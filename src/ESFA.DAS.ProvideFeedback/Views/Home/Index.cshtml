@@ -1,0 +1,19 @@
+﻿@{ViewBag.PageID = "page-service-start"; }
+@{ViewBag.Title = "Provide Feedback"; }
+@{ViewBag.MetaDesc = "Provide feedback on training providers"; }
+@{ViewBag.HideNav = "true"; }
+
+<div class="grid-row">
+    <div class="column-two-thirds">
+        <h1 class="heading-xlarge">
+            Give feedback on {Provider Name}
+        </h1>
+        <p class="lede">Give feedback on {Provider Name} and help improve the quality of apprenticeships in the {sector name} sector.</p>
+        <p>This will take about 1 minute to complete.</p>
+
+        <h2 class="heading-medium">Before you start</h2>
+        <p>To give feeback, you'll need to have a good understanding of your organisation's relationship with {Provider name}</p>
+
+        <p><a class="button button-start" id="service-start" href="@Url.Action("Questions", "Home")">Start</a></p>
+    </div>
+</div>
