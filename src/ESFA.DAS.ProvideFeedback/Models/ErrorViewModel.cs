@@ -1,6 +1,6 @@
 using System;
 
-namespace ESFA.DAS.ProvideFeedback.Models
+namespace ESFA.DAS.EmployerProvideFeedback.Models
 {
     public class ErrorViewModel
     {

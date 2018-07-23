@@ -1,4 +1,4 @@
-﻿namespace ESFA.DAS.ProvideFeedback.Configuration
+﻿namespace ESFA.DAS.EmployerProvideFeedback.Configuration
 {
     public static class EnvironmentNames
     {

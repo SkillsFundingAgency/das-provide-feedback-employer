@@ -1,8 +1,8 @@
 ﻿using System.Diagnostics;
-using ESFA.DAS.ProvideFeedback.Models;
+using ESFA.DAS.EmployerProvideFeedback.Models;
 using Microsoft.AspNetCore.Mvc;
 
-namespace ESFA.DAS.ProvideFeedback.Controllers
+namespace ESFA.DAS.EmployerProvideFeedback.Controllers
 {
     public class HomeController : Controller
     {

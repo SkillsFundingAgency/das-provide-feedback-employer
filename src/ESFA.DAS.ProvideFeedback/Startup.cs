@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace ESFA.DAS.ProvideFeedback
+namespace ESFA.DAS.EmployerProvideFeedback
 {
     public class Startup
     {
