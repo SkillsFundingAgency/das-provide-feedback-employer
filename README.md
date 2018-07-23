@@ -8,9 +8,30 @@ This solution represents the Provider Feedback code base currently in alpha.
 
 ### Requirements
 
+* [.NET Core SDK >= 2.1.4](https://www.microsoft.com/net/download/)
+* [Docker for X](https://docs.docker.com/install/#supported-platforms)
+
 ### Environment Setup
 
-### Running
+The default development environment uses docker containers to host it's dependencies.
+
+* Redis
+* Elasticsearch
+* Logstash
+* MongoDb
+
+On first setup run the following command from _**/setup/containers/**_ to create the docker container images:
+
+`docker-compose build`
+
+To start the containers run:
+
+`docker-compose up -d`
+
+You can view the state of the running containers using:
+
+`docker ps -a`
+
 
 ## License
 
