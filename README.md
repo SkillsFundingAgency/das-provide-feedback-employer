@@ -8,7 +8,7 @@ This solution represents the Provider Feedback code base currently in alpha.
 
 ### Requirements
 
-* [.NET Core SDK >= 2.1.4](https://www.microsoft.com/net/download/)
+* [.NET Core SDK >= 2.1.302](https://www.microsoft.com/net/download/)
 * [Docker for X](https://docs.docker.com/install/#supported-platforms)
 
 ### Environment Setup
