@@ -1,5 +1,3 @@
-using System;
-
 namespace ESFA.DAS.EmployerProvideFeedback.Models
 {
     public class ErrorViewModel
