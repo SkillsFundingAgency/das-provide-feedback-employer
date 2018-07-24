@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
 using NLog.Web;
 
 namespace ESFA.DAS.EmployerProvideFeedback
@@ -26,6 +27,7 @@ namespace ESFA.DAS.EmployerProvideFeedback
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
                 .UseStartup<Startup>()
-                .UseNLog();
+                .UseNLog()
+                .UseUrls("https://localhost:5030");
     }
 }

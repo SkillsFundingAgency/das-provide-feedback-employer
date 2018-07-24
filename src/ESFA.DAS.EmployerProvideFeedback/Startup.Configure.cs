@@ -1,3 +1,4 @@
+using ESFA.DAS.EmployerProvideFeedback.Configuration;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -7,12 +8,15 @@ namespace ESFA.DAS.EmployerProvideFeedback
 {
     public partial class Startup
     {
+        private AuthenticationConfiguration _authConfig { get; }
+        public IConfiguration _configuration { get; }
+
         public Startup(IConfiguration configuration)
         {
-            Configuration = configuration;
+            _configuration = configuration;
+            _authConfig = configuration.GetSection("Authentication").Get<AuthenticationConfiguration>();
         }
 
-        public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, IApplicationLifetime applicationLifetime, ILogger<Startup> logger)
@@ -34,6 +38,7 @@ namespace ESFA.DAS.EmployerProvideFeedback
             }
 
             app.UseHttpsRedirection();
+            app.UseAuthentication();
             app.UseStaticFiles();
             app.UseCookiePolicy();
 
