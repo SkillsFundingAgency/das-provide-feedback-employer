@@ -32,6 +32,8 @@ You can view the state of the running containers using:
 
 `docker ps -a`
 
+### Application logs
+Application logs are logged to [Elasticsearch](https://www.elastic.co/products/elasticsearch) and can be viewed using [Kibana](https://www.elastic.co/products/kibana) at http://localhost:5601
 
 ## License
 
