@@ -8,13 +8,15 @@ namespace ESFA.DAS.EmployerProvideFeedback
 {
     public partial class Startup
     {
-        private AuthenticationConfiguration _authConfig { get; }
-        public IConfiguration _configuration { get; }
+        private readonly AuthenticationConfiguration _authConfig;
+        private readonly IHostingEnvironment _hostingEnvironment;
+        public IConfiguration Configuration { get; }
 
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration, IHostingEnvironment hostingEnvironment)
         {
-            _configuration = configuration;
+            Configuration = configuration;
             _authConfig = configuration.GetSection("Authentication").Get<AuthenticationConfiguration>();
+            _hostingEnvironment = hostingEnvironment;
         }
 
 

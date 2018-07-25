@@ -1,7 +1,6 @@
 ﻿using ESFA.DAS.EmployerProvideFeedback.Security;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Authorization;
@@ -30,8 +29,7 @@ namespace ESFA.DAS.EmployerProvideFeedback
 
             }).SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
-            var hostingEnv = services.BuildServiceProvider().GetService<IHostingEnvironment>();
-            services.AddAuthenticationService(_authConfig, hostingEnv);
+            services.AddAuthenticationService(_authConfig, _hostingEnvironment);
         }
     }
 }
