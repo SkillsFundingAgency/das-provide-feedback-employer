@@ -1,7 +1,6 @@
 ﻿using System;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
 using NLog.Web;
 
 namespace ESFA.DAS.EmployerProvideFeedback

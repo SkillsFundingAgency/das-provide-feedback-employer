@@ -1,25 +1,11 @@
-using ESFA.DAS.EmployerProvideFeedback.Configuration;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
 namespace ESFA.DAS.EmployerProvideFeedback
 {
     public partial class Startup
     {
-        private readonly AuthenticationConfiguration _authConfig;
-        private readonly IHostingEnvironment _hostingEnvironment;
-        public IConfiguration Configuration { get; }
-
-        public Startup(IConfiguration configuration, IHostingEnvironment hostingEnvironment)
-        {
-            Configuration = configuration;
-            _authConfig = configuration.GetSection("Authentication").Get<AuthenticationConfiguration>();
-            _hostingEnvironment = hostingEnvironment;
-        }
-
-
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, IApplicationLifetime applicationLifetime, ILogger<Startup> logger)
         {
