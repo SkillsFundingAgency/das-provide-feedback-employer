@@ -1,6 +1,4 @@
-﻿using System.Diagnostics;
-using ESFA.DAS.EmployerProvideFeedback.Models;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 
 namespace ESFA.DAS.EmployerProvideFeedback.Controllers
 {
@@ -28,12 +26,6 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
         public IActionResult Privacy()
         {
             return View();
-        }
-
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
     }
 }
