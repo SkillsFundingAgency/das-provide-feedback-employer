@@ -1,0 +1,126 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "appServiceName": {
+            "type": "string"
+        },
+        "sharedAppServicePlanName": {
+            "type": "string"
+        },
+        "sharedAppServicePlanResourceGroup": {
+            "type": "string"
+        },
+        "authentication": {
+            "type": "secureObject",
+            "defaultValue": {
+                "Authority": "",
+                "MetaDataAddress": "",
+                "ClientId": "",
+                "ClientSecret": ""
+            }
+        },
+        "externalLinks": {
+            "type": "object",
+            "defaultValue": {
+                "ManageApprenticeshipSiteUrl": "",
+                "EmployerIdamsSiteUrl": ""
+            }
+        },
+        "loggingRedisConnectionString": {
+            "type": "string",
+            "defaultValue": ""
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "apiVersion": "2017-05-10",
+            "name": "UIAppInsights",
+            "type": "Microsoft.Resources/deployments",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/application-insights.json",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "appInsightsName": {
+                        "value": "[parameters('appServiceName')]"
+                    },
+                    "attachedService": {
+                        "value": "[parameters('appServiceName')]"
+                    }
+                }
+            }
+        },
+        {
+            "apiVersion": "2017-05-10",
+            "name": "UIAppService",
+            "type": "Microsoft.Resources/deployments",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/app-service.json",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "appServiceName": {
+                        "value": "[parameters('appServiceName')]"
+                    },
+                    "appServicePlanName": {
+                        "value": "[parameters('sharedAppServicePlanName')]"
+                    },
+                    "appServicePlanResourceGroup": {
+                        "value": "[parameters('sharedAppServicePlanResourceGroup')]"
+                    },
+                    "appServiceAppSettings": {
+                        "value": [
+                            {
+                                "name": "Authentication:Authority",
+                                "value": "[parameters('authentication').Authority]"
+                            },
+                            {
+                                "name": "Authentication:MetaDataAddress",
+                                "value": "[parameters('authentication').MetaDataAddress]"
+                            },
+                            {
+                                "name": "Authentication:ClientId",
+                                "value": "[parameters('authentication').ClientId]"
+                            },
+                            {
+                                "name": "Authentication:ClientSecret",
+                                "value": "[parameters('authentication').ClientSecret]"
+                            },
+                            {
+                                "name": "ExternalLinks:ManageApprenticeshipSiteUrl",
+                                "value": "[parameters('externalLinks').ManageApprenticeshipSiteUrl]"
+                            },
+                            {
+                                "name": "ExternalLinks:EmployerIdamsSiteUrl",
+                                "value": "[parameters('externalLinks').EmployerIdamsSiteUrl]"
+                            },
+                            {
+                                "name": "ApplicationInsights:InstrumentationKey",
+                                "value": "[reference('UIAppInsights').outputs.InstrumentationKey.value]"
+                            }
+                        ]
+                    },
+                    "appServiceConnectionStrings": {
+                        "value": [
+                            {
+                                "name": "Redis",
+                                "connectionString": "[parameters('loggingRedisConnectionString')]",
+                                "type": "Custom"
+                            }
+                        ]
+                    }
+                }
+            },
+            "dependsOn": [
+                "UIAppInsights"
+            ]
+        }
+    ],
+    "outputs": {}
+}
