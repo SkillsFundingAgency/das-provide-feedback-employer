@@ -3,11 +3,16 @@
     "tasks": [
         {
             "label": "build",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
             "command": "dotnet",
             "type": "process",
             "args": [
                 "build",
-                "${workspaceFolder}/ESFA.DAS.EmployerProvideFeedback/ESFA.DAS.EmployerProvideFeedback.csproj"
+                "${workspaceFolder}/ESFA.DAS.EmployerProvideFeedback/ESFA.DAS.EmployerProvideFeedback.csproj",
+                "/p:GenerateFullPaths=true"
             ],
             "problemMatcher": "$msCompile"
         }
