@@ -5,17 +5,8 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
 {
     public class HomeController : Controller
     {
-        private ILogger<HomeController> _logger;
-
-        public HomeController(ILogger<HomeController> logger)
-        {
-            _logger = logger;
-        }
-
         public IActionResult Index()
         {
-            // TODO: LWA remove this log line
-            _logger.LogInformation("Loading index view");
             return View();
         }
 
