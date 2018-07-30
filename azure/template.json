@@ -30,6 +30,9 @@
         "loggingRedisConnectionString": {
             "type": "string",
             "defaultValue": ""
+        },
+        "aspNetCoreEnvironment": {
+            "type": "string"
         }
     },
     "variables": {},
@@ -103,6 +106,10 @@
                             {
                                 "name": "ApplicationInsights:InstrumentationKey",
                                 "value": "[reference('UIAppInsights').outputs.InstrumentationKey.value]"
+                            },
+                            {
+                                "name": "ASPNETCORE_ENVIRONMENT",
+                                "value": "[parameters('aspNetCoreEnvironment')]"
                             }
                         ]
                     },
