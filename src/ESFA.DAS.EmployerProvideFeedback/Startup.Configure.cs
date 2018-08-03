@@ -26,7 +26,6 @@ namespace ESFA.DAS.EmployerProvideFeedback
             }
 
             app.UseHttpsRedirection();
-            app.UseAuthentication();
             app.UseStaticFiles();
             app.UseCookiePolicy();
 

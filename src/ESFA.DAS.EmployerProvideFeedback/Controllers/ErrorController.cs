@@ -18,8 +18,6 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
         {
             switch (id)
             {
-                case 403:
-                    return AccessDenied();
                 case 404:
                     return PageNotFound();
                 default:
@@ -27,12 +25,6 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
             }
 
             return View();//new ErrorViewModel { StatusCode = id, RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
-
-        private IActionResult AccessDenied()
-        {
-            Response.StatusCode = (int)HttpStatusCode.Unauthorized;
-            return View("AccessDenied");
         }
 
         private IActionResult PageNotFound()
