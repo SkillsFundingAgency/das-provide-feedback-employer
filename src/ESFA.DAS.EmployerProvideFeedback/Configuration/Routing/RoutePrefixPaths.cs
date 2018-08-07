@@ -2,6 +2,6 @@
 {
     public static class RoutePrefixPaths
     {
-        public const string FeedbackRoutePath = "accounts/{uniqueCode:guid}";
+        public const string FeedbackRoutePath = "{uniqueCode:guid}";
     }
 }

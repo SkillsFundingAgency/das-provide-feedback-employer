@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 
 namespace ESFA.DAS.EmployerProvideFeedback.Controllers
 {
+    [Route(RoutePrefixPaths.FeedbackRoutePath)]
     public class QuestionsController : Controller
     {
         [HttpGet("question-one", Name=RouteNames.QuestionOne_Get)]
