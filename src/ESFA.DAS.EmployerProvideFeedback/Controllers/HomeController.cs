@@ -1,30 +1,13 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using ESFA.DAS.EmployerProvideFeedback.Configuration.Routing;
 
 namespace ESFA.DAS.EmployerProvideFeedback.Controllers
 {
     public class HomeController : Controller
     {
+        [HttpGet(Name=RouteNames.Landing_Get)]
         public IActionResult Index()
-        {
-            return View();
-        }
-
-        public IActionResult About()
-        {
-            ViewData["Message"] = "Your application description page.";
-
-            return View();
-        }
-
-        public IActionResult Contact()
-        {
-            ViewData["Message"] = "Your contact page.";
-
-            return View();
-        }
-
-        public IActionResult Privacy()
         {
             return View();
         }
