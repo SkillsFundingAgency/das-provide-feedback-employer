@@ -8,6 +8,8 @@
         <h1 class="heading-xlarge">
             Check your answers
         </h1>
-        <p><a class="button button-start" id="submit-feedback" asp-route="@RouteNames.Confirmation_Get">Start</a></p>
+        <form asp-route="@RouteNames.ReviewAnswers_Post">
+            <button type="submit" class="button save-button">Next</button>
+        </form>
     </div>
 </div>

@@ -1,6 +1,5 @@
 ﻿using ESFA.DAS.EmployerProvideFeedback.Configuration.Routing;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 
 namespace ESFA.DAS.EmployerProvideFeedback.Controllers
 {
@@ -11,6 +10,12 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
         public IActionResult Index()
         {
             return View();
+        }
+
+        [HttpPost("review-answers", Name = RouteNames.ReviewAnswers_Post)]
+        public IActionResult Index(object answers)
+        {
+            return RedirectToRoute(RouteNames.Confirmation_Get);
         }
     }
 }

@@ -1,6 +1,5 @@
 ﻿using ESFA.DAS.EmployerProvideFeedback.Configuration.Routing;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 
 namespace ESFA.DAS.EmployerProvideFeedback.Controllers
 {

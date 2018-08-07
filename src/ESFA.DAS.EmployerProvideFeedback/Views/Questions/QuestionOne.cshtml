@@ -8,6 +8,8 @@
         <h1 class="heading-xlarge">
             {Provider Name}'s strengths
         </h1>
-        <p><a class="button button-start" id="next-question" asp-route="@RouteNames.QuestionTwo_Get">Start</a></p>
+        <form asp-route="@RouteNames.QuestionOne_Post">
+            <button type="submit" class="button save-button">Next</button>
+        </form>
     </div>
 </div>
