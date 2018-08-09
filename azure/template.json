@@ -37,13 +37,7 @@
         "customHostname": {
             "type": "string"
         },
-        "keyVaultCertificateName": {
-            "type": "string"
-        },
-        "sharedKeyVaultName": {
-            "type": "string"
-        },
-        "sharedKeyVaultResourceGroup": {
+        "certificateName": {
             "type": "string"
         }
     },
@@ -65,29 +59,6 @@
                     },
                     "attachedService": {
                         "value": "[parameters('appServiceName')]"
-                    }
-                }
-            }
-        },
-        {
-            "apiVersion": "2017-05-10",
-            "name": "UIAppServiceCertificate",
-            "type": "Microsoft.Resources/deployments",
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/app-service-certificate.json",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "keyVaultCertificateName": {
-                        "value": "[parameters('keyVaultCertificateName')]"
-                    },
-                    "keyVaultName": {
-                        "value": "[parameters('sharedKeyVaultName')]"
-                    },
-                    "keyVaultResourceGroup": {
-                        "value": "[parameters('sharedKeyVaultResourceGroup')]"
                     }
                 }
             }
@@ -161,13 +132,12 @@
                         "value": "[parameters('customHostname')]"
                     },
                     "certificateThumbprint": {
-                        "value": "[reference(resourceId('Microsoft.Web/certificates', parameters('keyVaultCertificateName')), '2016-08-01').Thumbprint]"
+                        "value": "[reference(resourceId(parameters('sharedAppServicePlanResourceGroup'), 'Microsoft.Web/certificates', parameters('certificateName')), '2016-03-01').Thumbprint]"
                     }
                 }
             },
             "dependsOn": [
-                "UIAppInsights",
-                "UIAppServiceCertificate"
+                "UIAppInsights"
             ]
         }
     ],
