@@ -33,6 +33,18 @@
         },
         "aspNetCoreEnvironment": {
             "type": "string"
+        },
+        "customHostname": {
+            "type": "string"
+        },
+        "keyVaultCertificateName": {
+            "type": "string"
+        },
+        "sharedKeyVaultName": {
+            "type": "string"
+        },
+        "sharedKeyVaultResourceGroup": {
+            "type": "string"
         }
     },
     "variables": {},
@@ -53,6 +65,29 @@
                     },
                     "attachedService": {
                         "value": "[parameters('appServiceName')]"
+                    }
+                }
+            }
+        },
+        {
+            "apiVersion": "2017-05-10",
+            "name": "UIAppServiceCertificate",
+            "type": "Microsoft.Resources/deployments",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/app-service-certificate.json",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "keyVaultCertificateName": {
+                        "value": "[parameters('keyVaultCertificateName')]"
+                    },
+                    "keyVaultName": {
+                        "value": "[parameters('sharedKeyVaultName')]"
+                    },
+                    "keyVaultResourceGroup": {
+                        "value": "[parameters('sharedKeyVaultResourceGroup')]"
                     }
                 }
             }
@@ -121,11 +156,18 @@
                                 "type": "Custom"
                             }
                         ]
+                    },
+                    "customHostName": {
+                        "value": "[parameters('customHostname')]"
+                    },
+                    "certificateThumbprint": {
+                        "value": "[reference(resourceId('Microsoft.Web/certificates', parameters('keyVaultCertificateName')), '2016-08-01').Thumbprint]"
                     }
                 }
             },
             "dependsOn": [
-                "UIAppInsights"
+                "UIAppInsights",
+                "UIAppServiceCertificate"
             ]
         }
     ],
