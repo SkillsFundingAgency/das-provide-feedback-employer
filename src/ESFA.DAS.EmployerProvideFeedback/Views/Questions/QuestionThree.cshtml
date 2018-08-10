@@ -5,11 +5,60 @@
 
 <div class="grid-row">
     <div class="column-two-thirds">
+
+        <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
+
+            <h2 class="heading-medium error-summary-heading hidden" id="error-summary-heading">
+                Error on page
+            </h2>
+
+           
+
+            <ul class="error-summary-list">
+                <li><a href="#error">Please rate training quality</a></li>
+            </ul>
+
+        </div>
+
+
         <h1 class="heading-xlarge">
             Training quality rating
         </h1>
         <form asp-route="@RouteNames.QuestionThree_Post">
-            <button type="submit" class="button save-button">Next</button>
+            <div class="form-group">
+                <fieldset class="form-group-error">
+                    <!-- dynamically add this class in fieldset in case of error-->
+                    <legend>
+                        <h3 class="heading-medium">How do you rate Cyberdynes apprenticeship training?</h3>
+                    </legend>
+
+                    <span class="error-message">
+                        <!-- dynamically add this span element here in case of error-->
+                        Please rate training quality
+                    </span>
+                    <div class="multiple-choice">
+                        <input id="radio-1" type="radio" name="radio-group" value="Excellent">
+                        <label for="radio-1">Excellent</label>
+                    </div>
+                    <div class="multiple-choice">
+                        <input id="radio-2" type="radio" name="radio-group" value="Good">
+                        <label for="radio-2">Good</label>
+                    </div>
+                    <div class="multiple-choice">
+                        <input id="radio-3" type="radio" name="radio-group" value="Poor">
+                        <label for="radio-3">Poor</label>
+                    </div>
+                    <div class="multiple-choice">
+                        <input id="radio-4" type="radio" name="radio-group" value="Very poor">
+                        <label for="radio-4">Very poor</label>
+                    </div>
+
+                </fieldset>
+            </div>
+
+
+            <button type="submit" class="button save-button">Continue</button>
+            <a href="#" class="button-link">Skip this question</a>
         </form>
     </div>
 </div>
