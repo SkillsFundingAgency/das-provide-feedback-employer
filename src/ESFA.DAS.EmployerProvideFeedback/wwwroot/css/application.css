@@ -1426,7 +1426,18 @@ input.form-control, textarea.form-control {
 }
 
 /*UI styles*/
-
 .heading-xlarge{
     margin-bottom:0;
+}
+
+hr {
+    clear: both;
+}
+
+.govuk-box-highlight .heading-xlarge{
+    margin-top:0;
+}
+
+.home-page .heading-xlarge{
+    margin-bottom:1.25em;
 }
