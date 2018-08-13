@@ -499,22 +499,6 @@
   }
   }
   
-  #floating-menu-holder {
-  background:#6f72af;
-  width:100%
-  }
-  
-  #floating-menu-holder .fixed-header {
-  left:0;
-  max-width:100%;
-  position:fixed;
-  top:0
-  }
-  
-  #floating-menu-holder .width-adjust {
-  margin:0 auto;
-  max-width:960px
-  }
   
   .account-information:after,.header-organisation ul:after {
   clear:both;
@@ -1439,4 +1423,21 @@ input.form-control, textarea.form-control {
 
 .select2-container--classic.select2-container--open .select2-dropdown {
     border-color: #5897fb
+}
+
+/*UI styles*/
+.heading-xlarge{
+    margin-bottom:0;
+}
+
+hr {
+    clear: both;
+}
+
+.govuk-box-highlight .heading-xlarge{
+    margin-top:0;
+}
+
+.home-page .heading-xlarge{
+    margin-bottom:1.25em;
 }
