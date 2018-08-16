@@ -136,6 +136,71 @@ namespace UnitTests.Controllers
             Assert.AreEqual(RouteNames.QuestionThree_Get, (result as RedirectToRouteResult).RouteName);
         }
 
+        [Test, Category("UnitTest")]
+        public void Question_3_When_Q1_And_Q2_Skipped_Should_Have_No_Selected_Skills()
+        {
+            // Arrange
+
+            // Act
+            var result = _controller.QuestionThree() as ViewResult;
+
+            // Assert
+            Assert.IsAssignableFrom<AnswerModel>(result.Model);
+            var model = result.Model as AnswerModel;
+            Assert.False(model.HasStrengths);
+            Assert.False(model.HasWeaknesses);
+        }
+
+        [Test, Category("UnitTest")]
+        public void Question_3_When_Q1_And_Q2_Skipped_And_Q3_Session_Answers_Should_Load_Previous_Selection()
+        {
+            // Arrange
+            var answerModel = new AnswerModel();
+            answerModel.ProviderRating = ProviderRating.Poor;
+            _sessionServiceMock.Setup(mock => mock.Get<AnswerModel>(It.IsAny<string>())).Returns(answerModel);
+
+            // Act
+            var result = _controller.QuestionThree() as ViewResult;
+
+            // Assert
+            Assert.IsAssignableFrom<AnswerModel>(result.Model);
+            var model = result.Model as AnswerModel;
+            Assert.AreEqual(ProviderRating.Poor, model.ProviderRating);
+        }
+
+        [Test, Category("UnitTest")]
+        public void Question_3_When_Answer_Not_Selected_Should_Fail_Model_Validation()
+        {
+            // Arrange
+            var answerModel = new AnswerModel();
+            _sessionServiceMock.Setup(mock => mock.Get<AnswerModel>(It.IsAny<string>())).Verifiable();
+
+            // simulate model validation as this only occurs at runtime
+            _controller.ModelState.AddModelError("ProviderRating", "Required Field");
+
+            // Act
+            var result = _controller.QuestionThree(answerModel);
+
+            // Assert
+            _sessionServiceMock.Verify(mock => mock.Set(It.IsAny<string>(), It.IsAny<object>()), Times.Never);
+            Assert.IsNotAssignableFrom<RedirectToRouteResult>(result);
+        }
+
+        [Test, Category("UnitTest")]
+        public void Question_3_When_Answers_Submitted_Should_Update_Session_And_Redirect()
+        {
+            // Arrange
+            var answerModel = new AnswerModel { ProviderRating = ProviderRating.Excellent };
+
+            // Act
+            var result = _controller.QuestionThree(answerModel);
+
+            // Assert
+            _sessionServiceMock.Verify(mock => mock.Set(It.IsAny<string>(), It.IsAny<object>()), Times.Once);
+            Assert.IsAssignableFrom<RedirectToRouteResult>(result);
+            Assert.AreEqual(RouteNames.ReviewAnswers_Get, (result as RedirectToRouteResult).RouteName);
+        }
+
         private List<ProviderSkill> GetProviderSkills()
         {
             return _fixture
