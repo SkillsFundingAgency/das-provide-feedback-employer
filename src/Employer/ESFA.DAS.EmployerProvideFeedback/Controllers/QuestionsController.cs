@@ -1,44 +1,77 @@
-﻿using ESFA.DAS.EmployerProvideFeedback.Configuration.Routing;
+﻿using System.Collections.Generic;
+using ESFA.DAS.EmployerProvideFeedback.Configuration.Routing;
+using ESFA.DAS.EmployerProvideFeedback.Infrastructure;
+using ESFA.DAS.EmployerProvideFeedback.ViewModels;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 
 namespace ESFA.DAS.EmployerProvideFeedback.Controllers
 {
     [Route(RoutePrefixPaths.FeedbackRoutePath)]
     public class QuestionsController : Controller
     {
-        [HttpGet("question-one", Name=RouteNames.QuestionOne_Get)]
-        public IActionResult QuestionOne()
+        const string SessionAnswerKey = "SessionAnswerKey";
+        private readonly ISessionService _sessionService;
+        private readonly AnswerModel _answerModel;
+
+        public QuestionsController(IHostingEnvironment hostingEnvironment, ISessionService sessionService, IOptions<List<ProviderSkill>> providerSkills)
         {
-            return View();
+            _sessionService = sessionService;
+            _answerModel = new AnswerModel { ProviderSkills = providerSkills.Value };
         }
 
-        [HttpPost("question-one", Name=RouteNames.QuestionOne_Post)]
-        public IActionResult QuestionOne(object answer)
+        [HttpGet("question-one", Name = RouteNames.QuestionOne_Get)]
+        public IActionResult QuestionOne()
         {
+            var cachedAnswers = _sessionService.Get<AnswerModel>(SessionAnswerKey);
+            return View(cachedAnswers != null ? cachedAnswers.ProviderSkills : _answerModel.ProviderSkills);
+        }
+
+        [HttpPost("question-one", Name = RouteNames.QuestionOne_Post)]
+        public IActionResult QuestionOne(List<ProviderSkill> providerSkills)
+        {
+            var sessionAnswer = _sessionService.Get<AnswerModel>(SessionAnswerKey) ?? new AnswerModel();
+            sessionAnswer.ProviderSkills = providerSkills;
+            _sessionService.Set(SessionAnswerKey, sessionAnswer);
+
             return RedirectToRoute(RouteNames.QuestionTwo_Get);
         }
 
-        [HttpGet("question-two", Name=RouteNames.QuestionTwo_Get)]
+        [HttpGet("question-two", Name = RouteNames.QuestionTwo_Get)]
         public IActionResult QuestionTwo()
         {
-            return View();
+            var sessionAnswers = _sessionService.Get<AnswerModel>(SessionAnswerKey);
+            return View(sessionAnswers.ProviderSkills);
         }
-        
-        [HttpPost("question-two", Name=RouteNames.QuestionTwo_Post)]
-        public IActionResult QuestionTwo(object answer)
+
+        [HttpPost("question-two", Name = RouteNames.QuestionTwo_Post)]
+        public IActionResult QuestionTwo(List<ProviderSkill> providerSkills)
         {
+            var sessionAnswer = _sessionService.Get<AnswerModel>(SessionAnswerKey);
+            sessionAnswer.ProviderSkills = providerSkills;
+            _sessionService.Set(SessionAnswerKey, sessionAnswer);
             return RedirectToRoute(RouteNames.QuestionThree_Get);
         }
 
-        [HttpGet("question-three", Name=RouteNames.QuestionThree_Get)]
+        [HttpGet("question-three", Name = RouteNames.QuestionThree_Get)]
         public IActionResult QuestionThree()
         {
-            return View();
+            var sessionAnswer = _sessionService.Get<AnswerModel>(SessionAnswerKey);
+            return View(sessionAnswer);
         }
 
-        [HttpPost("question-three", Name=RouteNames.QuestionThree_Post)]
-        public IActionResult QuestionThree(object answer)
+        [HttpPost("question-three", Name = RouteNames.QuestionThree_Post)]
+        public IActionResult QuestionThree(AnswerModel answerModel)
         {
+            if (!ModelState.IsValid)
+            {
+                return View(answerModel);
+            }
+
+            var sessionAnswer = _sessionService.Get<AnswerModel>(SessionAnswerKey);
+            sessionAnswer.ProviderRating = answerModel.ProviderRating;
+            _sessionService.Set(SessionAnswerKey, sessionAnswer);
             return RedirectToRoute(RouteNames.ReviewAnswers_Get);
         }
     }

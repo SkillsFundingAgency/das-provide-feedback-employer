@@ -27,7 +27,10 @@ namespace ESFA.DAS.EmployerProvideFeedback
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-            app.UseCookiePolicy();
+
+            //Enable sessions
+            app.UseSession();
+            //app.UseCookiePolicy();
 
             app.UseMvc(routes =>
             {
