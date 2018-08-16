@@ -31,7 +31,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
         [HttpPost("question-one", Name = RouteNames.QuestionOne_Post)]
         public IActionResult QuestionOne(List<ProviderSkill> providerSkills)
         {
-            var sessionAnswer = _sessionService.Get<AnswerModel>(SessionAnswerKey) ?? new AnswerModel();
+            var sessionAnswer = GetCurrentAnswerModel();
             sessionAnswer.ProviderSkills = providerSkills;
             _sessionService.Set(SessionAnswerKey, sessionAnswer);
 
@@ -41,14 +41,14 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
         [HttpGet("question-two", Name = RouteNames.QuestionTwo_Get)]
         public IActionResult QuestionTwo()
         {
-            var sessionAnswers = _sessionService.Get<AnswerModel>(SessionAnswerKey);
+            var sessionAnswers = GetCurrentAnswerModel();
             return View(sessionAnswers.ProviderSkills);
         }
 
         [HttpPost("question-two", Name = RouteNames.QuestionTwo_Post)]
         public IActionResult QuestionTwo(List<ProviderSkill> providerSkills)
         {
-            var sessionAnswer = _sessionService.Get<AnswerModel>(SessionAnswerKey);
+            var sessionAnswer = GetCurrentAnswerModel();
             sessionAnswer.ProviderSkills = providerSkills;
             _sessionService.Set(SessionAnswerKey, sessionAnswer);
             return RedirectToRoute(RouteNames.QuestionThree_Get);
@@ -57,7 +57,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
         [HttpGet("question-three", Name = RouteNames.QuestionThree_Get)]
         public IActionResult QuestionThree()
         {
-            var sessionAnswer = _sessionService.Get<AnswerModel>(SessionAnswerKey);
+            var sessionAnswer = GetCurrentAnswerModel();
             return View(sessionAnswer);
         }
 
@@ -69,10 +69,15 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
                 return View(answerModel);
             }
 
-            var sessionAnswer = _sessionService.Get<AnswerModel>(SessionAnswerKey);
+            var sessionAnswer = GetCurrentAnswerModel(); 
             sessionAnswer.ProviderRating = answerModel.ProviderRating;
             _sessionService.Set(SessionAnswerKey, sessionAnswer);
             return RedirectToRoute(RouteNames.ReviewAnswers_Get);
+        }
+
+        private AnswerModel GetCurrentAnswerModel()
+        {
+            return _sessionService.Get<AnswerModel>(SessionAnswerKey) ?? _answerModel;
         }
     }
 }
