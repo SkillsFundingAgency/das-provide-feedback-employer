@@ -66,7 +66,7 @@ public string GetTitle()
     @Html.Raw(JavaScriptSnippet.FullScript) <!-- AppInsights script -->
 </head>
 
-<body>
+<body id="@ViewBag.PageID">
     <script>document.body.className = ((document.body.className) ? document.body.className + ' js-enabled' : 'js-enabled');</script>
     <div id="skiplink-container">
         <div>
@@ -93,7 +93,6 @@ public string GetTitle()
         </div>
     </header>
     <div id="global-header-bar"></div>
-
     <main id="content" role="main">
         @RenderBody()
     </main>
