@@ -17,7 +17,7 @@
                 <div class="column-one-third" style="">
                     @{ if (Model.HasStrengths)
                         {
-                            @foreach (var item in Model.ProviderSkills.Where(x => x.IsDoingWell))
+                            foreach (var item in Model.ProviderSkills.Where(x => x.IsDoingWell))
                             {
                                 <p class="bold-small">@item.Name</p>
                             }
@@ -38,7 +38,7 @@
                 <div class="column-one-third" style="">
                     @{ if (Model.HasWeaknesses)
                         {
-                            @foreach (var item in Model.ProviderSkills.Where(x => x.IsToImprove))
+                            foreach (var item in Model.ProviderSkills.Where(x => x.IsToImprove))
                             {
                                 <p class="bold-small">@item.Name</p>
                             }

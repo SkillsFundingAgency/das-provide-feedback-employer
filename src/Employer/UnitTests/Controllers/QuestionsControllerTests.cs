@@ -17,7 +17,6 @@ namespace UnitTests.Controllers
     public class QuestionsControllerTests
     {
         private QuestionsController _controller;
-        private Mock<IHostingEnvironment> _hostingEnvMock;
         private Mock<ISessionService> _sessionServiceMock;
         private Mock<IOptions<List<ProviderSkill>>> _provSKillsOptions;
         private IFixture _fixture;
@@ -27,13 +26,12 @@ namespace UnitTests.Controllers
         public void SetUp()
         {
             _fixture = new Fixture();
-            _hostingEnvMock = new Mock<IHostingEnvironment>();
             _sessionServiceMock = new Mock<ISessionService>();
             _provSKillsOptions = new Mock<IOptions<List<ProviderSkill>>>();
 
             _providerSkills = GetProviderSkills();
             _provSKillsOptions.SetupGet(mock => mock.Value).Returns(_providerSkills);
-            _controller = new QuestionsController(_hostingEnvMock.Object, _sessionServiceMock.Object, _provSKillsOptions.Object);
+            _controller = new QuestionsController(_sessionServiceMock.Object, _provSKillsOptions.Object);
         }
 
         [Test, Category("UnitTest")]

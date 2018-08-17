@@ -2,7 +2,6 @@
 using ESFA.DAS.EmployerProvideFeedback.Configuration.Routing;
 using ESFA.DAS.EmployerProvideFeedback.Infrastructure;
 using ESFA.DAS.EmployerProvideFeedback.ViewModels;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 
@@ -11,11 +10,11 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
     [Route(RoutePrefixPaths.FeedbackRoutePath)]
     public class QuestionsController : Controller
     {
-        const string SessionAnswerKey = "SessionAnswerKey";
+        private const string SessionAnswerKey = "SessionAnswerKey";
         private readonly ISessionService _sessionService;
         private readonly AnswerModel _answerModel;
 
-        public QuestionsController(IHostingEnvironment hostingEnvironment, ISessionService sessionService, IOptions<List<ProviderSkill>> providerSkills)
+        public QuestionsController(ISessionService sessionService, IOptions<List<ProviderSkill>> providerSkills)
         {
             _sessionService = sessionService;
             _answerModel = new AnswerModel { ProviderSkills = providerSkills.Value };

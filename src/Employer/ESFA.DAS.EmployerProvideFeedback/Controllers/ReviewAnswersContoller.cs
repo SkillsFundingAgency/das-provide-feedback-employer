@@ -8,7 +8,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
     [Route(RoutePrefixPaths.FeedbackRoutePath)]
     public class ReviewAnswersController : Controller
     {
-        const string SessionAnswerKey = "SessionAnswerKey";
+        private const string SessionAnswerKey = "SessionAnswerKey";
         private readonly ISessionService _sessionService;
 
         public ReviewAnswersController(ISessionService sessionService)
