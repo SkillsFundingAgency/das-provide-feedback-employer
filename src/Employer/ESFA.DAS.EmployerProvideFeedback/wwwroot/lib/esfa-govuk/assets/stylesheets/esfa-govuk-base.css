@@ -1,6 +1,5 @@
-/***** FRONTEND-TOOLKIT START *****/
 .grid-row:after, #content:after, .notice:after, .panel:after, fieldset:after, .form-section:after,
-.form-group:after, .breadcrumbs ol:after {
+.form-group:after, .form-group-error:after, .breadcrumbs ol:after {
   content: "";
   display: block;
   clear: both; }
@@ -19,19 +18,19 @@
   margin: 0 -15px; }
 
 .grid-row:after, #content:after, .notice:after, .panel:after, fieldset:after, .form-section:after,
-.form-group:after, .breadcrumbs ol:after {
+.form-group:after, .form-group-error:after, .breadcrumbs ol:after {
   content: "";
   display: block;
   clear: both; }
 
 .grid-row:after, #content:after, .notice:after, .panel:after, fieldset:after, .form-section:after,
-.form-group:after, .breadcrumbs ol:after {
+.form-group:after, .form-group-error:after, .breadcrumbs ol:after {
   content: "";
   display: block;
   clear: both; }
 
 .grid-row:after, #content:after, .notice:after, .panel:after, fieldset:after, .form-section:after,
-.form-group:after, .breadcrumbs ol:after {
+.form-group:after, .form-group-error:after, .breadcrumbs ol:after {
   content: "";
   display: block;
   clear: both; }
@@ -50,19 +49,17 @@
   margin: 0 -15px; }
 
 .grid-row:after, #content:after, .notice:after, .panel:after, fieldset:after, .form-section:after,
-.form-group:after, .breadcrumbs ol:after {
+.form-group:after, .form-group-error:after, .breadcrumbs ol:after {
   content: "";
   display: block;
   clear: both; }
 
 .grid-row:after, #content:after, .notice:after, .panel:after, fieldset:after, .form-section:after,
-.form-group:after, .breadcrumbs ol:after {
+.form-group:after, .form-group-error:after, .breadcrumbs ol:after {
   content: "";
   display: block;
   clear: both; }
 
-/***** FRONTEND-TOOLKIT END *****/
-/***** ELEMENTS START *****/
 .visually-hidden,
 .visuallyhidden {
   position: absolute;
@@ -412,6 +409,7 @@ main {
   text-transform: none;
   font-size: 32px;
   line-height: 1.09375;
+  display: block;
   margin-top: 0.46875em;
   margin-bottom: 0.9375em; }
   @media (min-width: 641px) {
@@ -448,6 +446,7 @@ main {
   text-transform: none;
   font-size: 24px;
   line-height: 1.04167;
+  display: block;
   margin-top: 1.04167em;
   margin-bottom: 0.41667em; }
   @media (min-width: 641px) {
@@ -484,6 +483,7 @@ main {
   text-transform: none;
   font-size: 18px;
   line-height: 1.2;
+  display: block;
   margin-top: 1.25em;
   margin-bottom: 0.5em; }
   @media (min-width: 641px) {
@@ -501,6 +501,7 @@ main {
   text-transform: none;
   font-size: 16px;
   line-height: 1.25;
+  display: block;
   margin-top: 0.625em;
   margin-bottom: 0.3125em; }
   @media (min-width: 641px) {
@@ -730,7 +731,7 @@ hr {
   text-transform: none;
   font-size: 18px;
   line-height: 1.2;
-  background-image: image-url("icon-pointer.png");
+  background-image: url("../images/icon-pointer.png");
   background-repeat: no-repeat;
   background-position: 100% 50%;
   padding: 0.36842em 2.15789em 0.21053em 0.84211em; }
@@ -742,7 +743,7 @@ hr {
   @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20 / 10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
     .button-start,
     .button-get-started {
-      background-image: image-url("icon-pointer-2x.png");
+      background-image: url("../images/icon-pointer-2x.png");
       background-size: 30px 19px; } }
 
 .icon {
@@ -753,199 +754,199 @@ hr {
 .icon-calendar {
   width: 27px;
   height: 27px;
-  background-image: image-url("icon-calendar.png"); }
+  background-image: url("../images/icon-calendar.png"); }
   @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20 / 10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
     .icon-calendar {
-      background-image: image-url("icon-calendar-2x.png");
+      background-image: url("../images/icon-calendar-2x.png");
       background-size: 100%; } }
 
 .icon-file-download {
   width: 30px;
   height: 39px;
-  background-image: image-url("icon-file-download.png"); }
+  background-image: url("../images/icon-file-download.png"); }
   @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20 / 10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
     .icon-file-download {
-      background-image: image-url("icon-file-download-2x.png");
+      background-image: url("../images/icon-file-download-2x.png");
       background-size: 100%; } }
 
 .icon-important {
   width: 35px;
   height: 35px;
-  background-image: image-url("icon-important.png"); }
+  background-image: url("../images/icon-important.png"); }
   @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20 / 10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
     .icon-important {
-      background-image: image-url("icon-important-2x.png");
+      background-image: url("../images/icon-important-2x.png");
       background-size: 100%; } }
 
 .icon-information {
   width: 27px;
   height: 27px;
-  background-image: image-url("icon-information.png"); }
+  background-image: url("../images/icon-information.png"); }
   @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20 / 10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
     .icon-information {
-      background-image: image-url("icon-information-2x.png");
+      background-image: url("../images/icon-information-2x.png");
       background-size: 100%; } }
 
 .icon-locator {
   width: 26px;
   height: 36px;
-  background-image: image-url("icon-locator.png"); }
+  background-image: url("../images/icon-locator.png"); }
   @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20 / 10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
     .icon-locator {
-      background-image: image-url("icon-locator-2x.png");
+      background-image: url("../images/icon-locator-2x.png");
       background-size: 100%; } }
 
 .icon-pointer {
   width: 30px;
   height: 19px;
-  background-image: image-url("icon-pointer.png"); }
+  background-image: url("../images/icon-pointer.png"); }
   @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20 / 10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
     .icon-pointer {
-      background-image: image-url("icon-pointer-2x.png");
+      background-image: url("../images/icon-pointer-2x.png");
       background-size: 100%; } }
 
 .icon-pointer-black {
   width: 23px;
   height: 23px;
-  background-image: image-url("icon-pointer-black.png"); }
+  background-image: url("../images/icon-pointer-black.png"); }
   @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20 / 10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
     .icon-pointer-black {
-      background-image: image-url("icon-pointer-black-2x.png");
+      background-image: url("../images/icon-pointer-black-2x.png");
       background-size: 100%; } }
 
 .icon-search {
   width: 30px;
   height: 22px;
-  background-image: image-url("icon-search.png"); }
+  background-image: url("../images/icon-search.png"); }
   @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20 / 10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
     .icon-search {
-      background-image: image-url("icon-search-2x.png");
+      background-image: url("../images/icon-search-2x.png");
       background-size: 100%; } }
 
 .icon-step-1 {
   width: 23px;
   height: 23px;
-  background-image: image-url("icon-steps/icon-step-1.png"); }
+  background-image: url("../images/icon-steps/icon-step-1.png"); }
   @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20 / 10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
     .icon-step-1 {
-      background-image: image-url("icon-steps/icon-step-1-2x.png");
+      background-image: url("../images/icon-steps/icon-step-1-2x.png");
       background-size: 100%; } }
 
 .icon-step-2 {
   width: 23px;
   height: 23px;
-  background-image: image-url("icon-steps/icon-step-2.png"); }
+  background-image: url("../images/icon-steps/icon-step-2.png"); }
   @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20 / 10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
     .icon-step-2 {
-      background-image: image-url("icon-steps/icon-step-2-2x.png");
+      background-image: url("../images/icon-steps/icon-step-2-2x.png");
       background-size: 100%; } }
 
 .icon-step-3 {
   width: 23px;
   height: 23px;
-  background-image: image-url("icon-steps/icon-step-3.png"); }
+  background-image: url("../images/icon-steps/icon-step-3.png"); }
   @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20 / 10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
     .icon-step-3 {
-      background-image: image-url("icon-steps/icon-step-3-2x.png");
+      background-image: url("../images/icon-steps/icon-step-3-2x.png");
       background-size: 100%; } }
 
 .icon-step-4 {
   width: 23px;
   height: 23px;
-  background-image: image-url("icon-steps/icon-step-4.png"); }
+  background-image: url("../images/icon-steps/icon-step-4.png"); }
   @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20 / 10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
     .icon-step-4 {
-      background-image: image-url("icon-steps/icon-step-4-2x.png");
+      background-image: url("../images/icon-steps/icon-step-4-2x.png");
       background-size: 100%; } }
 
 .icon-step-5 {
   width: 23px;
   height: 23px;
-  background-image: image-url("icon-steps/icon-step-5.png"); }
+  background-image: url("../images/icon-steps/icon-step-5.png"); }
   @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20 / 10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
     .icon-step-5 {
-      background-image: image-url("icon-steps/icon-step-5-2x.png");
+      background-image: url("../images/icon-steps/icon-step-5-2x.png");
       background-size: 100%; } }
 
 .icon-step-6 {
   width: 23px;
   height: 23px;
-  background-image: image-url("icon-steps/icon-step-6.png"); }
+  background-image: url("../images/icon-steps/icon-step-6.png"); }
   @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20 / 10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
     .icon-step-6 {
-      background-image: image-url("icon-steps/icon-step-6-2x.png");
+      background-image: url("../images/icon-steps/icon-step-6-2x.png");
       background-size: 100%; } }
 
 .icon-step-7 {
   width: 23px;
   height: 23px;
-  background-image: image-url("icon-steps/icon-step-7.png"); }
+  background-image: url("../images/icon-steps/icon-step-7.png"); }
   @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20 / 10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
     .icon-step-7 {
-      background-image: image-url("icon-steps/icon-step-7-2x.png");
+      background-image: url("../images/icon-steps/icon-step-7-2x.png");
       background-size: 100%; } }
 
 .icon-step-8 {
   width: 23px;
   height: 23px;
-  background-image: image-url("icon-steps/icon-step-8.png"); }
+  background-image: url("../images/icon-steps/icon-step-8.png"); }
   @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20 / 10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
     .icon-step-8 {
-      background-image: image-url("icon-steps/icon-step-8-2x.png");
+      background-image: url("../images/icon-steps/icon-step-8-2x.png");
       background-size: 100%; } }
 
 .icon-step-9 {
   width: 23px;
   height: 23px;
-  background-image: image-url("icon-steps/icon-step-9.png"); }
+  background-image: url("../images/icon-steps/icon-step-9.png"); }
   @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20 / 10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
     .icon-step-9 {
-      background-image: image-url("icon-steps/icon-step-9-2x.png");
+      background-image: url("../images/icon-steps/icon-step-9-2x.png");
       background-size: 100%; } }
 
 .icon-step-10 {
   width: 23px;
   height: 23px;
-  background-image: image-url("icon-steps/icon-step-10.png"); }
+  background-image: url("../images/icon-steps/icon-step-10.png"); }
   @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20 / 10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
     .icon-step-10 {
-      background-image: image-url("icon-steps/icon-step-10-2x.png");
+      background-image: url("../images/icon-steps/icon-step-10-2x.png");
       background-size: 100%; } }
 
 .icon-step-11 {
   width: 23px;
   height: 23px;
-  background-image: image-url("icon-steps/icon-step-11.png"); }
+  background-image: url("../images/icon-steps/icon-step-11.png"); }
   @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20 / 10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
     .icon-step-11 {
-      background-image: image-url("icon-steps/icon-step-11-2x.png");
+      background-image: url("../images/icon-steps/icon-step-11-2x.png");
       background-size: 100%; } }
 
 .icon-step-12 {
   width: 23px;
   height: 23px;
-  background-image: image-url("icon-steps/icon-step-12.png"); }
+  background-image: url("../images/icon-steps/icon-step-12.png"); }
   @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20 / 10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
     .icon-step-12 {
-      background-image: image-url("icon-steps/icon-step-12-2x.png");
+      background-image: url("../images/icon-steps/icon-step-12-2x.png");
       background-size: 100%; } }
 
 .icon-step-13 {
   width: 23px;
   height: 23px;
-  background-image: image-url("icon-steps/icon-step-13.png"); }
+  background-image: url("../images/icon-steps/icon-step-13.png"); }
   @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20 / 10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
     .icon-step-13 {
-      background-image: image-url("icon-steps/icon-step-13-2x.png");
+      background-image: url("../images/icon-steps/icon-step-13-2x.png");
       background-size: 100%; } }
 
 .icon-step-14 {
   width: 23px;
   height: 23px;
-  background-image: image-url("icon-steps/icon-step-14.png"); }
+  background-image: url("../images/icon-steps/icon-step-14.png"); }
   @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20 / 10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
     .icon-step-14 {
-      background-image: image-url("icon-steps/icon-step-14-2x.png");
+      background-image: url("../images/icon-steps/icon-step-14-2x.png");
       background-size: 100%; } }
 
 .circle {
@@ -1056,16 +1057,44 @@ details {
     color: #005ea5;
     cursor: pointer;
     position: relative;
-    margin-bottom: 0.26316em; }
+    margin-bottom: 0.26316em;
+    padding-left: 25px; }
+    details summary:before {
+      content: "";
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      margin: auto;
+      display: block;
+      width: 0;
+      height: 0;
+      border-style: solid;
+      border-color: transparent;
+      -webkit-clip-path: polygon(0% 0%, 100% 50%, 0% 100%);
+      clip-path: polygon(0% 0%, 100% 50%, 0% 100%);
+      border-width: 7px 0 7px 12.124px;
+      border-left-color: inherit; }
     details summary:hover {
       color: #2b8cc4; }
     details summary:focus {
       outline: 3px solid #ffbf47; }
+    details summary::-webkit-details-marker {
+      display: none; }
+  details[open] > summary:before {
+    display: block;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-color: transparent;
+    -webkit-clip-path: polygon(0% 0%, 50% 100%, 100% 0%);
+    clip-path: polygon(0% 0%, 50% 100%, 100% 0%);
+    border-width: 12.124px 7px 0 7px;
+    border-top-color: inherit; }
   details .summary {
     text-decoration: underline; }
   details .arrow {
-    margin-right: .35em;
-    font-style: normal; }
+    display: none; }
 
 .panel {
   -webkit-box-sizing: border-box;
@@ -1107,6 +1136,11 @@ details {
 
 fieldset {
   width: 100%; }
+  fieldset.after-error-summary {
+    margin-top: -15px; }
+    @media (min-width: 641px) {
+      fieldset.after-error-summary {
+        margin-top: -30px; } }
 
 legend {
   overflow: hidden; }
@@ -1480,7 +1514,7 @@ input[type=number] {
     font-size: 14px;
     line-height: 1.14286;
     float: left;
-    background-image: image-url("separator.png");
+    background-image: url("../images/separator.png");
     background-position: 0% 50%;
     background-repeat: no-repeat;
     list-style: none;
@@ -1493,7 +1527,7 @@ input[type=number] {
         line-height: 1.25; } }
     @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20 / 10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
       .breadcrumbs li {
-        background-image: image-url("separator-2x.png");
+        background-image: url("../images/separator-2x.png");
         background-size: 6px 11px; } }
     .breadcrumbs li:first-child {
       background-image: none;
@@ -1620,9 +1654,7 @@ input[type=number] {
   background: #28a197;
   text-align: center; }
 
-@-moz-document regexp('.*') {
-  details summary:not([tabindex]) {
-    display: list-item;
-    display: revert; } }
-
+/***** FRONTEND-TOOLKIT START *****/
+/***** FRONTEND-TOOLKIT END *****/
+/***** ELEMENTS START *****/
 /***** ELEMENTS END *****/
