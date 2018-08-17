@@ -293,3 +293,4 @@ internal-nlog.txt
 
 # NuGet config
 /src/nuget.config
+.vscode
