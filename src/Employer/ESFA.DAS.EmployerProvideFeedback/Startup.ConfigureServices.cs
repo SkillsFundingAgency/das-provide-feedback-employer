@@ -1,4 +1,8 @@
-﻿using ESFA.DAS.EmployerProvideFeedback.Configuration.Routing;
+﻿using System;
+using System.Collections.Generic;
+using ESFA.DAS.EmployerProvideFeedback.Configuration.Routing;
+using ESFA.DAS.EmployerProvideFeedback.Infrastructure;
+using ESFA.DAS.EmployerProvideFeedback.ViewModels;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -23,12 +27,24 @@ namespace ESFA.DAS.EmployerProvideFeedback
         public void ConfigureServices(IServiceCollection services)
         {
             services.Configure<ExternalLinksConfiguration>(Configuration.GetSection("ExternalLinks"));
+            services.Configure<List<ProviderSkill>>(Configuration.GetSection("ProviderSkills"));
+            services.AddTransient<ISessionService, SessionService>();
 
             services.Configure<CookiePolicyOptions>(options =>
             {
                 // This lambda determines whether user consent for non-essential cookies is needed for a given request.
                 options.CheckConsentNeeded = context => true;
                 options.MinimumSameSitePolicy = SameSiteMode.None;
+            });
+
+            services.AddDistributedRedisCache(options => {
+                options.Configuration = Configuration.GetConnectionString("redis");
+                options.InstanceName = "";
+            });
+
+            services.AddSession(options => {
+                options.Cookie.Name = "PF.Session";
+                options.IdleTimeout = TimeSpan.FromMinutes(60);
             });
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
