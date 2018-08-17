@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using AutoFixture;
@@ -5,7 +6,6 @@ using ESFA.DAS.EmployerProvideFeedback.Configuration.Routing;
 using ESFA.DAS.EmployerProvideFeedback.Controllers;
 using ESFA.DAS.EmployerProvideFeedback.Infrastructure;
 using ESFA.DAS.EmployerProvideFeedback.ViewModels;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Moq;
@@ -21,6 +21,7 @@ namespace UnitTests.Controllers
         private Mock<IOptions<List<ProviderSkill>>> _provSKillsOptions;
         private IFixture _fixture;
         private List<ProviderSkill> _providerSkills;
+        private Guid _uniqueCode = Guid.NewGuid();
 
         [SetUp]
         public void SetUp()
@@ -40,7 +41,7 @@ namespace UnitTests.Controllers
             // Arrange
 
             // Act
-            var result = _controller.QuestionOne() as ViewResult;
+            var result = _controller.QuestionOne(_uniqueCode) as ViewResult;
 
             // Assert
             Assert.IsAssignableFrom<List<ProviderSkill>>(result.Model);
@@ -59,7 +60,7 @@ namespace UnitTests.Controllers
             _sessionServiceMock.Setup(mock => mock.Get<AnswerModel>(It.IsAny<string>())).Returns(answerModel);
 
             // Act
-            var result = _controller.QuestionOne() as ViewResult;
+            var result = _controller.QuestionOne(_uniqueCode) as ViewResult;
 
             // Assert
             Assert.IsAssignableFrom<List<ProviderSkill>>(result.Model);
@@ -90,7 +91,7 @@ namespace UnitTests.Controllers
             // Arrange
 
             // Act
-            var result = _controller.QuestionTwo() as ViewResult;
+            var result = _controller.QuestionTwo(_uniqueCode) as ViewResult;
 
             // Assert
             Assert.IsAssignableFrom<List<ProviderSkill>>(result.Model);
@@ -109,7 +110,7 @@ namespace UnitTests.Controllers
             _sessionServiceMock.Setup(mock => mock.Get<AnswerModel>(It.IsAny<string>())).Returns(answerModel);
 
             // Act
-            var result = _controller.QuestionTwo() as ViewResult;
+            var result = _controller.QuestionTwo(_uniqueCode) as ViewResult;
 
             // Assert
             Assert.IsAssignableFrom<List<ProviderSkill>>(result.Model);
@@ -126,7 +127,7 @@ namespace UnitTests.Controllers
             sessionDoingWellSkills.ForEach(ps => ps.IsToImprove = true);
 
             // Act
-            var result = _controller.QuestionTwo(_providerSkills);
+            var result = _controller.QuestionTwo(_uniqueCode, _providerSkills);
 
             // Assert
             _sessionServiceMock.Verify(mock => mock.Set(It.IsAny<string>(), It.IsAny<object>()), Times.Once);
@@ -140,7 +141,7 @@ namespace UnitTests.Controllers
             // Arrange
 
             // Act
-            var result = _controller.QuestionThree() as ViewResult;
+            var result = _controller.QuestionThree(_uniqueCode) as ViewResult;
 
             // Assert
             Assert.IsAssignableFrom<AnswerModel>(result.Model);
@@ -158,7 +159,7 @@ namespace UnitTests.Controllers
             _sessionServiceMock.Setup(mock => mock.Get<AnswerModel>(It.IsAny<string>())).Returns(answerModel);
 
             // Act
-            var result = _controller.QuestionThree() as ViewResult;
+            var result = _controller.QuestionThree(_uniqueCode) as ViewResult;
 
             // Assert
             Assert.IsAssignableFrom<AnswerModel>(result.Model);
@@ -177,7 +178,7 @@ namespace UnitTests.Controllers
             _controller.ModelState.AddModelError("ProviderRating", "Required Field");
 
             // Act
-            var result = _controller.QuestionThree(answerModel);
+            var result = _controller.QuestionThree(_uniqueCode, answerModel);
 
             // Assert
             _sessionServiceMock.Verify(mock => mock.Set(It.IsAny<string>(), It.IsAny<object>()), Times.Never);
@@ -191,7 +192,7 @@ namespace UnitTests.Controllers
             var answerModel = new AnswerModel { ProviderRating = ProviderRating.Excellent };
 
             // Act
-            var result = _controller.QuestionThree(answerModel);
+            var result = _controller.QuestionThree(_uniqueCode, answerModel);
 
             // Assert
             _sessionServiceMock.Verify(mock => mock.Set(It.IsAny<string>(), It.IsAny<object>()), Times.Once);
