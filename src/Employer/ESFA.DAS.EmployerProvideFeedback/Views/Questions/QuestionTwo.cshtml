@@ -13,8 +13,8 @@
                  <fieldset>
                      <legend>
                          <h2 class="heading-medium">What would Cyberdyne improve?</h2>
-                         <span class="body-text">Select as many as you like.</span>
                      </legend>
+                     <p class="form-hint">Select as many options as you like.</p>
                      <div class="multiple-choice">
                          <input id="onboarding" name="doing-well" type="checkbox" value="Onboarding">
                          <label for="onboarding">Onboarding new apprentices</label>
@@ -61,8 +61,10 @@
 
                  </fieldset>
             </div>
-            <button type="submit" class="button save-button">Continue</button> 
-            <a asp-route="@RouteNames.QuestionThree_Get" class="button-link">Skip this question</a>
+            <div class="submit-buttons">
+                <button type="submit" class="button save-button">Continue</button> 
+                <a asp-route="@RouteNames.QuestionThree_Get" class="button-link">Skip this question</a>
+            </div>
         </form>
     </div>
 </div>
