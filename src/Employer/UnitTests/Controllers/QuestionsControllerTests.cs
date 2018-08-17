@@ -9,11 +9,10 @@ using ESFA.DAS.EmployerProvideFeedback.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Moq;
-using NUnit.Framework;
+using Xunit;
 
 namespace UnitTests.Controllers
 {
-    [TestFixture]
     public class QuestionsControllerTests
     {
         private QuestionsController _controller;
@@ -23,8 +22,7 @@ namespace UnitTests.Controllers
         private List<ProviderSkill> _providerSkills;
         private Guid _uniqueCode = Guid.NewGuid();
 
-        [SetUp]
-        public void SetUp()
+        public QuestionsControllerTests()
         {
             _fixture = new Fixture();
             _sessionServiceMock = new Mock<ISessionService>();
@@ -35,7 +33,7 @@ namespace UnitTests.Controllers
             _controller = new QuestionsController(_sessionServiceMock.Object, _provSKillsOptions.Object);
         }
 
-        [Test, Category("UnitTest")]
+        [Fact]
         public void Question_1_When_No_Session_Answers_Should_Have_No_Doing_Well_Attributes()
         {
             // Arrange
@@ -46,10 +44,10 @@ namespace UnitTests.Controllers
             // Assert
             Assert.IsAssignableFrom<List<ProviderSkill>>(result.Model);
             var model = result.Model as List<ProviderSkill>;
-            Assert.False(model.Any(m => m.IsDoingWell));
+            Assert.DoesNotContain(model, m => m.IsDoingWell);
         }
 
-        [Test, Category("UnitTest")]
+        [Fact]
         public void Question_1_When_Session_Answers_Should_Mark_As_Doing_Well()
         {
             // Arrange
@@ -65,11 +63,11 @@ namespace UnitTests.Controllers
             // Assert
             Assert.IsAssignableFrom<List<ProviderSkill>>(result.Model);
             var model = result.Model as List<ProviderSkill>;
-            Assert.True(model.Any(m => m.IsDoingWell));
-            Assert.AreEqual(sessionDoingWellSkills.Count, model.Count(m => m.IsDoingWell));
+            Assert.Contains(model, m => m.IsDoingWell);
+            Assert.Equal(sessionDoingWellSkills.Count, model.Count(m => m.IsDoingWell));
         }
 
-        [Test, Category("UnitTest")]
+        [Fact]
         public void Question_1_When_Answers_Submitted_Should_Update_Session_And_Redirect()
         {
             // Arrange
@@ -77,15 +75,15 @@ namespace UnitTests.Controllers
             sessionDoingWellSkills.ForEach(ps => ps.IsDoingWell = true);
 
             // Act
-            var result = _controller.QuestionOne(_providerSkills);
+            var result = _controller.QuestionOne(_uniqueCode, _providerSkills);
 
             // Assert
             _sessionServiceMock.Verify(mock => mock.Set(It.IsAny<string>(), It.IsAny<object>()), Times.Once);
             Assert.IsAssignableFrom<RedirectToRouteResult>(result);
-            Assert.AreEqual(RouteNames.QuestionTwo_Get, (result as RedirectToRouteResult).RouteName);
+            Assert.Equal(RouteNames.QuestionTwo_Get, (result as RedirectToRouteResult).RouteName);
         }
 
-        [Test, Category("UnitTest")]
+        [Fact]
         public void Question_2_When_Q1_Skipped_Should_Have_No_Skills_Doing_Well()
         {
             // Arrange
@@ -96,10 +94,10 @@ namespace UnitTests.Controllers
             // Assert
             Assert.IsAssignableFrom<List<ProviderSkill>>(result.Model);
             var model = result.Model as List<ProviderSkill>;
-            Assert.False(model.Any(m => m.IsDoingWell));
+            Assert.DoesNotContain(model, m => m.IsDoingWell);
         }
 
-        [Test, Category("UnitTest")]
+        [Fact]
         public void Question_2_When_Q1_Skipped_And_Q2_Session_Answers_Should_Load_Previous_Selections()
         {
             // Arrange
@@ -115,11 +113,11 @@ namespace UnitTests.Controllers
             // Assert
             Assert.IsAssignableFrom<List<ProviderSkill>>(result.Model);
             var model = result.Model as List<ProviderSkill>;
-            Assert.True(model.Any(m => m.IsToImprove));
-            Assert.AreEqual(sessionDoingWellSkills.Count, model.Count(m => m.IsToImprove));
+            Assert.Contains(model, m => m.IsToImprove);
+            Assert.Equal(sessionDoingWellSkills.Count, model.Count(m => m.IsToImprove));
         }
 
-        [Test, Category("UnitTest")]
+        [Fact]
         public void Question_2_When_Answers_Submitted_Should_Update_Session_And_Redirect()
         {
             // Arrange
@@ -132,10 +130,10 @@ namespace UnitTests.Controllers
             // Assert
             _sessionServiceMock.Verify(mock => mock.Set(It.IsAny<string>(), It.IsAny<object>()), Times.Once);
             Assert.IsAssignableFrom<RedirectToRouteResult>(result);
-            Assert.AreEqual(RouteNames.QuestionThree_Get, (result as RedirectToRouteResult).RouteName);
+            Assert.Equal(RouteNames.QuestionThree_Get, (result as RedirectToRouteResult).RouteName);
         }
 
-        [Test, Category("UnitTest")]
+        [Fact]
         public void Question_3_When_Q1_And_Q2_Skipped_Should_Have_No_Selected_Skills()
         {
             // Arrange
@@ -150,7 +148,7 @@ namespace UnitTests.Controllers
             Assert.False(model.HasWeaknesses);
         }
 
-        [Test, Category("UnitTest")]
+        [Fact]
         public void Question_3_When_Q1_And_Q2_Skipped_And_Q3_Session_Answers_Should_Load_Previous_Selection()
         {
             // Arrange
@@ -164,10 +162,10 @@ namespace UnitTests.Controllers
             // Assert
             Assert.IsAssignableFrom<AnswerModel>(result.Model);
             var model = result.Model as AnswerModel;
-            Assert.AreEqual(ProviderRating.Poor, model.ProviderRating);
+            Assert.Equal(ProviderRating.Poor, model.ProviderRating);
         }
 
-        [Test, Category("UnitTest")]
+        [Fact]
         public void Question_3_When_Answer_Not_Selected_Should_Fail_Model_Validation()
         {
             // Arrange
@@ -182,10 +180,10 @@ namespace UnitTests.Controllers
 
             // Assert
             _sessionServiceMock.Verify(mock => mock.Set(It.IsAny<string>(), It.IsAny<object>()), Times.Never);
-            Assert.IsNotAssignableFrom<RedirectToRouteResult>(result);
+            Assert.IsAssignableFrom<ViewResult>(result);
         }
 
-        [Test, Category("UnitTest")]
+        [Fact]
         public void Question_3_When_Answers_Submitted_Should_Update_Session_And_Redirect()
         {
             // Arrange
@@ -196,8 +194,8 @@ namespace UnitTests.Controllers
 
             // Assert
             _sessionServiceMock.Verify(mock => mock.Set(It.IsAny<string>(), It.IsAny<object>()), Times.Once);
-            Assert.IsAssignableFrom<RedirectToRouteResult>(result);
-            Assert.AreEqual(RouteNames.ReviewAnswers_Get, (result as RedirectToRouteResult).RouteName);
+            var redirectResult = Assert.IsAssignableFrom<RedirectToRouteResult>(result);
+            Assert.Equal(RouteNames.ReviewAnswers_Get, redirectResult.RouteName);
         }
 
         private List<ProviderSkill> GetProviderSkills()

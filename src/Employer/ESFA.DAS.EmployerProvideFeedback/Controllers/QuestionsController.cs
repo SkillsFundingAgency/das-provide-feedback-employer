@@ -60,11 +60,6 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
             return View(sessionAnswer);
         }
 
-        public ViewResult QuestionOne(object uniqueCode)
-        {
-            throw new NotImplementedException();
-        }
-
         [HttpPost("question-three", Name = RouteNames.QuestionThree_Post)]
         public IActionResult QuestionThree(Guid uniqueCode, AnswerModel answerModel)
         {
