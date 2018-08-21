@@ -67,7 +67,7 @@ public string GetTitle()
 </head>
 
 <body id="@ViewBag.PageID">
-    <script>document.body.className = ((document.body.className) ? document.body.className + ' js-enabled' : 'js-enabled');</script>
+    <script>document.body.className = document.body.className ? document.body.className + ' js-enabled' : 'js-enabled';</script>
     <div id="skiplink-container">
         <div>
             <a href="#content" class="skiplink">Skip to main content</a>

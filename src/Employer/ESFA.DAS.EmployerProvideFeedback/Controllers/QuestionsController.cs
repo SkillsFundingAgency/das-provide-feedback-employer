@@ -8,6 +8,7 @@ using Microsoft.Extensions.Options;
 
 namespace ESFA.DAS.EmployerProvideFeedback.Controllers
 {
+    [ServiceFilter(typeof(EnsureFeedbackNotSubmitted))]
     [Route(RoutePrefixPaths.FeedbackRoutePath)]
     public class QuestionsController : Controller
     {

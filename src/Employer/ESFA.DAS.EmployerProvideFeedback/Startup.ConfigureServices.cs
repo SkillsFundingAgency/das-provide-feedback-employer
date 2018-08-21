@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using ESFA.DAS.EmployerProvideFeedback.Configuration.Routing;
 using ESFA.DAS.EmployerProvideFeedback.Infrastructure;
+using ESFA.DAS.EmployerProvideFeedback.Services;
 using ESFA.DAS.EmployerProvideFeedback.ViewModels;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -29,6 +30,8 @@ namespace ESFA.DAS.EmployerProvideFeedback
             services.Configure<ExternalLinksConfiguration>(Configuration.GetSection("ExternalLinks"));
             services.Configure<List<ProviderSkill>>(Configuration.GetSection("ProviderSkills"));
             services.AddTransient<ISessionService, SessionService>();
+            services.AddTransient<IStoreEmailDetails, StubEmailDetailStore>();
+            services.AddTransient<EnsureFeedbackNotSubmitted>();
 
             services.Configure<CookiePolicyOptions>(options =>
             {

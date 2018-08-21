@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ESFA.DAS.EmployerProvideFeedback.Controllers
 {
+    [ServiceFilter(typeof(EnsureFeedbackNotSubmitted))]
     [Route(RoutePrefixPaths.FeedbackRoutePath)]
     public class ReviewAnswersController : Controller
     {
