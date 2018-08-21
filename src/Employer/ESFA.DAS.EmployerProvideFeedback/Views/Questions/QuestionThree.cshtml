@@ -1,57 +1,61 @@
-﻿@{
+﻿@model AnswerModel
+@{
     ViewBag.PageID = "page-overall-quality-question";
     ViewBag.Title = "Provide Feedback";
 }
 
+<div class="breadcrumbs"><a asp-route="@RouteNames.QuestionTwo_Get" class="link-back">Back</a></div>
 <div class="grid-row">
     <div class="column-two-thirds">
+        @if (!ViewData.ModelState.IsValid)
+        {
+            <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
+                <h2 class="heading-medium error-summary-heading hidden" id="error-summary-heading">
+                    Error on page
+                </h2>
 
-        <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
-            <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
-                Error on page
-            </h2>
-            <ul class="error-summary-list">
-                <li><a href="#error">Please rate training quality</a></li>
-            </ul>
-        </div>
+                <ul class="error-summary-list">
+                    <li><a href="#error">Please rate training quality</a></li>
+                </ul>
+            </div>
+        }
         <h1 class="heading-xlarge">
             Training quality rating
         </h1>
         <form asp-route="@RouteNames.QuestionThree_Post">
             <div class="form-group">
-                <fieldset class="form-group-error">
-                  
+                <fieldset class="@(!ViewData.ModelState.IsValid ? "form-group-error" : "")">
+                    <!-- dynamically add this class in fieldset in case of error-->
                     <legend>
-                        <span class="form-label-bold">
-                            How do you rate Cyberdynes apprenticeship training?
-                        </span>
-                        <span class="error-message">
-                            Error message here
-                        </span>
+                        <h3 class="heading-medium">How do you rate Cyberdynes apprenticeship training?</h3>
                     </legend>
-
+                    @if (!ViewData.ModelState.IsValid)
+                    {
+                        <span class="error-message">
+                            <!-- dynamically add this span element here in case of error-->
+                            Please rate training quality
+                        </span>
+                    }
                     <div class="multiple-choice">
-                        <input id="radio-1" type="radio" name="radio-group" value="Excellent">
-                        <label for="radio-1">Excellent</label>
+                        @Html.RadioButtonFor(m => m.ProviderRating, ProviderRating.Excellent, new { id = ProviderRating.Excellent, name = ProviderRating.Excellent })
+                        <label for=@ProviderRating.Excellent>@ProviderRating.Excellent</label>
                     </div>
                     <div class="multiple-choice">
-                        <input id="radio-2" type="radio" name="radio-group" value="Good">
-                        <label for="radio-2">Good</label>
+                        @Html.RadioButtonFor(m => m.ProviderRating, ProviderRating.Good, new { id = ProviderRating.Good, name = ProviderRating.Good })
+                        <label for=@ProviderRating.Good>@ProviderRating.Good</label>
                     </div>
                     <div class="multiple-choice">
-                        <input id="radio-3" type="radio" name="radio-group" value="Poor">
-                        <label for="radio-3">Poor</label>
+                        @Html.RadioButtonFor(m => m.ProviderRating, ProviderRating.Poor, new { id = ProviderRating.Poor, name = ProviderRating.Poor })
+                        <label for=@ProviderRating.Poor>@ProviderRating.Poor</label>
                     </div>
                     <div class="multiple-choice">
-                        <input id="radio-4" type="radio" name="radio-group" value="Very poor">
-                        <label for="radio-4">Very poor</label>
+                        @Html.RadioButtonFor(m => m.ProviderRating, ProviderRating.VeryPoor, new { id = ProviderRating.VeryPoor, name = ProviderRating.VeryPoor })
+                        <label for=@ProviderRating.VeryPoor>@ProviderRating.VeryPoor.GetDisplayName()</label>
                     </div>
                 </fieldset>
             </div>
-            <div class="submit-buttons">
-                <button type="submit" class="button save-button">Continue</button>
-                <a asp-route="@RouteNames.ReviewAnswers_Get" class="button-link">Skip this question</a>
-            </div>
+
+            <button type="submit" class="button save-button">Continue</button>
         </form>
     </div>
 </div>

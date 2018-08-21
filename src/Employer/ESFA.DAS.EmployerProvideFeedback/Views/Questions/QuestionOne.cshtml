@@ -1,8 +1,10 @@
-﻿@{
+﻿@model List<ProviderSkill>
+@{
     ViewBag.PageID = "page-strengths-question";
     ViewBag.Title = "Providers Strengths";
 }
 
+<div class="breadcrumbs"><a asp-route="@RouteNames.Landing_Get" class="link-back">Back</a></div>
 <div class="grid-row">
     <div class="column-two-thirds">
         <h1 class="heading-xlarge">
@@ -10,57 +12,25 @@
         </h1>
         <form asp-route="@RouteNames.QuestionOne_Post">
             <div class="form-group">
-                <fieldset>
+                <fieldset name="DoingWell">
                     <legend>
                         <h2 class="heading-medium">What are Cyberdyne doing well?</h2>
+                        <span class="body-text">Select as many as you like.</span>
                     </legend>
-                    <p class="form-hint">Select as many options as you like.</p>
-                    <div class="multiple-choice">
-                        <input id="training-quality" name="doing-well" type="checkbox" value="Training quality">
-                        <label for="training-quality">Training quality</label>
-                    </div>
-                    <div class="multiple-choice">
-                        <input id="communication" name="doing-well" type="checkbox" value="Communication">
-                        <label for="communication">Communication between you and Cyberdyne</label>
-                    </div>
-                    <div class="multiple-choice">
-                        <input id="onboarding" name="doing-well" type="checkbox" value="Onboarding">
-                        <label for="onboarding">Onboarding new apprentices</label>
-                    </div>
-                    <div class="multiple-choice">
-                        <input id="skills" name="doing-well" type="checkbox" value="apprentice skills">
-                        <label for="skills">Improving apprentice skills</label>
-                    </div>
-                    <div class="multiple-choice">
-                        <input id="outcomes" name="doing-well" type="checkbox" value="Business outcomes">
-                        <label for="outcomes">Improving business outcomes</label>
-                    </div>
-                    <div class="multiple-choice">
-                        <input id="design" name="doing-well" type="checkbox" value="Design of training">
-                        <label for="design">Design of training</label>
-                    </div>
-                    <div class="multiple-choice">
-                        <input id="delivery" name="doing-well" type="checkbox" value="Delivery of training">
-                        <label for="delivery">Delivery of training</label>
-                    </div>
-                    <div class="multiple-choice">
-                        <input id="recruiting" name="doing-well" type="checkbox" value="Recruiting apprentices">
-                        <label for="recruiting">Recruiting apprentices</label>
-                    </div>
-                    <div class="multiple-choice">
-                        <input id="assessing" name="doing-well" type="checkbox" value="Assessing and reporting">
-                        <label for="assessing">Assessing and reporting on progress of apprentices</label>
-                    </div>
-                    <div class="multiple-choice">
-                        <input id="adapting" name="doing-well" type="checkbox" value="Adapting to my needs">
-                        <label for="adapting">Adapting to my needs</label>
-                    </div>
+                    @for (var i = 0; i < Model.Count; i++)
+                    {
+                        <div class="multiple-choice" style="display: @(Model[i].IsToImprove ? "none" : "block");">
+                            <input asp-for="@Model[i].IsDoingWell" id="col1-@i" type="checkbox">
+                            <label asp-for="@Model[i].Name">@Model[i].Name</label>
+                            <input asp-for="@Model[i].Name" type="hidden" />
+                            <input asp-for="@Model[i].Id" type="hidden" />
+                            <input asp-for="@Model[i].IsToImprove" type="hidden">
+                        </div>
+                    }
                 </fieldset>
             </div>
-            <div class="submit-buttons">
-                <button type="submit" class="button save-button">Continue</button> 
-                <a asp-route="@RouteNames.QuestionTwo_Get" class="button-link">Skip this question</a>
-            </div>
+            <button type="submit" class="button save-button">Continue</button>
+            <a asp-route="@RouteNames.QuestionTwo_Get" class="button-link">Skip this question</a>
         </form>
     </div>
 </div>

@@ -1,4 +1,4 @@
-namespace ESFA.DAS.EmployerProvideFeedback.Models
+namespace ESFA.DAS.EmployerProvideFeedback.ViewModels
 {
     public class ErrorViewModel
     {

@@ -1,62 +1,74 @@
-﻿@{
+﻿@model AnswerModel;
+@{
     ViewBag.PageID = "page-review-answers";
     ViewBag.Title = "Check your answers";
 }
 
+<div class="breadcrumbs"><a asp-route="@RouteNames.QuestionThree_Get" class="link-back">Back</a></div>
 <div class="grid-row">
     <div class="column-two-thirds">
         <h1 class="heading-xlarge">
             Check your answers
         </h1>
-
-        <ul class="check-your-answers">
-        <li>
-          <span class="question">
-            Cyberdyne's strengths
-          </span>
-          <span class="answer">
-            <p>You didn't select any</p>
-          </span>
-          <span class="change">
-              <a href="#">
-                Change<span class="visually-hidden"> answer</span>
-            </a>
-          </span>
-        </li>
-        <li>
-          <span class="question">
-            Things for Cyberdyne to improve
-          </span>
-          <span class="answer">
-              <p>You didn't select any</p>
-          </span>
-          <span class="change">
-              <a href="#">
-                Change<span class="visually-hidden"> answer</span>
-            </a>
-          </span>
-        </li>
-        <li>
-          <span class="question">
-            Training quality rating
-          </span>
-          <span class="answer">
-            Excellent
-          </span>
-          <span class="change">
-              <a href="#">
-                Change<span class="visually-hidden"> answer</span>
-            </a>
-          </span>
-        </li>
-      </ul>
-
         <form asp-route="@RouteNames.ReviewAnswers_Post">
-            
+            <div class="grid-row">
+                <hr>
+                <div class="column-one-third">
+                    <p>Cyberdyne's strength</p>
+                </div>
+                <div class="column-one-third" style="">
+                    @{ if (Model.HasStrengths)
+                        {
+                            foreach (var item in Model.ProviderSkills.Where(x => x.IsDoingWell))
+                            {
+                                <p class="bold-small">@item.Name</p>
+                            }
+                        }
+                        else
+                        {
+                            <p class="bold-small">You didn't select any</p>
+                        }
+                    }
+                </div>
+                <div class="column-one-third">
+                    <p><a href="#" class="float-right">Change</a></p>
+                </div>
+                <hr>
+                <div class="column-one-third">
+                    <p>Things for Cyberdyne to improve</p>
+                </div>
+                <div class="column-one-third" style="">
+                    @{ if (Model.HasWeaknesses)
+                        {
+                            foreach (var item in Model.ProviderSkills.Where(x => x.IsToImprove))
+                            {
+                                <p class="bold-small">@item.Name</p>
+                            }
+                        }
+                        else
+                        {
+                            <p class="bold-small">You didn't select any</p>
+                        }
+                    }
+                </div>
+                <div class="column-one-third">
+                    <p><a href="#" class="float-right">Change</a></p>
+                </div>
+                <hr>
+                <div class="column-one-third">
+                    <p>Training quality rating</p>
+                </div>
+                <div class="column-one-third">
+                    <p class="bold-small">@Model.ProviderRating?.GetDisplayName()</p>
+                </div>
+                <div class="column-one-third">
+                    <p><a href="#" class="float-right">Change</a></p>
+                </div>
+                <hr>
                 <p>Your answers will be published anonymously on the <span class="bold-small">Find apprenticeship training service</span> in the next 24 hours.</p>
                 <button type="submit" class="button save-button">Submit answers</button>
- 
-            
+            </div>
+
         </form>
     </div>
 </div>
