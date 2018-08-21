@@ -6,14 +6,28 @@
 }
 
 <div class="grid-row">
-    <div class="column-two-thirds home-page">
-        <h1 class="heading-xlarge">
-            Give feedback on {Provider Name}
-        </h1>
-        <p class="lede">Give feedback on {Provider Name} and help improve the quality of apprenticeships in the {sector name} sector.</p>
-        <p>This will take about 1 minute to complete.</p>
-        <h2 class="heading-medium">Before you start</h2>
-        <p>To give feeback, you'll need to have a good understanding of your organisation's relationship with {Provider name}</p>
-        <p><a class="button button-start" id="service-start" asp-route="@RouteNames.QuestionOne_Get">Start now</a></p>
+    <div class="column-two-thirds">
+
+        @if (1 == 1)
+        {
+
+            <h1 class="heading-xlarge">
+                Give feedback on {Provider Name}
+            </h1>
+            <p class="lede">Give feedback on {Provider Name} and help improve the quality of apprenticeships in the {Sector Name} sector.</p>
+            <p>This will take about 1 minute to complete.</p>
+            <h2 class="heading-medium">Before you start</h2>
+            <p>To give feeback, you'll need to have a good understanding of your organisation's relationship with {Provider Name}.</p>
+            <p><a class="button button-start" id="service-start" asp-route="@RouteNames.QuestionOne_Get">Start now</a></p>
+
+        }
+        else
+        {
+            <h1 class="heading-xlarge">
+                Feedback already submitted
+            </h1>
+            <p class="lede">You'll get another chance to leave feedback soon.</p>
+            <p>You can <a href="#">sign into your apprenticeship account</a>.</p>
+        }
     </div>
 </div>
