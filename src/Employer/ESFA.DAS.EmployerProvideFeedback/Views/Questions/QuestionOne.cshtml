@@ -21,7 +21,7 @@
                     {
                         <div class="multiple-choice" style="display: @(Model[i].IsToImprove ? "none" : "block");">
                             <input asp-for="@Model[i].IsDoingWell" id="col1-@i" type="checkbox">
-                            <label asp-for="@Model[i].Name">@Model[i].Name</label>
+                            <label for="col1-@i">@Model[i].Name</label>
                             <input asp-for="@Model[i].Name" type="hidden" />
                             <input asp-for="@Model[i].Id" type="hidden" />
                             <input asp-for="@Model[i].IsToImprove" type="hidden">
