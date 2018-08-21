@@ -4,16 +4,15 @@
     ViewBag.Title = "Provide Feedback";
 }
 
-<div class="breadcrumbs"><a asp-route="@RouteNames.QuestionTwo_Get" class="link-back">Back</a></div>
+<a asp-route="@RouteNames.QuestionTwo_Get" class="link-back">Back</a>
 <div class="grid-row">
     <div class="column-two-thirds">
         @if (!ViewData.ModelState.IsValid)
         {
             <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
-                <h2 class="heading-medium error-summary-heading hidden" id="error-summary-heading">
+                <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
                     Error on page
                 </h2>
-
                 <ul class="error-summary-list">
                     <li><a href="#error">Please rate training quality</a></li>
                 </ul>
@@ -27,7 +26,7 @@
                 <fieldset class="@(!ViewData.ModelState.IsValid ? "form-group-error" : "")">
                     <!-- dynamically add this class in fieldset in case of error-->
                     <legend>
-                        <h3 class="heading-medium">How do you rate Cyberdynes apprenticeship training?</h3>
+                        <h2 class="heading-medium">How do you rate Cyberdynes apprenticeship training?</h2>
                     </legend>
                     @if (!ViewData.ModelState.IsValid)
                     {
@@ -54,7 +53,6 @@
                     </div>
                 </fieldset>
             </div>
-
             <button type="submit" class="button save-button">Continue</button>
         </form>
     </div>
