@@ -4,7 +4,7 @@
     ViewBag.Title = "Providers Weaknesses";
 }
 
-<div class="breadcrumbs"><a asp-route="@RouteNames.QuestionOne_Get" class="link-back">Back</a></div>
+<a asp-route="@RouteNames.QuestionOne_Get" class="link-back">Back</a>
 <div class="grid-row">
     <div class="column-two-thirds">
         <h1 class="heading-xlarge">
@@ -22,7 +22,7 @@
                     {
                         <div class="multiple-choice" style="display: @(Model[i].IsDoingWell ? "none" : "block");">
                             <input asp-for="@Model[i].IsToImprove" id="col1-@i" type="checkbox">
-                            <label asp-for="@Model[i].Name">@Model[i].Name</label>
+                            <label for="col1-@i">@Model[i].Name</label>
                             <input asp-for="@Model[i].Name" type="hidden" />
                             <input asp-for="@Model[i].Id" type="hidden" />
                             <input asp-for="@Model[i].IsDoingWell" id="col1-@i" type="hidden">
