@@ -93,7 +93,7 @@
 
 @media(min-width: 641px) { 
     .check-your-answers .question {
-        width: 40%;
+        width: 35%;
         padding-right: 1em;
         display: table-cell;
         border-bottom: 1px solid #bfc1c3;
@@ -114,6 +114,7 @@
     .check-your-answers .answer {
         display: table-cell;
         border-bottom: 1px solid #bfc1c3;
+        padding-right: 1em;
     }
 }
 
