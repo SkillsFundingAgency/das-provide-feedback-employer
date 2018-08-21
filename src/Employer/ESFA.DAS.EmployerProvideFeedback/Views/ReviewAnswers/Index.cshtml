@@ -4,7 +4,7 @@
     ViewBag.Title = "Check your answers";
 }
 
-<div class="breadcrumbs"><a asp-route="@RouteNames.QuestionThree_Get" class="link-back">Back</a></div>
+<a asp-route="@RouteNames.QuestionThree_Get" class="link-back">Back</a>
 <div class="grid-row">
     <div class="column-two-thirds">
         <h1 class="heading-xlarge">
@@ -17,12 +17,12 @@
                     <span class="answer">
                         @{ if (Model?.HasStrengths != null)
                             {
-                                
-                                foreach (var item in Model.ProviderSkills.Where(x => x.IsDoingWell))
+                                <ul>
+                                @foreach (var item in Model.ProviderSkills.Where(x => x.IsDoingWell))
                                 {
                                     <li>@item.Name</li>
                                 }
-                      
+                                </ul>
                             }
                             else
                             {
@@ -31,7 +31,7 @@
                         }
                     </span>
                     <span class="change">
-                        <a href="#">Change</a>
+                        <a href="#">Change<span class="visually-hidden"> strength answers</a>
                     </span>
                 </li>
                 <li>
@@ -41,12 +41,12 @@
                     <span class="answer">
                     @{ if (Model?.HasWeaknesses != null)
                         {
-                         
-                            foreach (var item in Model.ProviderSkills.Where(x => x.IsToImprove))
+                         <ul>
+                            @foreach (var item in Model.ProviderSkills.Where(x => x.IsToImprove))
                             {
                                 <li>@item.Name</li>
                             }
-                         
+                         </ul>
                         }
                         else
                         {
@@ -55,7 +55,7 @@
                     }
                     </span>
                     <span class="change">
-                        <a href="#">Change</a>
+                        <a href="#">Change<span class="visually-hidden"> improvements answers</a>
                     </span>
                 </li>
                 <li>
@@ -66,15 +66,13 @@
                         <p>@Model?.ProviderRating?.GetDisplayName()</p>
                     </span>
                     <span class="change">
-                        <a href="#">Change</a>
+                        <a href="#">Change<span class="visually-hidden"> quality rating answer</a>
                     </span>
                 </li>
               </ul>
 
-                <p>Your answers will be published anonymously on the <span class="bold-small">Find apprenticeship training service</span> in the next 24 hours.</p>
-                <button type="submit" class="button save-button">Submit answers</button>
-           
-
+            <p>Your answers will be published anonymously on the <span class="bold-small">Find apprenticeship training service</span> in the next 24 hours.</p>
+            <button type="submit" class="button save-button">Submit answers</button>
         </form>
     </div>
 </div>
