@@ -1,19 +1,28 @@
-﻿@{
+﻿@using Microsoft.Extensions.Options;
+@inject IOptions<ExternalLinksConfiguration> externalLinks;
+
+@model AnswerModel
+@{
     ViewBag.PageID = "page-confirmation";
     ViewBag.Title = "Provide Feedback";
 }
-
 <div class="grid-row">
     <div class="column-two-thirds">
-
         <div class="govuk-box-highlight">
             <h1 class="heading-xlarge">
                 Feedback complete
             </h1>
         </div>
-        <p>Thanks for your feedback. It will help improve the transparency and quality of apprenticeship training in England.</p>
-        <p>You rated Cyberdyne's training quality as <span class="bold-small">Excellent</span></p>
-        <p>On average, ratings for Cyberdyne's training quality are <span class="bold-small">OK</span></p>
-        <p><a href="#">See all feedback for Cyberdyne</a></p>
+        <p>Thanks for your feedback. It'll help {Provider Name} to continuously improve its apprenticeship training.</p>
+        <p>You rated {Provider Name}'s training quality as <span class="bold-small">@Model.ProviderRating.GetDisplayName()</span></p>
+        @if (Model.ProviderRating == ProviderRating.VeryPoor)
+        {
+            <p>If you have concerns about {Provider Name}, tell your line manager or human resources team - your organisation might be able to solve your problem informally.</p>
+
+            <p>If you can't resolve it informally, you can make a formal complaint. <a href="@externalLinks.Value.ComplaintSiteUrl">Get advice about making a formal complaint</a>.</p>
+        }
+        else
+        {
+            <p>You can <a href="@externalLinks.Value.ManageApprenticeshipSiteUrl">sign into your apprenticeship account</a>.</p>
+        }
     </div>
-</div>

@@ -26,7 +26,6 @@ public string GetTitle()
     <meta charset="utf-8" />
     <title>@GetTitle()</title>
 
-    <!-- TEMPLATE STYLES - START -->
     <!--[if gt IE 8]><!-->
     <link rel="stylesheet" media="screen" href="/lib/esfa-govuk/assets/stylesheets/govuk-template.min.css?0.23.0" /><!--<![endif]-->
     <!--[if IE 6]><link rel="stylesheet" media="screen" href="/lib/esfa-govuk/assets/stylesheets/govuk-template-ie6.min.css?0.23.0" /><![endif]-->
@@ -36,14 +35,13 @@ public string GetTitle()
     <!--[if IE 8]><link rel="stylesheet" media="all" href="/lib/esfa-govuk/assets/stylesheets/fonts-ie8.min.css?0.23.0" /><![endif]-->
     <!--[if gte IE 9]><!-->
     <link rel="stylesheet" media="all" href="/lib/esfa-govuk/assets/stylesheets/fonts.min.css?0.23.0" /><!--<![endif]-->
-    <!-- TEMPLATE STYLES - END -->
-    <!-- ELEMENTS AND TOOLKIT STYLES - START -->
+
     <!--[if gt IE 8]><!-->
     <link rel="stylesheet" media="screen" href="/lib/esfa-govuk/assets/stylesheets/esfa-govuk-base.min.css?3.1.2" /><!--<![endif]-->
     <!--[if IE 6]><link rel="stylesheet" media="screen" href="/lib/esfa-govuk/assets/stylesheets/esfa-govuk-ie6.min.css?3.1.2" /><![endif]-->
     <!--[if IE 7]><link rel="stylesheet" media="screen" href="/lib/esfa-govuk/assets/stylesheets/esfa-govuk-ie7.min.css?3.1.2" /><![endif]-->
     <!--[if IE 8]><link rel="stylesheet" media="screen" href="/lib/esfa-govuk/assets/stylesheets/esfa-govuk-ie8.min.css?3.1.2" /><![endif]-->
-    <!-- ELEMENTS AND TOOLKIT STYLES - END -->
+
     <!--[if lt IE 9]><script src="/lib/esfa-govuk/assets/javascripts/ie.js?0.23.0"></script><![endif]-->
 
     <link rel="shortcut icon" href="/lib/esfa-govuk/assets/images/favicon.ico" type="image/x-icon" />
@@ -60,15 +58,15 @@ public string GetTitle()
 
     <link asp-append-version="true" rel="stylesheet" media="screen" href="/css/application.css" />
     <script src="@Url.Content("/lib/jquery/dist/jquery.js")"></script>
-    <script src="@Url.Content("/lib/jquery-are-you-sure/jquery.are-you-sure.js")"></script>
-    <script src="@Url.Content("/lib/jscookie/js.cookie.js")"></script>
+
     <environment exclude="@EnvironmentNames.GetNonProdEnvironmentNamesCommaDelimited()">
         @await Html.PartialAsync("_GoogleAnalyticsPartial")
     </environment>
+    
     @Html.Raw(JavaScriptSnippet.FullScript) <!-- AppInsights script -->
 </head>
 
-<body>
+<body id="@ViewBag.PageID">
     <script>document.body.className = ((document.body.className) ? document.body.className + ' js-enabled' : 'js-enabled');</script>
     <div id="skiplink-container">
         <div>
@@ -95,7 +93,6 @@ public string GetTitle()
         </div>
     </header>
     <div id="global-header-bar"></div>
-
     <main id="content" role="main">
         @RenderBody()
     </main>
