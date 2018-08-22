@@ -14,5 +14,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.ViewModels
         public bool HasStrengths => ProviderSkills.Any(skill => skill.IsDoingWell);
 
         public bool HasWeaknesses => ProviderSkills.Any(skill => skill.IsToImprove);
+
+        public bool Submitted { get; internal set; }
     }
 }
