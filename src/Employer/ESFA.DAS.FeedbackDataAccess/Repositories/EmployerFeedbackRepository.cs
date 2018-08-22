@@ -12,7 +12,7 @@ namespace ESFA.DAS.FeedbackDataAccess.Repositories
         private const string DatabaseId = "provide-feedback";
         private const string CollectionId = "employer-feedback";
 
-        public EmployerFeedbackRepository(IOptions<CosmosConnectionSettings> cosmosConfig, IDocumentClient client)
+        public EmployerFeedbackRepository(IDocumentClient client)
         {
             _client = client;
             CreateDatabaseIfNotExistsAsync().Wait();
