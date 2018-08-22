@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using ESFA.DAS.EmployerProvideFeedback.Configuration.Routing;
 using ESFA.DAS.EmployerProvideFeedback.Infrastructure;
 using ESFA.DAS.EmployerProvideFeedback.ViewModels;
@@ -25,7 +26,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
         }
 
         [HttpPost("review-answers", Name = RouteNames.ReviewAnswers_Post)]
-        public IActionResult Index(object answers)
+        public async Task<IActionResult> Confirmation(Guid uniqueCode)
         {
             return RedirectToRoute(RouteNames.Confirmation_Get);
         }
