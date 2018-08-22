@@ -6,13 +6,13 @@ namespace ESFA.DAS.EmployerProvideFeedback.ViewModels
 {
     public class AnswerModel
     {
-        public List<ProviderSkill> ProviderSkills { get; set; } = new List<ProviderSkill>();
+        public List<ProviderAttribute> ProviderAttributes { get; set; } = new List<ProviderAttribute>();
 
         [Required]
         public ProviderRating? ProviderRating { get; set; }
 
-        public bool HasStrengths => ProviderSkills.Any(skill => skill.IsDoingWell);
+        public bool HasStrengths => ProviderAttributes.Any(attr => attr.IsDoingWell);
 
-        public bool HasWeaknesses => ProviderSkills.Any(skill => skill.IsToImprove);
+        public bool HasWeaknesses => ProviderAttributes.Any(attr => attr.IsToImprove);
     }
 }

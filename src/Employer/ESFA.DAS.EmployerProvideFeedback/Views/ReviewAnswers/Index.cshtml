@@ -18,7 +18,7 @@
                         @{ if (Model?.HasStrengths != null)
                             {
                                 <ul class="list list-bullet">
-                                @foreach (var item in Model.ProviderSkills.Where(x => x.IsDoingWell))
+                                @foreach (var item in Model.ProviderAttributes.Where(x => x.IsDoingWell))
                                 {
                                     <li>@item.Name</li>
                                 }
@@ -42,7 +42,7 @@
                     @{ if (Model?.HasWeaknesses != null)
                         {
                          <ul class="list list-bullet">
-                            @foreach (var item in Model.ProviderSkills.Where(x => x.IsToImprove))
+                            @foreach (var item in Model.ProviderAttributes.Where(x => x.IsToImprove))
                             {
                                 <li>@item.Name</li>
                             }

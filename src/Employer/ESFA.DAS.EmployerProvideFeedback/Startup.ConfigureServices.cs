@@ -28,7 +28,7 @@ namespace ESFA.DAS.EmployerProvideFeedback
         public void ConfigureServices(IServiceCollection services)
         {
             services.Configure<ExternalLinksConfiguration>(Configuration.GetSection("ExternalLinks"));
-            services.Configure<List<ProviderSkill>>(Configuration.GetSection("ProviderSkills"));
+            services.Configure<List<ProviderAttribute>>(Configuration.GetSection("ProviderAttributes"));
             services.AddTransient<ISessionService, SessionService>();
             services.AddTransient<IStoreEmailDetails, StubEmailDetailStore>();
             services.AddTransient<EnsureFeedbackNotSubmitted>();

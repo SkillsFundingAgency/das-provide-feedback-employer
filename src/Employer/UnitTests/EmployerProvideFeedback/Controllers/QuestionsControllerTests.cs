@@ -11,26 +11,26 @@ using Microsoft.Extensions.Options;
 using Moq;
 using Xunit;
 
-namespace UnitTests.Controllers
+namespace UnitTests.EmployerProvideFeedback.Controllers
 {
     public class QuestionsControllerTests
     {
         private QuestionsController _controller;
         private Mock<ISessionService> _sessionServiceMock;
-        private Mock<IOptions<List<ProviderSkill>>> _provSKillsOptions;
+        private Mock<IOptions<List<ProviderAttribute>>> _providerAttributeOptions;
         private IFixture _fixture;
-        private List<ProviderSkill> _providerSkills;
+        private List<ProviderAttribute> _providerAttributes;
         private Guid _uniqueCode = Guid.NewGuid();
 
         public QuestionsControllerTests()
         {
             _fixture = new Fixture();
             _sessionServiceMock = new Mock<ISessionService>();
-            _provSKillsOptions = new Mock<IOptions<List<ProviderSkill>>>();
+            _providerAttributeOptions = new Mock<IOptions<List<ProviderAttribute>>>();
 
-            _providerSkills = GetProviderSkills();
-            _provSKillsOptions.SetupGet(mock => mock.Value).Returns(_providerSkills);
-            _controller = new QuestionsController(_sessionServiceMock.Object, _provSKillsOptions.Object);
+            _providerAttributes = GetProviderAttributes();
+            _providerAttributeOptions.SetupGet(mock => mock.Value).Returns(_providerAttributes);
+            _controller = new QuestionsController(_sessionServiceMock.Object, _providerAttributeOptions.Object);
         }
 
         [Fact]
@@ -42,8 +42,8 @@ namespace UnitTests.Controllers
             var result = _controller.QuestionOne(_uniqueCode) as ViewResult;
 
             // Assert
-            Assert.IsAssignableFrom<List<ProviderSkill>>(result.Model);
-            var model = result.Model as List<ProviderSkill>;
+            Assert.IsAssignableFrom<List<ProviderAttribute>>(result.Model);
+            var model = result.Model as List<ProviderAttribute>;
             Assert.DoesNotContain(model, m => m.IsDoingWell);
         }
 
@@ -52,30 +52,30 @@ namespace UnitTests.Controllers
         {
             // Arrange
             var answerModel = new AnswerModel();
-            var sessionDoingWellSkills = _providerSkills.Take(3).ToList();
-            sessionDoingWellSkills.ForEach(ps => ps.IsDoingWell = true);
-            answerModel.ProviderSkills = _providerSkills;
+            var sessionDoingWellAtts = _providerAttributes.Take(3).ToList();
+            sessionDoingWellAtts.ForEach(ps => ps.IsDoingWell = true);
+            answerModel.ProviderAttributes = _providerAttributes;
             _sessionServiceMock.Setup(mock => mock.Get<AnswerModel>(It.IsAny<string>())).Returns(answerModel);
 
             // Act
             var result = _controller.QuestionOne(_uniqueCode) as ViewResult;
 
             // Assert
-            Assert.IsAssignableFrom<List<ProviderSkill>>(result.Model);
-            var model = result.Model as List<ProviderSkill>;
+            Assert.IsAssignableFrom<List<ProviderAttribute>>(result.Model);
+            var model = result.Model as List<ProviderAttribute>;
             Assert.Contains(model, m => m.IsDoingWell);
-            Assert.Equal(sessionDoingWellSkills.Count, model.Count(m => m.IsDoingWell));
+            Assert.Equal(sessionDoingWellAtts.Count, model.Count(m => m.IsDoingWell));
         }
 
         [Fact]
         public void Question_1_When_Answers_Submitted_Should_Update_Session_And_Redirect()
         {
             // Arrange
-            var sessionDoingWellSkills = _providerSkills.Take(3).ToList();
-            sessionDoingWellSkills.ForEach(ps => ps.IsDoingWell = true);
+            var sessionDoingWellAtts = _providerAttributes.Take(3).ToList();
+            sessionDoingWellAtts.ForEach(ps => ps.IsDoingWell = true);
 
             // Act
-            var result = _controller.QuestionOne(_uniqueCode, _providerSkills);
+            var result = _controller.QuestionOne(_uniqueCode, _providerAttributes);
 
             // Assert
             _sessionServiceMock.Verify(mock => mock.Set(It.IsAny<string>(), It.IsAny<object>()), Times.Once);
@@ -84,7 +84,7 @@ namespace UnitTests.Controllers
         }
 
         [Fact]
-        public void Question_2_When_Q1_Skipped_Should_Have_No_Skills_Doing_Well()
+        public void Question_2_When_Q1_Skipped_Should_Have_No_Attributes_Doing_Well()
         {
             // Arrange
 
@@ -92,8 +92,8 @@ namespace UnitTests.Controllers
             var result = _controller.QuestionTwo(_uniqueCode) as ViewResult;
 
             // Assert
-            Assert.IsAssignableFrom<List<ProviderSkill>>(result.Model);
-            var model = result.Model as List<ProviderSkill>;
+            Assert.IsAssignableFrom<List<ProviderAttribute>>(result.Model);
+            var model = result.Model as List<ProviderAttribute>;
             Assert.DoesNotContain(model, m => m.IsDoingWell);
         }
 
@@ -102,30 +102,30 @@ namespace UnitTests.Controllers
         {
             // Arrange
             var answerModel = new AnswerModel();
-            var sessionDoingWellSkills = _providerSkills.Take(3).ToList();
-            sessionDoingWellSkills.ForEach(ps => ps.IsToImprove = true);
-            answerModel.ProviderSkills = _providerSkills;
+            var sessionDoingWellAtts = _providerAttributes.Take(3).ToList();
+            sessionDoingWellAtts.ForEach(ps => ps.IsToImprove = true);
+            answerModel.ProviderAttributes = _providerAttributes;
             _sessionServiceMock.Setup(mock => mock.Get<AnswerModel>(It.IsAny<string>())).Returns(answerModel);
 
             // Act
             var result = _controller.QuestionTwo(_uniqueCode) as ViewResult;
 
             // Assert
-            Assert.IsAssignableFrom<List<ProviderSkill>>(result.Model);
-            var model = result.Model as List<ProviderSkill>;
+            Assert.IsAssignableFrom<List<ProviderAttribute>>(result.Model);
+            var model = result.Model as List<ProviderAttribute>;
             Assert.Contains(model, m => m.IsToImprove);
-            Assert.Equal(sessionDoingWellSkills.Count, model.Count(m => m.IsToImprove));
+            Assert.Equal(sessionDoingWellAtts.Count, model.Count(m => m.IsToImprove));
         }
 
         [Fact]
         public void Question_2_When_Answers_Submitted_Should_Update_Session_And_Redirect()
         {
             // Arrange
-            var sessionDoingWellSkills = _providerSkills.Take(3).ToList();
-            sessionDoingWellSkills.ForEach(ps => ps.IsToImprove = true);
+            var sessionDoingWellAtts = _providerAttributes.Take(3).ToList();
+            sessionDoingWellAtts.ForEach(ps => ps.IsToImprove = true);
 
             // Act
-            var result = _controller.QuestionTwo(_uniqueCode, _providerSkills);
+            var result = _controller.QuestionTwo(_uniqueCode, _providerAttributes);
 
             // Assert
             _sessionServiceMock.Verify(mock => mock.Set(It.IsAny<string>(), It.IsAny<object>()), Times.Once);
@@ -134,7 +134,7 @@ namespace UnitTests.Controllers
         }
 
         [Fact]
-        public void Question_3_When_Q1_And_Q2_Skipped_Should_Have_No_Selected_Skills()
+        public void Question_3_When_Q1_And_Q2_Skipped_Should_Have_No_Selected_Attributes()
         {
             // Arrange
 
@@ -198,10 +198,10 @@ namespace UnitTests.Controllers
             Assert.Equal(RouteNames.ReviewAnswers_Get, redirectResult.RouteName);
         }
 
-        private List<ProviderSkill> GetProviderSkills()
+        private List<ProviderAttribute> GetProviderAttributes()
         {
             return _fixture
-                .Build<ProviderSkill>()
+                .Build<ProviderAttribute>()
                 .With(x => x.IsDoingWell, false)
                 .With(x => x.IsToImprove, false)
                 .CreateMany(10)
