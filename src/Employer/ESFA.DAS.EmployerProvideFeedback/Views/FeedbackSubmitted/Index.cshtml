@@ -1,0 +1,16 @@
+﻿@{
+    ViewBag.PageID = "page-feedback-already-submitted";
+    ViewBag.Title = "Feedback Already Submitted";
+}
+@using Microsoft.Extensions.Options;
+@inject IOptions<ExternalLinksConfiguration> externalLinks;
+
+<div class="grid-row">
+    <div class="column-two-thirds">
+        <h1 class="heading-xlarge">
+            Feedback already submitted
+        </h1>
+        <p class="lede">You'll get chance to leave feedback in a few months.</p>
+        <p>You can <a href="@externalLinks.Value.ManageApprenticeshipSiteUrl">sign into your apprenticeship account</a>.</p>
+    </div>
+</div>

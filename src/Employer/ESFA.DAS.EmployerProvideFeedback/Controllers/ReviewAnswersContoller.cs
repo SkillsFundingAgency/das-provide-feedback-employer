@@ -8,7 +8,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ESFA.DAS.EmployerProvideFeedback.Controllers
 {
-    [Route(RoutePrefixPaths.FeedbackRoutePath), EnsureFeedbackNotSubmitted]
+    [ServiceFilter(typeof(EnsureFeedbackNotSubmitted))]
+    [Route(RoutePrefixPaths.FeedbackRoutePath)]
     public class ReviewAnswersController : Controller
     {
         private readonly ISessionService _sessionService;

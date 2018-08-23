@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using ESFA.DAS.EmployerProvideFeedback.Configuration.Routing;
 using ESFA.DAS.EmployerProvideFeedback.Infrastructure;
+using ESFA.DAS.EmployerProvideFeedback.Services;
 using ESFA.DAS.EmployerProvideFeedback.Orchestrators;
 using ESFA.DAS.EmployerProvideFeedback.ViewModels;
 using ESFA.DAS.FeedbackDataAccess;
@@ -30,7 +31,9 @@ namespace ESFA.DAS.EmployerProvideFeedback
         public void ConfigureServices(IServiceCollection services)
         {
             services.Configure<ExternalLinksConfiguration>(Configuration.GetSection("ExternalLinks"));
-            services.Configure<List<ProviderSkill>>(Configuration.GetSection("ProviderSkills"));
+            services.AddTransient<IStoreEmailDetails, StubEmailDetailStore>();
+            services.AddTransient<EnsureFeedbackNotSubmitted>();
+            services.Configure<List<ProviderAttributeModel>>(Configuration.GetSection("ProviderAttributes"));
             services.Configure<CosmosConnectionSettings>(Configuration.GetSection("CosmosConnectionSettings"));
             services.AddTransient<ISessionService, SessionService>();
             services.AddTransient<ReviewAnswersOrchestrator>();

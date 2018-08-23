@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System;
 using ESFA.DAS.EmployerProvideFeedback.Configuration.Routing;
-using System;
+using ESFA.DAS.EmployerProvideFeedback.Infrastructure;
+using Microsoft.AspNetCore.Mvc;
 
 namespace ESFA.DAS.EmployerProvideFeedback.Controllers
 {
+    [ServiceFilter(typeof(EnsureFeedbackNotSubmitted))]
     [Route(RoutePrefixPaths.FeedbackRoutePath)]
     public class HomeController : Controller
     {

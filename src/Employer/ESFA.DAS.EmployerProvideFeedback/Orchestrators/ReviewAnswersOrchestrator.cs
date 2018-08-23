@@ -5,6 +5,7 @@ using ESFA.DAS.EmployerProvideFeedback.Extensions;
 using ESFA.DAS.EmployerProvideFeedback.ViewModels;
 using ESFA.DAS.FeedbackDataAccess.Models;
 using ESFA.DAS.FeedbackDataAccess.Repositories;
+using ProviderAttribute = ESFA.DAS.FeedbackDataAccess.Models.ProviderAttribute;
 
 namespace ESFA.DAS.EmployerProvideFeedback.Orchestrators
 {
@@ -31,7 +32,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Orchestrators
                 AccountId = 1,
                 DateTimeCompleted = DateTime.Now,
                 Ukprn = 11111111,
-                ProviderAttributes = answers.ProviderSkills.Select(ps =>
+                ProviderAttributes = answers.ProviderAttributes.Select(ps =>
                 {
                     return new ProviderAttribute
                     {

@@ -8,30 +8,31 @@ using Microsoft.Extensions.Options;
 
 namespace ESFA.DAS.EmployerProvideFeedback.Controllers
 {
+    [ServiceFilter(typeof(EnsureFeedbackNotSubmitted))]
     [Route(RoutePrefixPaths.FeedbackRoutePath)]
     public class QuestionsController : Controller
     {
         private readonly ISessionService _sessionService;
         private readonly AnswerModel _answerModel;
 
-        public QuestionsController(ISessionService sessionService, IOptions<List<ProviderSkill>> providerSkills)
+        public QuestionsController(ISessionService sessionService, IOptions<List<ProviderAttributeModel>> providerAttributes)
         {
             _sessionService = sessionService;
-            _answerModel = new AnswerModel { ProviderSkills = providerSkills.Value };
+            _answerModel = new AnswerModel { ProviderAttributes = providerAttributes.Value };
         }
 
         [HttpGet("question-one", Name = RouteNames.QuestionOne_Get)]
         public IActionResult QuestionOne(Guid uniqueCode)
         {
             var cachedAnswers = _sessionService.Get<AnswerModel>(uniqueCode.ToString());
-            return View(cachedAnswers != null ? cachedAnswers.ProviderSkills : _answerModel.ProviderSkills);
+            return View(cachedAnswers != null ? cachedAnswers.ProviderAttributes : _answerModel.ProviderAttributes);
         }
 
         [HttpPost("question-one", Name = RouteNames.QuestionOne_Post)]
-        public IActionResult QuestionOne(Guid uniqueCode, List<ProviderSkill> providerSkills)
+        public IActionResult QuestionOne(Guid uniqueCode, List<ProviderAttributeModel> providerAttributes)
         {
             var sessionAnswer = GetCurrentAnswerModel(uniqueCode);
-            sessionAnswer.ProviderSkills = providerSkills;
+            sessionAnswer.ProviderAttributes = providerAttributes;
             _sessionService.Set(uniqueCode.ToString(), sessionAnswer);
 
             return RedirectToRoute(RouteNames.QuestionTwo_Get);
@@ -41,14 +42,14 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
         public IActionResult QuestionTwo(Guid uniqueCode)
         {
             var sessionAnswers = GetCurrentAnswerModel(uniqueCode);
-            return View(sessionAnswers.ProviderSkills);
+            return View(sessionAnswers.ProviderAttributes);
         }
 
         [HttpPost("question-two", Name = RouteNames.QuestionTwo_Post)]
-        public IActionResult QuestionTwo(Guid uniqueCode, List<ProviderSkill> providerSkills)
+        public IActionResult QuestionTwo(Guid uniqueCode, List<ProviderAttributeModel> providerAttributes)
         {
             var sessionAnswer = GetCurrentAnswerModel(uniqueCode);
-            sessionAnswer.ProviderSkills = providerSkills;
+            sessionAnswer.ProviderAttributes = providerAttributes;
             _sessionService.Set(uniqueCode.ToString(), sessionAnswer);
             return RedirectToRoute(RouteNames.QuestionThree_Get);
         }
