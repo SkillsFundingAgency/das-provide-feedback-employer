@@ -12,7 +12,7 @@ namespace UnitTests.EmployerProvideFeedback.ViewModels
         public void Should_Generate_Score_Based_On_Attribute_Selection(bool isDoingWell, bool toImprove, int expectedScore)
         {
             // Arrange
-            var pa = new ProviderAttribute();
+            var pa = new ProviderAttributeModel();
 
             // Act
             pa.IsDoingWell = isDoingWell;

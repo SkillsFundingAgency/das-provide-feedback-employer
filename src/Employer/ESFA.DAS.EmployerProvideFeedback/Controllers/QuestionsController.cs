@@ -15,7 +15,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
         private readonly ISessionService _sessionService;
         private readonly AnswerModel _answerModel;
 
-        public QuestionsController(ISessionService sessionService, IOptions<List<ProviderAttribute>> providerAttributes)
+        public QuestionsController(ISessionService sessionService, IOptions<List<ProviderAttributeModel>> providerAttributes)
         {
             _sessionService = sessionService;
             _answerModel = new AnswerModel { ProviderAttributes = providerAttributes.Value };
@@ -29,7 +29,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
         }
 
         [HttpPost("question-one", Name = RouteNames.QuestionOne_Post)]
-        public IActionResult QuestionOne(Guid uniqueCode, List<ProviderAttribute> providerAttributes)
+        public IActionResult QuestionOne(Guid uniqueCode, List<ProviderAttributeModel> providerAttributes)
         {
             var sessionAnswer = GetCurrentAnswerModel(uniqueCode);
             sessionAnswer.ProviderAttributes = providerAttributes;
@@ -46,7 +46,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
         }
 
         [HttpPost("question-two", Name = RouteNames.QuestionTwo_Post)]
-        public IActionResult QuestionTwo(Guid uniqueCode, List<ProviderAttribute> providerAttributes)
+        public IActionResult QuestionTwo(Guid uniqueCode, List<ProviderAttributeModel> providerAttributes)
         {
             var sessionAnswer = GetCurrentAnswerModel(uniqueCode);
             sessionAnswer.ProviderAttributes = providerAttributes;

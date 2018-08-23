@@ -17,16 +17,16 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
     {
         private QuestionsController _controller;
         private Mock<ISessionService> _sessionServiceMock;
-        private Mock<IOptions<List<ProviderAttribute>>> _providerAttributeOptions;
+        private Mock<IOptions<List<ProviderAttributeModel>>> _providerAttributeOptions;
         private IFixture _fixture;
-        private List<ProviderAttribute> _providerAttributes;
+        private List<ProviderAttributeModel> _providerAttributes;
         private Guid _uniqueCode = Guid.NewGuid();
 
         public QuestionsControllerTests()
         {
             _fixture = new Fixture();
             _sessionServiceMock = new Mock<ISessionService>();
-            _providerAttributeOptions = new Mock<IOptions<List<ProviderAttribute>>>();
+            _providerAttributeOptions = new Mock<IOptions<List<ProviderAttributeModel>>>();
 
             _providerAttributes = GetProviderAttributes();
             _providerAttributeOptions.SetupGet(mock => mock.Value).Returns(_providerAttributes);
@@ -42,8 +42,8 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
             var result = _controller.QuestionOne(_uniqueCode) as ViewResult;
 
             // Assert
-            Assert.IsAssignableFrom<List<ProviderAttribute>>(result.Model);
-            var model = result.Model as List<ProviderAttribute>;
+            Assert.IsAssignableFrom<List<ProviderAttributeModel>>(result.Model);
+            var model = result.Model as List<ProviderAttributeModel>;
             Assert.DoesNotContain(model, m => m.IsDoingWell);
         }
 
@@ -61,8 +61,8 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
             var result = _controller.QuestionOne(_uniqueCode) as ViewResult;
 
             // Assert
-            Assert.IsAssignableFrom<List<ProviderAttribute>>(result.Model);
-            var model = result.Model as List<ProviderAttribute>;
+            Assert.IsAssignableFrom<List<ProviderAttributeModel>>(result.Model);
+            var model = result.Model as List<ProviderAttributeModel>;
             Assert.Contains(model, m => m.IsDoingWell);
             Assert.Equal(sessionDoingWellAtts.Count, model.Count(m => m.IsDoingWell));
         }
@@ -92,8 +92,8 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
             var result = _controller.QuestionTwo(_uniqueCode) as ViewResult;
 
             // Assert
-            Assert.IsAssignableFrom<List<ProviderAttribute>>(result.Model);
-            var model = result.Model as List<ProviderAttribute>;
+            Assert.IsAssignableFrom<List<ProviderAttributeModel>>(result.Model);
+            var model = result.Model as List<ProviderAttributeModel>;
             Assert.DoesNotContain(model, m => m.IsDoingWell);
         }
 
@@ -111,8 +111,8 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
             var result = _controller.QuestionTwo(_uniqueCode) as ViewResult;
 
             // Assert
-            Assert.IsAssignableFrom<List<ProviderAttribute>>(result.Model);
-            var model = result.Model as List<ProviderAttribute>;
+            Assert.IsAssignableFrom<List<ProviderAttributeModel>>(result.Model);
+            var model = result.Model as List<ProviderAttributeModel>;
             Assert.Contains(model, m => m.IsToImprove);
             Assert.Equal(sessionDoingWellAtts.Count, model.Count(m => m.IsToImprove));
         }
@@ -198,10 +198,10 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
             Assert.Equal(RouteNames.ReviewAnswers_Get, redirectResult.RouteName);
         }
 
-        private List<ProviderAttribute> GetProviderAttributes()
+        private List<ProviderAttributeModel> GetProviderAttributes()
         {
             return _fixture
-                .Build<ProviderAttribute>()
+                .Build<ProviderAttributeModel>()
                 .With(x => x.IsDoingWell, false)
                 .With(x => x.IsToImprove, false)
                 .CreateMany(10)

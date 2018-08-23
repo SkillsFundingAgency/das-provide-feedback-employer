@@ -3,7 +3,7 @@
 namespace ESFA.DAS.EmployerProvideFeedback.ViewModels
 {
     [Serializable]
-    public class ProviderAttribute
+    public class ProviderAttributeModel
     {
         public int Id { get; set; }
         public string Name { get; set; }

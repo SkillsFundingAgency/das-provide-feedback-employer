@@ -6,7 +6,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.ViewModels
 {
     public class AnswerModel
     {
-        public List<ProviderAttribute> ProviderAttributes { get; set; } = new List<ProviderAttribute>();
+        public List<ProviderAttributeModel> ProviderAttributes { get; set; } = new List<ProviderAttributeModel>();
 
         [Required]
         public ProviderRating? ProviderRating { get; set; }

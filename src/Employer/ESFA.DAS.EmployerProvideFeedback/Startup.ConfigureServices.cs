@@ -33,7 +33,7 @@ namespace ESFA.DAS.EmployerProvideFeedback
             services.Configure<ExternalLinksConfiguration>(Configuration.GetSection("ExternalLinks"));
             services.AddTransient<IStoreEmailDetails, StubEmailDetailStore>();
             services.AddTransient<EnsureFeedbackNotSubmitted>();
-            services.Configure<List<ProviderSkill>>(Configuration.GetSection("ProviderSkills"));
+            services.Configure<List<ProviderAttributeModel>>(Configuration.GetSection("ProviderAttributes"));
             services.Configure<CosmosConnectionSettings>(Configuration.GetSection("CosmosConnectionSettings"));
             services.AddTransient<ISessionService, SessionService>();
             services.AddTransient<ReviewAnswersOrchestrator>();
