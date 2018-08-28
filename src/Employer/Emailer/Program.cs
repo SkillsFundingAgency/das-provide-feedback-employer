@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Data;
+using System.Data.SqlClient;
 using System.IO;
 using System.Net.Http.Headers;
 using System.Reflection;
@@ -122,6 +124,7 @@ namespace Esfa.Das.Feedback.Employer.Emailer
             // Setup dependencies
             services.AddSingleton<ILoggerFactory, LoggerFactory>();
             services.AddSingleton(typeof(ILogger<>), typeof(Logger<>));
+            services.AddTransient<IDbConnection>(c => new SqlConnection(configuration.GetConnectionString("EmployerEmailStoreConnection")));
             services.AddLogging((options) =>
             {
                 options.AddConfiguration(configuration.GetSection("Logging"));

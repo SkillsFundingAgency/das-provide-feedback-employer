@@ -13,7 +13,7 @@ namespace Esfa.Das.Feedback.Employer.Emailer
                 new EmployerEmailDetail
                 {
                     UserRef = new Guid("7f11a6b0-a25b-45a5-bdfc-4424dfba85e8"),
-                    Email = "lee.wadhams@valtech.co.uk",
+                    Email = "corey.faulconbridge@digital.education.gov.uk",
                     EmailCode = new Guid(),
                     ProviderName = "My Provider",
                     UserFirstName = "Robert"
