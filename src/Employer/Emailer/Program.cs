@@ -5,6 +5,7 @@ using System.IO;
 using System.Net.Http.Headers;
 using System.Reflection;
 using Esfa.Das.Feedback.Employer.Emailer.Configuration;
+using ESFA.DAS.ProvideFeedback.Data;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -153,7 +154,7 @@ namespace Esfa.Das.Feedback.Employer.Emailer
             );
 
             services.AddTransient<EmployerEmailer>();
-            services.AddTransient<IStoreEmailDetails, StubEmailDetailsStore>();
+            services.AddTransient<IStoreEmployerEmailDetails, EmployerEmailDetailRepository>();
 
             // Add Jobs
             services.AddScoped<EmployerEmailerJob>();

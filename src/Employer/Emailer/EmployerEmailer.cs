@@ -4,6 +4,8 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Esfa.Das.Feedback.Employer.Emailer.Configuration;
+using Esfa.Das.ProvideFeedback.Domain.Entities;
+using ESFA.DAS.ProvideFeedback.Data;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using SFA.DAS.Notifications.Api.Client;
@@ -13,12 +15,12 @@ namespace Esfa.Das.Feedback.Employer.Emailer
 {
     public class EmployerEmailer
     {
-        private readonly IStoreEmailDetails _emailDetailsStore;
+        private readonly IStoreEmployerEmailDetails _emailDetailsStore;
         private readonly INotificationsApi _emailService;
         private readonly ILogger<EmployerEmailer> _logger;
         private readonly string _feedbackBaseUrl;
 
-        public EmployerEmailer(IStoreEmailDetails emailDetailsStore, INotificationsApi emailService, IOptions<EmailSettings> settings, ILogger<EmployerEmailer> logger)
+        public EmployerEmailer(IStoreEmployerEmailDetails emailDetailsStore, INotificationsApi emailService, IOptions<EmailSettings> settings, ILogger<EmployerEmailer> logger)
         {
             _emailDetailsStore = emailDetailsStore;
             _emailService = emailService;
@@ -28,7 +30,7 @@ namespace Esfa.Das.Feedback.Employer.Emailer
 
         public async Task SendEmailsAsync()
         {
-            var emailsToSend = await _emailDetailsStore.GetEmailDetailsToBeSent();
+            var emailsToSend = await _emailDetailsStore.GetEmailDetailsToBeSent(100);
 
             // Group by user
             var users =
@@ -59,7 +61,7 @@ namespace Esfa.Das.Feedback.Employer.Emailer
                 SystemId = "employer-feedback",
                 TemplateId = EmailTemplates.SingleLinkTemplateId,
                 Subject = "not-set",
-                RecipientsAddress = employerEmailDetail.Email,
+                RecipientsAddress = employerEmailDetail.EmailAddress,
                 ReplyToAddress = "not-set",
                 Tokens = new Dictionary<string, string>
                     {
@@ -75,7 +77,7 @@ namespace Esfa.Das.Feedback.Employer.Emailer
             }
             catch (HttpRequestException ex)
             {
-                _logger.LogError(ex, $"Unable to send email for user: {employerEmailDetail.Email}");
+                _logger.LogError(ex, $"Unable to send email for user: {employerEmailDetail.EmailAddress}");
                 throw;
             }
         }
@@ -87,7 +89,7 @@ namespace Esfa.Das.Feedback.Employer.Emailer
                 SystemId = "",
                 TemplateId = EmailTemplates.MultipleLinkTemplateId,
                 Subject = "not-set",
-                RecipientsAddress = userGroup.First().Email,
+                RecipientsAddress = userGroup.First().EmailAddress,
                 ReplyToAddress = "not-set",
                 Tokens = new Dictionary<string, string>
                     {

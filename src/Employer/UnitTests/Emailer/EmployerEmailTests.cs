@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Esfa.Das.Feedback.Employer.Emailer;
 using Esfa.Das.Feedback.Employer.Emailer.Configuration;
+using Esfa.Das.ProvideFeedback.Domain.Entities;
+using ESFA.DAS.ProvideFeedback.Data;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
@@ -16,7 +18,7 @@ namespace Esfa.Das.Feedback.Employer.UnitTests
     {
         public class UserWithSingleEntry
         {
-            private readonly Mock<IStoreEmailDetails> _mockStore = new Mock<IStoreEmailDetails>();
+            private readonly Mock<IStoreEmployerEmailDetails> _mockStore = new Mock<IStoreEmployerEmailDetails>();
             private readonly Mock<INotificationsApi> _mockEmailService = new Mock<INotificationsApi>();
             private readonly Mock<ILogger<EmployerEmailer>> _mockLogger = new Mock<ILogger<EmployerEmailer>>();
             private readonly IOptions<EmailSettings> _options;
@@ -28,10 +30,10 @@ namespace Esfa.Das.Feedback.Employer.UnitTests
 
                 var emailDetails = new List<EmployerEmailDetail>
                 {
-                    new EmployerEmailDetail { UserRef = new Guid("7f11a6b0-a25b-45a5-bdfc-4424dfba85e8"), Email = "test@test.com" }
+                    new EmployerEmailDetail { UserRef = new Guid("7f11a6b0-a25b-45a5-bdfc-4424dfba85e8"), EmailAddress = "test@test.com" }
                 };
 
-                _mockStore.Setup(x => x.GetEmailDetailsToBeSent()).ReturnsAsync(emailDetails);
+                _mockStore.Setup(x => x.GetEmailDetailsToBeSent(It.IsAny<int>())).ReturnsAsync(emailDetails);
 
                 _emailer = new EmployerEmailer(_mockStore.Object, _mockEmailService.Object, _options, _mockLogger.Object);
             }
@@ -63,7 +65,7 @@ namespace Esfa.Das.Feedback.Employer.UnitTests
 
         public class UserWithMultipleEntries
         {
-            private Mock<IStoreEmailDetails> _mockStore = new Mock<IStoreEmailDetails>();
+            private Mock<IStoreEmployerEmailDetails> _mockStore = new Mock<IStoreEmployerEmailDetails>();
             private Mock<INotificationsApi> _mockEmailService = new Mock<INotificationsApi>();
             private readonly Mock<ILogger<EmployerEmailer>> _mockLogger = new Mock<ILogger<EmployerEmailer>>();
 
@@ -76,11 +78,11 @@ namespace Esfa.Das.Feedback.Employer.UnitTests
 
                 var emailDetails = new List<EmployerEmailDetail>
                 {
-                    new EmployerEmailDetail { UserRef = new Guid("7f11a6b0-a25b-45a5-bdfc-4424dfba85e8"), Email = "test@test.com" },
-                    new EmployerEmailDetail { UserRef = new Guid("7f11a6b0-a25b-45a5-bdfc-4424dfba85e8"), Email = "test@test.com" }
+                    new EmployerEmailDetail { UserRef = new Guid("7f11a6b0-a25b-45a5-bdfc-4424dfba85e8"), EmailAddress = "test@test.com" },
+                    new EmployerEmailDetail { UserRef = new Guid("7f11a6b0-a25b-45a5-bdfc-4424dfba85e8"), EmailAddress = "test@test.com" }
                 };
 
-                _mockStore.Setup(x => x.GetEmailDetailsToBeSent()).ReturnsAsync(emailDetails);
+                _mockStore.Setup(x => x.GetEmailDetailsToBeSent(It.IsAny<int>())).ReturnsAsync(emailDetails);
 
                 _emailer = new EmployerEmailer(_mockStore.Object, _mockEmailService.Object, _options, _mockLogger.Object);
 

@@ -28,6 +28,9 @@
     <PackageReference Include="SFA.DAS.Notifications.Api.Client" Version="2.1.12" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ESFA.DAS.EmployerFeedbackEmail.Data\ESFA.DAS.ProvideFeedback.Data.csproj" />
+  </ItemGroup>
+  <ItemGroup>
     <None Update="appSettings.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
