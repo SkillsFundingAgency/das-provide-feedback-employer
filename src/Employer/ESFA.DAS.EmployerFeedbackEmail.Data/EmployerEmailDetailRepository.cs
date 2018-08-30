@@ -52,9 +52,14 @@ namespace ESFA.DAS.ProvideFeedback.Data
                                 new { codeBurntDate });
         }
 
-        public Task SetEmailDetailsAsSent(Guid emailCode)
+        public async Task SetEmailDetailsAsSent(Guid emailCode)
         {
-            throw new NotImplementedException();
+            var now = DateTime.Now;
+            await _dbConnection.QueryAsync($@"
+                                UPDATE EmployerEmailDetails
+                                SET EmailSentDate = @{nameof(now)}
+                                WHERE EmailCode = @{nameof(emailCode)}",
+                                new { now, emailCode });
         }
 
         public Task SetEmailDetailsAsSent(IEnumerable<Guid> id)
