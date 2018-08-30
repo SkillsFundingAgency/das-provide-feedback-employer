@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.SqlTypes;
 using System.Threading.Tasks;
 using Dapper;
 using Esfa.Das.ProvideFeedback.Domain.Entities;
@@ -15,6 +14,7 @@ namespace ESFA.DAS.ProvideFeedback.Data
         public EmployerEmailDetailRepository(IDbConnection dbConnection)
         {
             _dbConnection = dbConnection;
+            _dbConnection.Open();
         }
 
         public async Task<EmployerEmailDetail> GetEmailDetailsForUniqueCode(Guid guid)
@@ -26,13 +26,12 @@ namespace ESFA.DAS.ProvideFeedback.Data
                                           new { guid });
         }
 
-        public async Task<IEnumerable<EmployerEmailDetail>> GetEmailDetailsToBeSent(int amount)
+        public async Task<IEnumerable<EmployerEmailDetail>> GetEmailDetailsToBeSent()
         {
             return await _dbConnection.QueryAsync<EmployerEmailDetail>(@"
-                                        SELECT TOP(@amount) * 
+                                        SELECT * 
                                         FROM EmployerEmailDetails
-                                        WHERE EmailSentDate IS NULL",
-                                        new { amount });
+                                        WHERE EmailSentDate IS NULL");
         }
 
         public async Task<bool> IsCodeBurnt(Guid emailCode)
@@ -42,14 +41,13 @@ namespace ESFA.DAS.ProvideFeedback.Data
                                         FROM EmployerEmailDetails");
         }
 
-        public async Task SetCodeBurntDate(DateTime codeBurntDate)
+        public async Task SetCodeBurntDate()
         {
-            var sqlMinDate = (DateTime)SqlDateTime.MinValue;
-            codeBurntDate = codeBurntDate > sqlMinDate ? codeBurntDate : sqlMinDate;
-            await _dbConnection.QueryAsync(@"
+            var now = DateTime.Now;
+            await _dbConnection.QueryAsync($@"
                                 UPDATE EmployerEmailDetails
-                                SET CodeBurntDate = @codeBurntDate", 
-                                new { codeBurntDate });
+                                SET CodeBurntDate = @{nameof(now)}", 
+                                new { now });
         }
 
         public async Task SetEmailDetailsAsSent(Guid emailCode)

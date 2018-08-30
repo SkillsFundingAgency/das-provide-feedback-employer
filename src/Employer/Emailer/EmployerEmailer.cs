@@ -30,7 +30,7 @@ namespace Esfa.Das.Feedback.Employer.Emailer
 
         public async Task SendEmailsAsync()
         {
-            var emailsToSend = await _emailDetailsStore.GetEmailDetailsToBeSent(100);
+            var emailsToSend = await _emailDetailsStore.GetEmailDetailsToBeSent();
 
             // Group by user
             var users =
@@ -38,11 +38,11 @@ namespace Esfa.Das.Feedback.Employer.Emailer
             group detail by detail.UserRef into userGroup
             select userGroup;
 
-            foreach (var userGroup in users)
+            Parallel.ForEach(users, async userGroup =>
             {
                 if (userGroup.Count() > 1)
                 {
-                    SendMultiLinkEmail(userGroup);
+                    await SendMultiLinkEmail(userGroup);
                     await _emailDetailsStore.SetEmailDetailsAsSent(userGroup.Select(x => x.EmailCode));
                 }
                 else
@@ -51,7 +51,7 @@ namespace Esfa.Das.Feedback.Employer.Emailer
                     await SendSingleLinkEmailAsync(userDetails);
                     await _emailDetailsStore.SetEmailDetailsAsSent(userDetails.EmailCode);
                 }
-            }
+            });
         }
 
         private async Task SendSingleLinkEmailAsync(EmployerEmailDetail employerEmailDetail)
@@ -73,6 +73,7 @@ namespace Esfa.Das.Feedback.Employer.Emailer
 
             try
             {
+                _logger.LogInformation($"Sending email to {employerEmailDetail.EmailAddress}");
                 await _emailService.SendEmail(email);
             }
             catch (HttpRequestException ex)
@@ -82,7 +83,7 @@ namespace Esfa.Das.Feedback.Employer.Emailer
             }
         }
 
-        private void SendMultiLinkEmail(IGrouping<Guid, EmployerEmailDetail> userGroup)
+        private async Task SendMultiLinkEmail(IGrouping<Guid, EmployerEmailDetail> userGroup)
         {
             var email = new Email
             {
@@ -99,7 +100,7 @@ namespace Esfa.Das.Feedback.Employer.Emailer
                     }
             };
 
-            _emailService.SendEmail(email).Wait();
+            await _emailService.SendEmail(email);
         }
     }
 }
