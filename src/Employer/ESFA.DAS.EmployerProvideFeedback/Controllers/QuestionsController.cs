@@ -12,6 +12,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
     [Route(RoutePrefixPaths.FeedbackRoutePath)]
     public class QuestionsController : Controller
     {
+        private const string ReturnUrlKey = "ReturnUrl";
         private readonly ISessionService _sessionService;
         private readonly AnswerModel _answerModel;
 
@@ -22,8 +23,9 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
         }
 
         [HttpGet("question-one", Name = RouteNames.QuestionOne_Get)]
-        public IActionResult QuestionOne(Guid uniqueCode)
+        public IActionResult QuestionOne(Guid uniqueCode, string returnUrl = null)
         {
+            TempData[ReturnUrlKey] = returnUrl;
             var cachedAnswers = _sessionService.Get<AnswerModel>(uniqueCode.ToString());
             return View(cachedAnswers != null ? cachedAnswers.ProviderAttributes : _answerModel.ProviderAttributes);
         }
@@ -34,13 +36,13 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
             var sessionAnswer = GetCurrentAnswerModel(uniqueCode);
             sessionAnswer.ProviderAttributes = providerAttributes;
             _sessionService.Set(uniqueCode.ToString(), sessionAnswer);
-
-            return RedirectToRoute(RouteNames.QuestionTwo_Get);
+            return HandleRedirect(RouteNames.QuestionTwo_Get);
         }
 
         [HttpGet("question-two", Name = RouteNames.QuestionTwo_Get)]
-        public IActionResult QuestionTwo(Guid uniqueCode)
+        public IActionResult QuestionTwo(Guid uniqueCode, string returnUrl = null)
         {
+            TempData[ReturnUrlKey] = returnUrl;
             var sessionAnswers = GetCurrentAnswerModel(uniqueCode);
             return View(sessionAnswers.ProviderAttributes);
         }
@@ -51,12 +53,13 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
             var sessionAnswer = GetCurrentAnswerModel(uniqueCode);
             sessionAnswer.ProviderAttributes = providerAttributes;
             _sessionService.Set(uniqueCode.ToString(), sessionAnswer);
-            return RedirectToRoute(RouteNames.QuestionThree_Get);
+            return HandleRedirect(RouteNames.QuestionThree_Get);
         }
 
         [HttpGet("question-three", Name = RouteNames.QuestionThree_Get)]
-        public IActionResult QuestionThree(Guid uniqueCode)
+        public IActionResult QuestionThree(Guid uniqueCode, string returnUrl = null)
         {
+            TempData[ReturnUrlKey] = returnUrl;
             var sessionAnswer = GetCurrentAnswerModel(uniqueCode);
             return View(sessionAnswer);
         }
@@ -69,15 +72,21 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
                 return View(answerModel);
             }
 
-            var sessionAnswer = GetCurrentAnswerModel(uniqueCode); 
+            var sessionAnswer = GetCurrentAnswerModel(uniqueCode);
             sessionAnswer.ProviderRating = answerModel.ProviderRating;
             _sessionService.Set(uniqueCode.ToString(), sessionAnswer);
-            return RedirectToRoute(RouteNames.ReviewAnswers_Get);
+            return HandleRedirect(RouteNames.ReviewAnswers_Get);
         }
 
         private AnswerModel GetCurrentAnswerModel(Guid uniqueCode)
         {
             return _sessionService.Get<AnswerModel>(uniqueCode.ToString()) ?? _answerModel;
+        }
+
+        private IActionResult HandleRedirect(string nextRoute)
+        {
+            var returnRoute = Convert.ToString(TempData[ReturnUrlKey]);
+            return RedirectToRoute(string.IsNullOrEmpty(returnRoute) ? nextRoute : returnRoute);
         }
     }
 }
