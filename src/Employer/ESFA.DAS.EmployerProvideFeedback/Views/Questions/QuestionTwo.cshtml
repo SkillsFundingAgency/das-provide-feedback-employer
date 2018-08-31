@@ -32,6 +32,7 @@
 
             @if (string.IsNullOrEmpty(Convert.ToString(TempData.Peek("ReturnUrl"))))
             {
+                // TODO: Replace TempData by adding a flag to the ViewModel.
                 <a asp-route="@RouteNames.QuestionThree_Get" class="button-link">Skip this question</a>
             }
         </form>
