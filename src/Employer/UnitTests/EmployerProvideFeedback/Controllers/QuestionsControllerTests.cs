@@ -6,7 +6,9 @@ using ESFA.DAS.EmployerProvideFeedback.Configuration.Routing;
 using ESFA.DAS.EmployerProvideFeedback.Controllers;
 using ESFA.DAS.EmployerProvideFeedback.Infrastructure;
 using ESFA.DAS.EmployerProvideFeedback.ViewModels;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.Extensions.Options;
 using Moq;
 using Xunit;
@@ -30,7 +32,20 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
 
             _providerAttributes = GetProviderAttributes();
             _providerAttributeOptions.SetupGet(mock => mock.Value).Returns(_providerAttributes);
-            _controller = new QuestionsController(_sessionServiceMock.Object, _providerAttributeOptions.Object);
+
+            InitializeController();
+        }
+
+        private void InitializeController()
+        {
+            var httpContextMock = new Mock<HttpContext>();
+            var tempDataProvider = new Mock<SessionStateTempDataProvider>();
+
+            _controller = new QuestionsController(_sessionServiceMock.Object, _providerAttributeOptions.Object)
+            {
+                ControllerContext = new ControllerContext { HttpContext = httpContextMock.Object },
+                TempData = new TempDataDictionary(httpContextMock.Object, tempDataProvider.Object)
+            };
         }
 
         [Fact]
@@ -84,6 +99,20 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
         }
 
         [Fact]
+        public void Question_1_Should_Handle_Return_Url()
+        {
+            // Arrange
+            _controller.TempData.Add("ReturnUrl", RouteNames.ReviewAnswers_Get);
+
+            // Act
+            var result = _controller.QuestionOne(_uniqueCode, _providerAttributes);
+
+            // Assert
+            Assert.IsAssignableFrom<RedirectToRouteResult>(result);
+            Assert.Equal(RouteNames.ReviewAnswers_Get, (result as RedirectToRouteResult).RouteName);
+        }
+
+        [Fact]
         public void Question_2_When_Q1_Skipped_Should_Have_No_Attributes_Doing_Well()
         {
             // Arrange
@@ -131,6 +160,20 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
             _sessionServiceMock.Verify(mock => mock.Set(It.IsAny<string>(), It.IsAny<object>()), Times.Once);
             Assert.IsAssignableFrom<RedirectToRouteResult>(result);
             Assert.Equal(RouteNames.QuestionThree_Get, (result as RedirectToRouteResult).RouteName);
+        }
+
+        [Fact]
+        public void Question_2_Should_Handle_Return_Url()
+        {
+            // Arrange
+            _controller.TempData.Add("ReturnUrl", RouteNames.ReviewAnswers_Get);
+
+            // Act
+            var result = _controller.QuestionTwo(_uniqueCode, _providerAttributes);
+
+            // Assert
+            Assert.IsAssignableFrom<RedirectToRouteResult>(result);
+            Assert.Equal(RouteNames.ReviewAnswers_Get, (result as RedirectToRouteResult).RouteName);
         }
 
         [Fact]
@@ -196,6 +239,21 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
             _sessionServiceMock.Verify(mock => mock.Set(It.IsAny<string>(), It.IsAny<object>()), Times.Once);
             var redirectResult = Assert.IsAssignableFrom<RedirectToRouteResult>(result);
             Assert.Equal(RouteNames.ReviewAnswers_Get, redirectResult.RouteName);
+        }
+
+        [Fact]
+        public void Question_3_Should_Handle_Return_Url()
+        {
+            // Arrange
+            var answerModel = new AnswerModel { ProviderRating = ProviderRating.Excellent };
+            _controller.TempData.Add("ReturnUrl", RouteNames.ReviewAnswers_Get);
+
+            // Act
+            var result = _controller.QuestionThree(_uniqueCode, answerModel);
+
+            // Assert
+            Assert.IsAssignableFrom<RedirectToRouteResult>(result);
+            Assert.Equal(RouteNames.ReviewAnswers_Get, (result as RedirectToRouteResult).RouteName);
         }
 
         private List<ProviderAttributeModel> GetProviderAttributes()

@@ -3,7 +3,6 @@
     ViewBag.PageID = "page-strengths-question";
     ViewBag.Title = "Providers Strengths";
 }
-
 <a asp-route="@RouteNames.Landing_Get" class="link-back">Back</a>
 <div class="grid-row">
     <div class="column-two-thirds">
@@ -30,7 +29,12 @@
                 </fieldset>
             </div>
             <button type="submit" class="button save-button">Continue</button>
-            <a asp-route="@RouteNames.QuestionTwo_Get" class="button-link">Skip this question</a>
+            
+            @if (string.IsNullOrEmpty(Convert.ToString(TempData.Peek("ReturnUrl"))))
+            {
+                // TODO: Replace TempData by adding a flag to the ViewModel.
+                <a asp-route="@RouteNames.QuestionTwo_Get" class="button-link">Skip this question</a>
+            }
         </form>
     </div>
 </div>
