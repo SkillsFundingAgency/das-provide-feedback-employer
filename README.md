@@ -18,7 +18,6 @@ The default development environment uses docker containers to host it's dependen
 * Redis
 * Elasticsearch
 * Logstash
-* MongoDb
 
 On first setup run the following command from _**/setup/containers/**_ to create the docker container images:
 
