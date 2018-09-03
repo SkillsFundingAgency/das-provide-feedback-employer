@@ -3,7 +3,6 @@
     ViewBag.PageID = "page-review-answers";
     ViewBag.Title = "Check your answers";
 }
-
 <a asp-route="@RouteNames.QuestionThree_Get" class="link-back">Back</a>
 <div class="grid-row">
     <div class="column-two-thirds">
@@ -15,13 +14,13 @@
                 <li>
                     <span class="question">Cyberdyne's strength</span>
                     <span class="answer">
-                        @{ if (Model?.HasStrengths != null)
+                        @{ if (Model.HasStrengths)
                             {
                                 <ul class="list list-bullet">
-                                @foreach (var item in Model.ProviderAttributes.Where(x => x.IsDoingWell))
-                                {
-                                    <li>@item.Name</li>
-                                }
+                                    @foreach (var item in Model.ProviderAttributes.Where(x => x.IsDoingWell))
+                                    {
+                                        <li>@item.Name</li>
+                                    }
                                 </ul>
                             }
                             else
@@ -39,20 +38,20 @@
                         Things for Cyberdyne to improve
                     </span>
                     <span class="answer">
-                    @{ if (Model?.HasWeaknesses != null)
-                        {
-                         <ul class="list list-bullet">
-                            @foreach (var item in Model.ProviderAttributes.Where(x => x.IsToImprove))
+                        @{ if (Model.HasWeaknesses)
                             {
-                                <li>@item.Name</li>
+                                <ul class="list list-bullet">
+                                    @foreach (var item in Model.ProviderAttributes.Where(x => x.IsToImprove))
+                                    {
+                                        <li>@item.Name</li>
+                                    }
+                                </ul>
                             }
-                         </ul>
+                            else
+                            {
+                                <p>You didn't select any</p>
+                            }
                         }
-                        else
-                        {
-                            <p>You didn't select any</p>
-                        }
-                    }
                     </span>
                     <span class="change">
                         <a asp-route="@RouteNames.QuestionTwo_Get" asp-route-returnUrl="@RouteNames.ReviewAnswers_Get">Change<span class="visually-hidden"> improvements answers</a>
@@ -63,14 +62,13 @@
                         Training quality rating
                     </span>
                     <span class="answer">
-                        <p>@Model?.ProviderRating?.GetDisplayName()</p>
+                        <p>@Model.ProviderRating.GetDisplayName()</p>
                     </span>
                     <span class="change">
                         <a asp-route="@RouteNames.QuestionThree_Get" asp-route-returnUrl="@RouteNames.ReviewAnswers_Get">Change<span class="visually-hidden"> quality rating answer</a>
                     </span>
                 </li>
-              </ul>
-
+            </ul>
             <p>Your answers will be published anonymously on the <span class="bold-small">Find apprenticeship training service</span> in the next 24 hours.</p>
             <button type="submit" class="button save-button">Submit answers</button>
         </form>
