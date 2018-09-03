@@ -1,6 +1,5 @@
 ﻿@using Microsoft.Extensions.Options;
 @inject IOptions<ExternalLinksConfiguration> externalLinks;
-
 @model AnswerModel
 @{
     ViewBag.PageID = "page-confirmation";
@@ -26,3 +25,4 @@
             <p>You can <a href="@externalLinks.Value.ManageApprenticeshipSiteUrl">sign into your apprenticeship account</a>.</p>
         }
     </div>
+</div>
