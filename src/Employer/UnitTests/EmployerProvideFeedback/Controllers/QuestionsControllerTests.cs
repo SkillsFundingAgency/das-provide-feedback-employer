@@ -19,7 +19,7 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
     {
         private QuestionsController _controller;
         private Mock<ISessionService> _sessionServiceMock;
-        private Mock<IOptions<List<ProviderAttributeModel>>> _providerAttributeOptions;
+        private IOptions<List<ProviderAttributeModel>> _providerAttributeOptions;
         private IFixture _fixture;
         private List<ProviderAttributeModel> _providerAttributes;
         private Guid _uniqueCode = Guid.NewGuid();
@@ -28,11 +28,10 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
         {
             _fixture = new Fixture();
             _sessionServiceMock = new Mock<ISessionService>();
-            _providerAttributeOptions = new Mock<IOptions<List<ProviderAttributeModel>>>();
 
             _providerAttributes = GetProviderAttributes();
-            _providerAttributeOptions.SetupGet(mock => mock.Value).Returns(_providerAttributes);
-
+            _providerAttributeOptions = Options.Create(_providerAttributes);
+            
             InitializeController();
         }
 

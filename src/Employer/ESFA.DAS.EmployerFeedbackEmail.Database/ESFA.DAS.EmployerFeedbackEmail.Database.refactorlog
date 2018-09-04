@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Operations Version="1.0" xmlns="http://schemas.microsoft.com/sqlserver/dac/Serialization/2012/02">
+  <Operation Name="Rename Refactor" Key="155f36b8-4bf3-48e6-be96-648364fe487b" ChangeDateTime="08/24/2018 14:37:46">
+    <Property Name="ElementName" Value="[EmployerUser].[cs].[FeedbackUID]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[EmployerUser].[cs]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="EmailUID" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="937df134-a718-4d80-8e5e-bec798f5bd1c" ChangeDateTime="08/24/2018 14:37:54">
+    <Property Name="ElementName" Value="[EmployerUser].[cs].[Id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[EmployerUser].[cs]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="EmailUID" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="7617a167-f73e-4aea-bbdf-10cc67dad228" ChangeDateTime="08/24/2018 14:38:12">
+    <Property Name="ElementName" Value="[EmployerUser].[cs].[AccountId]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[EmployerUser].[cs]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="EmailCode" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="5bcb4c2f-b375-42e6-8971-a230e910b66c" ChangeDateTime="08/24/2018 14:38:21">
+    <Property Name="ElementName" Value="[EmployerUser].[cs].[ProviderId]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[EmployerUser].[cs]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="EmailAddress" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="f94fa94f-0ff8-4bd7-9ef7-f13e119f40c1" ChangeDateTime="08/24/2018 14:38:52">
+    <Property Name="ElementName" Value="[EmployerUser].[cs].[DateSubmitted]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[EmployerUser].[cs]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="AccountId" />
+  </Operation>
+</Operations>

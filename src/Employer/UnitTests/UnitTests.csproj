@@ -20,6 +20,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ESFA.DAS.EmployerProvideFeedback\ESFA.DAS.EmployerProvideFeedback.csproj" />
+    <ProjectReference Include="..\ESFA.DAS.FeedbackDataAccess\ESFA.DAS.ProvideFeedback.FeedbackDataAccess.csproj" />
+    <ProjectReference Include="..\ESFA.DAS.ProvideFeedback.Emailer\ESFA.DAS.ProvideFeedback.Emailer.csproj" />
   </ItemGroup>
 
 </Project>
