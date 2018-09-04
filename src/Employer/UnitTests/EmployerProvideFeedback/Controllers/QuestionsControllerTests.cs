@@ -40,7 +40,7 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
             var httpContextMock = new Mock<HttpContext>();
             var tempDataProvider = new Mock<SessionStateTempDataProvider>();
 
-            _controller = new QuestionsController(_sessionServiceMock.Object, _providerAttributeOptions.Object)
+            _controller = new QuestionsController(_sessionServiceMock.Object, _providerAttributeOptions)
             {
                 ControllerContext = new ControllerContext { HttpContext = httpContextMock.Object },
                 TempData = new TempDataDictionary(httpContextMock.Object, tempDataProvider.Object)
