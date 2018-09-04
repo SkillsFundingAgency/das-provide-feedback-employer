@@ -94,9 +94,8 @@ namespace Esfa.Das.Feedback.Employer.Emailer
                 ReplyToAddress = "not-set",
                 Tokens = new Dictionary<string, string>
                     {
-                        {"provider_name", ""},
                         {"first_name", ""},
-                        {"feedback_url", ""}
+                        {"feedback_urls", ""}
                     }
             };
 
