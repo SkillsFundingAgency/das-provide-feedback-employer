@@ -30,7 +30,7 @@
                         }
                     </span>
                     <span class="change">
-                        <a href="#">Change<span class="visually-hidden"> strength answers</a>
+                        <a asp-route="@RouteNames.QuestionOne_Get" asp-route-returnUrl="@RouteNames.ReviewAnswers_Get">Change<span class="visually-hidden"> strength answers</a>
                     </span>
                 </li>
                 <li>
@@ -54,7 +54,7 @@
                         }
                     </span>
                     <span class="change">
-                        <a href="#">Change<span class="visually-hidden"> improvements answers</a>
+                        <a asp-route="@RouteNames.QuestionTwo_Get" asp-route-returnUrl="@RouteNames.ReviewAnswers_Get">Change<span class="visually-hidden"> improvements answers</a>
                     </span>
                 </li>
                 <li>
@@ -65,7 +65,7 @@
                         <p>@Model.ProviderRating.GetDisplayName()</p>
                     </span>
                     <span class="change">
-                        <a href="#">Change<span class="visually-hidden"> quality rating answer</a>
+                        <a asp-route="@RouteNames.QuestionThree_Get" asp-route-returnUrl="@RouteNames.ReviewAnswers_Get">Change<span class="visually-hidden"> quality rating answer</a>
                     </span>
                 </li>
             </ul>

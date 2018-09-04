@@ -10,15 +10,15 @@ This solution represents the Provider Feedback code base currently in alpha.
 
 * [.NET Core SDK >= 2.1.302](https://www.microsoft.com/net/download/)
 * [Docker for X](https://docs.docker.com/install/#supported-platforms)
+* [Azure Cosmos DB Emulator](https://docs.microsoft.com/en-us/azure/cosmos-db/local-emulator)
 
 ### Environment Setup
 
-The default development environment uses docker containers to host it's dependencies.
+The default development environment uses docker containers to host the following dependencies.
 
 * Redis
 * Elasticsearch
 * Logstash
-* MongoDb
 
 On first setup run the following command from _**/setup/containers/**_ to create the docker container images:
 
@@ -31,6 +31,8 @@ To start the containers run:
 You can view the state of the running containers using:
 
 `docker ps -a`
+
+Run Azure Cosmos DB Emulator
 
 ### Application logs
 Application logs are logged to [Elasticsearch](https://www.elastic.co/products/elasticsearch) and can be viewed using [Kibana](https://www.elastic.co/products/kibana) at http://localhost:5601

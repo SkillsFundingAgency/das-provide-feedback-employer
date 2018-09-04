@@ -3,7 +3,6 @@
     ViewBag.PageID = "page-weaknesses-question";
     ViewBag.Title = "Providers Weaknesses";
 }
-
 <a asp-route="@RouteNames.QuestionOne_Get" class="link-back">Back</a>
 <div class="grid-row">
     <div class="column-two-thirds">
@@ -17,7 +16,6 @@
                         <h2 class="heading-medium">What would Cyberdyne improve?</h2>
                         <span class="body-text">Select as many as you like.</span>
                     </legend>
-
                     @for (var i = 0; i < Model.Count; i++)
                     {
                         <div class="multiple-choice" style="display: @(Model[i].IsDoingWell ? "none" : "block");">
@@ -31,7 +29,12 @@
                 </fieldset>
             </div>
             <button type="submit" class="button save-button">Continue</button>
-            <a asp-route="@RouteNames.QuestionThree_Get" class="button-link">Skip this question</a>
+
+            @if (string.IsNullOrEmpty(Convert.ToString(TempData.Peek("ReturnUrl"))))
+            {
+                // TODO: Replace TempData by adding a flag to the ViewModel.
+                <a asp-route="@RouteNames.QuestionThree_Get" class="button-link">Skip this question</a>
+            }
         </form>
     </div>
 </div>
