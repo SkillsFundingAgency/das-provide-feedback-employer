@@ -42,10 +42,52 @@
         },
         "cosmosDbName": {
             "type": "string"
+        },
+        "workerAppServiceName": {
+            "type": "string"
+        },
+        "workerAppServicePlanName": {
+            "type": "string"
+        },
+        "aseHostingEnvironmentName": {
+            "type": "string"
+        },
+        "aseResourceGroup": {
+            "type": "string"
+        },
+        "notificationApiCredentials": {
+            "type": "secureObject",
+            "defaultValue": {
+                "BaseUrl": "",
+                "ClientToken": ""
+            }
+        },
+        "storageAccountName": {
+            "type": "string"
+        },
+        "dbConnectionString": {
+            "type": "secureString"
         }
     },
     "variables": {},
     "resources": [
+        {
+            "apiVersion": "2017-05-10",
+            "name": "StorageAccount",
+            "type": "Microsoft.Resources/deployments",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/storage-account-arm.json",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "storageAccountName": {
+                        "value": "[parameters('storageAccountName')]"
+                    }
+                }
+            }
+        },
         {
             "apiVersion": "2017-05-10",
             "name": "UIAppInsights",
@@ -149,6 +191,105 @@
             },
             "dependsOn": [
                 "UIAppInsights"
+            ]
+        },
+        {
+            "apiVersion": "2017-05-10",
+            "name": "WorkerAppServicePlan",
+            "type": "Microsoft.Resources/deployments",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/app-service-plan.json",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "appServicePlanName": {
+                        "value": "[parameters('workerAppServicePlanName')]"
+                    },
+                    "aseHostingEnvironmentName": {
+                        "value": "[parameters('aseHostingEnvironmentName')]"
+                    },
+                    "aseResourceGroup": {
+                        "value": "[parameters('aseResourceGroup')]"
+                    },
+                    "aspSize": {
+                        "value": "1"
+                    },
+                    "aspInstances": {
+                        "value": 1
+                    }
+                }
+            }
+        },
+        {
+            "apiVersion": "2017-05-10",
+            "name": "WorkerAppService",
+            "type": "Microsoft.Resources/deployments",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/app-service.json",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "appServiceName": {
+                        "value": "[parameters('workerAppServiceName')]"
+                    },
+                    "appServicePlanName": {
+                        "value": "[parameters('workerAppServicePlanName')]"
+                    },
+                    "appServicePlanResourceGroup": {
+                        "value": "[resourceGroup().name]"
+                    },
+                    "appServiceAppSettings": {
+                        "value": [
+                            {
+                                "name": "ASPNETCORE_ENVIRONMENT",
+                                "value": "[parameters('aspNetCoreEnvironment')]"
+                            },
+                            {
+                                "name": "NotificationApi:BaseUrl",
+                                "value": "[parameters('notificationApiCredentials').BaseUrl]"
+                            },
+                            {
+                                "name": "NotificationApi:ClientToken",
+                                "value": "[parameters('notificationApiCredentials').ClientToken]"
+                            },
+                            {
+                                "name": "EmailSettings:FeedbackSiteBaseUrl",
+                                "value": "[concat('https://', parameters('customHostname'), '/')]"
+                            }
+                        ]
+                    },
+                    "appServiceConnectionStrings": {
+                        "value": [
+                            {
+                                "name": "WebJobsDashboard",
+                                "connectionString": "[reference('StorageAccount').storageConnectionString.value]",
+                                "type": "Custom"
+                            },
+                            {
+                                "name": "WebJobsStorage",
+                                "connectionString": "[reference('StorageAccount').storageConnectionString.value]",
+                                "type": "Custom"
+                            },
+                            {
+                                "name": "Redis",
+                                "connectionString": "[parameters('loggingRedisConnectionString')]",
+                                "type": "Custom"
+                            },
+                            {
+                                "name": "EmployerEmailStoreConnection",
+                                "connectionString": "[parameters('dbConnectionString')]",
+                                "type": "Custom"
+                            }
+                        ]
+                    }
+                }
+            },
+            "dependsOn": [
+                "WorkerAppServicePlan"
             ]
         },
         {
