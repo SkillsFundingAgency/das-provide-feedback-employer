@@ -17,7 +17,7 @@ namespace Esfa.Das.Feedback.Employer.Emailer
             _emailer = emailer;
         }
 
-        public async Task EmailEmployerFeedbackInvitations([TimerTrigger(Schedules.FourAmDaily, RunOnStartup = true)] TimerInfo timerInfo, TextWriter log)
+        public async Task EmailEmployerFeedbackInvitations()
         {
             _logger.LogInformation("Starting employer emailer job.");
 
