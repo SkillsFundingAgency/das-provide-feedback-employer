@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
 using ESFA.DAS.EmployerProvideFeedback.Configuration.Routing;
 using ESFA.DAS.EmployerProvideFeedback.Infrastructure;
-using ESFA.DAS.EmployerProvideFeedback.Services;
 using ESFA.DAS.EmployerProvideFeedback.Orchestrators;
 using ESFA.DAS.EmployerProvideFeedback.ViewModels;
 using ESFA.DAS.FeedbackDataAccess;
 using ESFA.DAS.FeedbackDataAccess.IoC;
+using ESFA.DAS.ProvideFeedback.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -31,10 +33,11 @@ namespace ESFA.DAS.EmployerProvideFeedback
         public void ConfigureServices(IServiceCollection services)
         {
             services.Configure<ExternalLinksConfiguration>(Configuration.GetSection("ExternalLinks"));
-            services.AddTransient<IStoreEmailDetails, StubEmailDetailStore>();
+            services.AddTransient<IStoreEmployerEmailDetails, EmployerEmailDetailRepository>();
             services.AddTransient<EnsureFeedbackNotSubmitted>();
             services.Configure<List<ProviderAttributeModel>>(Configuration.GetSection("ProviderAttributes"));
             services.Configure<CosmosConnectionSettings>(Configuration.GetSection("CosmosConnectionSettings"));
+            services.AddTransient<IDbConnection>(c => new SqlConnection(Configuration.GetConnectionString("EmployerEmailStoreConnection")));
             services.AddTransient<ISessionService, SessionService>();
             services.AddTransient<ReviewAnswersOrchestrator>();
             services.AddProvideFeedbackCosmos(Configuration);

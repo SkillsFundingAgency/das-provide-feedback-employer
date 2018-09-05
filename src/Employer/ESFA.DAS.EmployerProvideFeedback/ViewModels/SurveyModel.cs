@@ -1,11 +1,18 @@
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 
 namespace ESFA.DAS.EmployerProvideFeedback.ViewModels
 {
-    public class AnswerModel
+    public class SurveyModel
     {
+        public Guid UserRef { get; set; }
+
+        public long Ukprn { get; set; }
+
+        public long AccountId { get; set; }
+
         public List<ProviderAttributeModel> ProviderAttributes { get; set; } = new List<ProviderAttributeModel>();
 
         [Required]
@@ -16,5 +23,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.ViewModels
         public bool HasWeaknesses => ProviderAttributes.Any(attr => attr.IsToImprove);
 
         public bool Submitted { get; internal set; }
+
+        public string ProviderName { get; set; }
     }
 }

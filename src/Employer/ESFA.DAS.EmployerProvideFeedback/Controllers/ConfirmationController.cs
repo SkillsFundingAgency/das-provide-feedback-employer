@@ -19,8 +19,8 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
         [HttpGet("feedback-confirmation", Name = RouteNames.Confirmation_Get)]
         public IActionResult Index(Guid uniqueCode)
         {
-            var surveyAnswerModel = _sessionService.Get<AnswerModel>(uniqueCode.ToString());
-            return View(surveyAnswerModel);
+            var surveyModel = _sessionService.Get<SurveyModel>(uniqueCode.ToString());
+            return View(surveyModel);
         }
     }
 }

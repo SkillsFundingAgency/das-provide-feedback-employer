@@ -11,7 +11,7 @@ namespace ESFA.DAS.ProvideFeedback.Data
         Task SetEmailDetailsAsSent(Guid emailCode);
         Task SetEmailDetailsAsSent(IEnumerable<Guid> id);
         Task<EmployerEmailDetail> GetEmailDetailsForUniqueCode(Guid guid);
-        Task SetCodeBurntDate();
+        Task SetCodeBurntDate(Guid uniqueCode);
         Task<bool> IsCodeBurnt(Guid emailCode);
     }
 }
