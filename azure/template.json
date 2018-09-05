@@ -285,6 +285,9 @@
                                 "type": "Custom"
                             }
                         ]
+                    },
+                    "deployStagingSlot": {
+                        "value": false
                     }
                 }
             },
