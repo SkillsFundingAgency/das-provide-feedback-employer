@@ -38,20 +38,23 @@ namespace Esfa.Das.Feedback.Employer.Emailer
             group detail by detail.UserRef into userGroup
             select userGroup;
 
-            Parallel.ForEach(users, async userGroup =>
+            var tasks = users.Select(userGroup => HandleAsyncSend(userGroup));
+            await Task.WhenAll(tasks);
+        }
+
+        private async Task HandleAsyncSend(IGrouping<Guid, EmployerEmailDetail> userGroup)
+        {
+            if (userGroup.Count() > 1)
             {
-                if (userGroup.Count() > 1)
-                {
-                    await SendMultiLinkEmail(userGroup);
-                    await _emailDetailsStore.SetEmailDetailsAsSent(userGroup.Select(x => x.EmailCode));
-                }
-                else
-                {
-                    var userDetails = userGroup.Single();
-                    await SendSingleLinkEmailAsync(userDetails);
-                    await _emailDetailsStore.SetEmailDetailsAsSent(userDetails.EmailCode);
-                }
-            });
+                await SendMultiLinkEmail(userGroup);
+                await _emailDetailsStore.SetEmailDetailsAsSent(userGroup.Select(x => x.EmailCode));
+            }
+            else
+            {
+                var userDetails = userGroup.Single();
+                await SendSingleLinkEmailAsync(userDetails);
+                await _emailDetailsStore.SetEmailDetailsAsSent(userDetails.EmailCode);
+            }
         }
 
         private async Task SendSingleLinkEmailAsync(EmployerEmailDetail employerEmailDetail)
