@@ -45,15 +45,11 @@ namespace Esfa.Das.Feedback.Employer.Emailer
 
                 logger = factory.CreateLogger("Program");
 
-                JobHostConfiguration jobConfiguration = GetHostConfiguration(serviceProvider, factory);
-                var host = new JobHost(jobConfiguration);
-
-                var cancellationToken = new WebJobsShutdownWatcher().Token;
-                cancellationToken.Register(host.Stop);
+                var emailerJob = serviceProvider.GetService<EmployerEmailerJob>();
 
                 logger.LogInformation("Job Starting");
 
-                host.RunAndBlock();
+                emailerJob.EmailEmployerFeedbackInvitations().Wait();
 
                 logger.LogInformation("Job Stopping");
             }
@@ -80,23 +76,6 @@ namespace Esfa.Das.Feedback.Employer.Emailer
             //loggerFactory.AddApplicationInsights(instrumentationKey, null);
 
             return loggerFactory;
-        }
-
-        private static JobHostConfiguration GetHostConfiguration(ServiceProvider serviceProvider, ILoggerFactory loggerFactory)
-        {
-            // Host configuration
-            var jobConfiguration = new JobHostConfiguration();
-            jobConfiguration.JobActivator = new CustomJobActivator(serviceProvider);
-            jobConfiguration.UseTimers();
-            jobConfiguration.LoggerFactory = loggerFactory;
-
-            if (IsDevelopment)
-            {
-                jobConfiguration.DashboardConnectionString = null; // Reduces errors in output.
-                jobConfiguration.UseDevelopmentSettings();
-            }
-
-            return jobConfiguration;
         }
 
         private static IConfigurationRoot BuildConfiguration()
