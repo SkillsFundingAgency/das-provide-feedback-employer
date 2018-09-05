@@ -1,4 +1,4 @@
-﻿@model AnswerModel;
+﻿@model SurveyModel;
 @{
     ViewBag.PageID = "page-review-answers";
     ViewBag.Title = "Check your answers";
@@ -12,7 +12,7 @@
         <form asp-route="@RouteNames.ReviewAnswers_Post">
             <ul class="check-your-answers">
                 <li>
-                    <span class="question">Cyberdyne's strength</span>
+                    <span class="question">@Model.ProviderName's strength</span>
                     <span class="answer">
                         @{ if (Model.HasStrengths)
                             {
@@ -35,7 +35,7 @@
                 </li>
                 <li>
                     <span class="question">
-                        Things for Cyberdyne to improve
+                        Things for @Model.ProviderName to improve
                     </span>
                     <span class="answer">
                         @{ if (Model.HasWeaknesses)

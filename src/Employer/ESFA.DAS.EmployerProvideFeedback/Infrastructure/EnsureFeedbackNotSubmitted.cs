@@ -1,6 +1,6 @@
 using System;
 using ESFA.DAS.EmployerProvideFeedback.Configuration.Routing;
-using ESFA.DAS.EmployerProvideFeedback.Services;
+using ESFA.DAS.ProvideFeedback.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
@@ -8,17 +8,18 @@ namespace ESFA.DAS.EmployerProvideFeedback.Infrastructure
 {
     public class EnsureFeedbackNotSubmitted : ActionFilterAttribute
     {
-        private readonly IStoreEmailDetails _emailDetailStore;
+        private readonly IStoreEmployerEmailDetails _employerEmailDetailRepository;
 
-        public EnsureFeedbackNotSubmitted(IStoreEmailDetails emailDetailStore)
+        public EnsureFeedbackNotSubmitted(IStoreEmployerEmailDetails employerEmailDetailRepository)
         {
-            _emailDetailStore = emailDetailStore;
+            _employerEmailDetailRepository = employerEmailDetailRepository;
         }
 
         public override void OnActionExecuting(ActionExecutingContext context)
         {
             var uniqueCode = (Guid)context.ActionArguments["uniqueCode"];
-            if (_emailDetailStore.IsFeedbackSubmittedFor(uniqueCode))
+            var isCodeBurnt = _employerEmailDetailRepository.IsCodeBurnt(uniqueCode).Result;
+            if (isCodeBurnt)
             {
                 var controller = context.Controller as Controller;
                 context.Result = controller.RedirectToRoute(RouteNames.FeedbackAlreadySubmitted);

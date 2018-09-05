@@ -14,12 +14,10 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
     {
         private const string ReturnUrlKey = "ReturnUrl";
         private readonly ISessionService _sessionService;
-        private readonly AnswerModel _answerModel;
 
-        public QuestionsController(ISessionService sessionService, IOptions<List<ProviderAttributeModel>> providerAttributes)
+        public QuestionsController(ISessionService sessionService)
         {
             _sessionService = sessionService;
-            _answerModel = new AnswerModel { ProviderAttributes = providerAttributes.Value };
         }
 
         [HttpGet("question-one", Name = RouteNames.QuestionOne_Get)]
@@ -27,16 +25,20 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
         {
             // TODO: Replace TempData by adding a flag to the ViewModel.
             TempData[ReturnUrlKey] = returnUrl;
-            var cachedAnswers = _sessionService.Get<AnswerModel>(uniqueCode.ToString());
-            return View(cachedAnswers != null ? cachedAnswers.ProviderAttributes : _answerModel.ProviderAttributes);
+            var cachedAnswers = _sessionService.Get<SurveyModel>(uniqueCode.ToString());
+            
+            // TODO: Redirect from all questions and review route to landing if no survey in the session.
+
+            return View(cachedAnswers);
         }
 
         [HttpPost("question-one", Name = RouteNames.QuestionOne_Post)]
         public IActionResult QuestionOne(Guid uniqueCode, List<ProviderAttributeModel> providerAttributes)
         {
-            var sessionAnswer = GetCurrentAnswerModel(uniqueCode);
+            var sessionAnswer = _sessionService.Get<SurveyModel>(uniqueCode.ToString());
             sessionAnswer.ProviderAttributes = providerAttributes;
             _sessionService.Set(uniqueCode.ToString(), sessionAnswer);
+
             return HandleRedirect(RouteNames.QuestionTwo_Get);
         }
 
@@ -44,14 +46,14 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
         public IActionResult QuestionTwo(Guid uniqueCode, string returnUrl = null)
         {
             TempData[ReturnUrlKey] = returnUrl;
-            var sessionAnswers = GetCurrentAnswerModel(uniqueCode);
-            return View(sessionAnswers.ProviderAttributes);
+            var sessionAnswers = _sessionService.Get<SurveyModel>(uniqueCode.ToString());
+            return View(sessionAnswers);
         }
 
         [HttpPost("question-two", Name = RouteNames.QuestionTwo_Post)]
         public IActionResult QuestionTwo(Guid uniqueCode, List<ProviderAttributeModel> providerAttributes)
         {
-            var sessionAnswer = GetCurrentAnswerModel(uniqueCode);
+            var sessionAnswer = _sessionService.Get<SurveyModel>(uniqueCode.ToString());
             sessionAnswer.ProviderAttributes = providerAttributes;
             _sessionService.Set(uniqueCode.ToString(), sessionAnswer);
             return HandleRedirect(RouteNames.QuestionThree_Get);
@@ -61,27 +63,22 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
         public IActionResult QuestionThree(Guid uniqueCode, string returnUrl = null)
         {
             TempData[ReturnUrlKey] = returnUrl;
-            var sessionAnswer = GetCurrentAnswerModel(uniqueCode);
+            var sessionAnswer = _sessionService.Get<SurveyModel>(uniqueCode.ToString());
             return View(sessionAnswer);
         }
 
         [HttpPost("question-three", Name = RouteNames.QuestionThree_Post)]
-        public IActionResult QuestionThree(Guid uniqueCode, AnswerModel answerModel)
+        public IActionResult QuestionThree(Guid uniqueCode, SurveyModel surveyModel)
         {
             if (!ModelState.IsValid)
             {
-                return View(answerModel);
+                return View(surveyModel);
             }
 
-            var sessionAnswer = GetCurrentAnswerModel(uniqueCode);
-            sessionAnswer.ProviderRating = answerModel.ProviderRating;
+            var sessionAnswer = _sessionService.Get<SurveyModel>(uniqueCode.ToString());
+            sessionAnswer.ProviderRating = surveyModel.ProviderRating;
             _sessionService.Set(uniqueCode.ToString(), sessionAnswer);
             return HandleRedirect(RouteNames.ReviewAnswers_Get);
-        }
-
-        private AnswerModel GetCurrentAnswerModel(Guid uniqueCode)
-        {
-            return _sessionService.Get<AnswerModel>(uniqueCode.ToString()) ?? _answerModel;
         }
 
         private IActionResult HandleRedirect(string nextRoute)

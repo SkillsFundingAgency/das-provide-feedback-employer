@@ -1,6 +1,6 @@
 ﻿@using Microsoft.Extensions.Options;
 @inject IOptions<ExternalLinksConfiguration> externalLinks;
-@model AnswerModel
+@model SurveyModel
 @{
     ViewBag.PageID = "page-confirmation";
     ViewBag.Title = "Provide Feedback";
@@ -12,11 +12,11 @@
                 Feedback complete
             </h1>
         </div>
-        <p>Thanks for your feedback. It'll help {Provider Name} to continuously improve its apprenticeship training.</p>
-        <p>You rated {Provider Name}'s training quality as <span class="bold-small">@Model.ProviderRating.GetDisplayName()</span></p>
+        <p>Thanks for your feedback. It'll help @Model.ProviderName to continuously improve its apprenticeship training.</p>
+        <p>You rated @Model.ProviderName's training quality as <span class="bold-small">@Model.ProviderRating.GetDisplayName()</span></p>
         @if (Model.ProviderRating == ProviderRating.VeryPoor)
         {
-            <p>If you have concerns about {Provider Name}, tell your line manager or human resources team - your organisation might be able to solve your problem informally.</p>
+            <p>If you have concerns about @Model.ProviderName, tell your line manager or human resources team - your organisation might be able to solve your problem informally.</p>
 
             <p>If you can't resolve it informally, you can make a formal complaint. <a href="@externalLinks.Value.ComplaintSiteUrl">Get advice about making a formal complaint</a>.</p>
         }

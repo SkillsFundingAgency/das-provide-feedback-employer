@@ -1,9 +1,8 @@
-﻿@model AnswerModel
+﻿@model SurveyModel
 @{
     ViewBag.PageID = "page-overall-quality-question";
     ViewBag.Title = "Provide Feedback";
 }
-
 <a asp-route="@RouteNames.QuestionTwo_Get" class="link-back">Back</a>
 <div class="grid-row">
     <div class="column-two-thirds">
@@ -26,7 +25,7 @@
                 <fieldset class="@(!ViewData.ModelState.IsValid ? "form-group-error" : "")">
                     <!-- dynamically add this class in fieldset in case of error-->
                     <legend>
-                        <h2 class="heading-medium">How do you rate Cyberdynes apprenticeship training?</h2>
+                        <h2 class="heading-medium">How do you rate @Model.ProviderName's apprenticeship training?</h2>
                     </legend>
                     @if (!ViewData.ModelState.IsValid)
                     {

@@ -19,7 +19,6 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
     {
         private QuestionsController _controller;
         private Mock<ISessionService> _sessionServiceMock;
-        private IOptions<List<ProviderAttributeModel>> _providerAttributeOptions;
         private IFixture _fixture;
         private List<ProviderAttributeModel> _providerAttributes;
         private Guid _uniqueCode = Guid.NewGuid();
@@ -28,10 +27,9 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
         {
             _fixture = new Fixture();
             _sessionServiceMock = new Mock<ISessionService>();
-
             _providerAttributes = GetProviderAttributes();
-            _providerAttributeOptions = Options.Create(_providerAttributes);
-            
+            _sessionServiceMock.Setup(mock => mock.Get<SurveyModel>(It.IsAny<string>())).Returns(new SurveyModel());
+
             InitializeController();
         }
 
@@ -40,7 +38,7 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
             var httpContextMock = new Mock<HttpContext>();
             var tempDataProvider = new Mock<SessionStateTempDataProvider>();
 
-            _controller = new QuestionsController(_sessionServiceMock.Object, _providerAttributeOptions)
+            _controller = new QuestionsController(_sessionServiceMock.Object)
             {
                 ControllerContext = new ControllerContext { HttpContext = httpContextMock.Object },
                 TempData = new TempDataDictionary(httpContextMock.Object, tempDataProvider.Object)
@@ -56,29 +54,29 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
             var result = _controller.QuestionOne(_uniqueCode) as ViewResult;
 
             // Assert
-            Assert.IsAssignableFrom<List<ProviderAttributeModel>>(result.Model);
-            var model = result.Model as List<ProviderAttributeModel>;
-            Assert.DoesNotContain(model, m => m.IsDoingWell);
+            Assert.IsAssignableFrom<SurveyModel>(result.Model);
+            var attributes = (result.Model as SurveyModel).ProviderAttributes;
+            Assert.DoesNotContain(attributes, m => m.IsDoingWell);
         }
 
         [Fact]
         public void Question_1_When_Session_Answers_Should_Mark_As_Doing_Well()
         {
             // Arrange
-            var answerModel = new AnswerModel();
+            var surveyModel = new SurveyModel();
             var sessionDoingWellAtts = _providerAttributes.Take(3).ToList();
             sessionDoingWellAtts.ForEach(ps => ps.IsDoingWell = true);
-            answerModel.ProviderAttributes = _providerAttributes;
-            _sessionServiceMock.Setup(mock => mock.Get<AnswerModel>(It.IsAny<string>())).Returns(answerModel);
+            surveyModel.ProviderAttributes = _providerAttributes;
+            _sessionServiceMock.Setup(mock => mock.Get<SurveyModel>(It.IsAny<string>())).Returns(surveyModel);
 
             // Act
             var result = _controller.QuestionOne(_uniqueCode) as ViewResult;
 
             // Assert
-            Assert.IsAssignableFrom<List<ProviderAttributeModel>>(result.Model);
-            var model = result.Model as List<ProviderAttributeModel>;
-            Assert.Contains(model, m => m.IsDoingWell);
-            Assert.Equal(sessionDoingWellAtts.Count, model.Count(m => m.IsDoingWell));
+            Assert.IsAssignableFrom<SurveyModel>(result.Model);
+            var attributes = (result.Model as SurveyModel).ProviderAttributes;
+            Assert.Contains(attributes, m => m.IsDoingWell);
+            Assert.Equal(sessionDoingWellAtts.Count, attributes.Count(m => m.IsDoingWell));
         }
 
         [Fact]
@@ -120,29 +118,29 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
             var result = _controller.QuestionTwo(_uniqueCode) as ViewResult;
 
             // Assert
-            Assert.IsAssignableFrom<List<ProviderAttributeModel>>(result.Model);
-            var model = result.Model as List<ProviderAttributeModel>;
-            Assert.DoesNotContain(model, m => m.IsDoingWell);
+            Assert.IsAssignableFrom<SurveyModel>(result.Model);
+            var attributes = (result.Model as SurveyModel).ProviderAttributes;
+            Assert.DoesNotContain(attributes, m => m.IsDoingWell);
         }
 
         [Fact]
         public void Question_2_When_Q1_Skipped_And_Q2_Session_Answers_Should_Load_Previous_Selections()
         {
             // Arrange
-            var answerModel = new AnswerModel();
+            var surveyModel = new SurveyModel();
             var sessionDoingWellAtts = _providerAttributes.Take(3).ToList();
             sessionDoingWellAtts.ForEach(ps => ps.IsToImprove = true);
-            answerModel.ProviderAttributes = _providerAttributes;
-            _sessionServiceMock.Setup(mock => mock.Get<AnswerModel>(It.IsAny<string>())).Returns(answerModel);
+            surveyModel.ProviderAttributes = _providerAttributes;
+            _sessionServiceMock.Setup(mock => mock.Get<SurveyModel>(It.IsAny<string>())).Returns(surveyModel);
 
             // Act
             var result = _controller.QuestionTwo(_uniqueCode) as ViewResult;
 
             // Assert
-            Assert.IsAssignableFrom<List<ProviderAttributeModel>>(result.Model);
-            var model = result.Model as List<ProviderAttributeModel>;
-            Assert.Contains(model, m => m.IsToImprove);
-            Assert.Equal(sessionDoingWellAtts.Count, model.Count(m => m.IsToImprove));
+            Assert.IsAssignableFrom<SurveyModel>(result.Model);
+            var attributes = (result.Model as SurveyModel).ProviderAttributes;
+            Assert.Contains(attributes, m => m.IsToImprove);
+            Assert.Equal(sessionDoingWellAtts.Count, attributes.Count(m => m.IsToImprove));
         }
 
         [Fact]
@@ -184,8 +182,8 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
             var result = _controller.QuestionThree(_uniqueCode) as ViewResult;
 
             // Assert
-            Assert.IsAssignableFrom<AnswerModel>(result.Model);
-            var model = result.Model as AnswerModel;
+            Assert.IsAssignableFrom<SurveyModel>(result.Model);
+            var model = result.Model as SurveyModel;
             Assert.False(model.HasStrengths);
             Assert.False(model.HasWeaknesses);
         }
@@ -194,16 +192,16 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
         public void Question_3_When_Q1_And_Q2_Skipped_And_Q3_Session_Answers_Should_Load_Previous_Selection()
         {
             // Arrange
-            var answerModel = new AnswerModel();
-            answerModel.ProviderRating = ProviderRating.Poor;
-            _sessionServiceMock.Setup(mock => mock.Get<AnswerModel>(It.IsAny<string>())).Returns(answerModel);
+            var surveyModel = new SurveyModel();
+            surveyModel.ProviderRating = ProviderRating.Poor;
+            _sessionServiceMock.Setup(mock => mock.Get<SurveyModel>(It.IsAny<string>())).Returns(surveyModel);
 
             // Act
             var result = _controller.QuestionThree(_uniqueCode) as ViewResult;
 
             // Assert
-            Assert.IsAssignableFrom<AnswerModel>(result.Model);
-            var model = result.Model as AnswerModel;
+            Assert.IsAssignableFrom<SurveyModel>(result.Model);
+            var model = result.Model as SurveyModel;
             Assert.Equal(ProviderRating.Poor, model.ProviderRating);
         }
 
@@ -211,14 +209,14 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
         public void Question_3_When_Answer_Not_Selected_Should_Fail_Model_Validation()
         {
             // Arrange
-            var answerModel = new AnswerModel();
-            _sessionServiceMock.Setup(mock => mock.Get<AnswerModel>(It.IsAny<string>())).Verifiable();
+            var surveyModel = new SurveyModel();
+            _sessionServiceMock.Setup(mock => mock.Get<SurveyModel>(It.IsAny<string>())).Verifiable();
 
             // simulate model validation as this only occurs at runtime
             _controller.ModelState.AddModelError("ProviderRating", "Required Field");
 
             // Act
-            var result = _controller.QuestionThree(_uniqueCode, answerModel);
+            var result = _controller.QuestionThree(_uniqueCode, surveyModel);
 
             // Assert
             _sessionServiceMock.Verify(mock => mock.Set(It.IsAny<string>(), It.IsAny<object>()), Times.Never);
@@ -229,10 +227,10 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
         public void Question_3_When_Answers_Submitted_Should_Update_Session_And_Redirect()
         {
             // Arrange
-            var answerModel = new AnswerModel { ProviderRating = ProviderRating.Excellent };
+            var surveyModel = new SurveyModel { ProviderRating = ProviderRating.Excellent };
 
             // Act
-            var result = _controller.QuestionThree(_uniqueCode, answerModel);
+            var result = _controller.QuestionThree(_uniqueCode, surveyModel);
 
             // Assert
             _sessionServiceMock.Verify(mock => mock.Set(It.IsAny<string>(), It.IsAny<object>()), Times.Once);
@@ -244,11 +242,11 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
         public void Question_3_Should_Handle_Return_Url()
         {
             // Arrange
-            var answerModel = new AnswerModel { ProviderRating = ProviderRating.Excellent };
+            var surveyModel = new SurveyModel { ProviderRating = ProviderRating.Excellent };
             _controller.TempData.Add("ReturnUrl", RouteNames.ReviewAnswers_Get);
 
             // Act
-            var result = _controller.QuestionThree(_uniqueCode, answerModel);
+            var result = _controller.QuestionThree(_uniqueCode, surveyModel);
 
             // Assert
             Assert.IsAssignableFrom<RedirectToRouteResult>(result);

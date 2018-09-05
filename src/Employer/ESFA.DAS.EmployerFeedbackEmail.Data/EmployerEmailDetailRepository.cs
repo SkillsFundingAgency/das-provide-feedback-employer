@@ -17,13 +17,13 @@ namespace ESFA.DAS.ProvideFeedback.Data
             _dbConnection.Open();
         }
 
-        public async Task<EmployerEmailDetail> GetEmailDetailsForUniqueCode(Guid guid)
+        public async Task<EmployerEmailDetail> GetEmailDetailsForUniqueCode(Guid uniqueCode)
         {
             return await _dbConnection.QueryFirstOrDefaultAsync<EmployerEmailDetail>(
-                                        @"SELECT TOP(1) *
+                                        $@"SELECT TOP(1) *
                                           FROM EmployerEmailDetails
-                                          WHERE EmailUID = @guid",
-                                          new { guid });
+                                          WHERE EmailCode = @{nameof(uniqueCode)}",
+                                          new { uniqueCode });
         }
 
         public async Task<IEnumerable<EmployerEmailDetail>> GetEmailDetailsToBeSent()
@@ -36,18 +36,21 @@ namespace ESFA.DAS.ProvideFeedback.Data
 
         public async Task<bool> IsCodeBurnt(Guid emailCode)
         {
-            return await _dbConnection.QueryFirstOrDefaultAsync<bool>(@"
+            return await _dbConnection.QueryFirstOrDefaultAsync<bool>($@"
                                         SELECT CASE WHEN CodeBurntDate IS NULL THEN 0 ELSE 1 END
-                                        FROM EmployerEmailDetails");
+                                        FROM EmployerEmailDetails
+                                        WHERE EmailCode = @{nameof(emailCode)}",
+                                        new { emailCode });
         }
 
-        public async Task SetCodeBurntDate()
+        public async Task SetCodeBurntDate(Guid uniqueCode)
         {
             var now = DateTime.Now;
             await _dbConnection.QueryAsync($@"
                                 UPDATE EmployerEmailDetails
-                                SET CodeBurntDate = @{nameof(now)}", 
-                                new { now });
+                                SET CodeBurntDate = @now
+                                WHERE EmailCode = @{nameof(uniqueCode)}",
+                                new { now, uniqueCode });
         }
 
         public async Task SetEmailDetailsAsSent(Guid emailCode)
