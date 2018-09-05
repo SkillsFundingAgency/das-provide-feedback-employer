@@ -178,6 +178,11 @@
                                 "name": "Redis",
                                 "connectionString": "[parameters('loggingRedisConnectionString')]",
                                 "type": "Custom"
+                            },
+                            {
+                                "name": "EmployerEmailStoreConnection",
+                                "connectionString": "[parameters('dbConnectionString')]",
+                                "type": "Custom"
                             }
                         ]
                     },
