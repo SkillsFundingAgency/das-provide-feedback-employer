@@ -266,12 +266,12 @@
                         "value": [
                             {
                                 "name": "WebJobsDashboard",
-                                "connectionString": "[reference('StorageAccount').storageConnectionString.value]",
+                                "connectionString": "[reference('StorageAccount').outputs.storageConnectionString.value]",
                                 "type": "Custom"
                             },
                             {
                                 "name": "WebJobsStorage",
-                                "connectionString": "[reference('StorageAccount').storageConnectionString.value]",
+                                "connectionString": "[reference('StorageAccount').outputs.storageConnectionString.value]",
                                 "type": "Custom"
                             },
                             {
