@@ -17,7 +17,10 @@
     <ProjectReference Include="..\ESFA.DAS.ProvideFeedback.Domain.Entities\ESFA.DAS.ProvideFeedback.Domain.Entities.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Content Update="Views\Shared\_GoogleAnalyticsPartial.cshtml">
+    <Content Update="Views\Shared\_GoogleAnalyticsBodyPartial.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Shared\_GoogleAnalyticsHeadPartial.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
   </ItemGroup>

@@ -57,16 +57,18 @@ public string GetTitle()
     <meta property="og:image" content="/lib/esfa-govuk/assets/images/opengraph-image.png">
 
     <link asp-append-version="true" rel="stylesheet" media="screen" href="/css/application.css" />
-    <script src="@Url.Content("/lib/jquery/dist/jquery.js")"></script>
-
-    <environment exclude="@EnvironmentNames.GetNonProdEnvironmentNamesCommaDelimited()">
-        @await Html.PartialAsync("_GoogleAnalyticsPartial")
-    </environment>
     
+    <script src="@Url.Content("/lib/jquery/dist/jquery.js")"></script>
+    
+    @await Html.PartialAsync("_GoogleAnalyticsHeadPartial")
+
     @Html.Raw(JavaScriptSnippet.FullScript) <!-- AppInsights script -->
 </head>
 
 <body id="@ViewBag.PageID">
+
+    @await Html.PartialAsync("_GoogleAnalyticsBodyPartial")
+
     <script>document.body.className = document.body.className ? document.body.className + ' js-enabled' : 'js-enabled';</script>
     <div id="skiplink-container">
         <div>
