@@ -1,7 +1,7 @@
 ﻿@using Microsoft.Extensions.Options;
 @using ESFA.DAS.EmployerProvideFeedback.Configuration;
 
-@inject IOptions<GoogleAnalyticslConfiguration> GaConfig
+@inject IOptions<GoogleAnalyticsConfiguration> GaConfig
 
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=@GaConfig.Value.TrackingId"></script>
