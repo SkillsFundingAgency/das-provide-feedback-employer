@@ -88,17 +88,21 @@ namespace Esfa.Das.Feedback.Employer.Emailer
 
         private async Task SendMultiLinkEmail(IGrouping<Guid, EmployerEmailDetail> userGroup)
         {
+            var feedbackUrlStrings = userGroup.Select(employerEmailDetail => $"{employerEmailDetail.ProviderName} {Environment.NewLine} {_feedbackBaseUrl}{employerEmailDetail.EmailCode}");
+            var feedbackUrls = string.Join("\r\n \r\n", feedbackUrlStrings);
+
             var email = new Email
             {
-                SystemId = "",
+                SystemId = "employer-feedback",
                 TemplateId = EmailTemplates.MultipleLinkTemplateId,
                 Subject = "not-set",
                 RecipientsAddress = userGroup.First().EmailAddress,
                 ReplyToAddress = "not-set",
                 Tokens = new Dictionary<string, string>
                     {
-                        {"first_name", ""},
-                        {"feedback_urls", ""}
+                        {"provider_name", userGroup.First().ProviderName},
+                        { "first_name", userGroup.First().UserFirstName},
+                        {"feedback_urls", feedbackUrls}
                     }
             };
 

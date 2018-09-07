@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
 using Esfa.Das.ProvideFeedback.Domain.Entities;
@@ -63,9 +64,15 @@ namespace ESFA.DAS.ProvideFeedback.Data
                                 new { now, emailCode });
         }
 
-        public Task SetEmailDetailsAsSent(IEnumerable<Guid> id)
+        public async Task SetEmailDetailsAsSent(IEnumerable<Guid> ids)
         {
-            throw new NotImplementedException();
+            var idsArray = ids.ToArray();
+            var now = DateTime.Now;
+            await _dbConnection.QueryAsync($@"
+                                UPDATE EmployerEmailDetails
+                                SET EmailSentDate = @{nameof(now)}
+                                WHERE EmailCode in @{nameof(idsArray)}",
+                                new { now, idsArray});
         }
     }
 }
