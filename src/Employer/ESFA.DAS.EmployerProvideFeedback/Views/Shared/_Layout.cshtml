@@ -58,7 +58,9 @@ public string GetTitle()
     @Html.Raw(JavaScriptSnippet.FullScript) <!-- AppInsights script -->
 </head>
 <body id="@ViewBag.PageID">
-    @await Html.PartialAsync("_GoogleAnalyticsBodyPartial")
+    <environment include="@EnvironmentNames.PROD,@EnvironmentNames.TEST">
+        @await Html.PartialAsync("_GoogleAnalyticsBodyPartial")
+    </environment>
     <script>document.body.className = document.body.className ? document.body.className + ' js-enabled' : 'js-enabled';</script>
     <div id="skiplink-container">
         <div>

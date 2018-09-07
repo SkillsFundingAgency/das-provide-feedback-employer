@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using ESFA.DAS.EmployerProvideFeedback.Configuration;
 using ESFA.DAS.EmployerProvideFeedback.Configuration.Routing;
 using ESFA.DAS.EmployerProvideFeedback.Infrastructure;
 using ESFA.DAS.EmployerProvideFeedback.Orchestrators;
@@ -33,6 +34,7 @@ namespace ESFA.DAS.EmployerProvideFeedback
         public void ConfigureServices(IServiceCollection services)
         {
             services.Configure<ExternalLinksConfiguration>(Configuration.GetSection("ExternalLinks"));
+            services.Configure<GoogleAnalyticsConfiguration>(Configuration.GetSection("GoogleAnalytics"));
             services.AddTransient<IStoreEmployerEmailDetails, EmployerEmailDetailRepository>();
             services.AddTransient<EnsureFeedbackNotSubmitted>();
             services.Configure<List<ProviderAttributeModel>>(Configuration.GetSection("ProviderAttributes"));
