@@ -67,6 +67,9 @@
         },
         "dbConnectionString": {
             "type": "secureString"
+        },
+        "gaTrackingId": {
+            "type":"string"
         }
     },
     "variables": {},
@@ -153,6 +156,10 @@
                             {
                                 "name": "ExternalLinks:EmployerIdamsSiteUrl",
                                 "value": "[parameters('externalLinks').EmployerIdamsSiteUrl]"
+                            },
+                            {
+                                "name": "GoogleAnalytics:TrackingId",
+                                "value": "[parameters('gaTrackingId')]"
                             },
                             {
                                 "name": "ApplicationInsights:InstrumentationKey",
