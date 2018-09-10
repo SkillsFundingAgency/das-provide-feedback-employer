@@ -15,6 +15,9 @@ namespace ESFA.DAS.FeedbackDataAccess.Models
         [JsonProperty(PropertyName = "accountId")]
         public long AccountId { get; set; }
 
+        [JsonProperty(PropertyName = "userRef")]
+        public Guid UserRef { get; set; }
+
         [JsonProperty(PropertyName = "dateTimeCompleted")]
         public DateTime DateTimeCompleted { get; set; }
 
@@ -23,8 +26,5 @@ namespace ESFA.DAS.FeedbackDataAccess.Models
 
         [JsonProperty(PropertyName = "providerRating")]
         public string ProviderRating { get; set; }
-
-        [JsonProperty(PropertyName = "userRef")]
-        public Guid UserRef { get; set; }
     }
 }
