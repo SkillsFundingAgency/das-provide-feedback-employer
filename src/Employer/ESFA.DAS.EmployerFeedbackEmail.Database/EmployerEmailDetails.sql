@@ -6,7 +6,7 @@
     [UserRef] UNIQUEIDENTIFIER NOT NULL, 
     [UserFirstName] NVARCHAR(100) NOT NULL,
 	[AccountId] INT NOT NULL, 
-    [ProviderId] INT NOT NULL,
+    [Ukprn] INT NOT NULL,
 	[ProviderName] NVARCHAR(100) NOT NULL,
     [EmailSentDate] DATETIME NULL, 
     [CodeBurntDate] DATETIME NULL
