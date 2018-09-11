@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace ESFA.DAS.EmployerProvideFeedback.Controllers
 {
     [Route(RoutePrefixPaths.FeedbackRoutePath)]
+    [ServiceFilter(typeof(EnsureSessionExists))]
     public class ConfirmationController : Controller
     {
         private readonly ISessionService _sessionService;
