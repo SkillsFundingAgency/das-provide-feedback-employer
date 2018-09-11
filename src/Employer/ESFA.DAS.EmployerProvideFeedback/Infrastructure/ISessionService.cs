@@ -1,4 +1,6 @@
-﻿namespace ESFA.DAS.EmployerProvideFeedback.Infrastructure
+﻿using System;
+
+namespace ESFA.DAS.EmployerProvideFeedback.Infrastructure
 {
     public interface ISessionService
     {
@@ -7,5 +9,6 @@
         void Remove(string key);
         string Get(string key);
         T Get<T>(string key);
+        bool Exists(string key);
     }
 }

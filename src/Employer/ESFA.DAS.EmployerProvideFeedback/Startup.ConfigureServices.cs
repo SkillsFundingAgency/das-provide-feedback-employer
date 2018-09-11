@@ -37,6 +37,7 @@ namespace ESFA.DAS.EmployerProvideFeedback
             services.Configure<GoogleAnalyticsConfiguration>(Configuration.GetSection("GoogleAnalytics"));
             services.AddTransient<IStoreEmployerEmailDetails, EmployerEmailDetailRepository>();
             services.AddTransient<EnsureFeedbackNotSubmitted>();
+            services.AddTransient<EnsureSessionExists>();
             services.Configure<List<ProviderAttributeModel>>(Configuration.GetSection("ProviderAttributes"));
             services.Configure<CosmosConnectionSettings>(Configuration.GetSection("CosmosConnectionSettings"));
             services.AddTransient<IDbConnection>(c => new SqlConnection(Configuration.GetConnectionString("EmployerEmailStoreConnection")));

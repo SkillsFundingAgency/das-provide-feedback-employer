@@ -42,15 +42,26 @@ namespace ESFA.DAS.EmployerProvideFeedback.Infrastructure
         {
             var session = _httpContextAccessor.HttpContext.Session;
             key = _environment + "_" + key;
+            var sessionObject = string.Empty;
 
-            if (session.Keys.All(k => k != key))
+            if (KeyExists(session, key))
             {
-                return default(T);
+                sessionObject = session.GetString(key);
             }
 
-            var value = session.GetString(key);
+            return string.IsNullOrWhiteSpace(sessionObject) ? default(T) : JsonConvert.DeserializeObject<T>(sessionObject);
+        }
 
-            return string.IsNullOrWhiteSpace(value) ? default(T) : JsonConvert.DeserializeObject<T>(value);
+        public bool Exists(string key)
+        {
+            key = _environment + "_" + key;
+            var session = _httpContextAccessor.HttpContext.Session;
+            return KeyExists(session, key);
+        }
+
+        private bool KeyExists(ISession session, string key)
+        {
+            return session.Keys.Any(k => k == key);
         }
     }
 }
