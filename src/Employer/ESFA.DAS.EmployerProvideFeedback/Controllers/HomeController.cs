@@ -66,7 +66,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
             return new SurveyModel
             {
                 AccountId = employerEmailDetail.AccountId,
-                Ukprn = employerEmailDetail.ProviderId,
+                Ukprn = employerEmailDetail.Ukprn,
                 UserRef = employerEmailDetail.UserRef,
                 Submitted = employerEmailDetail.CodeBurntDate != null,
                 ProviderName = employerEmailDetail.ProviderName,
