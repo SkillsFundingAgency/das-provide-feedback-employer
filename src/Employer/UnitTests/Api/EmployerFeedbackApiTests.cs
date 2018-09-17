@@ -1,100 +1,151 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using ESFA.DAS.EmployerProvideFeedback.Api.Controllers;
-using ESFA.DAS.EmployerProvideFeedback.Api.Models;
-using ESFA.DAS.FeedbackDataAccess.Models;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
-using Microsoft.EntityFrameworkCore.Internal;
-using Xunit;
-using Xunit.Sdk;
-
-namespace UnitTests.Api
+﻿namespace UnitTests.Api
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Linq.Expressions;
+    using System.Threading.Tasks;
+
+    using ESFA.DAS.EmployerProvideFeedback.Api.Controllers;
+    using ESFA.DAS.EmployerProvideFeedback.Api.Models;
+    using ESFA.DAS.EmployerProvideFeedback.Api.Repository;
+    using ESFA.DAS.EmployerProvideFeedback.Configuration;
+
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.Azure.Documents.Client;
+    using Microsoft.EntityFrameworkCore;
+    using Microsoft.Extensions.Options;
+
+    using Moq;
+
+    using Newtonsoft.Json;
+
+    using Xunit;
+
     public class FeedbackControllerTests
     {
-        private readonly EmployerFeedbackTestHelper _testHelper;
-        private readonly EmployerFeedbackTestContext _context;
-        private readonly FeedbackController _controller;
-        
+        private readonly IOptions<Azure> options;
+
+        private readonly FeedbackController controller;
+
+        private readonly Mock<IDataRepository> mockRepo;
+
+        private readonly List<EmployerFeedbackDto> testData = new List<EmployerFeedbackDto>();
+
+        private readonly EmployerFeedbackTestHelper testHelper;
+
         public FeedbackControllerTests()
         {
-            _testHelper = new EmployerFeedbackTestHelper();
-            _context = new InMemoryEmployerFeedbackTestContext().Context();
+            this.options = Options.Create(
+                new Azure
+                    {
+                        AzureCosmosEndpoint = string.Empty,
+                        AzureCosmosKey = string.Empty,
+                        DatabaseName = string.Empty,
+                        EmployerFeedbackCollection = string.Empty
+                    });
 
-            if (EnumerableExtensions.Any(_context.EmployerFeedback)) return;
-            for (var i = 0; i < 1000; i++)
+            this.mockRepo = new Mock<IDataRepository>();
+
+            this.testHelper = new EmployerFeedbackTestHelper();
+
+            for (var i = 0; i < 50; i++)
             {
-                _context.EmployerFeedback.Add(_testHelper.GenerateRandomFeedback());
+                this.testData.Add(this.testHelper.GenerateRandomFeedback(Guid.NewGuid().ToString()));
             }
-            _context.SaveChanges();
 
-            _controller = new FeedbackController(_context);
+            this.testData.Add(this.testHelper.GenerateRandomFeedback("ddcf9d13-bf05-4e9c-bd5c-20c4133cc739"));
+            this.testData.Add(this.testHelper.GenerateRandomFeedback("84C4CFDD-1DEA-4A1A-BEC8-C1A6C763004C"));
+
+            this.controller = new FeedbackController(this.options, this.mockRepo.Object);
         }
 
         ~FeedbackControllerTests()
         {
-            _context.Database.EnsureDeleted();
-            _context.Dispose();
-            _controller.Dispose();
+            this.testData.Clear();
+            this.controller.Dispose();
         }
 
         public class GetAll : FeedbackControllerTests
         {
+            public GetAll()
+            {
+                this.mockRepo.Setup(m => m.GetAllItemsAsync<EmployerFeedbackDto>(It.IsAny<FeedOptions>()))
+                    .ReturnsAsync(this.testData);
+            }
+
             [Fact]
-            public void Should_Return_All_Items()
+            public async Task Should_Return_All_Items()
             {
                 // arrange
-                var items = _context.EmployerFeedback.ToList();
-                var expected = items.Count;
+                var expected = this.testData.Count;
 
                 // act
-                var result = _controller.GetAll();
-                var actual = result.Value.Count;
+                var actionResult = await this.controller.GetAll();
 
                 // assert
+                var actionOkResult = actionResult as OkObjectResult;
+                Assert.NotNull(actionOkResult);
+
+                var model = actionOkResult.Value as List<EmployerFeedbackDto>;
+                Assert.NotNull(model);
+
+                var actual = model.Count;
+
                 Assert.Equal(expected, actual);
             }
         }
+
         public class GetById : FeedbackControllerTests
         {
-            public GetById() : base()
+            public GetById()
+                : base()
             {
-                _context.Database.EnsureDeleted();
-                _context.Database.EnsureCreated();
+                var queries = new List<Expression<Func<EmployerFeedbackDto, bool>>>();
+                foreach (var t in this.testData)
+                {
+                    Expression<Func<EmployerFeedbackDto, bool>> expression = i => i.Id == t.Id;
+                    queries.Add(expression);
+                }
 
-                _context.EmployerFeedback.Add(_testHelper.AddedFeedback());
-                _context.SaveChanges();
+                queries.Add(i => i.Id == "00000000-0000-0000-0000-000000000000");
+
+                this.mockRepo.Setup(m => m.GetItemAsync(It.IsAny<Expression<Func<EmployerFeedbackDto, bool>>>(), It.IsAny<FeedOptions>()))
+                    .ReturnsAsync((Expression<Func<EmployerFeedbackDto, bool>> x, FeedOptions y) => this.testData.SingleOrDefault(x.Compile()));
             }
 
             [Fact]
-            public void Should_Return_NotFound_If_Not_Present()
+            public async Task Should_Return_NotFound_If_Not_Present()
             {
-                // arrange
-                var expected = typeof(NotFoundResult);
-
                 // act
-                var result = _controller.GetById(Guid.NewGuid()).Result;
-                var actual = result.GetType();
+                var actionResult = await this.controller.GetById("00000000-0000-0000-0000-000000000000");
+                Console.WriteLine(JsonConvert.SerializeObject(actionResult));
 
                 // assert
-                Assert.Equal(expected, actual);
+                var actionNotFoundResult = actionResult as NotFoundResult;
+                Assert.NotNull(actionNotFoundResult);
             }
 
-            [Fact]
-            public void Should_Return_The_Correct_Item()
+            [Theory]
+            [InlineData("ddcf9d13-bf05-4e9c-bd5c-20c4133cc739")]
+            [InlineData("84C4CFDD-1DEA-4A1A-BEC8-C1A6C763004C")]
+            public async Task Should_Return_The_Correct_Item(string id)
             {
                 // arrange
-                var expected = _testHelper.AddedFeedback();
+                var expected = this.testData.Single(t => t.Id == id.ToLower());
 
                 // act
-                var result = _controller.GetById(expected.Id);
-                var actual = result.Value;
+                var actionResult = await this.controller.GetById(id.ToLower());
+                Console.WriteLine(JsonConvert.SerializeObject(actionResult));
 
                 // assert
+                Assert.NotNull(actionResult);
+                var actionOkResult = actionResult as OkObjectResult;
+                Assert.NotNull(actionOkResult);
+
+                var actual = actionOkResult.Value as EmployerFeedbackDto;
+                Assert.NotNull(actual);
+
                 Assert.Equal(expected.Id, actual.Id);
                 Assert.Equal(expected.Ukprn, actual.Ukprn);
                 Assert.Equal(expected.AccountId, actual.AccountId);
@@ -103,52 +154,6 @@ namespace UnitTests.Api
                 Assert.Equal(expected.ProviderAttributes.Count, actual.ProviderAttributes.Count);
                 Assert.Equal(expected.ProviderRating, actual.ProviderRating);
             }
-        }
-    }
-
-    //public class InMemoryDataContext<TContext> where TContext : DbContext
-    //{
-    //    private readonly DbContextOptions<TContext> _options;
-
-    //    public InMemoryDataContext()
-    //    {
-    //        _options = CreateOptions();
-    //    }
-
-    //    public DbContextOptions<TContext> CreateOptions()
-    //    {
-    //        return new DbContextOptionsBuilder<TContext>()
-    //            .UseInMemoryDatabase(databaseName: nameof(TContext)).Options;
-    //    }
-
-    //    public TContext CreateContext()
-    //    {
-    //        return new DbContext(_options) as TContext;
-    //    }
-    //}
-
-    public class InMemoryEmployerFeedbackTestContext
-    {
-        private readonly DbContextOptions<EmployerFeedbackTestContext> options;
-
-        public InMemoryEmployerFeedbackTestContext()
-        {
-            options = CreateOptions();
-        }
-
-        public DbContextOptions<EmployerFeedbackTestContext> CreateOptions()
-        {
-            return new DbContextOptionsBuilder<EmployerFeedbackTestContext>()
-                .UseInMemoryDatabase(databaseName: nameof(EmployerFeedbackTestContext)).Options;
-        }
-
-        public EmployerFeedbackTestContext Context()
-        {
-            var context = new EmployerFeedbackTestContext(options);
-            context.Database.EnsureDeleted();
-            context.Database.EnsureCreated();
-
-            return context;;
         }
     }
 }
