@@ -1,96 +1,92 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using ESFA.DAS.EmployerProvideFeedback.Api.Models;
-using ESFA.DAS.FeedbackDataAccess.Models;
-using Microsoft.AspNetCore.Mvc;
-using NJsonSchema.Infrastructure;
-
-namespace ESFA.DAS.EmployerProvideFeedback.Api.Controllers
+﻿namespace ESFA.DAS.EmployerProvideFeedback.Api.Controllers
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Threading.Tasks;
+
+    using ESFA.DAS.EmployerProvideFeedback.Api.Models;
+    using ESFA.DAS.EmployerProvideFeedback.Api.Repository;
+
+    using Microsoft.AspNetCore.Authorization;
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.Azure.Documents.SystemFunctions;
+
     [Produces("application/json")]
     [Route("api/[controller]")]
     [ApiController]
     public class FeedbackController : Controller
     {
-        private readonly EmployerFeedbackTestContext _context;
-        private readonly EmployerFeedbackTestHelper _testHelper;
+        private readonly IEmployerFeedbackRepository feedback;
+        private readonly EmployerFeedbackTestHelper testHelper;
 
-        public FeedbackController(EmployerFeedbackTestContext context)
+        public FeedbackController(IEmployerFeedbackRepository feedback)
         {
-            _context = context;
-            _testHelper = new EmployerFeedbackTestHelper();
-
-            if (_context.EmployerFeedback.Any()) return;
-            for (var i = 0; i < 1000; i++)
-            {
-                _context.EmployerFeedback.Add(_testHelper.GenerateRandomFeedback());
-            }
-            _context.SaveChanges();
+            this.feedback = feedback;
         }
 
-        [HttpGet]
-        [ProducesResponseType(200, Type = typeof(List<EmployerFeedback>))]
+        [HttpGet, Authorize]
+        [ProducesResponseType(200, Type = typeof(List<EmployerFeedbackDto>))]
         [ProducesResponseType(204)]
-        public ActionResult<List<EmployerFeedback>> GetAll()
+        [ProducesResponseType(401)]
+        public async Task<IActionResult> GetAll()
         {
             try
             {
-                var result = _context.EmployerFeedback.ToList();
+                var result = await this.feedback.GetAllItemsAsync<EmployerFeedbackDto>();
                 if (!result.Any())
                 {
-                    return NoContent();
+                    return this.NoContent();
                 }
 
-                return result;
+                return this.Ok(result);
             }
             catch (Exception e)
             {
-                return StatusCode(500, e.Message);
+                return this.StatusCode(500, e.Message);
             }
-
         }
 
-        [HttpGet("{date}", Name = "GetNewer")]
-        [ProducesResponseType(200, Type = typeof(List<EmployerFeedback>))]
-        [ProducesResponseType(204)]
-        public ActionResult<List<EmployerFeedback>> GetNewer(DateTime date)
+        [HttpGet("{date}", Name = "GetNewer"), Authorize]
+        [ProducesResponseType(200, Type = typeof(List<EmployerFeedbackDto>))]
+        [ProducesResponseType(404)]
+        public async Task<IActionResult> GetNewer(DateTime date)
         {
             try
             {
-                var result = _context.EmployerFeedback.Where(f => f.DateTimeCompleted >= date).ToList();
-                if (!result.Any())
+                var result = await this.feedback.GetItemsAsync<EmployerFeedbackDto>(f => f.DateTimeCompleted >= date);
+                if (result.IsNull())
                 {
-                    return NotFound();
+                    return this.NotFound();
                 }
 
-                return result;
+                return this.Ok(result);
             }
             catch (Exception e)
             {
-                return StatusCode(500, e.Message);
+                return this.StatusCode(500, e.Message);
             }
         }
 
-        [HttpGet("{id}", Name = "GetById")]
-        [ProducesResponseType(200, Type = typeof(EmployerFeedback))]
-        [ProducesResponseType(204)]
-        public ActionResult<EmployerFeedback> GetById(Guid id)
+        [HttpGet("{id}", Name = "GetById"), Authorize]
+        [ProducesResponseType(200, Type = typeof(EmployerFeedbackDto))]
+        [ProducesResponseType(404)]
+        public async Task<IActionResult> GetById(string id)
         {
             try
             {
-                var item = _context.EmployerFeedback.Find(id);
+                EmployerFeedbackDto item = await this.feedback.GetItemAsync<EmployerFeedbackDto>(i => i.Id == id);
 
                 if (item == null)
                 {
-                    return NotFound();
+                    return this.NotFound();
                 }
 
-                return item;
+                return this.Ok(item);
             }
             catch (Exception e)
             {
-                return StatusCode(500, e.Message);
+                return this.StatusCode(500, e.Message);
             }
         }
     }

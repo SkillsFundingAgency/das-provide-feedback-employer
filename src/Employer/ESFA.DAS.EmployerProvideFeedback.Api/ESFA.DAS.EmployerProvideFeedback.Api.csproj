@@ -18,6 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\ESFA.DAS.EmployerFeedbackEmail.Data\ESFA.DAS.ProvideFeedback.Data.csproj" />
     <ProjectReference Include="..\ESFA.DAS.FeedbackDataAccess\ESFA.DAS.ProvideFeedback.FeedbackDataAccess.csproj" />
   </ItemGroup>
 

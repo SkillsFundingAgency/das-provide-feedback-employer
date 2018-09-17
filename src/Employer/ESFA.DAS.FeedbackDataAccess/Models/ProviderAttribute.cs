@@ -4,9 +4,6 @@ namespace ESFA.DAS.FeedbackDataAccess.Models
 {
     public class ProviderAttribute
     {
-        [JsonProperty(PropertyName = "id")]
-        public string Id { get; set; }
-
         [JsonProperty(PropertyName = "name")]
         public string Name { get; set; }
 
