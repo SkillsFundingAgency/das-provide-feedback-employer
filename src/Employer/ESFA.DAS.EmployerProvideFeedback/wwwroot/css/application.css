@@ -15,6 +15,17 @@
     }
 }
 
+.phase-banner-beta .phase-tag {
+    float: left;
+}
+
+@media (min-width: 1020px) {
+    .phase-banner-beta, .phase-banner {
+        max-width: 960px;
+        margin: 0 auto;
+    }
+}
+
 /*** Overide GDS styles to match DAS ***/
 @media(min-width: 641px) {
     #global-header .header-proposition #proposition-name {
