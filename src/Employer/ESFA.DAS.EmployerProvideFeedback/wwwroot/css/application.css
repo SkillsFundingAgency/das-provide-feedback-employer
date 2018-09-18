@@ -23,6 +23,18 @@
     }
 }
 
+.phase-banner {
+    margin: 0 15px; }
+    @media (min-width: 641px) {
+      .phase-banner {
+        margin: 0 30px; } }
+    @media (min-width: 1020px) {
+      .phase-banner {
+        margin: 0 auto;
+        max-width: 960px; } }
+    .phase-banner p {
+      display: table; }
+
 .button-link {
     display: inline-block;
     background: #fff;
