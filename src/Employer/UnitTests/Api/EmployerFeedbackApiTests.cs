@@ -26,7 +26,7 @@ namespace UnitTests.Api
 
     public class FeedbackControllerTests
     {
-        private readonly IOptions<Azure> options;
+        private readonly IOptions<AzureOptions> options;
 
         private readonly FeedbackController controller;
 
@@ -39,7 +39,7 @@ namespace UnitTests.Api
         public FeedbackControllerTests()
         {
             this.options = Options.Create(
-                new Azure
+                new AzureOptions
                     {
                         AzureCosmosEndpoint = string.Empty,
                         AzureCosmosKey = string.Empty,
