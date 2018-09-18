@@ -97,11 +97,12 @@ namespace ESFA.DAS.EmployerProvideFeedback.Api.Repository
 
             var results = new List<T>();
 
+            // TODO: Add type of doc into the DB when saved
             // Add the 'Type' of the document as a query filter, so documents can be filtered by a specific type.
-            Expression<Func<T, bool>> typeCheck = p => p.Type == typeof(T).Name;
+            // Expression<Func<T, bool>> typeCheck = p => p.Type == typeof(T).Name;
 
             var query = this.documentClient.CreateDocumentQuery<T>(this.DocumentCollectionUri, feedOptions)
-                .Where(typeCheck).AsDocumentQuery();
+                .AsDocumentQuery();
 
             while (query.HasMoreResults)
             {
@@ -119,11 +120,12 @@ namespace ESFA.DAS.EmployerProvideFeedback.Api.Repository
         {
             this.TrySetPartitionKey(ref feedOptions);
 
+            // TODO: Add type of doc into the DB when saved
             // Add the 'Type' of the document as a query filter, so documents can be filtered by a specific type.
-            Expression<Func<T, bool>> typeCheck = p => p.Type == typeof(T).Name;
+            // Expression<Func<T, bool>> typeCheck = p => p.Type == typeof(T).Name;
 
             var query = this.documentClient.CreateDocumentQuery<T>(this.DocumentCollectionUri, feedOptions)
-                .Where(typeCheck).Where(predicate).AsDocumentQuery();
+                .Where(predicate).AsDocumentQuery();
 
             var results = await query.ExecuteNextAsync<T>();
 
@@ -151,11 +153,12 @@ namespace ESFA.DAS.EmployerProvideFeedback.Api.Repository
 
             var results = new List<T>();
 
+            // TODO: Add type of doc into the DB when saved
             // Add the 'Type' of the document as a query filter, so documents can be filtered by a specific type.
-            Expression<Func<T, bool>> typeCheck = p => p.Type == typeof(T).Name;
+            // Expression<Func<T, bool>> typeCheck = p => p.Type == typeof(T).Name;
 
             var query = this.documentClient.CreateDocumentQuery<T>(this.DocumentCollectionUri, feedOptions)
-                .Where(typeCheck).Where(predicate).AsDocumentQuery();
+                .Where(predicate).AsDocumentQuery();
 
             while (query.HasMoreResults)
             {
