@@ -1,6 +1,6 @@
 ﻿namespace ESFA.DAS.EmployerProvideFeedback.Configuration
 {
-    public class Azure
+    public class AzureOptions
     {
         public string AzureCosmosEndpoint { get; set; }
 
