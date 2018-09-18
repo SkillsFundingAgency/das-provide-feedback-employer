@@ -1,6 +1,4 @@
-﻿@using ESFA.DAS.EmployerProvideFeedback.Configuration;
-@using ESFA.DAS.EmployerProvideFeedback.Configuration.Routing;
-@using Microsoft.Extensions.Options;
+﻿@using Microsoft.Extensions.Options;
 @inject IOptions<ExternalLinksConfiguration> externalLinks;
 @{
     var _isErrorPage = ViewContext.View.Path.Contains("Error");
@@ -92,8 +90,7 @@ public string GetTitle()
             <p>
                 <strong class="phase-tag">BETA</strong>
                 <span>
-                    <!--TODO: Correct survey url-->
-                    This is a new service – your <a href="@externalLinks.Value.ManageApprenticeshipSiteUrl" target="_blank">feedback</a> will help us to improve it.
+                    This is a new service – your <a href="@externalLinks.Value.FeedbackSurveyUrl" target="_blank">feedback</a> will help us to improve it.
                 </span>
             </p>
         </div>
