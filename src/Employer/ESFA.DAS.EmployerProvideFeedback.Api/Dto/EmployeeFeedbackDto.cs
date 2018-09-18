@@ -1,16 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
-using ESFA.DAS.FeedbackDataAccess.Models;
+using ESFA.DAS.EmployerProvideFeedback.Api.Repository;
 using Newtonsoft.Json;
 
-namespace ESFA.DAS.EmployerProvideFeedback.Api.Models
+namespace ESFA.DAS.EmployerProvideFeedback.Api.Dto
 {
-    using ESFA.DAS.EmployerProvideFeedback.Api.Repository;
-
     [Serializable]
-    public class EmployerFeedbackDto : TypedDocument<EmployerFeedbackDto>
+    public class EmployerFeedback : TypedDocument<EmployerFeedback>
     {
         [JsonProperty(PropertyName = "ukprn")]
         public long Ukprn { get; set; }
@@ -25,14 +21,14 @@ namespace ESFA.DAS.EmployerProvideFeedback.Api.Models
         public DateTime DateTimeCompleted { get; set; }
 
         [JsonProperty(PropertyName = "providerAttributes")]
-        public List<ProviderAttributeDto> ProviderAttributes { get; set; }
+        public List<ProviderAttribute> ProviderAttributes { get; set; }
 
         [JsonProperty(PropertyName = "providerRating")]
         public string ProviderRating { get; set; }
     }
 
     [Serializable]
-    public class ProviderAttributeDto
+    public class ProviderAttribute
     {
         [JsonProperty(PropertyName = "name")]
         public string Name { get; set; }

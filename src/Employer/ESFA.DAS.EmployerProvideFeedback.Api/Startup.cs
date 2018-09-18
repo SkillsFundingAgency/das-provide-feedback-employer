@@ -64,17 +64,19 @@
             services.AddDbContext<EmployerFeedbackTestContext>(opt => opt.UseInMemoryDatabase("EmployerFeedback"));
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
-            services.AddSingleton(svc =>
+            services.AddSingleton<IDataRepository>((svc) => 
                     {
-                        string endpoint = this.Configuration["AzureCosmosEndpoint"];
-                        string authKey = this.Configuration["AzureCosmosKey"];
-                        string database = this.Configuration["DatabaseName"];
-                        string collection = this.Configuration["SessionLogTable"];
+                        string endpoint = this.Configuration["Azure:CosmosEndpoint"];
+                        string authKey = this.Configuration["Azure:CosmosKey"];
+                        string database = this.Configuration["Azure:DatabaseName"];
+                        string collection = this.Configuration["Azure:EmployerFeedbackCollection"];
 
-                        IDataRepository repo = CosmosDbRepository.Instance.ConnectTo(endpoint)
-                            .WithAuthKeyOrResourceToken(authKey).UsingDatabase(database).UsingCollection(collection);
-
-                        return repo as IEmployerFeedbackRepository;
+                        return CosmosDbRepository
+                            .Instance
+                            .ConnectTo(endpoint)
+                            .WithAuthKeyOrResourceToken(authKey)
+                            .UsingDatabase(database)
+                            .UsingCollection(collection);
                     });
         }
     }

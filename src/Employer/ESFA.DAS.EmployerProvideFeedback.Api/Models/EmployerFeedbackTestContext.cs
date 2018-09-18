@@ -10,7 +10,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Api.Models
         {
         }
 
-        public DbSet<EmployerFeedback> EmployerFeedback { get; set; }
+        public DbSet<FeedbackDataAccess.Models.EmployerFeedback> EmployerFeedback { get; set; }
 
     }
 }

@@ -1,4 +1,6 @@
-﻿namespace UnitTests.Api
+﻿using ESFA.DAS.EmployerProvideFeedback.Api.Dto;
+
+namespace UnitTests.Api
 {
     using System;
     using System.Collections.Generic;
@@ -30,7 +32,7 @@
 
         private readonly Mock<IEmployerFeedbackRepository> mockRepo;
 
-        private readonly List<EmployerFeedbackDto> testData = new List<EmployerFeedbackDto>();
+        private readonly List<EmployerFeedback> testData = new List<EmployerFeedback>();
 
         private readonly EmployerFeedbackTestHelper testHelper;
 
@@ -70,7 +72,7 @@
         {
             public GetAll()
             {
-                this.mockRepo.Setup(m => m.GetAllItemsAsync<EmployerFeedbackDto>(It.IsAny<FeedOptions>()))
+                this.mockRepo.Setup(m => m.GetAllItemsAsync<EmployerFeedback>(It.IsAny<FeedOptions>()))
                     .ReturnsAsync(this.testData);
             }
 
@@ -87,7 +89,7 @@
                 var actionOkResult = actionResult as OkObjectResult;
                 Assert.NotNull(actionOkResult);
 
-                var model = actionOkResult.Value as List<EmployerFeedbackDto>;
+                var model = actionOkResult.Value as List<EmployerFeedback>;
                 Assert.NotNull(model);
 
                 var actual = model.Count;
@@ -101,17 +103,17 @@
             public GetById()
                 : base()
             {
-                var queries = new List<Expression<Func<EmployerFeedbackDto, bool>>>();
+                var queries = new List<Expression<Func<EmployerFeedback, bool>>>();
                 foreach (var t in this.testData)
                 {
-                    Expression<Func<EmployerFeedbackDto, bool>> expression = i => i.Id == t.Id;
+                    Expression<Func<EmployerFeedback, bool>> expression = i => i.Id == t.Id;
                     queries.Add(expression);
                 }
 
                 queries.Add(i => i.Id == "00000000-0000-0000-0000-000000000000");
 
-                this.mockRepo.Setup(m => m.GetItemAsync(It.IsAny<Expression<Func<EmployerFeedbackDto, bool>>>(), It.IsAny<FeedOptions>()))
-                    .ReturnsAsync((Expression<Func<EmployerFeedbackDto, bool>> x, FeedOptions y) => this.testData.SingleOrDefault(x.Compile()));
+                this.mockRepo.Setup(m => m.GetItemAsync(It.IsAny<Expression<Func<EmployerFeedback, bool>>>(), It.IsAny<FeedOptions>()))
+                    .ReturnsAsync((Expression<Func<EmployerFeedback, bool>> x, FeedOptions y) => this.testData.SingleOrDefault(x.Compile()));
             }
 
             [Fact]
@@ -143,7 +145,7 @@
                 var actionOkResult = actionResult as OkObjectResult;
                 Assert.NotNull(actionOkResult);
 
-                var actual = actionOkResult.Value as EmployerFeedbackDto;
+                var actual = actionOkResult.Value as EmployerFeedback;
                 Assert.NotNull(actual);
 
                 Assert.Equal(expected.Id, actual.Id);
