@@ -1,4 +1,10 @@
-﻿namespace ESFA.DAS.EmployerProvideFeedback.Api
+﻿using System.IO;
+using ESFA.DAS.EmployerProvideFeedback.Configuration;
+using Microsoft.AspNetCore.Hosting;
+using NSwag;
+using NSwag.SwaggerGeneration.Processors.Security;
+
+namespace ESFA.DAS.EmployerProvideFeedback.Api
 {
     using System.Reflection;
     using System.Text;
@@ -20,9 +26,15 @@
 
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public Startup(IHostingEnvironment env)
         {
-            this.Configuration = configuration;
+            var configBuilder = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile($"appsettings.json", optional: true)
+                .AddJsonFile($"appsettings.json.{env.EnvironmentName}", optional: true)
+                .AddEnvironmentVariables();
+
+            this.Configuration = configBuilder.Build();
         }
 
         public IConfiguration Configuration { get; }
@@ -37,6 +49,16 @@
                 settings =>
                     {
                         settings.GeneratorSettings.DefaultPropertyNameHandling = PropertyNameHandling.CamelCase;
+                        settings.GeneratorSettings.OperationProcessors.Add(new OperationSecurityScopeProcessor("JWT Token"));
+
+                        settings.GeneratorSettings.DocumentProcessors.Add(new SecurityDefinitionAppender("JWT Token",
+                            new SwaggerSecurityScheme
+                            {
+                                Type = SwaggerSecuritySchemeType.ApiKey,
+                                Name = "Authorization",
+                                Description = "Copy 'Bearer ' + valid JWT token into field",
+                                In = SwaggerSecurityApiKeyLocation.Header
+                            }));
                     });
 
             app.UseAuthentication();
@@ -46,6 +68,11 @@
 
         public void ConfigureServices(IServiceCollection services)
         {
+            var configBuilder = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json", optional: true);
+            var config = configBuilder.Build();
+
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(
                 options =>
                     {
@@ -61,7 +88,7 @@
                                     new SymmetricSecurityKey(Encoding.UTF8.GetBytes(this.Configuration["Jwt:Key"]))
                             };
                     });
-            services.AddDbContext<EmployerFeedbackTestContext>(opt => opt.UseInMemoryDatabase("EmployerFeedback"));
+
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
             services.AddSingleton<IDataRepository>((svc) => 
@@ -78,6 +105,9 @@
                             .UsingDatabase(database)
                             .UsingCollection(collection);
                     });
+
+            services.Configure<AzureOptions>(Configuration.GetSection("Azure"));
+            services.Configure<JwtOptions>(Configuration.GetSection("Jwt"));
         }
     }
 }
