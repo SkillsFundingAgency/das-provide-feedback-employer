@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using ESFA.DAS.EmployerProvideFeedback.Infrastructure.Validation;
 
 namespace ESFA.DAS.EmployerProvideFeedback.ViewModels
 {
@@ -13,6 +14,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.ViewModels
 
         public long AccountId { get; set; }
 
+        [EnsureMaxThreeProviderAttribute]
         public List<ProviderAttributeModel> ProviderAttributes { get; set; } = new List<ProviderAttributeModel>();
 
         [Required]

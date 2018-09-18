@@ -27,6 +27,9 @@
                     <legend>
                         <h2 class="heading-medium">How do you rate @Model.ProviderName's apprenticeship training?</h2>
                     </legend>
+
+                    <input type="hidden" asp-for="@Model.ProviderName" />
+
                     @if (!ViewData.ModelState.IsValid)
                     {
                         <span class="error-message">

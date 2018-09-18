@@ -9,7 +9,6 @@ using ESFA.DAS.EmployerProvideFeedback.ViewModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
-using Microsoft.Extensions.Options;
 using Moq;
 using Xunit;
 
@@ -85,9 +84,10 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
             // Arrange
             var sessionDoingWellAtts = _providerAttributes.Take(3).ToList();
             sessionDoingWellAtts.ForEach(ps => ps.IsDoingWell = true);
+            var surveyModel = new SurveyModel { ProviderAttributes = _providerAttributes };
 
             // Act
-            var result = _controller.QuestionOne(_uniqueCode, _providerAttributes);
+            var result = _controller.QuestionOne(_uniqueCode, surveyModel);
 
             // Assert
             _sessionServiceMock.Verify(mock => mock.Set(It.IsAny<string>(), It.IsAny<object>()), Times.Once);
@@ -102,7 +102,7 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
             _controller.TempData.Add("ReturnUrl", RouteNames.ReviewAnswers_Get);
 
             // Act
-            var result = _controller.QuestionOne(_uniqueCode, _providerAttributes);
+            var result = _controller.QuestionOne(_uniqueCode, new SurveyModel { ProviderAttributes = _providerAttributes });
 
             // Assert
             Assert.IsAssignableFrom<RedirectToRouteResult>(result);
@@ -149,9 +149,10 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
             // Arrange
             var sessionDoingWellAtts = _providerAttributes.Take(3).ToList();
             sessionDoingWellAtts.ForEach(ps => ps.IsToImprove = true);
+            var surveyModel = new SurveyModel { ProviderAttributes = _providerAttributes };
 
             // Act
-            var result = _controller.QuestionTwo(_uniqueCode, _providerAttributes);
+            var result = _controller.QuestionTwo(_uniqueCode, surveyModel);
 
             // Assert
             _sessionServiceMock.Verify(mock => mock.Set(It.IsAny<string>(), It.IsAny<object>()), Times.Once);
@@ -166,7 +167,7 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
             _controller.TempData.Add("ReturnUrl", RouteNames.ReviewAnswers_Get);
 
             // Act
-            var result = _controller.QuestionTwo(_uniqueCode, _providerAttributes);
+            var result = _controller.QuestionTwo(_uniqueCode, new SurveyModel { ProviderAttributes = _providerAttributes });
 
             // Assert
             Assert.IsAssignableFrom<RedirectToRouteResult>(result);

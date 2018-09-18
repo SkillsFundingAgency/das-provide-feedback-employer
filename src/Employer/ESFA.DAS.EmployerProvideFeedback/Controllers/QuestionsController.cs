@@ -1,10 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using ESFA.DAS.EmployerProvideFeedback.Configuration.Routing;
 using ESFA.DAS.EmployerProvideFeedback.Infrastructure;
 using ESFA.DAS.EmployerProvideFeedback.ViewModels;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace ESFA.DAS.EmployerProvideFeedback.Controllers
 {
@@ -34,10 +33,15 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
         }
 
         [HttpPost("question-one", Name = RouteNames.QuestionOne_Post)]
-        public IActionResult QuestionOne(Guid uniqueCode, List<ProviderAttributeModel> providerAttributes)
+        public IActionResult QuestionOne(Guid uniqueCode, SurveyModel surveyModel)
         {
+            if (!IsProviderAttributesValid(surveyModel))
+            {
+                return View(surveyModel);
+            }
+
             var sessionAnswer = _sessionService.Get<SurveyModel>(uniqueCode.ToString());
-            sessionAnswer.ProviderAttributes = providerAttributes;
+            sessionAnswer.ProviderAttributes = surveyModel.ProviderAttributes;
             _sessionService.Set(uniqueCode.ToString(), sessionAnswer);
 
             return HandleRedirect(RouteNames.QuestionTwo_Get);
@@ -52,13 +56,20 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
         }
 
         [HttpPost("question-two", Name = RouteNames.QuestionTwo_Post)]
-        public IActionResult QuestionTwo(Guid uniqueCode, List<ProviderAttributeModel> providerAttributes)
+        public IActionResult QuestionTwo(Guid uniqueCode, SurveyModel surveyModel)
         {
+            if (!IsProviderAttributesValid(surveyModel))
+            {
+                return View(surveyModel);
+            }
+
             var sessionAnswer = _sessionService.Get<SurveyModel>(uniqueCode.ToString());
-            sessionAnswer.ProviderAttributes = providerAttributes;
+            sessionAnswer.ProviderAttributes = surveyModel.ProviderAttributes;
             _sessionService.Set(uniqueCode.ToString(), sessionAnswer);
             return HandleRedirect(RouteNames.QuestionThree_Get);
         }
+
+        
 
         [HttpGet("question-three", Name = RouteNames.QuestionThree_Get)]
         public IActionResult QuestionThree(Guid uniqueCode, string returnUrl = null)
@@ -86,6 +97,12 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
         {
             var returnRoute = Convert.ToString(TempData[ReturnUrlKey]);
             return RedirectToRoute(string.IsNullOrEmpty(returnRoute) ? nextRoute : returnRoute);
+        }
+
+        private bool IsProviderAttributesValid(SurveyModel surveyModel)
+        {
+            ModelState.TryGetValue(nameof(surveyModel.ProviderAttributes), out ModelStateEntry modelState);
+            return modelState == null ? true : modelState.ValidationState == ModelValidationState.Valid;
         }
     }
 }
