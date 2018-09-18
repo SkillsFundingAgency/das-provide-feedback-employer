@@ -28,7 +28,7 @@
 
         private readonly FeedbackController controller;
 
-        private readonly Mock<IDataRepository> mockRepo;
+        private readonly Mock<IEmployerFeedbackRepository> mockRepo;
 
         private readonly List<EmployerFeedbackDto> testData = new List<EmployerFeedbackDto>();
 
@@ -45,7 +45,7 @@
                         EmployerFeedbackCollection = string.Empty
                     });
 
-            this.mockRepo = new Mock<IDataRepository>();
+            this.mockRepo = new Mock<IEmployerFeedbackRepository>();
 
             this.testHelper = new EmployerFeedbackTestHelper();
 
@@ -57,7 +57,7 @@
             this.testData.Add(this.testHelper.GenerateRandomFeedback("ddcf9d13-bf05-4e9c-bd5c-20c4133cc739"));
             this.testData.Add(this.testHelper.GenerateRandomFeedback("84C4CFDD-1DEA-4A1A-BEC8-C1A6C763004C"));
 
-            this.controller = new FeedbackController(this.options, this.mockRepo.Object);
+            this.controller = new FeedbackController(this.mockRepo.Object);
         }
 
         ~FeedbackControllerTests()
