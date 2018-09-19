@@ -17,14 +17,6 @@ namespace ESFA.DAS.EmployerProvideFeedback.Api.Repository
 
     using Microsoft.Azure.Documents.Client;
 
-    public interface IEmployerFeedbackRepository : IDataRepository
-    {
-
-    }
-
-    /// <summary>
-    /// The DataRepository interface.
-    /// </summary>
     public interface IDataRepository
     {
         /// <summary>
@@ -105,5 +97,78 @@ namespace ESFA.DAS.EmployerProvideFeedback.Api.Repository
         /// <returns>An updated object of type <see cref="T"/></returns>
         Task<T> UpsertItemAsync<T>(T document, RequestOptions requestOptions = null)
             where T : TypedDocument<T>;
+    }
+
+    /// <summary>
+    /// The DataRepository interface.
+    /// </summary>
+    /// <typeparam name="TEntity">
+    ///     The default entity type to work with
+    /// </typeparam>
+    public interface IDataRepository<TEntity> : IDataRepository
+        where TEntity : TypedDocument<TEntity>
+    {
+        /// <summary>
+        ///     Get all documents of type <see cref="TEntity"/> from the data store
+        /// </summary>
+        /// <param name="feedOptions">the <see cref="FeedOptions"/></param>
+        /// <returns>An <see cref="IEnumerable{TEntity}"/> collection of objects</returns>
+        Task<IEnumerable<TEntity>> GetAllItemsAsync(FeedOptions feedOptions = null);
+
+        /// <summary>
+        ///     Get a single document of type <see cref="TEntity"/> from the data store, using a predicate
+        /// </summary>
+        /// <param name="predicate"> The expression to use for obtaining the item</param>
+        /// <param name="feedOptions"> the <see cref="FeedOptions"/> </param>
+        /// <returns>An object of type <see cref="TEntity"/></returns>
+        Task<TEntity> GetItemAsync(Expression<Func<TEntity, bool>> predicate, FeedOptions feedOptions = null);
+
+        /// <summary>
+        ///     Get a single item of type <see cref="TEntity"/> from the data store, using the documentId
+        /// </summary>
+        /// <param name="documentId"> The ID of the document to return</param>
+        /// <param name="requestOptions"> the <see cref="RequestOptions"/> </param>
+        /// <returns>An object of type <see cref="TEntity"/></returns>
+        Task<TEntity> GetItemAsync(string documentId, RequestOptions requestOptions = null);
+
+        /// <summary>
+        ///     Get all documents of type <see cref="TEntity"/> from the data store that match a given predicate
+        /// </summary>
+        /// <param name="predicate"> The expression to use for obtaining the items</param>
+        /// <param name="feedOptions"> the <see cref="FeedOptions"/> </param>
+        /// <returns>An <see cref="IEnumerable{T}"/> collection of objects</returns>
+        Task<IEnumerable<TEntity>> GetItemsAsync(Expression<Func<TEntity, bool>> predicate, FeedOptions feedOptions = null);
+
+        /// <summary>
+        ///     Remove a single document of type <see cref="TEntity"/> from the data store, using the documentId
+        /// </summary>
+        /// <param name="documentId"> The ID of the document to return</param>
+        /// <param name="requestOptions"> the <see cref="RequestOptions"/> </param>
+        /// <returns> A boolean value indicating success or failure </returns>
+        Task<bool> RemoveItemAsync(string documentId, RequestOptions requestOptions = null);
+
+        /// <summary>
+        ///     Remove a single document of type <see cref="TEntity"/> from the data store, using the document <see cref="TEntity"/>
+        /// </summary>
+        /// <param name="document"> The document of type <see cref="TEntity"/> to remove </param>
+        /// <param name="requestOptions"> the <see cref="RequestOptions"/> </param>
+        /// <returns> A boolean value indicating success or failure </returns>
+        Task<bool> RemoveItemAsync(TEntity document, RequestOptions requestOptions = null);
+
+        /// <summary>
+        ///     Remove a collection of documents of type <see cref="TEntity"/> from the data store that are present in a given document list of type <see cref="TEntity"/>
+        /// </summary>
+        /// <param name="documents"> The collection of documents of type <see cref="TEntity"/> to remove </param>
+        /// <param name="requestOptions"> the <see cref="RequestOptions"/> </param>
+        /// <returns> A boolean value indicating success or failure </returns>
+        Task<bool> RemoveItemsAsync(IEnumerable<TEntity> documents, RequestOptions requestOptions = null);
+
+        /// <summary>
+        ///     Creates or updates a single document of type <see cref="TEntity"/> from the data store, using the document <see cref="TEntity"/>
+        /// </summary>
+        /// <param name="document"> The document of type <see cref="TEntity"/> to create/update </param>
+        /// <param name="requestOptions"> the <see cref="RequestOptions"/> </param>
+        /// <returns>An updated object of type <see cref="TEntity"/></returns>
+        Task<TEntity> UpsertItemAsync(TEntity document, RequestOptions requestOptions = null);
     }
 }
