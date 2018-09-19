@@ -5,6 +5,9 @@
         "appServiceName": {
             "type": "string"
         },
+        "apiAppServiceName": {
+            "type": "string"
+        },		
         "sharedAppServicePlanName": {
             "type": "string"
         },
@@ -62,6 +65,19 @@
                 "ClientToken": ""
             }
         },
+        "feedbackApiAuth": {
+            "type": "secureObject",
+            "defaultValue": {
+                "Key": ""
+            }
+        },		
+        "feedbackApiData": {
+            "type": "object",
+            "defaultValue": {
+                "DatabaseName": "",
+				"CollectionName": ""
+            }
+        },			
         "storageAccountName": {
             "type": "string"
         },
@@ -205,6 +221,81 @@
                 "UIAppInsights"
             ]
         },
+        {
+            "apiVersion": "2017-05-10",
+            "name": "ApiAppService",
+            "type": "Microsoft.Resources/deployments",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/app-service.json",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "appServiceName": {
+                        "value": "[parameters('apiAppServiceName')]"
+                    },
+                    "appServicePlanName": {
+                        "value": "[parameters('sharedAppServicePlanName')]"
+                    },
+                    "appServicePlanResourceGroup": {
+                        "value": "[parameters('sharedAppServicePlanResourceGroup')]"
+                    },
+                    "appServiceAppSettings": {
+                        "value": [
+                            {
+                                "name": "Azure:CosmosEndpoint",
+                                "value": "[concat('https://', parameters('cosmosDbName'), '.documents.azure.com:443/')]"
+                            },
+                            {
+                                "name": "Azure:CosmosKey",
+                                "value": "[reference('CosmosDB').outputs.PrimaryMasterKey.value]"
+                            },
+							{
+                                "name": "Azure:DatabaseName",
+                                "value": "[parameters('feedbackApiData').DatabaseName]"
+                            },
+                            {
+                                "name": "Azure:EmployerFeedbackCollection",
+                                "value": "[parameters('feedbackApiData').CollectionName]"
+                            },							
+							{
+                                "name": "Jwt:Key",
+                                "value": "[parameters('feedbackApiAuth').Key]"
+                            },
+                            {
+                                "name": "Jwt:Issuer",
+                                "value": "[concat('https://', parameters('apiAppServiceName'), '.apprenticeships.sfa.bis.gov.uk')]"
+                            },							
+                            {
+                                "name": "ApplicationInsights:InstrumentationKey",
+                                "value": "[reference('UIAppInsights').outputs.InstrumentationKey.value]"
+                            },
+                            {
+                                "name": "ASPNETCORE_ENVIRONMENT",
+                                "value": "[parameters('aspNetCoreEnvironment')]"
+                            }
+                        ]
+                    },
+                    "appServiceConnectionStrings": {
+                        "value": [
+                            {
+                                "name": "Redis",
+                                "connectionString": "[parameters('loggingRedisConnectionString')]",
+                                "type": "Custom"
+                            }
+						]
+                    },
+                    "certificateThumbprint": {
+                        "value": "[reference(resourceId(parameters('sharedAppServicePlanResourceGroup'), 'Microsoft.Web/certificates', parameters('certificateName')), '2016-03-01').Thumbprint]"
+                    }
+                }
+            },
+            "dependsOn": [
+                "UIAppInsights",
+				"CosmosDB"
+            ]
+        },		
         {
             "apiVersion": "2017-05-10",
             "name": "WorkerAppServicePlan",
