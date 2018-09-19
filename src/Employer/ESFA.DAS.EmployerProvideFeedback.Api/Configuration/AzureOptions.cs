@@ -1,4 +1,4 @@
-﻿namespace ESFA.DAS.EmployerProvideFeedback.Configuration
+﻿namespace ESFA.DAS.EmployerProvideFeedback.Api.Configuration
 {
     public class AzureOptions
     {

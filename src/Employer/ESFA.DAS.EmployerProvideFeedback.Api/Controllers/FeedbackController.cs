@@ -1,31 +1,30 @@
-﻿using ESFA.DAS.EmployerProvideFeedback.Api.Dto;
-using Microsoft.Azure.Documents.Client;
-
-namespace ESFA.DAS.EmployerProvideFeedback.Api.Controllers
+﻿namespace ESFA.DAS.EmployerProvideFeedback.Api.Controllers
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
 
-    using ESFA.DAS.EmployerProvideFeedback.Api.Models;
+    using ESFA.DAS.EmployerProvideFeedback.Api.Dto;
     using ESFA.DAS.EmployerProvideFeedback.Api.Repository;
 
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Azure.Documents.SystemFunctions;
+    using Microsoft.Extensions.Logging;
 
     [Produces("application/json")]
     [Route("api/[controller]")]
     [ApiController]
     public class FeedbackController : Controller
     {
-        private readonly IDataRepository feedback;
-        private readonly EmployerFeedbackTestHelper testHelper;
+        private readonly IEmployerFeedbackRepository feedback;
+        private readonly ILogger<FeedbackController> logger;
 
-        public FeedbackController(IDataRepository feedback)
+        public FeedbackController(IEmployerFeedbackRepository feedback, ILogger<FeedbackController> logger)
         {
             this.feedback = feedback;
+            this.logger = logger;
         }
 
         [HttpGet, Authorize]
@@ -36,38 +35,48 @@ namespace ESFA.DAS.EmployerProvideFeedback.Api.Controllers
         {
             try
             {
-                var result = await this.feedback.GetAllItemsAsync<EmployerFeedback>();
-                if (!result.Any())
+                var result = await this.feedback.GetAllItemsAsync();
+                if (result.Any())
                 {
-                    return this.NoContent();
+                    return this.Ok(result);
                 }
 
-                return this.Ok(result);
+                this.logger.LogWarning($"Provider Feedback records database seems to be empty, could not return results");
+                return this.NoContent();
+
             }
             catch (Exception e)
             {
-                return this.StatusCode(500, e.Message);
+                var message = $"Exception when attempting to get all Provider Feedback records. Message: {e.Message}";
+                this.logger.LogError(message);
+                return this.StatusCode(500, message);
             }
         }
 
-        [HttpGet("{date}", Name = "GetNewer"), Authorize]
+        [HttpGet("{year}/{month}/{day}", Name = "GetNewer"), Authorize]
         [ProducesResponseType(200, Type = typeof(List<EmployerFeedback>))]
         [ProducesResponseType(404)]
-        public async Task<IActionResult> GetNewer(DateTime date)
+        public async Task<IActionResult> GetNewer(int year, int month, int day)
         {
+            DateTime date = DateTime.UtcNow;
             try
             {
-                var result = await this.feedback.GetItemsAsync<EmployerFeedback>(f => f.DateTimeCompleted >= date);
-                if (result.IsNull())
+                date = new DateTime(year, month, day, 0, 0, 0);
+                var result = await this.feedback.GetItemsAsync(f => f.DateTimeCompleted.CompareTo(date) >= 0);
+                if (!result.IsNull())
                 {
-                    return this.NotFound();
+                    return this.Ok(result);
                 }
 
-                return this.Ok(result);
+                this.logger.LogWarning($"Provider Feedback records newer than {date} were not found.");
+                return this.NotFound();
+
             }
             catch (Exception e)
             {
-                return this.StatusCode(500, e.Message);
+                var message = $"Exception when attempting to get all Provider Feedback records newer than {date.ToLongDateString()}. Message: {e.Message}";
+                this.logger.LogError(message);
+                return this.StatusCode(500, message);
             }
         }
 
@@ -78,18 +87,21 @@ namespace ESFA.DAS.EmployerProvideFeedback.Api.Controllers
         {
             try
             {
-                EmployerFeedback item = await this.feedback.GetItemAsync<EmployerFeedback>(i => i.Id == id);
-
-                if (item == null)
+                EmployerFeedback item = await this.feedback.GetItemAsync(i => i.Id == id);
+                if (item != null)
                 {
-                    return this.NotFound();
+                    return this.Ok(item);
                 }
 
-                return this.Ok(item);
+                this.logger.LogWarning($"Provider Feedback record with id {id} was not found.");
+                return this.NotFound();
+
             }
             catch (Exception e)
             {
-                return this.StatusCode(500, e.Message);
+                var message = $"Exception when attempting to a Provider Feedback record with id {id}. Message: {e.Message}";
+                this.logger.LogError(message);
+                return this.StatusCode(500, message);
             }
         }
     }
