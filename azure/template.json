@@ -75,7 +75,8 @@
             "type": "object",
             "defaultValue": {
                 "DatabaseName": "",
-				"CollectionName": ""
+				"TokenCollection": ""
+				"FeedbackCollection": ""
             }
         },			
         "storageAccountName": {
@@ -257,8 +258,12 @@
                             },
                             {
                                 "name": "Azure:EmployerFeedbackCollection",
-                                "value": "[parameters('feedbackApiData').CollectionName]"
-                            },							
+                                "value": "[parameters('feedbackApiData').FeedbackCollection]"
+                            },		
+							{
+                                "name": "Azure:TokenCollection",
+                                "value": "[parameters('feedbackApiData').TokenCollection]"
+                            },	
 							{
                                 "name": "Jwt:Key",
                                 "value": "[parameters('feedbackApiAuth').Key]"

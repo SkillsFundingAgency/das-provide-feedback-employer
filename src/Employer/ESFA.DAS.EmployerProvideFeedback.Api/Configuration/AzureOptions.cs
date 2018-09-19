@@ -2,12 +2,14 @@
 {
     public class AzureOptions
     {
-        public string AzureCosmosEndpoint { get; set; }
+        public string CosmosEndpoint { get; set; }
 
-        public string AzureCosmosKey { get; set; }
+        public string CosmosKey { get; set; }
 
         public string DatabaseName { get; set; }
 
         public string EmployerFeedbackCollection { get; set; }
+
+        public string TokenCollection { get; set; }
     }
 }
