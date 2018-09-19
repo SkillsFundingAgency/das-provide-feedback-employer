@@ -36,4 +36,25 @@ namespace ESFA.DAS.EmployerProvideFeedback.Api.Dto
         [JsonProperty(PropertyName = "value")]
         public int Value { get; set; }
     }
+
+    [Serializable]
+    public class UserModel
+    {
+        public string Email { get; set; }
+
+        public string Name { get; set; }
+    }
+
+    [Serializable]
+    public class ApiAccount : TypedDocument<ApiAccount>
+    {
+        [JsonProperty(PropertyName = "key")]
+        public string Key { get; set; }
+
+        [JsonProperty(PropertyName = "email")]
+        public string Email { get; set; }
+
+        [JsonProperty(PropertyName = "name")]
+        public string Name { get; set; }
+    }
 }

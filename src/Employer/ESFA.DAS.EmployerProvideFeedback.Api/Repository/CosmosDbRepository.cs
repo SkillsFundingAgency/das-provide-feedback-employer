@@ -1,14 +1,4 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="CosmosDbRepository.cs" company="Sohara Design Ltd">
-//  This is based on the work of Adam Hockemeyer:
-//   https://github.com/adamhockemeyer/Azure-Functions---CosmosDB-ResourceToken-Broker/blob/master/CosmosDBResourceTokenBroker.Shared/CosmosDBRepository.cs
-// </copyright>
-// <summary>
-//   The cosmos db repository.
-// </summary>
-// --------------------------------------------------------------------------------------------------------------------
-
-namespace ESFA.DAS.EmployerProvideFeedback.Api.Repository
+﻿namespace ESFA.DAS.EmployerProvideFeedback.Api.Repository
 {
     using System;
     using System.Collections.Generic;
@@ -24,46 +14,25 @@ namespace ESFA.DAS.EmployerProvideFeedback.Api.Repository
     /// <inheritdoc cref="IDataRepository" />
     public class CosmosDbRepository : IDataRepository
     {
-        /// <summary>
-        /// Sets up a new Instance on demand.
-        /// </summary>
         private static readonly Lazy<CosmosDbRepository> LazyInstance =
             new Lazy<CosmosDbRepository>(() => new CosmosDbRepository());
 
-        /// <summary>
-        /// The auth key or resource token.
-        /// </summary>
         private string authKeyOrResourceToken = string.Empty;
 
-        /// <summary>
-        /// The name of the CosmosDb collection.
-        /// </summary>
         private string collection = string.Empty;
 
-        /// <summary>
-        /// The CosmosDb endpoint.
-        /// </summary>
         private string cosmosEndpoint = string.Empty;
 
-        /// <summary>
-        /// The name of the CosmosDb database.
-        /// </summary>
         private string database = string.Empty;
 
-        /// <summary>
-        /// The CosmosDb client.
-        /// </summary>
         private DocumentClient documentClient;
 
-        /// <summary>
-        /// The partition key for the collection.
-        /// </summary>
         private string partitionKey = string.Empty;
 
         /// <summary>
-        /// Prevents a default instance of the <see cref="CosmosDbRepository"/> class from being created.
+        /// Initializes a new instance of the <see cref="CosmosDbRepository"/> class. 
         /// </summary>
-        private CosmosDbRepository()
+        protected CosmosDbRepository()
         {
             // Additional Initialization.
         }
@@ -139,8 +108,8 @@ namespace ESFA.DAS.EmployerProvideFeedback.Api.Repository
             this.TrySetPartitionKey(ref requestOptions);
 
             return await this.documentClient.ReadDocumentAsync<T>(
-                       UriFactory.CreateDocumentUri(this.database, this.collection, documentId),
-                       requestOptions);
+                UriFactory.CreateDocumentUri(this.database, this.collection, documentId),
+                requestOptions);
         }
 
         /// <inheritdoc />
@@ -243,9 +212,9 @@ namespace ESFA.DAS.EmployerProvideFeedback.Api.Repository
             this.TrySetPartitionKey(ref document);
 
             var response = await this.documentClient.UpsertDocumentAsync(
-                               this.DocumentCollectionUri,
-                               document,
-                               requestOptions);
+                this.DocumentCollectionUri,
+                document,
+                requestOptions);
 
             return (dynamic)response.Resource;
         }
@@ -405,7 +374,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Api.Repository
             try
             {
                 var documentCollection = await this.documentClient.ReadDocumentCollectionAsync(
-                                             UriFactory.CreateDocumentCollectionUri(this.database, this.collection));
+                    UriFactory.CreateDocumentCollectionUri(this.database, this.collection));
 
                 return documentCollection;
             }
@@ -424,9 +393,9 @@ namespace ESFA.DAS.EmployerProvideFeedback.Api.Repository
                             new RequestOptions { OfferThroughput = 1000 }; // TODO: pull out to parameter
 
                     var documentCollection = await this.documentClient.CreateDocumentCollectionAsync(
-                                                 UriFactory.CreateDatabaseUri(this.database),
-                                                 conversationCollection,
-                                                 collectionSettings);
+                        UriFactory.CreateDatabaseUri(this.database),
+                        conversationCollection,
+                        collectionSettings);
 
                     return documentCollection;
                 }
@@ -453,16 +422,16 @@ namespace ESFA.DAS.EmployerProvideFeedback.Api.Repository
                 new Uri(this.cosmosEndpoint),
                 this.authKeyOrResourceToken,
                 new ConnectionPolicy
-                {
-                    RetryOptions =
+                    {
+                        RetryOptions =
                             new RetryOptions
-                            {
-                                MaxRetryAttemptsOnThrottledRequests = 3,
-                                MaxRetryWaitTimeInSeconds = 15
-                            },
-                    ConnectionMode = ConnectionMode.Direct,
-                    ConnectionProtocol = Protocol.Tcp
-                });
+                                {
+                                    MaxRetryAttemptsOnThrottledRequests = 3,
+                                    MaxRetryWaitTimeInSeconds = 15
+                                },
+                        ConnectionMode = ConnectionMode.Direct,
+                        ConnectionProtocol = Protocol.Tcp
+                    });
 
             Debug.WriteLine($"Creating DocumentClient...");
         }
