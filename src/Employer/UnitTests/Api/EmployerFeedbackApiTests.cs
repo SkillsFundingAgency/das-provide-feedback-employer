@@ -1,6 +1,4 @@
-﻿using ESFA.DAS.EmployerProvideFeedback.Api.Dto;
-
-namespace UnitTests.Api
+﻿namespace UnitTests.Api
 {
     using System;
     using System.Collections.Generic;
@@ -8,14 +6,16 @@ namespace UnitTests.Api
     using System.Linq.Expressions;
     using System.Threading.Tasks;
 
+    using ESFA.DAS.EmployerProvideFeedback.Api.Configuration;
     using ESFA.DAS.EmployerProvideFeedback.Api.Controllers;
-    using ESFA.DAS.EmployerProvideFeedback.Api.Models;
+    using ESFA.DAS.EmployerProvideFeedback.Api.Dto;
     using ESFA.DAS.EmployerProvideFeedback.Api.Repository;
     using ESFA.DAS.EmployerProvideFeedback.Configuration;
+    using ESFA.DAS.FeedbackDataAccess.Repositories;
 
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Azure.Documents.Client;
-    using Microsoft.EntityFrameworkCore;
+    using Microsoft.Extensions.Logging;
     using Microsoft.Extensions.Options;
 
     using Moq;
@@ -24,13 +24,17 @@ namespace UnitTests.Api
 
     using Xunit;
 
-    public class FeedbackControllerTests
-    {
-        private readonly IOptions<AzureOptions> options;
+    using IEmployerFeedbackRepository = ESFA.DAS.EmployerProvideFeedback.Api.Repository.IEmployerFeedbackRepository;
 
+    public class FeedbackControllerTests : IDisposable
+    {
         private readonly FeedbackController controller;
 
+        private readonly Mock<ILogger<FeedbackController>> mockLogger;
+
         private readonly Mock<IEmployerFeedbackRepository> mockRepo;
+
+        private readonly IOptions<AzureOptions> options;
 
         private readonly List<EmployerFeedback> testData = new List<EmployerFeedback>();
 
@@ -41,13 +45,15 @@ namespace UnitTests.Api
             this.options = Options.Create(
                 new AzureOptions
                     {
-                        AzureCosmosEndpoint = string.Empty,
-                        AzureCosmosKey = string.Empty,
+                        CosmosEndpoint = string.Empty,
+                        CosmosKey = string.Empty,
                         DatabaseName = string.Empty,
                         EmployerFeedbackCollection = string.Empty
                     });
 
             this.mockRepo = new Mock<IEmployerFeedbackRepository>();
+
+            this.mockLogger = new Mock<ILogger<FeedbackController>>();
 
             this.testHelper = new EmployerFeedbackTestHelper();
 
@@ -59,10 +65,33 @@ namespace UnitTests.Api
             this.testData.Add(this.testHelper.GenerateRandomFeedback("ddcf9d13-bf05-4e9c-bd5c-20c4133cc739"));
             this.testData.Add(this.testHelper.GenerateRandomFeedback("84C4CFDD-1DEA-4A1A-BEC8-C1A6C763004C"));
 
-            this.controller = new FeedbackController(this.mockRepo.Object);
+            this.controller = new FeedbackController(this.mockRepo.Object, this.mockLogger.Object);
         }
 
+        /// <summary>
+        /// Finalizes an instance of the <see cref="FeedbackControllerTests"/> class. 
+        /// </summary>
         ~FeedbackControllerTests()
+        {
+            this.Dispose(false);
+        }
+
+        public void Dispose()
+        {
+            this.Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        private void Dispose(bool disposing)
+        {
+            this.ReleaseUnmanagedResources();
+            if (disposing)
+            {
+                this.controller?.Dispose();
+            }
+        }
+
+        private void ReleaseUnmanagedResources()
         {
             this.testData.Clear();
             this.controller.Dispose();
@@ -72,7 +101,7 @@ namespace UnitTests.Api
         {
             public GetAll()
             {
-                this.mockRepo.Setup(m => m.GetAllItemsAsync<EmployerFeedback>(It.IsAny<FeedOptions>()))
+                this.mockRepo.Setup(m => m.GetAllItemsAsync(It.IsAny<FeedOptions>()))
                     .ReturnsAsync(this.testData);
             }
 
@@ -112,8 +141,13 @@ namespace UnitTests.Api
 
                 queries.Add(i => i.Id == "00000000-0000-0000-0000-000000000000");
 
-                this.mockRepo.Setup(m => m.GetItemAsync(It.IsAny<Expression<Func<EmployerFeedback, bool>>>(), It.IsAny<FeedOptions>()))
-                    .ReturnsAsync((Expression<Func<EmployerFeedback, bool>> x, FeedOptions y) => this.testData.SingleOrDefault(x.Compile()));
+                this.mockRepo
+                    .Setup(
+                        m => m.GetItemAsync(
+                            It.IsAny<Expression<Func<EmployerFeedback, bool>>>(),
+                            It.IsAny<FeedOptions>())).ReturnsAsync(
+                        (Expression<Func<EmployerFeedback, bool>> x, FeedOptions y) =>
+                            this.testData.SingleOrDefault(x.Compile()));
             }
 
             [Fact]
