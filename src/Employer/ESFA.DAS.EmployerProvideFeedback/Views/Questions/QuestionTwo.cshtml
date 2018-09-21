@@ -9,9 +9,9 @@
         @if (!ViewData.ModelState.IsValid)
         {
         <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
-            <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
+            @*<h2 class="heading-medium error-summary-heading" id="error-summary-heading">
                 Error on page
-            </h2>
+            </h2>*@
             <ul class="error-summary-list">
                 <!--TODO: Match this text to content-->
                 <li><a href="#error">Choose up to 3 options</a></li>
@@ -19,7 +19,7 @@
         </div>
         }
         <h1 class="heading-xlarge">
-            Things for @Model.ProviderName to improve
+            How could @Model.ProviderName improve?
         </h1>
         <form asp-route="@RouteNames.QuestionTwo_Post">
             <div class="form-group">

@@ -9,9 +9,9 @@
         @if (!ViewData.ModelState.IsValid)
         {
             <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
-                <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
+                @*<h2 class="heading-medium error-summary-heading" id="error-summary-heading">
                     Error on page
-                </h2>
+                </h2>*@
                 <ul class="error-summary-list">
                     <!--TODO: Match this text to content-->
                     <li><a href="#error">Choose up to 3 options</a></li>
@@ -25,7 +25,7 @@
             <div class="form-group">
                 <fieldset name="DoingWell" class="checkbox-limit @(!ViewData.ModelState.IsValid ? "form-group-error" : "")">
                     <legend>
-                        <h2 class="heading-medium">Are @Model.ProviderName very good at any of these?</h2>
+                        <h2 class="heading-medium">What is @Model.ProviderName doing very well?</h2>
                         <span class="body-text">It's optional. You can choose up to 3.</span>
                     </legend>
 
