@@ -7,7 +7,7 @@
         },
         "apiAppServiceName": {
             "type": "string"
-        },		
+        },
         "sharedAppServicePlanName": {
             "type": "string"
         },
@@ -70,15 +70,15 @@
             "defaultValue": {
                 "Key": ""
             }
-        },		
+        },
         "feedbackApiData": {
             "type": "object",
             "defaultValue": {
                 "DatabaseName": "",
-				"TokenCollection": ""
-				"FeedbackCollection": ""
+                "TokenCollection": "",
+                "FeedbackCollection": ""
             }
-        },			
+        },
         "storageAccountName": {
             "type": "string"
         },
@@ -86,7 +86,7 @@
             "type": "secureString"
         },
         "gaTrackingId": {
-            "type":"string"
+            "type": "string"
         }
     },
     "variables": {},
@@ -252,26 +252,26 @@
                                 "name": "Azure:CosmosKey",
                                 "value": "[reference('CosmosDB').outputs.PrimaryMasterKey.value]"
                             },
-							{
+                            {
                                 "name": "Azure:DatabaseName",
                                 "value": "[parameters('feedbackApiData').DatabaseName]"
                             },
                             {
                                 "name": "Azure:EmployerFeedbackCollection",
                                 "value": "[parameters('feedbackApiData').FeedbackCollection]"
-                            },		
-							{
+                            },
+                            {
                                 "name": "Azure:TokenCollection",
                                 "value": "[parameters('feedbackApiData').TokenCollection]"
-                            },	
-							{
+                            },
+                            {
                                 "name": "Jwt:Key",
                                 "value": "[parameters('feedbackApiAuth').Key]"
                             },
                             {
                                 "name": "Jwt:Issuer",
                                 "value": "[concat('https://', parameters('apiAppServiceName'), '.apprenticeships.sfa.bis.gov.uk')]"
-                            },							
+                            },
                             {
                                 "name": "ApplicationInsights:InstrumentationKey",
                                 "value": "[reference('UIAppInsights').outputs.InstrumentationKey.value]"
@@ -289,7 +289,7 @@
                                 "connectionString": "[parameters('loggingRedisConnectionString')]",
                                 "type": "Custom"
                             }
-						]
+                        ]
                     },
                     "certificateThumbprint": {
                         "value": "[reference(resourceId(parameters('sharedAppServicePlanResourceGroup'), 'Microsoft.Web/certificates', parameters('certificateName')), '2016-03-01').Thumbprint]"
@@ -298,9 +298,9 @@
             },
             "dependsOn": [
                 "UIAppInsights",
-				"CosmosDB"
+                "CosmosDB"
             ]
-        },		
+        },
         {
             "apiVersion": "2017-05-10",
             "name": "WorkerAppServicePlan",
