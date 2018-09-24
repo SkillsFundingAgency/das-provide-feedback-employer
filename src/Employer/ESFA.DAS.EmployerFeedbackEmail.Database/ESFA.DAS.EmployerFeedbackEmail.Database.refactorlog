@@ -42,4 +42,25 @@
     <Property Name="ParentElementType" Value="SqlTable" />
     <Property Name="NewName" Value="Ukprn" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="4996705b-c2af-4cba-8d1d-c230e76ba389" ChangeDateTime="09/24/2018 12:51:29">
+    <Property Name="ElementName" Value="[dbo].[staging_commitment].[Id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[staging_commitment]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="EmployerAccountId" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="5140f056-670e-4d46-aa6c-6707fed1858f" ChangeDateTime="09/24/2018 12:52:18">
+    <Property Name="ElementName" Value="[dbo].[staging_employer_accounts].[Id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[staging_employer_accounts]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="AccountId" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="eee12f67-69ac-401b-9ee1-9a61cc2a09b5" ChangeDateTime="09/24/2018 12:54:40">
+    <Property Name="ElementName" Value="[dbo].[staging_roatp].[Id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[staging_roatp]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="Ukprn" />
+  </Operation>
 </Operations>

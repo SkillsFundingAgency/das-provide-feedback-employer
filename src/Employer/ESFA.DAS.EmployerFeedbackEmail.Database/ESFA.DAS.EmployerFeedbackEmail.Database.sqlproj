@@ -63,5 +63,9 @@
   </ItemGroup>
   <ItemGroup>
     <Build Include="EmployerEmailDetails.sql" />
+    <Build Include="staging_commitment.sql" />
+    <Build Include="staging_employer_accounts.sql" />
+    <Build Include="CreateEmployerEmailDetails.sql" />
+    <Build Include="staging_roatp.sql" />
   </ItemGroup>
 </Project>
