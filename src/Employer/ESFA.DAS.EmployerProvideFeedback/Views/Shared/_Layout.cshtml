@@ -1,6 +1,4 @@
-﻿@using ESFA.DAS.EmployerProvideFeedback.Configuration;
-@using ESFA.DAS.EmployerProvideFeedback.Configuration.Routing;
-@using Microsoft.Extensions.Options;
+﻿@using Microsoft.Extensions.Options;
 @inject IOptions<ExternalLinksConfiguration> externalLinks;
 @{
     var _isErrorPage = ViewContext.View.Path.Contains("Error");
@@ -87,6 +85,16 @@ public string GetTitle()
         </div>
     </header>
     <div id="global-header-bar"></div>
+    <div class="phase-banner phase-banner-beta">
+        <div class="phase-banner-info">
+            <p>
+                <strong class="phase-tag">BETA</strong>
+                <span>
+                    This is a new service – your <a href="@externalLinks.Value.FeedbackSurveyUrl" target="_blank">feedback</a> will help us to improve it.
+                </span>
+            </p>
+        </div>
+    </div>
     <main id="content" role="main">
         @RenderBody()
     </main>
@@ -95,6 +103,7 @@ public string GetTitle()
             <div class="footer-meta">
                 <div class="footer-meta-inner">
                     <ul class="platform-help-links">
+                        <li><a href="https://manage-apprenticeships.service.gov.uk/service/help">Help</a></li>
                         <li><a href="https://www.gov.uk/help/cookies">Privacy and cookies</a></li>
                         <li>Built by the <a href="http://gov.uk/sfa" target="_blank">Education and Skills Funding Agency</a></li>
                     </ul>

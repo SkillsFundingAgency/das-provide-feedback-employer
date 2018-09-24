@@ -6,33 +6,48 @@
 <a asp-route="@RouteNames.QuestionOne_Get" class="link-back">Back</a>
 <div class="grid-row">
     <div class="column-two-thirds">
+        @if (!ViewData.ModelState.IsValid)
+        {
+        <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
+            @*<h2 class="heading-medium error-summary-heading" id="error-summary-heading">
+                Error on page
+            </h2>*@
+            <ul class="error-summary-list">
+                <!--TODO: Match this text to content-->
+                <li><a href="#error">Choose up to 3 options</a></li>
+            </ul>
+        </div>
+        }
         <h1 class="heading-xlarge">
-            Things for @Model.ProviderName to improve
+            How could @Model.ProviderName improve?
         </h1>
         <form asp-route="@RouteNames.QuestionTwo_Post">
             <div class="form-group">
-                <fieldset>
+                <fieldset class="checkbox-limit @(!ViewData.ModelState.IsValid ? " form-group-error" : "" )">
                     <legend>
-                        <h2 class="heading-medium">What could @Model.ProviderName improve?</h2>
-                        <span class="body-text">Select as many as you like.</span>
+                        <h2 class="heading-medium">Does @Model.ProviderName need to improve any of these?</h2>
+                        <span class="body-text">It's optional. You can choose up to 3.</span>
                     </legend>
-                    @for (var i = 0; i < Model.ProviderAttributes.Count; i++)
+
+                    <input type="hidden" asp-for="@Model.ProviderName" />
+
+                    @for (var i=0; i < Model.ProviderAttributes.Count; i++)
                     {
-                        <div class="multiple-choice" style="display: @(Model.ProviderAttributes[i].IsDoingWell ? "none" : "block");">
-                            <input asp-for="@Model.ProviderAttributes[i].IsToImprove" id="col1-@i" type="checkbox">
-                            <label for="col1-@i">@Model.ProviderAttributes[i].Name</label>
-                            <input asp-for="@Model.ProviderAttributes[i].Name" type="hidden" />
-                            <input asp-for="@Model.ProviderAttributes[i].Id" type="hidden" />
-                            <input asp-for="@Model.ProviderAttributes[i].IsDoingWell" id="col1-@i" type="hidden">
-                        </div>
+                    <div class="multiple-choice" style="display: @(Model.ProviderAttributes[i].IsDoingWell ? " none" : "block" );">
+                        <input asp-for="@Model.ProviderAttributes[i].IsToImprove" id="col1-@i" type="checkbox">
+                        <label for="col1-@i">@Model.ProviderAttributes[i].Name</label>
+                        <input asp-for="@Model.ProviderAttributes[i].Name" type="hidden" />
+                        <input asp-for="@Model.ProviderAttributes[i].Id" type="hidden" />
+                        <input asp-for="@Model.ProviderAttributes[i].IsDoingWell" id="col1-@i" type="hidden">
+                    </div>
                     }
                 </fieldset>
             </div>
             <button type="submit" class="button save-button">Continue</button>
             @if (string.IsNullOrEmpty(Convert.ToString(TempData.Peek("ReturnUrl"))))
             {
-                // TODO: Replace TempData by adding a flag to the ViewModel. Move this to a partial view?
-                <a asp-route="@RouteNames.QuestionThree_Get" class="button-link">Skip this question</a>
+            // TODO: Replace TempData by adding a flag to the ViewModel. Move this to a partial view?
+            <a asp-route="@RouteNames.QuestionThree_Get" class="button-link">Skip this question</a>
             }
         </form>
     </div>

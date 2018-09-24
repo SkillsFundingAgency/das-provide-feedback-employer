@@ -1,4 +1,4 @@
-﻿namespace UnitTests.Api
+namespace UnitTests.Api
 {
     using System;
     using System.Collections.Generic;

@@ -27,7 +27,8 @@
             "type": "object",
             "defaultValue": {
                 "ManageApprenticeshipSiteUrl": "",
-                "EmployerIdamsSiteUrl": ""
+                "EmployerIdamsSiteUrl": "",
+                "FeedbackSurveyUrl": ""
             }
         },
         "loggingRedisConnectionString": {
@@ -173,6 +174,10 @@
                             {
                                 "name": "ExternalLinks:EmployerIdamsSiteUrl",
                                 "value": "[parameters('externalLinks').EmployerIdamsSiteUrl]"
+                            },
+                            {
+                                "name": "ExternalLinks:FeedbackSurveyUrl",
+                                "value": "[parameters('externalLinks').FeedbackSurveyUrl]"
                             },
                             {
                                 "name": "GoogleAnalytics:TrackingId",
