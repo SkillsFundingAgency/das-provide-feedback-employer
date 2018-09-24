@@ -5,13 +5,14 @@
     using System.Text;
     using System.Threading.Tasks;
 
+    using AutoMapper;
+
     using ESFA.DAS.EmployerProvideFeedback.Api.Configuration;
     using ESFA.DAS.EmployerProvideFeedback.Api.Repository;
 
     using Microsoft.AspNetCore.Authentication;
     using Microsoft.AspNetCore.Authentication.JwtBearer;
     using Microsoft.AspNetCore.Mvc;
-    using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
 
     using Microsoft.IdentityModel.Tokens;
@@ -24,6 +25,7 @@
     {
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddAutoMapper();
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(
                 options =>
                     {

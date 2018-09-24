@@ -6,9 +6,11 @@
     using System.Linq.Expressions;
     using System.Threading.Tasks;
 
+    using AutoMapper;
+
     using ESFA.DAS.EmployerProvideFeedback.Api.Configuration;
     using ESFA.DAS.EmployerProvideFeedback.Api.Controllers;
-    using ESFA.DAS.EmployerProvideFeedback.Api.Dto;
+    using ESFA.DAS.EmployerProvideFeedback.Api.Models;
     using ESFA.DAS.EmployerProvideFeedback.Api.Repository;
     using ESFA.DAS.EmployerProvideFeedback.Configuration;
     using ESFA.DAS.FeedbackDataAccess.Repositories;
@@ -17,6 +19,9 @@
     using Microsoft.Azure.Documents.Client;
     using Microsoft.Extensions.Logging;
     using Microsoft.Extensions.Options;
+
+    using EmployerFeedbackDto = ESFA.DAS.EmployerProvideFeedback.Api.Dto.EmployerFeedback;
+    using ProviderAttributeDto = ESFA.DAS.EmployerProvideFeedback.Api.Dto.ProviderAttribute;
 
     using Moq;
 
@@ -28,6 +33,8 @@
 
     public class FeedbackControllerTests : IDisposable
     {
+        private IMapper mapper;
+
         private readonly FeedbackController controller;
 
         private readonly Mock<ILogger<FeedbackController>> mockLogger;
@@ -36,7 +43,7 @@
 
         private readonly IOptions<AzureOptions> options;
 
-        private readonly List<EmployerFeedback> testData = new List<EmployerFeedback>();
+        private readonly List<EmployerFeedbackDto> testData = new List<EmployerFeedbackDto>();
 
         private readonly EmployerFeedbackTestHelper testHelper;
 
@@ -50,6 +57,8 @@
                         DatabaseName = string.Empty,
                         EmployerFeedbackCollection = string.Empty
                     });
+
+            this.mapper = new Mapper(new MapperConfiguration(this.ConfigureMaps));
 
             this.mockRepo = new Mock<IEmployerFeedbackRepository>();
 
@@ -65,7 +74,28 @@
             this.testData.Add(this.testHelper.GenerateRandomFeedback("ddcf9d13-bf05-4e9c-bd5c-20c4133cc739"));
             this.testData.Add(this.testHelper.GenerateRandomFeedback("84C4CFDD-1DEA-4A1A-BEC8-C1A6C763004C"));
 
-            this.controller = new FeedbackController(this.mockRepo.Object, this.mockLogger.Object);
+            this.controller = new FeedbackController(this.mockRepo.Object, this.mockLogger.Object, this.mapper);
+        }
+
+        private void ConfigureMaps(IMapperConfigurationExpression config)
+        {
+            config.CreateMap<ProviderAttributeDto, ProviderAttribute>()
+                .ForMember(destination => destination.Name, opt => opt.MapFrom(src => src.Name))
+                .ForMember(destination => destination.Value, opt => opt.MapFrom(src => src.Value));
+
+            config.CreateMap<EmployerFeedbackDto, PublicEmployerFeedback>()
+                .ForMember(destination => destination.DateTimeCompleted, opt => opt.MapFrom(src => src.DateTimeCompleted))
+                .ForMember(destination => destination.ProviderAttributes, opt => opt.MapFrom(src => src.ProviderAttributes))
+                .ForMember(destination => destination.ProviderRating, opt => opt.MapFrom(src => src.ProviderRating))
+                .ForMember(destination => destination.Ukprn, opt => opt.MapFrom(src => src.Ukprn));
+
+            config.CreateMap<EmployerFeedbackDto, EmployerFeedback>()
+                .ForMember(destination => destination.AccountId, opt => opt.MapFrom(src => src.AccountId))
+                .ForMember(destination => destination.UserRef, opt => opt.MapFrom(src => src.UserRef))
+                .ForMember(destination => destination.DateTimeCompleted, opt => opt.MapFrom(src => src.DateTimeCompleted))
+                .ForMember(destination => destination.ProviderAttributes, opt => opt.MapFrom(src => src.ProviderAttributes))
+                .ForMember(destination => destination.ProviderRating, opt => opt.MapFrom(src => src.ProviderRating))
+                .ForMember(destination => destination.Ukprn, opt => opt.MapFrom(src => src.Ukprn));
         }
 
         /// <summary>
@@ -118,7 +148,7 @@
                 var actionOkResult = actionResult as OkObjectResult;
                 Assert.NotNull(actionOkResult);
 
-                var model = actionOkResult.Value as List<EmployerFeedback>;
+                var model = actionOkResult.Value as List<PublicEmployerFeedback>;
                 Assert.NotNull(model);
 
                 var actual = model.Count;
@@ -132,10 +162,10 @@
             public GetById()
                 : base()
             {
-                var queries = new List<Expression<Func<EmployerFeedback, bool>>>();
+                var queries = new List<Expression<Func<EmployerFeedbackDto, bool>>>();
                 foreach (var t in this.testData)
                 {
-                    Expression<Func<EmployerFeedback, bool>> expression = i => i.Id == t.Id;
+                    Expression<Func<EmployerFeedbackDto, bool>> expression = i => i.Id == t.Id;
                     queries.Add(expression);
                 }
 
@@ -144,9 +174,9 @@
                 this.mockRepo
                     .Setup(
                         m => m.GetItemAsync(
-                            It.IsAny<Expression<Func<EmployerFeedback, bool>>>(),
+                            It.IsAny<Expression<Func<EmployerFeedbackDto, bool>>>(),
                             It.IsAny<FeedOptions>())).ReturnsAsync(
-                        (Expression<Func<EmployerFeedback, bool>> x, FeedOptions y) =>
+                        (Expression<Func<EmployerFeedbackDto, bool>> x, FeedOptions y) =>
                             this.testData.SingleOrDefault(x.Compile()));
             }
 
@@ -179,13 +209,10 @@
                 var actionOkResult = actionResult as OkObjectResult;
                 Assert.NotNull(actionOkResult);
 
-                var actual = actionOkResult.Value as EmployerFeedback;
+                var actual = actionOkResult.Value as PublicEmployerFeedback;
                 Assert.NotNull(actual);
 
-                Assert.Equal(expected.Id, actual.Id);
                 Assert.Equal(expected.Ukprn, actual.Ukprn);
-                Assert.Equal(expected.AccountId, actual.AccountId);
-                Assert.Equal(expected.UserRef, actual.UserRef);
                 Assert.Equal(expected.DateTimeCompleted, actual.DateTimeCompleted);
                 Assert.Equal(expected.ProviderAttributes.Count, actual.ProviderAttributes.Count);
                 Assert.Equal(expected.ProviderRating, actual.ProviderRating);

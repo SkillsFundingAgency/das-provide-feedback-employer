@@ -24,11 +24,13 @@
     {
         private readonly IEmployerFeedbackRepository feedback;
         private readonly ILogger<FeedbackController> logger;
+        private readonly IMapper mapper;
 
-        public FeedbackController(IEmployerFeedbackRepository feedback, ILogger<FeedbackController> logger)
+        public FeedbackController(IEmployerFeedbackRepository feedback, ILogger<FeedbackController> logger, IMapper mapper)
         {
             this.feedback = feedback;
             this.logger = logger;
+            this.mapper = mapper;
         }
 
         [HttpGet]
@@ -42,7 +44,7 @@
                 var result = await this.feedback.GetAllItemsAsync();
                 if (result.Any())
                 {
-                    var model = Mapper.Map<IEnumerable<EmployerFeedback>, IEnumerable<PublicEmployerFeedback>>(result, opt => opt.ConfigureMap(MemberList.Destination));
+                    var model = this.mapper.Map<List<PublicEmployerFeedback>>(result);
                     return this.Ok(model);
                 }
 
@@ -71,7 +73,7 @@
 
                 if (!result.IsNull())
                 {
-                    var model = Mapper.Map<IEnumerable<EmployerFeedback>, IEnumerable<PublicEmployerFeedback>>(result, opt => opt.ConfigureMap(MemberList.Destination));
+                    var model = this.mapper.Map<List<PublicEmployerFeedback>>(result);
                     return this.Ok(model);
                 }
 
@@ -97,7 +99,7 @@
                 EmployerFeedback item = await this.feedback.GetItemAsync(i => i.Id == id);
                 if (item != null)
                 {
-                    PublicEmployerFeedback model = Mapper.Map<EmployerFeedback, PublicEmployerFeedback>(item, opt => opt.ConfigureMap(MemberList.Destination));
+                    var model = this.mapper.Map<PublicEmployerFeedback>(item);
                     return this.Ok(model);
                 }
 
