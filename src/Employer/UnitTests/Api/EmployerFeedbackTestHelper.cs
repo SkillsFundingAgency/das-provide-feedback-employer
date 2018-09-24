@@ -6,6 +6,9 @@
     using ESFA.DAS.EmployerProvideFeedback.Api.Models;
     using ESFA.DAS.FeedbackDataAccess.Models;
 
+    using EmployerFeedbackDto = ESFA.DAS.EmployerProvideFeedback.Api.Dto.EmployerFeedback;
+    using ProviderAttributeDto = ESFA.DAS.EmployerProvideFeedback.Api.Dto.ProviderAttribute;
+
     internal class EmployerFeedbackTestHelper
     {
         private static readonly Random Random = new Random();
@@ -34,57 +37,57 @@
             Negative = -1
         }
 
-        internal ESFA.DAS.EmployerProvideFeedback.Api.Dto.EmployerFeedback GenerateRandomFeedback(string id) =>
-            new ESFA.DAS.EmployerProvideFeedback.Api.Dto.EmployerFeedback
+        internal EmployerFeedbackDto GenerateRandomFeedback(string id) =>
+            new EmployerFeedbackDto
             {
                     Id = new Guid(id).ToString(),
                     Ukprn = 123456789,
                     AccountId = 987654321,
                     UserRef = Guid.NewGuid(),
                     DateTimeCompleted = DateTime.UtcNow.AddDays(-Random.Next(200)),
-                    ProviderAttributes = new List<ESFA.DAS.EmployerProvideFeedback.Api.Dto.ProviderAttribute>()
+                    ProviderAttributes = new List<IProviderAttribute>()
                         {
-                            new ESFA.DAS.EmployerProvideFeedback.Api.Dto.ProviderAttribute()
+                            new ProviderAttributeDto
                                 {
                                     Name = "Providing relevant training at the right time",
                                     Value = (int)Scores.GetValue(Random.Next(Scores.Length))
                                 },
-                            new ESFA.DAS.EmployerProvideFeedback.Api.Dto.ProviderAttribute()
+                            new ProviderAttributeDto
                                 {
                                     Name = "Communication between you and the provider",
                                     Value = (int)Scores.GetValue(Random.Next(Scores.Length))
                                 },
-                            new ESFA.DAS.EmployerProvideFeedback.Api.Dto.ProviderAttribute()
+                            new ProviderAttributeDto
                                 {
                                     Name = "On-boarding new apprentices",
                                     Value = (int)Scores.GetValue(Random.Next(Scores.Length))
                                 },
-                            new ESFA.DAS.EmployerProvideFeedback.Api.Dto.ProviderAttribute()
+                            new ProviderAttributeDto
                                 {
                                     Name = "Improving apprentice skills",
                                     Value = (int)Scores.GetValue(Random.Next(Scores.Length))
                                 },
-                            new ESFA.DAS.EmployerProvideFeedback.Api.Dto.ProviderAttribute()
+                            new ProviderAttributeDto
                                 {
                                     Name = "Improving business outcomes",
                                     Value = (int)Scores.GetValue(Random.Next(Scores.Length))
                                 },
-                            new ESFA.DAS.EmployerProvideFeedback.Api.Dto.ProviderAttribute()
+                            new ProviderAttributeDto
                                 {
                                     Name = "Taking on small cohorts (small number of apprentices)",
                                     Value = (int)Scores.GetValue(Random.Next(Scores.Length))
                                 },
-                            new ESFA.DAS.EmployerProvideFeedback.Api.Dto.ProviderAttribute()
+                            new ProviderAttributeDto
                                 {
                                     Name = "Recruiting apprentices",
                                     Value = (int)Scores.GetValue(Random.Next(Scores.Length))
                                 },
-                            new ESFA.DAS.EmployerProvideFeedback.Api.Dto.ProviderAttribute()
+                            new ProviderAttributeDto
                                 {
                                     Name = "Assessing and reporting on progress of apprentices",
                                     Value = (int)Scores.GetValue(Random.Next(Scores.Length))
                                 },
-                            new ESFA.DAS.EmployerProvideFeedback.Api.Dto.ProviderAttribute()
+                            new ProviderAttributeDto
                                 {
                                     Name = "Adapting to my needs",
                                     Value = (int)Scores.GetValue(Random.Next(Scores.Length))
