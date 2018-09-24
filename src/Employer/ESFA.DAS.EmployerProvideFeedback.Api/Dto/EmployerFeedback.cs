@@ -1,12 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using ESFA.DAS.EmployerProvideFeedback.Api.Repository;
-using Newtonsoft.Json;
-
-namespace ESFA.DAS.EmployerProvideFeedback.Api.Dto
+﻿namespace ESFA.DAS.EmployerProvideFeedback.Api.Dto
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Runtime.Serialization;
+
+    using ESFA.DAS.EmployerProvideFeedback.Api.Models;
+    using ESFA.DAS.EmployerProvideFeedback.Api.Repository;
+
+    using Newtonsoft.Json;
+
     [Serializable]
-    public class EmployerFeedback : TypedDocument<EmployerFeedback>
+    [DataContract(Name = "EmployerFeedback")]
+    public class EmployerFeedback : TypedDocument<EmployerFeedback>, IEmployerFeedback, IEmployerDetails
     {
         [JsonProperty(PropertyName = "ukprn")]
         public long Ukprn { get; set; }
@@ -21,40 +26,12 @@ namespace ESFA.DAS.EmployerProvideFeedback.Api.Dto
         public DateTime DateTimeCompleted { get; set; }
 
         [JsonProperty(PropertyName = "providerAttributes")]
-        public List<ProviderAttribute> ProviderAttributes { get; set; }
+        public List<IProviderAttribute> ProviderAttributes { get; set; }
 
         [JsonProperty(PropertyName = "providerRating")]
         public string ProviderRating { get; set; }
-    }
 
-    [Serializable]
-    public class ProviderAttribute
-    {
-        [JsonProperty(PropertyName = "name")]
-        public string Name { get; set; }
-
-        [JsonProperty(PropertyName = "value")]
-        public int Value { get; set; }
-    }
-
-    [Serializable]
-    public class UserModel
-    {
-        public string Email { get; set; }
-
-        public string Name { get; set; }
-    }
-
-    [Serializable]
-    public class ApiAccount : TypedDocument<ApiAccount>
-    {
-        [JsonProperty(PropertyName = "key")]
-        public string Key { get; set; }
-
-        [JsonProperty(PropertyName = "email")]
-        public string Email { get; set; }
-
-        [JsonProperty(PropertyName = "name")]
-        public string Name { get; set; }
+        [JsonProperty(PropertyName = "_pk")]
+        public new string PartitionKey => this.Ukprn.ToString();
     }
 }

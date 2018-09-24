@@ -15,8 +15,6 @@ namespace ESFA.DAS.EmployerProvideFeedback.Api.Repository
     using System.Linq.Expressions;
     using System.Threading.Tasks;
 
-    using ESFA.DAS.EmployerProvideFeedback.Api.Dto;
-
     using Microsoft.Azure.Documents.Client;
 
     public class TypedCosmosDbRepository<TInstance, TEntity> : CosmosDbRepository, IDataRepository<TEntity>
@@ -96,21 +94,5 @@ namespace ESFA.DAS.EmployerProvideFeedback.Api.Repository
         }
 
         public static new TInstance Instance => LazyInstance.Value;
-    }
-
-    public interface IEmployerFeedbackRepository : IDataRepository<EmployerFeedback>
-    {
-    }
-
-    public class CosmosEmployerFeedbackRepository : TypedCosmosDbRepository<CosmosEmployerFeedbackRepository, EmployerFeedback>, IEmployerFeedbackRepository
-    {
-    }
-
-    public interface ITokenProvider : IDataRepository<ApiAccount>
-    {
-    }
-
-    public class CosmosTokenStore : TypedCosmosDbRepository<CosmosTokenStore, ApiAccount>, ITokenProvider
-    {
     }
 }

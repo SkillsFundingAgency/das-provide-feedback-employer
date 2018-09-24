@@ -34,11 +34,6 @@
             {
                 app.UseDeveloperExceptionPage();
             }
-            //else
-            //{
-            //    app.UseExceptionHandler("/error/handle");
-            //    app.UseHsts();
-            //}
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
@@ -50,19 +45,19 @@
                     {
                         settings.GeneratorSettings.DefaultPropertyNameHandling = PropertyNameHandling.CamelCase;
 
-                        settings.GeneratorSettings.OperationProcessors.Add(
-                            new OperationSecurityScopeProcessor("JWT Token"));
+                        //settings.GeneratorSettings.OperationProcessors.Add(
+                        //    new OperationSecurityScopeProcessor("JWT Token"));
 
-                        settings.GeneratorSettings.DocumentProcessors.Add(
-                            new SecurityDefinitionAppender(
-                                "JWT Token",
-                                new SwaggerSecurityScheme
-                                    {
-                                        Type = SwaggerSecuritySchemeType.ApiKey,
-                                        Name = "Authorization",
-                                        Description = "Copy 'Bearer ' + valid JWT token into field",
-                                        In = SwaggerSecurityApiKeyLocation.Header
-                                    }));
+                        //settings.GeneratorSettings.DocumentProcessors.Add(
+                        //    new SecurityDefinitionAppender(
+                        //        "JWT Token",
+                        //        new SwaggerSecurityScheme
+                        //            {
+                        //                Type = SwaggerSecuritySchemeType.ApiKey,
+                        //                Name = "Authorization",
+                        //                Description = "Copy 'Bearer ' + valid JWT token into field",
+                        //                In = SwaggerSecurityApiKeyLocation.Header
+                        //            }));
                     });
 
             app.UseAuthentication();

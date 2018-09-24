@@ -1,15 +1,19 @@
 ﻿namespace ESFA.DAS.EmployerProvideFeedback.Api
 {
+    using System.Collections.Generic;
     using System.IO;
     using System.Text;
+    using System.Threading.Tasks;
 
     using ESFA.DAS.EmployerProvideFeedback.Api.Configuration;
     using ESFA.DAS.EmployerProvideFeedback.Api.Repository;
 
+    using Microsoft.AspNetCore.Authentication;
     using Microsoft.AspNetCore.Authentication.JwtBearer;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
+
     using Microsoft.IdentityModel.Tokens;
 
     /// <summary>
@@ -24,17 +28,23 @@
                 options =>
                     {
                         options.TokenValidationParameters = new TokenValidationParameters
-                            {
-                                ValidateIssuer = true,
-                                ValidateAudience = true,
-                                ValidateLifetime = true,
-                                ValidateIssuerSigningKey = true,
-                                ValidIssuer = this.Configuration["Jwt:Issuer"],
-                                ValidAudience = this.Configuration["Jwt:Issuer"],
-                                IssuerSigningKey = 
+                        {
+                            ValidateIssuer = true,
+                            ValidateAudience = true,
+                            ValidateLifetime = true,
+                            ValidateIssuerSigningKey = true,
+                            ValidIssuer = this.Configuration["Jwt:Issuer"],
+                            ValidAudience = this.Configuration["Jwt:Issuer"],
+                            IssuerSigningKey =
                                     new SymmetricSecurityKey(Encoding.UTF8.GetBytes(this.Configuration["Jwt:Key"]))
-                            };
+                        };
                     });
+
+            //services.AddAuthentication(sharedOptions =>
+            //        {
+            //            sharedOptions.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+            //        })
+            //    .AddAzureADBearer(options => this.Configuration.Bind("AzureAd", options));
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 

@@ -2,7 +2,7 @@
 {
     using ESFA.DAS.EmployerProvideFeedback.Api.Dto;
 
-    public class CosmosTokenStore : TypedCosmosDbRepository<CosmosTokenStore, ApiAccount>, ITokenProvider
+    public class CosmosTokenStore : TypedCosmosDbRepository<CosmosTokenStore, ApplicationKey>, ITokenProvider
     {
     }
 }

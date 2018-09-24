@@ -5,13 +5,17 @@
     using System.Linq;
     using System.Threading.Tasks;
 
-    using ESFA.DAS.EmployerProvideFeedback.Api.Dto;
+    using AutoMapper;
+
+    using ESFA.DAS.EmployerProvideFeedback.Api.Models;
     using ESFA.DAS.EmployerProvideFeedback.Api.Repository;
 
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Azure.Documents.SystemFunctions;
     using Microsoft.Extensions.Logging;
+
+    using EmployerFeedback = ESFA.DAS.EmployerProvideFeedback.Api.Dto.EmployerFeedback;
 
     [Produces("application/json")]
     [Route("api/[controller]")]
@@ -27,8 +31,8 @@
             this.logger = logger;
         }
 
-        [HttpGet, Authorize]
-        [ProducesResponseType(200, Type = typeof(List<EmployerFeedback>))]
+        [HttpGet]
+        [ProducesResponseType(200, Type = typeof(List<PublicEmployerFeedback>))]
         [ProducesResponseType(204)]
         [ProducesResponseType(401)]
         public async Task<IActionResult> GetAll()
@@ -38,7 +42,8 @@
                 var result = await this.feedback.GetAllItemsAsync();
                 if (result.Any())
                 {
-                    return this.Ok(result);
+                    var model = Mapper.Map<IEnumerable<EmployerFeedback>, IEnumerable<PublicEmployerFeedback>>(result, opt => opt.ConfigureMap(MemberList.Destination));
+                    return this.Ok(model);
                 }
 
                 this.logger.LogWarning($"Provider Feedback records database seems to be empty, could not return results");
@@ -53,8 +58,8 @@
             }
         }
 
-        [HttpGet("{year}/{month}/{day}", Name = "GetNewer"), Authorize]
-        [ProducesResponseType(200, Type = typeof(List<EmployerFeedback>))]
+        [HttpGet("{year}/{month}/{day}", Name = "GetNewer")]
+        [ProducesResponseType(200, Type = typeof(List<PublicEmployerFeedback>))]
         [ProducesResponseType(404)]
         public async Task<IActionResult> GetNewer(int year, int month, int day)
         {
@@ -63,9 +68,11 @@
             {
                 date = new DateTime(year, month, day, 0, 0, 0);
                 var result = await this.feedback.GetItemsAsync(f => f.DateTimeCompleted.CompareTo(date) >= 0);
+
                 if (!result.IsNull())
                 {
-                    return this.Ok(result);
+                    var model = Mapper.Map<IEnumerable<EmployerFeedback>, IEnumerable<PublicEmployerFeedback>>(result, opt => opt.ConfigureMap(MemberList.Destination));
+                    return this.Ok(model);
                 }
 
                 this.logger.LogWarning($"Provider Feedback records newer than {date} were not found.");
@@ -80,8 +87,8 @@
             }
         }
 
-        [HttpGet("{id}", Name = "GetById"), Authorize]
-        [ProducesResponseType(200, Type = typeof(EmployerFeedback))]
+        [HttpGet("{id}", Name = "GetById")]
+        [ProducesResponseType(200, Type = typeof(PublicEmployerFeedback))]
         [ProducesResponseType(404)]
         public async Task<IActionResult> GetById(string id)
         {
@@ -90,7 +97,8 @@
                 EmployerFeedback item = await this.feedback.GetItemAsync(i => i.Id == id);
                 if (item != null)
                 {
-                    return this.Ok(item);
+                    PublicEmployerFeedback model = Mapper.Map<EmployerFeedback, PublicEmployerFeedback>(item, opt => opt.ConfigureMap(MemberList.Destination));
+                    return this.Ok(model);
                 }
 
                 this.logger.LogWarning($"Provider Feedback record with id {id} was not found.");

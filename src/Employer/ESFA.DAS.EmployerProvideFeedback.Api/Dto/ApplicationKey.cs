@@ -7,7 +7,7 @@
     using Newtonsoft.Json;
 
     [Serializable]
-    public class ApiAccount : TypedDocument<ApiAccount>
+    public class ApplicationKey : TypedDocument<ApplicationKey>
     {
         [JsonProperty(PropertyName = "key")]
         public string Key { get; set; }
