@@ -9,7 +9,7 @@
 
     [Serializable]
     [DataContract(Name = "ProviderAttribute")]
-    public class ProviderAttribute : IProviderAttribute
+    public class ProviderAttribute
     {
         [JsonProperty(PropertyName = "name")]
         public string Name { get; set; }

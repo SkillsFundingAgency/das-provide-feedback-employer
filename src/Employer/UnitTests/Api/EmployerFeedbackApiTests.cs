@@ -1,4 +1,4 @@
-﻿namespace UnitTests.Api
+namespace UnitTests.Api
 {
     using System;
     using System.Collections.Generic;
@@ -12,16 +12,11 @@
     using ESFA.DAS.EmployerProvideFeedback.Api.Controllers;
     using ESFA.DAS.EmployerProvideFeedback.Api.Models;
     using ESFA.DAS.EmployerProvideFeedback.Api.Repository;
-    using ESFA.DAS.EmployerProvideFeedback.Configuration;
-    using ESFA.DAS.FeedbackDataAccess.Repositories;
 
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Azure.Documents.Client;
     using Microsoft.Extensions.Logging;
     using Microsoft.Extensions.Options;
-
-    using EmployerFeedbackDto = ESFA.DAS.EmployerProvideFeedback.Api.Dto.EmployerFeedback;
-    using ProviderAttributeDto = ESFA.DAS.EmployerProvideFeedback.Api.Dto.ProviderAttribute;
 
     using Moq;
 
@@ -29,12 +24,11 @@
 
     using Xunit;
 
-    using IEmployerFeedbackRepository = ESFA.DAS.EmployerProvideFeedback.Api.Repository.IEmployerFeedbackRepository;
+    using EmployerFeedbackDto = ESFA.DAS.EmployerProvideFeedback.Api.Dto.EmployerFeedback;
+    using ProviderAttributeDto = ESFA.DAS.EmployerProvideFeedback.Api.Dto.ProviderAttribute;
 
     public class FeedbackControllerTests : IDisposable
     {
-        private IMapper mapper;
-
         private readonly FeedbackController controller;
 
         private readonly Mock<ILogger<FeedbackController>> mockLogger;
@@ -47,6 +41,8 @@
 
         private readonly EmployerFeedbackTestHelper testHelper;
 
+        private IMapper mapper;
+
         public FeedbackControllerTests()
         {
             this.options = Options.Create(
@@ -58,7 +54,7 @@
                         EmployerFeedbackCollection = string.Empty
                     });
 
-            this.mapper = new Mapper(new MapperConfiguration(this.ConfigureMaps));
+            this.mapper = new Mapper(new MapperConfiguration(ConfigureMaps));
 
             this.mockRepo = new Mock<IEmployerFeedbackRepository>();
 
@@ -77,27 +73,6 @@
             this.controller = new FeedbackController(this.mockRepo.Object, this.mockLogger.Object, this.mapper);
         }
 
-        private void ConfigureMaps(IMapperConfigurationExpression config)
-        {
-            config.CreateMap<ProviderAttributeDto, ProviderAttribute>()
-                .ForMember(destination => destination.Name, opt => opt.MapFrom(src => src.Name))
-                .ForMember(destination => destination.Value, opt => opt.MapFrom(src => src.Value));
-
-            config.CreateMap<EmployerFeedbackDto, PublicEmployerFeedback>()
-                .ForMember(destination => destination.DateTimeCompleted, opt => opt.MapFrom(src => src.DateTimeCompleted))
-                .ForMember(destination => destination.ProviderAttributes, opt => opt.MapFrom(src => src.ProviderAttributes))
-                .ForMember(destination => destination.ProviderRating, opt => opt.MapFrom(src => src.ProviderRating))
-                .ForMember(destination => destination.Ukprn, opt => opt.MapFrom(src => src.Ukprn));
-
-            config.CreateMap<EmployerFeedbackDto, EmployerFeedback>()
-                .ForMember(destination => destination.AccountId, opt => opt.MapFrom(src => src.AccountId))
-                .ForMember(destination => destination.UserRef, opt => opt.MapFrom(src => src.UserRef))
-                .ForMember(destination => destination.DateTimeCompleted, opt => opt.MapFrom(src => src.DateTimeCompleted))
-                .ForMember(destination => destination.ProviderAttributes, opt => opt.MapFrom(src => src.ProviderAttributes))
-                .ForMember(destination => destination.ProviderRating, opt => opt.MapFrom(src => src.ProviderRating))
-                .ForMember(destination => destination.Ukprn, opt => opt.MapFrom(src => src.Ukprn));
-        }
-
         /// <summary>
         /// Finalizes an instance of the <see cref="FeedbackControllerTests"/> class. 
         /// </summary>
@@ -110,6 +85,36 @@
         {
             this.Dispose(true);
             GC.SuppressFinalize(this);
+        }
+
+        private static void ConfigureMaps(IMapperConfigurationExpression config)
+        {
+            config.CreateMap<ProviderAttributeDto, ProviderAttribute>()
+                .ForMember(destination => destination.Name, opt => opt.MapFrom(src => src.Name)).ForMember(
+                    destination => destination.Value,
+                    opt => opt.MapFrom(src => src.Value));
+
+            config.CreateMap<EmployerFeedbackDto, PublicEmployerFeedback>()
+                .ForMember(
+                    destination => destination.DateTimeCompleted,
+                    opt => opt.MapFrom(src => src.DateTimeCompleted))
+                .ForMember(
+                    destination => destination.ProviderAttributes,
+                    opt => opt.MapFrom(src => src.ProviderAttributes))
+                .ForMember(destination => destination.ProviderRating, opt => opt.MapFrom(src => src.ProviderRating))
+                .ForMember(destination => destination.Ukprn, opt => opt.MapFrom(src => src.Ukprn));
+
+            config.CreateMap<EmployerFeedbackDto, EmployerFeedback>()
+                .ForMember(destination => destination.AccountId, opt => opt.MapFrom(src => src.AccountId))
+                .ForMember(destination => destination.UserRef, opt => opt.MapFrom(src => src.UserRef))
+                .ForMember(
+                    destination => destination.DateTimeCompleted,
+                    opt => opt.MapFrom(src => src.DateTimeCompleted))
+                .ForMember(
+                    destination => destination.ProviderAttributes,
+                    opt => opt.MapFrom(src => src.ProviderAttributes))
+                .ForMember(destination => destination.ProviderRating, opt => opt.MapFrom(src => src.ProviderRating))
+                .ForMember(destination => destination.Ukprn, opt => opt.MapFrom(src => src.Ukprn));
         }
 
         private void Dispose(bool disposing)
@@ -131,8 +136,7 @@
         {
             public GetAll()
             {
-                this.mockRepo.Setup(m => m.GetAllItemsAsync(It.IsAny<FeedOptions>()))
-                    .ReturnsAsync(this.testData);
+                this.mockRepo.Setup(m => m.GetAllItemsAsync(It.IsAny<FeedOptions>())).ReturnsAsync(this.testData);
             }
 
             [Fact]

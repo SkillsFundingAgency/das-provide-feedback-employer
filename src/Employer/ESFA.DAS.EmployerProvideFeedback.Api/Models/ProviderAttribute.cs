@@ -11,7 +11,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Api.Models
     /// A positive or negative attribute of a Provider
     /// </summary>
     [Serializable]
-    public class ProviderAttribute : IProviderAttribute
+    public class ProviderAttribute
     {
         [JsonProperty(PropertyName = "name")]
         public string Name { get; set; }
