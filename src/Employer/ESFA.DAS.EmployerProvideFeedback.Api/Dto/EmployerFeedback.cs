@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.Runtime.Serialization;
 
+    using ESFA.DAS.EmployerProvideFeedback.Api.Configuration.Mappers;
     using ESFA.DAS.EmployerProvideFeedback.Api.Models;
     using ESFA.DAS.EmployerProvideFeedback.Api.Repository;
 
@@ -11,7 +12,7 @@
 
     [Serializable]
     [DataContract(Name = "EmployerFeedback")]
-    public class EmployerFeedback : TypedDocument<EmployerFeedback>, IEmployerFeedback, IEmployerDetails
+    public class EmployerFeedback : TypedDocument<EmployerFeedback>
     {
         [JsonProperty(PropertyName = "ukprn")]
         public long Ukprn { get; set; }
@@ -26,7 +27,7 @@
         public DateTime DateTimeCompleted { get; set; }
 
         [JsonProperty(PropertyName = "providerAttributes")]
-        public List<IProviderAttribute> ProviderAttributes { get; set; }
+        public List<ProviderAttribute> ProviderAttributes { get; set; }
 
         [JsonProperty(PropertyName = "providerRating")]
         public string ProviderRating { get; set; }

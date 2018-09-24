@@ -45,7 +45,7 @@
                     AccountId = 987654321,
                     UserRef = Guid.NewGuid(),
                     DateTimeCompleted = DateTime.UtcNow.AddDays(-Random.Next(200)),
-                    ProviderAttributes = new List<IProviderAttribute>()
+                    ProviderAttributes = new List<ProviderAttributeDto>
                         {
                             new ProviderAttributeDto
                                 {
