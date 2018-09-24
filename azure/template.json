@@ -229,6 +229,26 @@
         },
         {
             "apiVersion": "2017-05-10",
+            "name": "ApiAppInsights",
+            "type": "Microsoft.Resources/deployments",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/application-insights.json",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "appInsightsName": {
+                        "value": "[parameters('apiAppServiceName')]"
+                    },
+                    "attachedService": {
+                        "value": "[parameters('apiAppServiceName')]"
+                    }
+                }
+            }
+        },
+        {
+            "apiVersion": "2017-05-10",
             "name": "ApiAppService",
             "type": "Microsoft.Resources/deployments",
             "properties": {
@@ -279,7 +299,7 @@
                             },
                             {
                                 "name": "ApplicationInsights:InstrumentationKey",
-                                "value": "[reference('UIAppInsights').outputs.InstrumentationKey.value]"
+                                "value": "[reference('ApiAppInsights').outputs.InstrumentationKey.value]"
                             },
                             {
                                 "name": "ASPNETCORE_ENVIRONMENT",
@@ -302,7 +322,7 @@
                 }
             },
             "dependsOn": [
-                "UIAppInsights",
+                "ApiAppInsights",
                 "CosmosDB"
             ]
         },
