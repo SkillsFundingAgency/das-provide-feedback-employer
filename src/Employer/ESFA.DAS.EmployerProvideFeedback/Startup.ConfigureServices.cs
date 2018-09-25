@@ -59,6 +59,8 @@ namespace ESFA.DAS.EmployerProvideFeedback
 
             services.AddSession(options => {
                 options.Cookie.Name = "PF.Session";
+                options.Cookie.HttpOnly = true;
+                options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
                 options.IdleTimeout = TimeSpan.FromMinutes(60);
             });
 

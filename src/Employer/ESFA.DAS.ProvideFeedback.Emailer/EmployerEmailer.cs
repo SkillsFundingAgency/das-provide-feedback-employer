@@ -27,6 +27,7 @@ namespace Esfa.Das.Feedback.Employer.Emailer
             _emailService = emailService;
             _logger = logger;
             _feedbackBaseUrl = settings.Value.FeedbackSiteBaseUrl.Last() != '/' ? settings.Value.FeedbackSiteBaseUrl + "/" : settings.Value.FeedbackSiteBaseUrl;
+            _numberOfEmailsToSend = settings.Value.BatchSize;
         }
 
         public async Task SendEmailsAsync()
@@ -34,12 +35,11 @@ namespace Esfa.Das.Feedback.Employer.Emailer
             var emailsToSend = await _emailDetailsStore.GetEmailDetailsToBeSent();
 
             // Group by user
-            var users =
-            from detail in emailsToSend
-            group detail by detail.UserRef into userGroup
-            select userGroup;
+            var emailsGroupedByUser = emailsToSend
+                .GroupBy(email => email.UserRef)
+                .Take(_numberOfEmailsToSend);
 
-            var tasks = users.Select(userGroup => HandleAsyncSend(userGroup));
+            var tasks = emailsGroupedByUser.Select(userGroup => HandleAsyncSend(userGroup));
             await Task.WhenAll(tasks);
         }
 
