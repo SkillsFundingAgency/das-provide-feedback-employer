@@ -26,7 +26,7 @@ namespace Esfa.Das.Feedback.Employer.UnitTests
 
             public UserWithSingleEntry()
             {
-                _options = Options.Create(new EmailSettings { FeedbackSiteBaseUrl = "https://test-site.com/" });
+                _options = Options.Create(new EmailSettings { FeedbackSiteBaseUrl = "https://test-site.com/", BatchSize = 10 });
 
                 var emailDetails = new List<EmployerEmailDetail>
                 {
@@ -74,7 +74,7 @@ namespace Esfa.Das.Feedback.Employer.UnitTests
 
             public UserWithMultipleEntries()
             {
-                _options = Options.Create(new EmailSettings { FeedbackSiteBaseUrl = "https://test-site.com/" });
+                _options = Options.Create(new EmailSettings { FeedbackSiteBaseUrl = "https://test-site.com/", BatchSize = 10 });
 
                 var emailDetails = new List<EmployerEmailDetail>
                 {
