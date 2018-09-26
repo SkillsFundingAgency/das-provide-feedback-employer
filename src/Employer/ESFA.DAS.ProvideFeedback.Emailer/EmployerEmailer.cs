@@ -19,6 +19,7 @@ namespace Esfa.Das.Feedback.Employer.Emailer
         private readonly INotificationsApi _emailService;
         private readonly ILogger<EmployerEmailer> _logger;
         private readonly string _feedbackBaseUrl;
+        private readonly int _numberOfEmailsToSend;
 
         public EmployerEmailer(IStoreEmployerEmailDetails emailDetailsStore, INotificationsApi emailService, IOptions<EmailSettings> settings, ILogger<EmployerEmailer> logger)
         {
@@ -26,6 +27,7 @@ namespace Esfa.Das.Feedback.Employer.Emailer
             _emailService = emailService;
             _logger = logger;
             _feedbackBaseUrl = settings.Value.FeedbackSiteBaseUrl.Last() != '/' ? settings.Value.FeedbackSiteBaseUrl + "/" : settings.Value.FeedbackSiteBaseUrl;
+            _numberOfEmailsToSend = settings.Value.BatchSize;
         }
 
         public async Task SendEmailsAsync()
@@ -33,12 +35,11 @@ namespace Esfa.Das.Feedback.Employer.Emailer
             var emailsToSend = await _emailDetailsStore.GetEmailDetailsToBeSent();
 
             // Group by user
-            var users =
-            from detail in emailsToSend
-            group detail by detail.UserRef into userGroup
-            select userGroup;
+            var emailsGroupedByUser = emailsToSend
+                .GroupBy(email => email.UserRef)
+                .Take(_numberOfEmailsToSend);
 
-            var tasks = users.Select(userGroup => HandleAsyncSend(userGroup));
+            var tasks = emailsGroupedByUser.Select(userGroup => HandleAsyncSend(userGroup));
             await Task.WhenAll(tasks);
         }
 
@@ -74,20 +75,12 @@ namespace Esfa.Das.Feedback.Employer.Emailer
                     }
             };
 
-            try
-            {
-                _logger.LogInformation($"Sending email to {employerEmailDetail.EmailAddress}");
-                await _emailService.SendEmail(email);
-            }
-            catch (HttpRequestException ex)
-            {
-                _logger.LogError(ex, $"Unable to send email for user: {employerEmailDetail.EmailAddress}");
-                throw;
-            }
+            await SendEmail(employerEmailDetail.EmailAddress, email);
         }
 
         private async Task SendMultiLinkEmail(IGrouping<Guid, EmployerEmailDetail> userGroup)
         {
+            var emailAddress = userGroup.First().EmailAddress;
             var feedbackUrlStrings = userGroup.Select(employerEmailDetail => $"{employerEmailDetail.ProviderName} {Environment.NewLine} {_feedbackBaseUrl}{employerEmailDetail.EmailCode}");
             var feedbackUrls = string.Join("\r\n \r\n", feedbackUrlStrings);
 
@@ -106,7 +99,21 @@ namespace Esfa.Das.Feedback.Employer.Emailer
                     }
             };
 
-            await _emailService.SendEmail(email);
+            await SendEmail(emailAddress, email);
+        }
+
+        private async Task SendEmail(string sendToAddress, Email email)
+        {
+            try
+            {
+                _logger.LogInformation($"Sending email to {sendToAddress}");
+                await _emailService.SendEmail(email);
+            }
+            catch (HttpRequestException ex)
+            {
+                _logger.LogError(ex, $"Unable to send email for user: {sendToAddress}");
+                throw;
+            }
         }
     }
 }

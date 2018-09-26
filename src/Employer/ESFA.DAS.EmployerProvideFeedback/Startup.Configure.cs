@@ -22,6 +22,7 @@ namespace ESFA.DAS.EmployerProvideFeedback
             else
             {
                 app.UseExceptionHandler("/error/handle");
+                app.UseNoCacheHttpHeaders(); // Affectively forces the browser to always request dynamic pages
                 app.UseHsts();
             }
 

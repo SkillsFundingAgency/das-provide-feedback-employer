@@ -66,6 +66,10 @@
                 "ClientToken": ""
             }
         },
+        "emailBatchSize": {
+            "type": "int",
+            "defaultValue": "25"
+        },
         "feedbackApiAuth": {
             "type": "secureObject",
             "defaultValue": {
@@ -392,6 +396,10 @@
                             {
                                 "name": "EmailSettings:FeedbackSiteBaseUrl",
                                 "value": "[concat('https://', parameters('customHostname'), '/')]"
+                            },
+                            {
+                                "name": "EmailSettings:BatchSize",
+                                "value": "[parameters('emailBatchSize')]"
                             }
                         ]
                     },
