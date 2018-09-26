@@ -68,7 +68,7 @@
         },
         "emailBatchSize": {
             "type": "int",
-            "defaultValue": "25"
+            "defaultValue": 25
         },
         "feedbackApiAuth": {
             "type": "secureObject",
