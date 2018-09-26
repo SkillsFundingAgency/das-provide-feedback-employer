@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE [dbo].[CreateEmployerEmailDetails]
+﻿CREATE PROCEDURE [dbo].[CreateEmployerEmailDetails_Beta]
 AS
 	INSERT INTO EmployerEmailDetails
 	SELECT 
@@ -18,5 +18,5 @@ AS
 	INNER JOIN staging_roatp r
 	ON c.ProviderId = r.Ukprn
 	WHERE r.ProviderType = 'Main Provider'
-	AND ea.EmailAddress NOT IN (SELECT EmailAddress FROM EmployerEmailDetails)
+	AND ea.EmailAddress IN (SELECT EmailAddress FROM staging_beta_users)
 RETURN 0
