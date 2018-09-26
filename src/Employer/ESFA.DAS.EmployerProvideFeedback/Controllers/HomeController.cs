@@ -12,8 +12,7 @@ using Microsoft.Extensions.Options;
 
 namespace ESFA.DAS.EmployerProvideFeedback.Controllers
 {
-    [ServiceFilter(typeof(EnsureFeedbackNotSubmitted))]
-    [Route(RoutePrefixPaths.FeedbackRoutePath)]
+    
     public class HomeController : Controller
     {
         private readonly IStoreEmployerEmailDetails _employerEmailDetailsRepository;
@@ -33,7 +32,9 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
             _providerAttributeList = providerAttributes.Value;
         }
 
-        [HttpGet(Name = RouteNames.Landing_Get)]
+        [ServiceFilter(typeof(EnsureFeedbackNotSubmitted))]
+        [Route(RoutePrefixPaths.FeedbackRoutePath)]
+        [HttpGet]
         public async Task<IActionResult> Index(Guid uniqueCode)
         {
             var sessionSurvey = _sessionService.Get<SurveyModel>(uniqueCode.ToString());
@@ -58,6 +59,19 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
                 ViewData.Add("ProviderName", sessionSurvey.ProviderName);
             }
 
+            return View();
+        }
+
+        [HttpGet(Name = RouteNames.Cookies)]
+        public IActionResult Cookies()
+        {
+            return View();
+        }
+
+
+        [HttpGet(Name = RouteNames.Privacy)]
+        public IActionResult Privacy()
+        {
             return View();
         }
 
