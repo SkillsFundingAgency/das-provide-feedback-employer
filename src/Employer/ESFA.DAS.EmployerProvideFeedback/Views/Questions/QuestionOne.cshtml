@@ -3,7 +3,7 @@
     ViewBag.PageID = "page-strengths-question";
     ViewBag.Title = "Providers Strengths";
 }
-<a asp-route="@RouteNames.Landing_Get" class="link-back">Back</a>
+<a asp-controller="Home" asp-action="Index" class="link-back">Back</a>
 <div class="grid-row">
     <div class="column-two-thirds">
         @if (!ViewData.ModelState.IsValid)

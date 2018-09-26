@@ -18,6 +18,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Infrastructure
         public override void OnActionExecuting(ActionExecutingContext context)
         {
             var uniqueCode = (Guid)context.ActionArguments["uniqueCode"];
+
             var isCodeBurnt = _employerEmailDetailRepository.IsCodeBurnt(uniqueCode).Result;
             if (isCodeBurnt)
             {
