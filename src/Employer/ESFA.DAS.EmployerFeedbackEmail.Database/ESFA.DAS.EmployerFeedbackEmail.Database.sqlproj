@@ -67,5 +67,7 @@
     <Build Include="staging_employer_accounts.sql" />
     <Build Include="CreateEmployerEmailDetails.sql" />
     <Build Include="staging_roatp.sql" />
+    <Build Include="staging_beta_users.sql" />
+    <Build Include="CreateEmployerEmailDetails_Beta.sql" />
   </ItemGroup>
 </Project>
