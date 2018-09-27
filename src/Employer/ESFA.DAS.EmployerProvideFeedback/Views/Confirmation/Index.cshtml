@@ -13,8 +13,8 @@
             </h1>
         </div>
         <p>Thanks for your feedback. It'll help @Model.ProviderName to continuously improve its apprenticeship training.</p>
-        <p>You rated @Model.ProviderName's training quality as <span class="bold-small">@Model.ProviderRating.GetDisplayName()</span></p>
-        @if (Model.ProviderRating == ProviderRating.VeryPoor)
+        <p>You rated @Model.ProviderName's training quality as <span class="bold-small">@Model.Rating.GetDisplayName()</span></p>
+        @if (Model.Rating == ProviderRating.VeryPoor)
         {
             <p>If you have concerns about @Model.ProviderName, tell your line manager or Human Resources team - your organisation might be able to solve your problem informally.</p>
 

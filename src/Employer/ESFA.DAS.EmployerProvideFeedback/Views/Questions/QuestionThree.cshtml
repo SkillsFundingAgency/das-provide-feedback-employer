@@ -35,19 +35,19 @@
                         </span>
                     }
                     <div class="multiple-choice">
-                        @Html.RadioButtonFor(m => m.ProviderRating, ProviderRating.Excellent, new { id = ProviderRating.Excellent, name = ProviderRating.Excellent })
+                        @Html.RadioButtonFor(m => m.Rating, ProviderRating.Excellent, new { id = ProviderRating.Excellent, name = ProviderRating.Excellent })
                         <label for=@ProviderRating.Excellent>@ProviderRating.Excellent</label>
                     </div>
                     <div class="multiple-choice">
-                        @Html.RadioButtonFor(m => m.ProviderRating, ProviderRating.Good, new { id = ProviderRating.Good, name = ProviderRating.Good })
+                        @Html.RadioButtonFor(m => m.Rating, ProviderRating.Good, new { id = ProviderRating.Good, name = ProviderRating.Good })
                         <label for=@ProviderRating.Good>@ProviderRating.Good</label>
                     </div>
                     <div class="multiple-choice">
-                        @Html.RadioButtonFor(m => m.ProviderRating, ProviderRating.Poor, new { id = ProviderRating.Poor, name = ProviderRating.Poor })
+                        @Html.RadioButtonFor(m => m.Rating, ProviderRating.Poor, new { id = ProviderRating.Poor, name = ProviderRating.Poor })
                         <label for=@ProviderRating.Poor>@ProviderRating.Poor</label>
                     </div>
                     <div class="multiple-choice">
-                        @Html.RadioButtonFor(m => m.ProviderRating, ProviderRating.VeryPoor, new { id = ProviderRating.VeryPoor, name = ProviderRating.VeryPoor })
+                        @Html.RadioButtonFor(m => m.Rating, ProviderRating.VeryPoor, new { id = ProviderRating.VeryPoor, name = ProviderRating.VeryPoor })
                         <label for=@ProviderRating.VeryPoor>@ProviderRating.VeryPoor.GetDisplayName()</label>
                     </div>
                 </fieldset>

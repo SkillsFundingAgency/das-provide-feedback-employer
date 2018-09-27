@@ -15,8 +15,8 @@ namespace UnitTests.EmployerProvideFeedback.ViewModels
             var pa = new ProviderAttributeModel();
 
             // Act
-            pa.IsDoingWell = isDoingWell;
-            pa.IsToImprove = toImprove;
+            pa.Good = isDoingWell;
+            pa.Bad = toImprove;
 
             // Assert
             Assert.Equal(expectedScore, pa.Score);

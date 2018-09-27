@@ -31,14 +31,14 @@
 
                     <input type="hidden" asp-for="@Model.ProviderName" />
 
-                    @for (var i=0; i < Model.ProviderAttributes.Count; i++)
+                    @for (var i=0; i < Model.Attributes.Count; i++)
                     {
-                    <div class="multiple-choice" style="display: @(Model.ProviderAttributes[i].IsDoingWell ? " none" : "block" );">
-                        <input asp-for="@Model.ProviderAttributes[i].IsToImprove" id="col1-@i" type="checkbox">
-                        <label for="col1-@i">@Model.ProviderAttributes[i].Name</label>
-                        <input asp-for="@Model.ProviderAttributes[i].Name" type="hidden" />
-                        <input asp-for="@Model.ProviderAttributes[i].Id" type="hidden" />
-                        <input asp-for="@Model.ProviderAttributes[i].IsDoingWell" id="col1-@i" type="hidden">
+                    <div class="multiple-choice" style="display: @(Model.Attributes[i].Good ? " none" : "block" );">
+                        <input asp-for="@Model.Attributes[i].Bad" id="col1-@i" type="checkbox">
+                        <label for="col1-@i">@Model.Attributes[i].Name</label>
+                        <input asp-for="@Model.Attributes[i].Name" type="hidden" />
+                        <input asp-for="@Model.Attributes[i].Id" type="hidden" />
+                        <input asp-for="@Model.Attributes[i].Good" id="col1-@i" type="hidden">
                     </div>
                     }
                 </fieldset>

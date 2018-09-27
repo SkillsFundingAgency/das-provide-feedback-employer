@@ -15,8 +15,8 @@ namespace ESFA.DAS.EmployerProvideFeedback.Infrastructure.Validation
             if (list != null)
             {
                 
-                return list.Where(att => att.IsDoingWell).Count() <= 3
-                    && list.Where(att => att.IsToImprove).Count() <= 3;
+                return list.Where(att => att.Good).Count() <= 3
+                    && list.Where(att => att.Bad).Count() <= 3;
             }
 
             return false;

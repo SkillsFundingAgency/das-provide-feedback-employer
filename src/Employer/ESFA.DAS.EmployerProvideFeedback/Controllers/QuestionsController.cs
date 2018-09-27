@@ -41,7 +41,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
             }
 
             var sessionAnswer = _sessionService.Get<SurveyModel>(uniqueCode.ToString());
-            sessionAnswer.ProviderAttributes = surveyModel.ProviderAttributes;
+            sessionAnswer.Attributes = surveyModel.Attributes;
             _sessionService.Set(uniqueCode.ToString(), sessionAnswer);
 
             return HandleRedirect(RouteNames.QuestionTwo_Get);
@@ -64,7 +64,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
             }
 
             var sessionAnswer = _sessionService.Get<SurveyModel>(uniqueCode.ToString());
-            sessionAnswer.ProviderAttributes = surveyModel.ProviderAttributes;
+            sessionAnswer.Attributes = surveyModel.Attributes;
             _sessionService.Set(uniqueCode.ToString(), sessionAnswer);
             return HandleRedirect(RouteNames.QuestionThree_Get);
         }
@@ -88,7 +88,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
             }
 
             var sessionAnswer = _sessionService.Get<SurveyModel>(uniqueCode.ToString());
-            sessionAnswer.ProviderRating = surveyModel.ProviderRating;
+            sessionAnswer.Rating = surveyModel.Rating;
             _sessionService.Set(uniqueCode.ToString(), sessionAnswer);
             return HandleRedirect(RouteNames.ReviewAnswers_Get);
         }
@@ -101,7 +101,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
 
         private bool IsProviderAttributesValid(SurveyModel surveyModel)
         {
-            ModelState.TryGetValue(nameof(surveyModel.ProviderAttributes), out ModelStateEntry modelState);
+            ModelState.TryGetValue(nameof(surveyModel.Attributes), out ModelStateEntry modelState);
             return modelState == null ? true : modelState.ValidationState == ModelValidationState.Valid;
         }
     }

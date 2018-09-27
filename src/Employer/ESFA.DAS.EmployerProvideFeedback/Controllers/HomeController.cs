@@ -84,7 +84,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
                 UserRef = employerEmailDetail.UserRef,
                 Submitted = employerEmailDetail.CodeBurntDate != null,
                 ProviderName = employerEmailDetail.ProviderName,
-                ProviderAttributes = _providerAttributeList
+                Attributes = _providerAttributeList
             };
         }
     }

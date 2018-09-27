@@ -54,8 +54,8 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
 
             // Assert
             Assert.IsAssignableFrom<SurveyModel>(result.Model);
-            var attributes = (result.Model as SurveyModel).ProviderAttributes;
-            Assert.DoesNotContain(attributes, m => m.IsDoingWell);
+            var attributes = (result.Model as SurveyModel).Attributes;
+            Assert.DoesNotContain(attributes, m => m.Good);
         }
 
         [Fact]
@@ -64,8 +64,8 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
             // Arrange
             var surveyModel = new SurveyModel();
             var sessionDoingWellAtts = _providerAttributes.Take(3).ToList();
-            sessionDoingWellAtts.ForEach(ps => ps.IsDoingWell = true);
-            surveyModel.ProviderAttributes = _providerAttributes;
+            sessionDoingWellAtts.ForEach(ps => ps.Good = true);
+            surveyModel.Attributes = _providerAttributes;
             _sessionServiceMock.Setup(mock => mock.Get<SurveyModel>(It.IsAny<string>())).Returns(surveyModel);
 
             // Act
@@ -73,9 +73,9 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
 
             // Assert
             Assert.IsAssignableFrom<SurveyModel>(result.Model);
-            var attributes = (result.Model as SurveyModel).ProviderAttributes;
-            Assert.Contains(attributes, m => m.IsDoingWell);
-            Assert.Equal(sessionDoingWellAtts.Count, attributes.Count(m => m.IsDoingWell));
+            var attributes = (result.Model as SurveyModel).Attributes;
+            Assert.Contains(attributes, m => m.Good);
+            Assert.Equal(sessionDoingWellAtts.Count, attributes.Count(m => m.Good));
         }
 
         [Fact]
@@ -83,8 +83,8 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
         {
             // Arrange
             var sessionDoingWellAtts = _providerAttributes.Take(3).ToList();
-            sessionDoingWellAtts.ForEach(ps => ps.IsDoingWell = true);
-            var surveyModel = new SurveyModel { ProviderAttributes = _providerAttributes };
+            sessionDoingWellAtts.ForEach(ps => ps.Good = true);
+            var surveyModel = new SurveyModel { Attributes = _providerAttributes };
 
             // Act
             var result = _controller.QuestionOne(_uniqueCode, surveyModel);
@@ -102,7 +102,7 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
             _controller.TempData.Add("ReturnUrl", RouteNames.ReviewAnswers_Get);
 
             // Act
-            var result = _controller.QuestionOne(_uniqueCode, new SurveyModel { ProviderAttributes = _providerAttributes });
+            var result = _controller.QuestionOne(_uniqueCode, new SurveyModel { Attributes = _providerAttributes });
 
             // Assert
             Assert.IsAssignableFrom<RedirectToRouteResult>(result);
@@ -119,8 +119,8 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
 
             // Assert
             Assert.IsAssignableFrom<SurveyModel>(result.Model);
-            var attributes = (result.Model as SurveyModel).ProviderAttributes;
-            Assert.DoesNotContain(attributes, m => m.IsDoingWell);
+            var attributes = (result.Model as SurveyModel).Attributes;
+            Assert.DoesNotContain(attributes, m => m.Good);
         }
 
         [Fact]
@@ -129,8 +129,8 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
             // Arrange
             var surveyModel = new SurveyModel();
             var sessionDoingWellAtts = _providerAttributes.Take(3).ToList();
-            sessionDoingWellAtts.ForEach(ps => ps.IsToImprove = true);
-            surveyModel.ProviderAttributes = _providerAttributes;
+            sessionDoingWellAtts.ForEach(ps => ps.Bad = true);
+            surveyModel.Attributes = _providerAttributes;
             _sessionServiceMock.Setup(mock => mock.Get<SurveyModel>(It.IsAny<string>())).Returns(surveyModel);
 
             // Act
@@ -138,9 +138,9 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
 
             // Assert
             Assert.IsAssignableFrom<SurveyModel>(result.Model);
-            var attributes = (result.Model as SurveyModel).ProviderAttributes;
-            Assert.Contains(attributes, m => m.IsToImprove);
-            Assert.Equal(sessionDoingWellAtts.Count, attributes.Count(m => m.IsToImprove));
+            var attributes = (result.Model as SurveyModel).Attributes;
+            Assert.Contains(attributes, m => m.Bad);
+            Assert.Equal(sessionDoingWellAtts.Count, attributes.Count(m => m.Bad));
         }
 
         [Fact]
@@ -148,8 +148,8 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
         {
             // Arrange
             var sessionDoingWellAtts = _providerAttributes.Take(3).ToList();
-            sessionDoingWellAtts.ForEach(ps => ps.IsToImprove = true);
-            var surveyModel = new SurveyModel { ProviderAttributes = _providerAttributes };
+            sessionDoingWellAtts.ForEach(ps => ps.Bad = true);
+            var surveyModel = new SurveyModel { Attributes = _providerAttributes };
 
             // Act
             var result = _controller.QuestionTwo(_uniqueCode, surveyModel);
@@ -167,7 +167,7 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
             _controller.TempData.Add("ReturnUrl", RouteNames.ReviewAnswers_Get);
 
             // Act
-            var result = _controller.QuestionTwo(_uniqueCode, new SurveyModel { ProviderAttributes = _providerAttributes });
+            var result = _controller.QuestionTwo(_uniqueCode, new SurveyModel { Attributes = _providerAttributes });
 
             // Assert
             Assert.IsAssignableFrom<RedirectToRouteResult>(result);
@@ -194,7 +194,7 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
         {
             // Arrange
             var surveyModel = new SurveyModel();
-            surveyModel.ProviderRating = ProviderRating.Poor;
+            surveyModel.Rating = ProviderRating.Poor;
             _sessionServiceMock.Setup(mock => mock.Get<SurveyModel>(It.IsAny<string>())).Returns(surveyModel);
 
             // Act
@@ -203,7 +203,7 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
             // Assert
             Assert.IsAssignableFrom<SurveyModel>(result.Model);
             var model = result.Model as SurveyModel;
-            Assert.Equal(ProviderRating.Poor, model.ProviderRating);
+            Assert.Equal(ProviderRating.Poor, model.Rating);
         }
 
         [Fact]
@@ -228,7 +228,7 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
         public void Question_3_When_Answers_Submitted_Should_Update_Session_And_Redirect()
         {
             // Arrange
-            var surveyModel = new SurveyModel { ProviderRating = ProviderRating.Excellent };
+            var surveyModel = new SurveyModel { Rating = ProviderRating.Excellent };
 
             // Act
             var result = _controller.QuestionThree(_uniqueCode, surveyModel);
@@ -243,7 +243,7 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
         public void Question_3_Should_Handle_Return_Url()
         {
             // Arrange
-            var surveyModel = new SurveyModel { ProviderRating = ProviderRating.Excellent };
+            var surveyModel = new SurveyModel { Rating = ProviderRating.Excellent };
             _controller.TempData.Add("ReturnUrl", RouteNames.ReviewAnswers_Get);
 
             // Act
@@ -258,8 +258,8 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
         {
             return _fixture
                 .Build<ProviderAttributeModel>()
-                .With(x => x.IsDoingWell, false)
-                .With(x => x.IsToImprove, false)
+                .With(x => x.Good, false)
+                .With(x => x.Bad, false)
                 .CreateMany(10)
                 .ToList();
         }
