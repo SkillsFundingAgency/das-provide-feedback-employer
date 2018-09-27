@@ -53,7 +53,7 @@ namespace ESFA.DAS.EmployerProvideFeedback
             });
 
             services.AddDistributedRedisCache(options => {
-                options.Configuration = Configuration.GetConnectionString("redis");
+                options.Configuration = Configuration.GetConnectionString("RedisApplication");
                 options.InstanceName = "";
             });
 
