@@ -21,7 +21,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Infrastructure
             if (!_sessionService.Exists(uniqueCode.ToString()))
             {
                 var controller = context.Controller as Controller;
-                context.Result = controller.RedirectToRoute(RouteNames.Landing_Get);
+                context.Result = controller.RedirectToAction("Index", "Home");
             }
         }
     }
