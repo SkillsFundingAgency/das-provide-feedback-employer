@@ -17,7 +17,7 @@
                         @{ if (Model.HasStrengths)
                             {
                                 <ul class="list list-bullet">
-                                    @foreach (var item in Model.ProviderAttributes.Where(x => x.IsDoingWell))
+                                    @foreach (var item in Model.Attributes.Where(x => x.Good))
                                     {
                                         <li>@item.Name</li>
                                     }
@@ -41,7 +41,7 @@
                         @{ if (Model.HasWeaknesses)
                             {
                                 <ul class="list list-bullet">
-                                    @foreach (var item in Model.ProviderAttributes.Where(x => x.IsToImprove))
+                                    @foreach (var item in Model.Attributes.Where(x => x.Bad))
                                     {
                                         <li>@item.Name</li>
                                     }
@@ -62,7 +62,7 @@
                         Overall rating
                     </span>
                     <span class="answer">
-                        <p>@Model.ProviderRating.GetDisplayName()</p>
+                        <p>@Model.Rating.GetDisplayName()</p>
                     </span>
                     <span class="change">
                         <a asp-route="@RouteNames.QuestionThree_Get" asp-route-returnUrl="@RouteNames.ReviewAnswers_Get">Change<span class="visually-hidden"> quality rating answer</a>

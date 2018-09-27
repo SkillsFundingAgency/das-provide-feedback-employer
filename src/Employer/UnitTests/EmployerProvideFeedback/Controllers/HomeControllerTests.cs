@@ -104,8 +104,8 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
         {
             return _fixture
                 .Build<ProviderAttributeModel>()
-                .With(x => x.IsDoingWell, false)
-                .With(x => x.IsToImprove, false)
+                .With(x => x.Good, false)
+                .With(x => x.Bad, false)
                 .CreateMany(10)
                 .ToList();
         }

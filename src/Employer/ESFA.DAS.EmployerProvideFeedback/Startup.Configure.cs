@@ -22,12 +22,17 @@ namespace ESFA.DAS.EmployerProvideFeedback
             else
             {
                 app.UseExceptionHandler("/error/handle");
-                app.UseNoCacheHttpHeaders(); // Affectively forces the browser to always request dynamic pages
                 app.UseHsts();
             }
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
+
+            if (!env.IsDevelopment())
+            {
+                // Remove to test pre-prod issue
+                // app.UseNoCacheHttpHeaders(); // Affectively forces the browser to always request dynamic pages
+            }
 
             //Enable sessions
             app.UseSession();

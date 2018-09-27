@@ -50,7 +50,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Orchestrators
                 AccountId = survey.AccountId,
                 DateTimeCompleted = DateTime.Now,
                 Ukprn = survey.Ukprn,
-                ProviderAttributes = survey.ProviderAttributes.Select(ps =>
+                ProviderAttributes = survey.Attributes.Select(ps =>
                 {
                     return new ProviderAttribute
                     {
@@ -59,7 +59,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Orchestrators
                     };
 
                 }).ToList(),
-                ProviderRating = survey.ProviderRating.Value.GetDisplayName()
+                ProviderRating = survey.Rating.Value.GetDisplayName()
             };
         }
     }

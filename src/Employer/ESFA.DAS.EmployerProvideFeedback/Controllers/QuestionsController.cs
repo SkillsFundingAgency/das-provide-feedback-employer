@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using ESFA.DAS.EmployerProvideFeedback.Configuration.Routing;
 using ESFA.DAS.EmployerProvideFeedback.Infrastructure;
 using ESFA.DAS.EmployerProvideFeedback.ViewModels;
@@ -41,10 +43,29 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
             }
 
             var sessionAnswer = _sessionService.Get<SurveyModel>(uniqueCode.ToString());
-            sessionAnswer.ProviderAttributes = surveyModel.ProviderAttributes;
+            SetStengths(sessionAnswer, surveyModel.Attributes.Where(x => x.Good));
+            // sessionAnswer.Attributes = surveyModel.Attributes;
             _sessionService.Set(uniqueCode.ToString(), sessionAnswer);
 
             return HandleRedirect(RouteNames.QuestionTwo_Get);
+        }
+
+        private void SetStengths(SurveyModel sessionAnswer, IEnumerable<ProviderAttributeModel> currentAnswerAttributes)
+        {
+            foreach (var attr in sessionAnswer.Attributes)
+            {
+                var match = currentAnswerAttributes.SingleOrDefault(x => x.Name == attr.Name);
+                attr.Good = match != null;
+            }
+        }
+
+        private void SetWeaknesses(SurveyModel sessionAnswer, IEnumerable<ProviderAttributeModel> currentAnswerAttributes)
+        {
+            foreach (var attr in sessionAnswer.Attributes)
+            {
+                var match = currentAnswerAttributes.SingleOrDefault(x => x.Name == attr.Name);
+                attr.Bad = match != null;
+            }
         }
 
         [HttpGet("question-two", Name = RouteNames.QuestionTwo_Get)]
@@ -64,7 +85,8 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
             }
 
             var sessionAnswer = _sessionService.Get<SurveyModel>(uniqueCode.ToString());
-            sessionAnswer.ProviderAttributes = surveyModel.ProviderAttributes;
+            // sessionAnswer.Attributes = surveyModel.Attributes;
+            SetWeaknesses(sessionAnswer, surveyModel.Attributes.Where(x => x.Bad));
             _sessionService.Set(uniqueCode.ToString(), sessionAnswer);
             return HandleRedirect(RouteNames.QuestionThree_Get);
         }
@@ -88,7 +110,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
             }
 
             var sessionAnswer = _sessionService.Get<SurveyModel>(uniqueCode.ToString());
-            sessionAnswer.ProviderRating = surveyModel.ProviderRating;
+            sessionAnswer.Rating = surveyModel.Rating;
             _sessionService.Set(uniqueCode.ToString(), sessionAnswer);
             return HandleRedirect(RouteNames.ReviewAnswers_Get);
         }
@@ -101,7 +123,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
 
         private bool IsProviderAttributesValid(SurveyModel surveyModel)
         {
-            ModelState.TryGetValue(nameof(surveyModel.ProviderAttributes), out ModelStateEntry modelState);
+            ModelState.TryGetValue(nameof(surveyModel.Attributes), out ModelStateEntry modelState);
             return modelState == null ? true : modelState.ValidationState == ModelValidationState.Valid;
         }
     }

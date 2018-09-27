@@ -15,14 +15,14 @@ namespace ESFA.DAS.EmployerProvideFeedback.ViewModels
         public long AccountId { get; set; }
 
         [EnsureMaxThreeProviderAttribute]
-        public List<ProviderAttributeModel> ProviderAttributes { get; set; } = new List<ProviderAttributeModel>();
+        public List<ProviderAttributeModel> Attributes { get; set; } = new List<ProviderAttributeModel>();
 
         [Required]
-        public ProviderRating? ProviderRating { get; set; }
+        public ProviderRating? Rating { get; set; }
 
-        public bool HasStrengths => ProviderAttributes.Any(attr => attr.IsDoingWell);
+        public bool HasStrengths => Attributes.Any(attr => attr.Good);
 
-        public bool HasWeaknesses => ProviderAttributes.Any(attr => attr.IsToImprove);
+        public bool HasWeaknesses => Attributes.Any(attr => attr.Bad);
 
         public bool Submitted { get; internal set; }
 
