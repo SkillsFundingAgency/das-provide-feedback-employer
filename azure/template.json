@@ -92,6 +92,9 @@
         },
         "gaTrackingId": {
             "type": "string"
+        },
+        "appRedisConnectionString": {
+            "type": "secureString"
         }
     },
     "variables": {},
@@ -210,6 +213,11 @@
                             {
                                 "name": "Redis",
                                 "connectionString": "[parameters('loggingRedisConnectionString')]",
+                                "type": "Custom"
+                            },
+                            {
+                                "name": "RedisApplication",
+                                "connectionString": "[parameters('appRedisConnectionString')]",
                                 "type": "Custom"
                             },
                             {
