@@ -33,7 +33,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
         }
 
         [ServiceFilter(typeof(EnsureFeedbackNotSubmitted))]
-        [Route(RoutePrefixPaths.FeedbackRoutePath)]
+        [Route(RoutePrefixPaths.FeedbackRoutePath, Name = RouteNames.Landing_Get)]
         [HttpGet]
         public async Task<IActionResult> Index(Guid uniqueCode)
         {

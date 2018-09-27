@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using ESFA.DAS.EmployerProvideFeedback.Configuration.Routing;
 using ESFA.DAS.EmployerProvideFeedback.Infrastructure;
 using FluentAssertions;
@@ -47,15 +46,14 @@ namespace UnitTests.EmployerProvideFeedback.Infrastructure
 
             // Act
             ensureSession.OnActionExecuting(context);
-
             // Assert
             context
-                .Result
-                .Should()
-                .NotBeNull()
-                .And
-                .BeAssignableTo<RedirectToRouteResult>()
-                .Which
+                  .Result
+                  .Should()
+                  .NotBeNull()
+                  .And
+                  .BeAssignableTo<RedirectToRouteResult>()
+                  .Which
                 .RouteName
                 .Should()
                 .BeEquivalentTo(RouteNames.Landing_Get);
