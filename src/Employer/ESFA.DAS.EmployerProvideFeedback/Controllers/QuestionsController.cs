@@ -52,25 +52,19 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
 
         private void SetStengths(SurveyModel sessionAnswer, IEnumerable<ProviderAttributeModel> currentAnswerAttributes)
         {
-            foreach (var attr in currentAnswerAttributes)
+            foreach (var attr in sessionAnswer.Attributes)
             {
-                var match = sessionAnswer.Attributes.SingleOrDefault(x => x.Name == attr.Name);
-                if (match != null)
-                {
-                    match.Good = true;
-                }
+                var match = currentAnswerAttributes.SingleOrDefault(x => x.Name == attr.Name);
+                attr.Good = match != null;
             }
         }
 
         private void SetWeaknesses(SurveyModel sessionAnswer, IEnumerable<ProviderAttributeModel> currentAnswerAttributes)
         {
-            foreach (var attr in currentAnswerAttributes)
+            foreach (var attr in sessionAnswer.Attributes)
             {
-                var match = sessionAnswer.Attributes.SingleOrDefault(x => x.Name == attr.Name);
-                if(match != null)
-                {
-                    match.Bad = true;
-                }
+                var match = currentAnswerAttributes.SingleOrDefault(x => x.Name == attr.Name);
+                attr.Bad = match != null;
             }
         }
 
