@@ -37,8 +37,6 @@
                         <input asp-for="@Model.Attributes[i].Bad" id="col1-@i" type="checkbox">
                         <label for="col1-@i">@Model.Attributes[i].Name</label>
                         <input asp-for="@Model.Attributes[i].Name" type="hidden" />
-                        <input asp-for="@Model.Attributes[i].Id" type="hidden" />
-                        <input asp-for="@Model.Attributes[i].Good" id="col1-@i" type="hidden">
                     </div>
                     }
                 </fieldset>

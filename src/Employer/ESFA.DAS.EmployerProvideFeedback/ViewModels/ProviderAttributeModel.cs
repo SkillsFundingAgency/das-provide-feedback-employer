@@ -5,7 +5,6 @@ namespace ESFA.DAS.EmployerProvideFeedback.ViewModels
     [Serializable]
     public class ProviderAttributeModel
     {
-        public int Id { get; set; }
         public string Name { get; set; }
         public bool Good { get; set; }
         public bool Bad { get; set; }
