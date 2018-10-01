@@ -10,7 +10,7 @@
         {
             <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
                 <ul class="error-summary-list">
-                    <li><a href="#error">Please rate training quality</a></li>
+                    <li><a href="#error">Please rate @Model.ProviderName</a></li>
                 </ul>
             </div>
         }
@@ -24,14 +24,12 @@
                     <legend>
                         <h2 class="heading-medium">How would you rate @Model.ProviderName’s training and service overall?</h2>
                     </legend>
-
                     <input type="hidden" asp-for="@Model.ProviderName" />
-
                     @if (!ViewData.ModelState.IsValid)
                     {
                         <span class="error-message">
                             <!-- dynamically add this span element here in case of error-->
-                            Please rate training quality
+                            Please rate @Model.ProviderName
                         </span>
                     }
                     <div class="multiple-choice">
