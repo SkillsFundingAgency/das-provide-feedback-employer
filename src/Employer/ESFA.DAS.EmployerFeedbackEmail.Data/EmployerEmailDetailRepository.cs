@@ -10,6 +10,7 @@ namespace ESFA.DAS.ProvideFeedback.Data
 {
     public class EmployerEmailDetailRepository : IStoreEmployerEmailDetails
     {
+        private int _commandTimeoutMinutes = 30;
         private readonly IDbConnection _dbConnection;
 
         public EmployerEmailDetailRepository(IDbConnection dbConnection)
@@ -29,10 +30,11 @@ namespace ESFA.DAS.ProvideFeedback.Data
 
         public async Task<IEnumerable<EmployerEmailDetail>> GetEmailDetailsToBeSent()
         {
-            return await _dbConnection.QueryAsync<EmployerEmailDetail>(@"
+            var commandTimeout = (int)TimeSpan.FromMinutes(_commandTimeoutMinutes).TotalMilliseconds;
+            return await _dbConnection.QueryAsync<EmployerEmailDetail>(sql: @"
                                         SELECT * 
                                         FROM EmployerEmailDetails
-                                        WHERE EmailSentDate IS NULL");
+                                        WHERE EmailSentDate IS NULL", param: null, transaction: null, commandTimeout: commandTimeout);
         }
 
         public async Task<bool> IsCodeBurnt(Guid emailCode)
