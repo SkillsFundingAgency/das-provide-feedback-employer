@@ -5,12 +5,13 @@ using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
 using Esfa.Das.ProvideFeedback.Domain.Entities;
+using Polly;
 
 namespace ESFA.DAS.ProvideFeedback.Data
 {
     public class EmployerEmailDetailRepository : IStoreEmployerEmailDetails
     {
-        private int _commandTimeoutMinutes = 30;
+        private int _commandTimeoutSeconds = 120;
         private readonly IDbConnection _dbConnection;
 
         public EmployerEmailDetailRepository(IDbConnection dbConnection)
@@ -30,11 +31,10 @@ namespace ESFA.DAS.ProvideFeedback.Data
 
         public async Task<IEnumerable<EmployerEmailDetail>> GetEmailDetailsToBeSent()
         {
-            var commandTimeout = (int)TimeSpan.FromMinutes(_commandTimeoutMinutes).TotalMilliseconds;
             return await _dbConnection.QueryAsync<EmployerEmailDetail>(sql: @"
                                         SELECT * 
                                         FROM EmployerEmailDetails
-                                        WHERE EmailSentDate IS NULL", param: null, transaction: null, commandTimeout: commandTimeout);
+                                        WHERE EmailSentDate IS NULL", param: null, transaction: null, commandTimeout: _commandTimeoutSeconds);
         }
 
         public async Task<bool> IsCodeBurnt(Guid emailCode)
@@ -59,22 +59,34 @@ namespace ESFA.DAS.ProvideFeedback.Data
         public async Task SetEmailDetailsAsSent(Guid emailCode)
         {
             var now = DateTime.Now;
-            await _dbConnection.QueryAsync($@"
-                                UPDATE EmployerEmailDetails
-                                SET EmailSentDate = @{nameof(now)}
-                                WHERE EmailCode = @{nameof(emailCode)}",
-                                new { now, emailCode });
+            var sql = $@"
+                        UPDATE EmployerEmailDetails
+                        SET EmailSentDate = @{nameof(now)}
+                        WHERE EmailCode = @{nameof(emailCode)}";
+
+            await ExecuteUpdateAsync(sql, new { now, emailCode });
         }
 
         public async Task SetEmailDetailsAsSent(IEnumerable<Guid> ids)
         {
             var idsArray = ids.ToArray();
             var now = DateTime.Now;
-            await _dbConnection.QueryAsync($@"
-                                UPDATE EmployerEmailDetails
-                                SET EmailSentDate = @{nameof(now)}
-                                WHERE EmailCode in @{nameof(idsArray)}",
-                                new { now, idsArray});
+            var sql = $@"UPDATE EmployerEmailDetails
+                         SET EmailSentDate = @{nameof(now)}
+                         WHERE EmailCode in @{nameof(idsArray)}";
+
+            await ExecuteUpdateAsync(sql, new { now, idsArray });
+        }
+
+        private async Task ExecuteUpdateAsync(string sql, object param)
+        {
+            var policy = Policy.Handle<Exception>()
+                .WaitAndRetryAsync(3, x => TimeSpan.FromSeconds(3));
+
+            await policy.ExecuteAsync(() =>
+            {
+                return _dbConnection.QueryAsync(sql: sql, param: param, transaction: null, commandTimeout: _commandTimeoutSeconds);
+            });
         }
     }
 }
