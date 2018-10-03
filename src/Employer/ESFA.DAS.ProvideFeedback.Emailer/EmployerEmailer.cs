@@ -39,8 +39,10 @@ namespace Esfa.Das.Feedback.Employer.Emailer
                 .GroupBy(email => email.UserRef)
                 .Take(_numberOfEmailsToSend);
 
-            var tasks = emailsGroupedByUser.Select(userGroup => HandleAsyncSend(userGroup));
-            await Task.WhenAll(tasks);
+            foreach (var userGroup in emailsGroupedByUser)
+            {
+                await HandleAsyncSend(userGroup);
+            }
         }
 
         private async Task HandleAsyncSend(IGrouping<Guid, EmployerEmailDetail> userGroup)
