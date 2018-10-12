@@ -70,4 +70,11 @@
     <Property Name="ParentElementType" Value="SqlTable" />
     <Property Name="NewName" Value="EmailAddress" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="c39c22a2-f7ff-4c7a-ba09-e53489c756a3" ChangeDateTime="10/09/2018 07:58:01">
+    <Property Name="ElementName" Value="[dbo].[EmployerEmailDetails].[IX_EmployerEmailDetails_Column]" />
+    <Property Name="ElementType" Value="SqlIndex" />
+    <Property Name="ParentElementName" Value="[dbo].[EmployerEmailDetails]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="[IX_EmployerEmailDetails_EmailCode]" />
+  </Operation>
 </Operations>

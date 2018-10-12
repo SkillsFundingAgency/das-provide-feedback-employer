@@ -12,3 +12,7 @@
     [CodeBurntDate] DATETIME NULL
 )
 
+
+GO
+
+CREATE NONCLUSTERED INDEX [IX_EmployerEmailDetails_EmailCode] ON [dbo].[EmployerEmailDetails] ([EmailCode]) WITH (ONLINE = ON)
