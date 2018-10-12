@@ -15,4 +15,4 @@
 
 GO
 
-CREATE UNIQUE NONCLUSTERED INDEX [IX_EmployerEmailDetails_EmailCode] ON [dbo].[EmployerEmailDetails] ([EmailCode]) WITH (ONLINE = ON)
+CREATE NONCLUSTERED INDEX [IX_EmployerEmailDetails_EmailCode] ON [dbo].[EmployerEmailDetails] ([EmailCode]) WITH (ONLINE = ON)
