@@ -118,6 +118,10 @@
     position: relative;
 }
 
+.check-your-answers .answer .list li:not(:last-child) {
+    margin-bottom: 20px;
+}
+
 .check-your-answers .answer p {
     margin: 0;
 }
