@@ -16,7 +16,7 @@
                     <span class="answer">
                         @{ if (Model.HasStrengths)
                             {
-                                <ul class="list list-bullet">
+                                <ul class="list">
                                     @foreach (var item in Model.Attributes.Where(x => x.Good))
                                     {
                                         <li>@item.Name</li>
@@ -40,7 +40,7 @@
                     <span class="answer">
                         @{ if (Model.HasWeaknesses)
                             {
-                                <ul class="list list-bullet">
+                                <ul class="list">
                                     @foreach (var item in Model.Attributes.Where(x => x.Bad))
                                     {
                                         <li>@item.Name</li>
