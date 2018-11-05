@@ -3,15 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Esfa.Das.Feedback.Employer.Emailer.Configuration;
-using Esfa.Das.ProvideFeedback.Domain.Entities;
+using ESFA.DAS.Feedback.Employer.Emailer.Configuration;
+using ESFA.DAS.ProvideFeedback.Domain.Entities;
 using ESFA.DAS.ProvideFeedback.Data;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using SFA.DAS.Notifications.Api.Client;
 using SFA.DAS.Notifications.Api.Types;
 
-namespace Esfa.Das.Feedback.Employer.Emailer
+namespace ESFA.DAS.Feedback.Employer.Emailer
 {
     public class EmployerEmailer
     {

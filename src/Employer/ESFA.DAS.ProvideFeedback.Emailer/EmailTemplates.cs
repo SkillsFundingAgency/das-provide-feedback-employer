@@ -1,4 +1,4 @@
-﻿namespace Esfa.Das.Feedback.Employer.Emailer
+﻿namespace ESFA.DAS.Feedback.Employer.Emailer
 {
     public class EmailTemplates
     {

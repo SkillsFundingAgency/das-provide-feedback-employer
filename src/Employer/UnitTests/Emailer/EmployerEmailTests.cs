@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Esfa.Das.Feedback.Employer.Emailer;
-using Esfa.Das.Feedback.Employer.Emailer.Configuration;
-using Esfa.Das.ProvideFeedback.Domain.Entities;
+using ESFA.DAS.Feedback.Employer.Emailer;
+using ESFA.DAS.Feedback.Employer.Emailer.Configuration;
+using ESFA.DAS.ProvideFeedback.Domain.Entities;
 using ESFA.DAS.ProvideFeedback.Data;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;

@@ -1,10 +1,8 @@
 ﻿using System;
-using System.IO;
 using System.Threading.Tasks;
-using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
 
-namespace Esfa.Das.Feedback.Employer.Emailer
+namespace ESFA.DAS.Feedback.Employer.Emailer
 {
     public class EmployerEmailerJob
     {
