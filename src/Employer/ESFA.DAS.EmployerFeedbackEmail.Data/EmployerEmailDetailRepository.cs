@@ -29,12 +29,20 @@ namespace ESFA.DAS.ProvideFeedback.Data
                                           new { uniqueCode });
         }
 
-        public async Task<IEnumerable<EmployerEmailDetail>> GetEmailDetailsToBeSent()
+        public async Task<IEnumerable<EmployerEmailDetail>> GetEmailDetailsToBeSentInvite()
         {
             return await _dbConnection.QueryAsync<EmployerEmailDetail>(sql: @"
                                         SELECT * 
                                         FROM EmployerEmailDetails
                                         WHERE EmailSentDate IS NULL", param: null, transaction: null, commandTimeout: _commandTimeoutSeconds);
+        }
+
+        public async Task<IEnumerable<EmployerEmailDetail>> GetEmailDetailsToBeSentReminder()
+        {
+            return await _dbConnection.QueryAsync<EmployerEmailDetail>(sql: @"
+                                        SELECT * 
+                                        FROM EmployerEmailDetails
+                                        WHERE CodeBurntDate IS NULL", param: null, transaction: null, commandTimeout: _commandTimeoutSeconds);
         }
 
         public async Task<bool> IsCodeBurnt(Guid emailCode)
@@ -56,26 +64,15 @@ namespace ESFA.DAS.ProvideFeedback.Data
                                 new { now, uniqueCode });
         }
 
-        public async Task SetEmailDetailsAsSent(Guid emailCode)
+        public async Task SetEmailDetailsAsSent(Guid userRef)
         {
             var now = DateTime.Now;
             var sql = $@"
                         UPDATE EmployerEmailDetails
                         SET EmailSentDate = @{nameof(now)}
-                        WHERE EmailCode = @{nameof(emailCode)}";
+                        WHERE UserRef = @{nameof(userRef)}";
 
-            await ExecuteUpdateAsync(sql, new { now, emailCode });
-        }
-
-        public async Task SetEmailDetailsAsSent(IEnumerable<Guid> ids)
-        {
-            var idsArray = ids.ToArray();
-            var now = DateTime.Now;
-            var sql = $@"UPDATE EmployerEmailDetails
-                         SET EmailSentDate = @{nameof(now)}
-                         WHERE EmailCode in @{nameof(idsArray)}";
-
-            await ExecuteUpdateAsync(sql, new { now, idsArray });
+            await ExecuteUpdateAsync(sql, new { now, userRef });
         }
 
         private async Task ExecuteUpdateAsync(string sql, object param)

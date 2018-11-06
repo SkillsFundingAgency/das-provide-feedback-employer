@@ -7,7 +7,7 @@
   </PropertyGroup>
   <PropertyGroup>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <AssemblyName>Esfa.Das.Feedback.Employer.Emailer</AssemblyName>
+    <AssemblyName>ESFA.DAS.Feedback.Employer.Emailer</AssemblyName>
   </PropertyGroup>
   <PropertyGroup>
     <IsWebJobProject>true</IsWebJobProject>

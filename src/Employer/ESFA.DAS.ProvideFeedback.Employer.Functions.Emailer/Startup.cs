@@ -65,9 +65,9 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
                 }
             );
 
-            services.AddSingleton<EmployerEmailer>();
+            services.AddSingleton<EmployerSurveyInviteEmailer>();
+            services.AddSingleton<EmployerSurveyReminderEmailer>();
             services.AddSingleton<IStoreEmployerEmailDetails, EmployerEmailDetailRepository>();
-            services.AddSingleton<EmployerEmailerJob>();
         }
     }
 }

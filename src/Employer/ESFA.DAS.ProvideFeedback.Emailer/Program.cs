@@ -132,7 +132,7 @@ namespace Esfa.Das.Feedback.Employer.Emailer
                 }
             );
 
-            services.AddTransient<EmployerEmailer>();
+            services.AddTransient<EmployerSurveyInviteEmailer>();
             services.AddTransient<IStoreEmployerEmailDetails, EmployerEmailDetailRepository>();
 
             // Add Jobs

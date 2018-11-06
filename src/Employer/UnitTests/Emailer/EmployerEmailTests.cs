@@ -20,9 +20,9 @@ namespace Esfa.Das.Feedback.Employer.UnitTests
         {
             private readonly Mock<IStoreEmployerEmailDetails> _mockStore = new Mock<IStoreEmployerEmailDetails>();
             private readonly Mock<INotificationsApi> _mockEmailService = new Mock<INotificationsApi>();
-            private readonly Mock<ILogger<EmployerEmailer>> _mockLogger = new Mock<ILogger<EmployerEmailer>>();
+            private readonly Mock<ILogger<EmployerSurveyInviteEmailer>> _mockLogger = new Mock<ILogger<EmployerSurveyInviteEmailer>>();
             private readonly IOptions<EmailSettings> _options;
-            private readonly EmployerEmailer _emailer;
+            private readonly EmployerSurveyInviteEmailer _emailer;
 
             public UserWithSingleEntry()
             {
@@ -33,9 +33,9 @@ namespace Esfa.Das.Feedback.Employer.UnitTests
                     new EmployerEmailDetail { UserRef = new Guid("7f11a6b0-a25b-45a5-bdfc-4424dfba85e8"), EmailAddress = "test@test.com" }
                 };
 
-                _mockStore.Setup(x => x.GetEmailDetailsToBeSent()).ReturnsAsync(emailDetails);
+                _mockStore.Setup(x => x.GetEmailDetailsToBeSentInvite()).ReturnsAsync(emailDetails);
 
-                _emailer = new EmployerEmailer(_mockStore.Object, _mockEmailService.Object, _options, _mockLogger.Object);
+                _emailer = new EmployerSurveyInviteEmailer(_mockStore.Object, _mockEmailService.Object, _options, _mockLogger.Object);
             }
 
             [Fact]
@@ -43,7 +43,7 @@ namespace Esfa.Das.Feedback.Employer.UnitTests
             {
                 await _emailer.SendEmailsAsync();
 
-                _mockEmailService.Verify(x => x.SendEmail(It.Is<Email>(a => a.TemplateId == EmailTemplates.SingleLinkTemplateId)));
+                _mockEmailService.Verify(x => x.SendEmail(It.Is<Email>(a => a.TemplateId == EmailTemplates.MultipleLinkTemplateId)));
             }
 
             [Fact]
@@ -67,10 +67,10 @@ namespace Esfa.Das.Feedback.Employer.UnitTests
         {
             private Mock<IStoreEmployerEmailDetails> _mockStore = new Mock<IStoreEmployerEmailDetails>();
             private Mock<INotificationsApi> _mockEmailService = new Mock<INotificationsApi>();
-            private readonly Mock<ILogger<EmployerEmailer>> _mockLogger = new Mock<ILogger<EmployerEmailer>>();
+            private readonly Mock<ILogger<EmployerSurveyInviteEmailer>> _mockLogger = new Mock<ILogger<EmployerSurveyInviteEmailer>>();
 
             private readonly IOptions<EmailSettings> _options;
-            private readonly EmployerEmailer _emailer;
+            private readonly EmployerSurveyInviteEmailer _emailer;
 
             public UserWithMultipleEntries()
             {
@@ -82,9 +82,9 @@ namespace Esfa.Das.Feedback.Employer.UnitTests
                     new EmployerEmailDetail { UserRef = new Guid("7f11a6b0-a25b-45a5-bdfc-4424dfba85e8"), EmailAddress = "test@test.com" }
                 };
 
-                _mockStore.Setup(x => x.GetEmailDetailsToBeSent()).ReturnsAsync(emailDetails);
+                _mockStore.Setup(x => x.GetEmailDetailsToBeSentInvite()).ReturnsAsync(emailDetails);
 
-                _emailer = new EmployerEmailer(_mockStore.Object, _mockEmailService.Object, _options, _mockLogger.Object);
+                _emailer = new EmployerSurveyInviteEmailer(_mockStore.Object, _mockEmailService.Object, _options, _mockLogger.Object);
 
             }
 
@@ -109,7 +109,7 @@ namespace Esfa.Das.Feedback.Employer.UnitTests
             {
                 await _emailer.SendEmailsAsync();
 
-                _mockStore.Verify(x => x.SetEmailDetailsAsSent(It.IsAny<IEnumerable<Guid>>()), Times.Once);
+                _mockStore.Verify(x => x.SetEmailDetailsAsSent(It.IsAny<Guid>()), Times.Once);
             }
         }
     }

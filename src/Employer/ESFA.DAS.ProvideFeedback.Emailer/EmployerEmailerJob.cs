@@ -7,9 +7,9 @@ namespace ESFA.DAS.Feedback.Employer.Emailer
     public class EmployerEmailerJob
     {
         private readonly ILogger<EmployerEmailerJob> _logger;
-        private readonly EmployerEmailer _emailer;
+        private readonly EmployerSurveyInviteEmailer _emailer;
 
-        public EmployerEmailerJob(ILogger<EmployerEmailerJob> logger, EmployerEmailer emailer)
+        public EmployerEmailerJob(ILogger<EmployerEmailerJob> logger, EmployerSurveyInviteEmailer emailer)
         {
             _logger = logger;
             _emailer = emailer;

@@ -4,5 +4,6 @@
     {
         public const string SingleLinkTemplateId = "EmployerRequestFeedbackSingle";
         public const string MultipleLinkTemplateId = "EmployerRequestFeedbackMultiple";
+        public const string ReminderTemplateId = "EmployerRequestFeedbackReminder";
     }
 }
