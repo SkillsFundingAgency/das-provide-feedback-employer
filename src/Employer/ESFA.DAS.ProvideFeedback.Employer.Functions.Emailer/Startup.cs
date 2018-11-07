@@ -52,11 +52,9 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
 
             services.AddHttpClient<INotificationsApi, NotificationsApi>(c =>
             {
-                //c.BaseAddress =  new Uri(notificationApiConfig.BaseUrl);
                 c.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", notificationApiConfig.ClientToken);
             });
 
-            //services.AddTransient<INotificationsApi, NotificationsApi>();
             services.AddSingleton<INotificationsApiClientConfiguration, NotificationsApiClientConfiguration>(a =>
                 new NotificationsApiClientConfiguration
                 {
