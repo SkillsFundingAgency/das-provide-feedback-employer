@@ -25,6 +25,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <None Update="SurveyInviteEmailer/function.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="SurveyReminderEmailer/function.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
