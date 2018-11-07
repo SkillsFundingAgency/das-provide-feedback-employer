@@ -35,7 +35,7 @@ namespace ESFA.DAS.Feedback.Employer.Emailer
 
         protected override async Task HandleSendAsync(IGrouping<Guid, EmployerEmailDetail> userGroup)
         {
-            var userRef = userGroup.FirstOrDefault().UserRef;
+            var userRef = userGroup.First().UserRef;
             await SendFeedbackEmail(userGroup, EmailTemplates.MultipleLinkTemplateId);
             await _emailDetailsStore.SetEmailDetailsAsSent(userRef);
         }

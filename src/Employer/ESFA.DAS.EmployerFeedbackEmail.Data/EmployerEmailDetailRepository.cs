@@ -70,7 +70,8 @@ namespace ESFA.DAS.ProvideFeedback.Data
             var sql = $@"
                         UPDATE EmployerEmailDetails
                         SET EmailSentDate = @{nameof(now)}
-                        WHERE UserRef = @{nameof(userRef)}";
+                        WHERE UserRef = @{nameof(userRef)}
+                        AND CodeBurntDate IS NULL";
 
             await ExecuteUpdateAsync(sql, new { now, userRef });
         }
