@@ -12,9 +12,9 @@ using SFA.DAS.Notifications.Api.Client;
 using SFA.DAS.Notifications.Api.Types;
 using Xunit;
 
-namespace Esfa.Das.Feedback.Employer.UnitTests
+namespace ESFA.DAS.Feedback.Employer.UnitTests.Emailer
 {
-    public class EmployerEmailTests
+    public class InviteEmailerTests
     {
         public class UserWithSingleEntry
         {

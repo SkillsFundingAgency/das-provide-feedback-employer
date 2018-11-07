@@ -18,7 +18,7 @@ namespace ESFA.DAS.Feedback.Employer.Emailer
             IStoreEmployerEmailDetails emailDetailsStore,
             INotificationsApi emailService,
             IOptions<EmailSettings> settings,
-            ILogger<EmployerSurveyInviteEmailer> logger) : base(emailService, logger, settings)
+            ILogger<EmployerSurveyEmailer> logger) : base(emailService, logger, settings)
         {
             _emailDetailsStore = emailDetailsStore;
         }
