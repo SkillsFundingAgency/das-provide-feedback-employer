@@ -47,10 +47,10 @@
         "cosmosDbName": {
             "type": "string"
         },
-        "workerAppServiceName": {
+        "functionAppName": {
             "type": "string"
         },
-        "workerAppServicePlanName": {
+        "functionAppServicePlanName": {
             "type": "string"
         },
         "aseHostingEnvironmentName": {
@@ -340,7 +340,7 @@
         },
         {
             "apiVersion": "2017-05-10",
-            "name": "WorkerAppServicePlan",
+            "name": "FunctionAppServicePlan",
             "type": "Microsoft.Resources/deployments",
             "properties": {
                 "mode": "Incremental",
@@ -350,7 +350,7 @@
                 },
                 "parameters": {
                     "appServicePlanName": {
-                        "value": "[parameters('workerAppServicePlanName')]"
+                        "value": "[parameters('functionAppServicePlanName')]"
                     },
                     "aseHostingEnvironmentName": {
                         "value": "[parameters('aseHostingEnvironmentName')]"
@@ -369,25 +369,25 @@
         },
         {
             "apiVersion": "2017-05-10",
-            "name": "WorkerAppService",
+            "name": "FunctionApp",
             "type": "Microsoft.Resources/deployments",
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/app-service.json",
+                    "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/function-app.json",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
-                    "appServiceName": {
-                        "value": "[parameters('workerAppServiceName')]"
+                    "functionAppName": {
+                        "value": "[parameters('functionAppName')]"
                     },
                     "appServicePlanName": {
-                        "value": "[parameters('workerAppServicePlanName')]"
+                        "value": "[parameters('functionappServicePlanName')]"
                     },
                     "appServicePlanResourceGroup": {
                         "value": "[resourceGroup().name]"
                     },
-                    "appServiceAppSettings": {
+                    "functionAppAppSettings": {
                         "value": [
                             {
                                 "name": "ASPNETCORE_ENVIRONMENT",
@@ -411,7 +411,7 @@
                             }
                         ]
                     },
-                    "appServiceConnectionStrings": {
+                    "functionAppConnectionStrings": {
                         "value": [
                             {
                                 "name": "WebJobsDashboard",
@@ -435,13 +435,16 @@
                             }
                         ]
                     },
-                    "deployStagingSlot": {
-                        "value": false
+                    "customHostName": {
+                        "value": ""
+                    },
+                    "certificateThumbprint": {
+                        "value": ""
                     }
                 }
             },
             "dependsOn": [
-                "WorkerAppServicePlan"
+                "FunctionAppServicePlan"
             ]
         },
         {
