@@ -1,8 +1,14 @@
 ﻿using System;
+using System.IO;
+using System.Threading.Tasks;
+using ESFA.DAS.EmployerProvideFeedback.Configuration;
 using ESFA.DAS.EmployerProvideFeedback.Configuration.Routing;
+using ESFA.DAS.EmployerProvideFeedback.Extensions;
 using ESFA.DAS.EmployerProvideFeedback.Infrastructure;
 using ESFA.DAS.EmployerProvideFeedback.ViewModels;
+using ESFA.DAS.ProvideFeedback.Employer.ApplicationServices;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 
 namespace ESFA.DAS.EmployerProvideFeedback.Controllers
 {
@@ -11,17 +17,32 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
     public class ConfirmationController : Controller
     {
         private readonly ISessionService _sessionService;
+        private readonly IGetProviderFeedback _providerFeedbackRepo;
+        private readonly ExternalLinksConfiguration _externalLinks;
 
-        public ConfirmationController(ISessionService sessionService)
+        public ConfirmationController(ISessionService sessionService, IGetProviderFeedback providerFeedbackRepo, IOptions<ExternalLinksConfiguration> externalLinks)
         {
             _sessionService = sessionService;
+            _providerFeedbackRepo = providerFeedbackRepo;
+            _externalLinks = externalLinks.Value;
         }
 
         [HttpGet("feedback-confirmation", Name = RouteNames.Confirmation_Get)]
-        public IActionResult Index(Guid uniqueCode)
+        public async Task<IActionResult> Index(Guid uniqueCode)
         {
             var surveyModel = _sessionService.Get<SurveyModel>(uniqueCode.ToString());
-            return View(surveyModel);
+            var feedback = await _providerFeedbackRepo.GetProviderFeedback(surveyModel.Ukprn);
+
+            var confirmationVm = new ConfirmationViewModel
+            {
+                ProviderName = surveyModel.ProviderName,
+                FeedbackRating = surveyModel.Rating.Value,
+                Feedback = feedback != null ? new FeedbackViewModel(feedback) : null,
+                FatProviderDetailViewUrl = Path.Combine(_externalLinks.FindApprenticeshipTrainingSiteUrl, "Provider", surveyModel.Ukprn.ToString()),
+                FatProviderSearch = Path.Combine(_externalLinks.FindApprenticeshipTrainingSiteUrl, "Provider", "Search")
+            };
+
+            return View(confirmationVm);
         }
     }
 }

@@ -5,7 +5,7 @@
 /*** Override the icon location ***/
 .button-start,
 .button-get-started {
-    background-image: url("../img/icons/icon-pointer.png");    
+    background-image: url("../img/icons/icon-pointer.png");
 }
 
 @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20 / 10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
@@ -18,22 +18,31 @@
 /*** Overide GDS styles to match DAS ***/
 @media(min-width: 641px) {
     #global-header .header-proposition #proposition-name {
-        margin-top:5px;
+        margin-top: 5px;
         display: inline-block
     }
 }
 
 .phase-banner {
-    margin: 0 15px; }
-    @media (min-width: 641px) {
-      .phase-banner {
-        margin: 0 30px; } }
-    @media (min-width: 1020px) {
-      .phase-banner {
+    margin: 0 15px;
+}
+
+@media (min-width: 641px) {
+    .phase-banner {
+        margin: 0 30px;
+    }
+}
+
+@media (min-width: 1020px) {
+    .phase-banner {
         margin: 0 auto;
-        max-width: 960px; } }
-    .phase-banner p {
-      display: table; }
+        max-width: 960px;
+    }
+}
+
+.phase-banner p {
+    display: table;
+}
 
 .button-link {
     display: inline-block;
@@ -53,18 +62,85 @@
     width: 100%
 }
 
-.button-link:focus {
-    background: #fff;
-}
+    .button-link:focus {
+        background: #fff;
+    }
 
-@media(min-width: 641px) { 
+@media(min-width: 641px) {
     .button-link {
         width: auto;
     }
 }
 
+/* Confirmation View Graph */
+.graph-list {
+    margin-bottom: 20px;
+}
 
+.graph-list li {
+    display: table-row;
+}
 
+.graph-list li .label, .graph-list li .chart, .graph-list li .figure {
+    display: table-cell;
+    white-space: nowrap;
+    vertical-align: middle;
+    padding: 5px 0;
+}
+
+.graph-list li .chart {
+    width: 100%;
+}
+
+.graph-list li .chart .bar, .graph-list li .chart .graph {
+    display: block;
+    height: 24px;
+}
+
+.graph-list li .chart .graph {
+    background: #f8f8f8;
+    border: 2px solid #ccc;
+    margin: 3px 10px;
+}
+
+.graph-list li .chart .bar {
+    background: #005ea5;
+}
+
+.graph-list li.level-1 .bar {
+    background: #006435;
+}
+
+.graph-list li.level-2 .bar {
+    background: #85994b;
+}
+
+.graph-list li.level-3 .bar {
+    background: #f47738;
+}
+
+.graph-list li.level-4 .bar {
+    background: #df3034;
+}
+
+.graph-heading-group {
+    margin-bottom: 30px;
+}
+
+.graph-heading-group h2.heading-medium {
+    margin-bottom: 0;
+}
+
+.graph-heading-group p.meta {
+    font-size: 14px;
+    margin-top: 0;
+}
+
+@media(min-width: 641px) {
+    .graph-heading-group p.meta {
+        font-size: 16px;
+    }
+}
 
 /*** TYPOGRAPHY ***/
 
@@ -80,9 +156,8 @@
     border-top: 1px solid #bfc1c3;
 }
 
-@media(min-width: 641px) { 
+@media(min-width: 641px) {
     .check-your-answers {
-
     }
 }
 
@@ -91,7 +166,7 @@
     border-bottom: 1px solid #bfc1c3;
 }
 
-@media(min-width: 641px) { 
+@media(min-width: 641px) {
     .check-your-answers > li {
         display: table-row;
     }
@@ -103,7 +178,7 @@
     font-weight: bold;
 }
 
-@media(min-width: 641px) { 
+@media(min-width: 641px) {
     .check-your-answers .question {
         width: 35%;
         padding-right: 1em;
@@ -118,15 +193,15 @@
     position: relative;
 }
 
-.check-your-answers .answer .list li:not(:last-child) {
-    margin-bottom: 20px;
-}
+    .check-your-answers .answer .list li:not(:last-child) {
+        margin-bottom: 20px;
+    }
 
-.check-your-answers .answer p {
-    margin: 0;
-}
+    .check-your-answers .answer p {
+        margin: 0;
+    }
 
-@media(min-width: 641px) { 
+@media(min-width: 641px) {
     .check-your-answers .answer {
         display: table-cell;
         border-bottom: 1px solid #bfc1c3;
@@ -142,11 +217,11 @@
     right: 0;
 }
 
-.check-your-answers .change a {
-    color: #005ea5;
-}
+    .check-your-answers .change a {
+        color: #005ea5;
+    }
 
-@media(min-width: 641px) { 
+@media(min-width: 641px) {
     .check-your-answers .change {
         display: table-cell;
         border-bottom: 1px solid #bfc1c3;
