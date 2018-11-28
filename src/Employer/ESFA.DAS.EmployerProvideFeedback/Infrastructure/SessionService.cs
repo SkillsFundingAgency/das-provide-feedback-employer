@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
@@ -14,6 +15,21 @@ namespace ESFA.DAS.EmployerProvideFeedback.Infrastructure
         {
             _httpContextAccessor = httpContextAccessor;
             _environment = environment.EnvironmentName;
+        }
+
+        public async Task<T> GetAsync<T>(string key)
+        {
+            return await Task.Run(() => Get<T>(key));
+        }
+
+        public async Task SetAsync(string key, object value)
+        {
+            await Task.Run(() => Set(key, value));
+        }
+
+        public async Task<bool> ExistsAsync(string key)
+        {
+            return await Task.Run(() => Exists(key));
         }
 
         public void Set(string key, object value)

@@ -5,6 +5,6 @@ namespace ESFA.DAS.ProvideFeedback.Employer.ApplicationServices
 {
     public interface IGetProviderFeedback
     {
-        Task<Feedback> GetProviderFeedback(long ukPrn);
+        Task<Feedback> GetProviderFeedbackAsync(long ukPrn);
     }
 }

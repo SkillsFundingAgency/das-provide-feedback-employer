@@ -3,7 +3,6 @@ using System.IO;
 using System.Threading.Tasks;
 using ESFA.DAS.EmployerProvideFeedback.Configuration;
 using ESFA.DAS.EmployerProvideFeedback.Configuration.Routing;
-using ESFA.DAS.EmployerProvideFeedback.Extensions;
 using ESFA.DAS.EmployerProvideFeedback.Infrastructure;
 using ESFA.DAS.EmployerProvideFeedback.ViewModels;
 using ESFA.DAS.ProvideFeedback.Employer.ApplicationServices;
@@ -30,8 +29,8 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
         [HttpGet("feedback-confirmation", Name = RouteNames.Confirmation_Get)]
         public async Task<IActionResult> Index(Guid uniqueCode)
         {
-            var surveyModel = _sessionService.Get<SurveyModel>(uniqueCode.ToString());
-            var feedback = await _providerFeedbackRepo.GetProviderFeedback(surveyModel.Ukprn);
+            var surveyModel = await _sessionService.GetAsync<SurveyModel>(uniqueCode.ToString());
+            var feedback = await _providerFeedbackRepo.GetProviderFeedbackAsync(surveyModel.Ukprn);
 
             var confirmationVm = new ConfirmationViewModel
             {
