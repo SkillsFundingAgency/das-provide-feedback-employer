@@ -23,9 +23,9 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
         }
 
         [HttpGet("review-answers", Name = RouteNames.ReviewAnswers_Get)]
-        public IActionResult Index(Guid uniqueCode)
+        public async Task<IActionResult> Index(Guid uniqueCode)
         {
-            var vm = _sessionService.GetAsync<SurveyModel>(uniqueCode.ToString());
+            var vm = await _sessionService.GetAsync<SurveyModel>(uniqueCode.ToString());
             return View(vm);
         }
 

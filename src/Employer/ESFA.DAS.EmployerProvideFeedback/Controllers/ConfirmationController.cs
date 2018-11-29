@@ -7,7 +7,9 @@ using ESFA.DAS.EmployerProvideFeedback.Infrastructure;
 using ESFA.DAS.EmployerProvideFeedback.ViewModels;
 using ESFA.DAS.ProvideFeedback.Employer.ApplicationServices;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using SFA.DAS.Apprenticeships.Api.Types.Providers;
 
 namespace ESFA.DAS.EmployerProvideFeedback.Controllers
 {
@@ -17,12 +19,18 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
     {
         private readonly ISessionService _sessionService;
         private readonly IGetProviderFeedback _providerFeedbackRepo;
+        private readonly ILogger<ConfirmationController> _logger;
         private readonly ExternalLinksConfiguration _externalLinks;
 
-        public ConfirmationController(ISessionService sessionService, IGetProviderFeedback providerFeedbackRepo, IOptions<ExternalLinksConfiguration> externalLinks)
+        public ConfirmationController(
+            ISessionService sessionService, 
+            IGetProviderFeedback providerFeedbackRepo, 
+            IOptions<ExternalLinksConfiguration> externalLinks,
+            ILogger<ConfirmationController> logger)
         {
             _sessionService = sessionService;
             _providerFeedbackRepo = providerFeedbackRepo;
+            _logger = logger;
             _externalLinks = externalLinks.Value;
         }
 
@@ -30,13 +38,22 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
         public async Task<IActionResult> Index(Guid uniqueCode)
         {
             var surveyModel = await _sessionService.GetAsync<SurveyModel>(uniqueCode.ToString());
-            var feedback = await _providerFeedbackRepo.GetProviderFeedbackAsync(surveyModel.Ukprn);
+            Feedback previousFeedback = null;
+
+            try
+            {
+                previousFeedback = await _providerFeedbackRepo.GetProviderFeedbackAsync(surveyModel.Ukprn);
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError(ex, $"Feedback has been given for a ukprn which is invalid according to the ApprenticeshipServiceApi");
+            }
 
             var confirmationVm = new ConfirmationViewModel
             {
                 ProviderName = surveyModel.ProviderName,
                 FeedbackRating = surveyModel.Rating.Value,
-                Feedback = feedback != null ? new FeedbackViewModel(feedback) : null,
+                Feedback = previousFeedback != null ? new FeedbackViewModel(previousFeedback) : null,
                 FatProviderDetailViewUrl = Path.Combine(_externalLinks.FindApprenticeshipTrainingSiteUrl, "Provider", surveyModel.Ukprn.ToString()),
                 FatProviderSearch = Path.Combine(_externalLinks.FindApprenticeshipTrainingSiteUrl, "Provider", "Search")
             };

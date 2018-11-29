@@ -8,8 +8,6 @@
 
         public FeedbackViewModel Feedback { get; set; }
 
-        public long Ukprn { get; set; }
-
         public string FatProviderDetailViewUrl { get; set; }
 
         public string FatProviderSearch { get; internal set; }

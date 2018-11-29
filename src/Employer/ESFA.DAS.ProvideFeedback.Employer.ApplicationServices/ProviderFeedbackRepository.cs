@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using SFA.DAS.Apprenticeships.Api.Types.Providers;
 using SFA.DAS.Providers.Api.Client;
 
@@ -15,9 +14,9 @@ namespace ESFA.DAS.ProvideFeedback.Employer.ApplicationServices
             _providerApiClient = providerApiClient;
         }
 
-        public async Task<Feedback> GetProviderFeedbackAsync(long ukPrn)
+        public async Task<Feedback> GetProviderFeedbackAsync(long ukprn)
         {
-            var result = await _providerApiClient.GetAsync(ukPrn);
+            var result = await _providerApiClient.GetAsync(ukprn);
             return result.ProviderFeedback;
         }
     }
