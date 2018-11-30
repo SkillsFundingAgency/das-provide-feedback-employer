@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using ESFA.DAS.EmployerProvideFeedback.Configuration.Routing;
 using ESFA.DAS.EmployerProvideFeedback.Infrastructure;
 using ESFA.DAS.EmployerProvideFeedback.ViewModels;
@@ -23,11 +24,11 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
         }
 
         [HttpGet("question-one", Name = RouteNames.QuestionOne_Get)]
-        public IActionResult QuestionOne(Guid uniqueCode, string returnUrl = null)
+        public async Task<IActionResult> QuestionOne(Guid uniqueCode, string returnUrl = null)
         {
             // TODO: Replace TempData by adding a flag to the ViewModel.
             TempData[ReturnUrlKey] = returnUrl;
-            var cachedAnswers = _sessionService.Get<SurveyModel>(uniqueCode.ToString());
+            var cachedAnswers = await _sessionService.GetAsync<SurveyModel>(uniqueCode.ToString());
             
             // TODO: Redirect from all questions and review route to landing if no survey in the session.
 
@@ -35,17 +36,17 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
         }
 
         [HttpPost("question-one", Name = RouteNames.QuestionOne_Post)]
-        public IActionResult QuestionOne(Guid uniqueCode, SurveyModel surveyModel)
+        public async Task<IActionResult> QuestionOne(Guid uniqueCode, SurveyModel surveyModel)
         {
             if (!IsProviderAttributesValid(surveyModel))
             {
                 return View(surveyModel);
             }
 
-            var sessionAnswer = _sessionService.Get<SurveyModel>(uniqueCode.ToString());
+            var sessionAnswer = await _sessionService.GetAsync<SurveyModel>(uniqueCode.ToString());
             SetStengths(sessionAnswer, surveyModel.Attributes.Where(x => x.Good));
-            // sessionAnswer.Attributes = surveyModel.Attributes;
-            _sessionService.Set(uniqueCode.ToString(), sessionAnswer);
+
+            await _sessionService.SetAsync(uniqueCode.ToString(), sessionAnswer);
 
             return HandleRedirect(RouteNames.QuestionTwo_Get);
         }
@@ -69,49 +70,49 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
         }
 
         [HttpGet("question-two", Name = RouteNames.QuestionTwo_Get)]
-        public IActionResult QuestionTwo(Guid uniqueCode, string returnUrl = null)
+        public async Task<IActionResult> QuestionTwo(Guid uniqueCode, string returnUrl = null)
         {
             TempData[ReturnUrlKey] = returnUrl;
-            var sessionAnswers = _sessionService.Get<SurveyModel>(uniqueCode.ToString());
+            var sessionAnswers = await _sessionService.GetAsync<SurveyModel>(uniqueCode.ToString());
             return View(sessionAnswers);
         }
 
         [HttpPost("question-two", Name = RouteNames.QuestionTwo_Post)]
-        public IActionResult QuestionTwo(Guid uniqueCode, SurveyModel surveyModel)
+        public async Task<IActionResult> QuestionTwo(Guid uniqueCode, SurveyModel surveyModel)
         {
             if (!IsProviderAttributesValid(surveyModel))
             {
                 return View(surveyModel);
             }
 
-            var sessionAnswer = _sessionService.Get<SurveyModel>(uniqueCode.ToString());
-            // sessionAnswer.Attributes = surveyModel.Attributes;
+            var sessionAnswer = await _sessionService.GetAsync<SurveyModel>(uniqueCode.ToString());
+
             SetWeaknesses(sessionAnswer, surveyModel.Attributes.Where(x => x.Bad));
-            _sessionService.Set(uniqueCode.ToString(), sessionAnswer);
+            await _sessionService.SetAsync(uniqueCode.ToString(), sessionAnswer);
             return HandleRedirect(RouteNames.QuestionThree_Get);
         }
 
         
 
         [HttpGet("question-three", Name = RouteNames.QuestionThree_Get)]
-        public IActionResult QuestionThree(Guid uniqueCode, string returnUrl = null)
+        public async Task<IActionResult> QuestionThree(Guid uniqueCode, string returnUrl = null)
         {
             TempData[ReturnUrlKey] = returnUrl;
-            var sessionAnswer = _sessionService.Get<SurveyModel>(uniqueCode.ToString());
+            var sessionAnswer = await _sessionService.GetAsync<SurveyModel>(uniqueCode.ToString());
             return View(sessionAnswer);
         }
 
         [HttpPost("question-three", Name = RouteNames.QuestionThree_Post)]
-        public IActionResult QuestionThree(Guid uniqueCode, SurveyModel surveyModel)
+        public async Task<IActionResult> QuestionThree(Guid uniqueCode, SurveyModel surveyModel)
         {
             if (!ModelState.IsValid)
             {
                 return View(surveyModel);
             }
 
-            var sessionAnswer = _sessionService.Get<SurveyModel>(uniqueCode.ToString());
+            var sessionAnswer = await _sessionService.GetAsync<SurveyModel>(uniqueCode.ToString());
             sessionAnswer.Rating = surveyModel.Rating;
-            _sessionService.Set(uniqueCode.ToString(), sessionAnswer);
+            await _sessionService.SetAsync(uniqueCode.ToString(), sessionAnswer);
             return HandleRedirect(RouteNames.ReviewAnswers_Get);
         }
 
