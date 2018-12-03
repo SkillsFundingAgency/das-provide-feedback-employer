@@ -19,7 +19,7 @@
             </div>
         }
         <h1 class="heading-xlarge">
-            @Model.ProviderName's strengths
+            @(Model.ProviderName.EndsWith("'s") ? @Model.ProviderName : $"{@Model.ProviderName}'s") strengths
         </h1>
         <form asp-route="@RouteNames.QuestionOne_Post">
             <div class="form-group">
