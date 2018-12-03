@@ -100,7 +100,6 @@
         "appRedisConnectionString": {
             "type": "secureString"
         }
-    },
   },
     "variables": {},
     "resources": [
