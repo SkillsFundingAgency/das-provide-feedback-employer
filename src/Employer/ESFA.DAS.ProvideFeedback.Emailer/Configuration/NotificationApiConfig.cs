@@ -1,4 +1,4 @@
-﻿namespace Esfa.Das.Feedback.Employer.Emailer.Configuration
+﻿namespace ESFA.DAS.Feedback.Employer.Emailer.Configuration
 {
     public class NotificationApiConfig
     {

@@ -19,6 +19,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ESFA.DAS.ProvideFeedback.Do
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ESFA.DAS.EmployerProvideFeedback.Api", "ESFA.DAS.EmployerProvideFeedback.Api\ESFA.DAS.EmployerProvideFeedback.Api.csproj", "{7F6DCD59-BF58-4E76-A313-715D8D71712C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer", "ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer\ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer.csproj", "{8080A1B5-DB1B-4BEF-BD2A-3005AF06D7B6}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ESFA.DAS.ProvideFeedback.Employer.ApplicationServices", "ESFA.DAS.ProvideFeedback.Employer.ApplicationServices\ESFA.DAS.ProvideFeedback.Employer.ApplicationServices.csproj", "{BC93130B-6FF0-4F24-98BC-D0881D95B0F3}"
 EndProject
 Global
@@ -61,6 +63,10 @@ Global
 		{7F6DCD59-BF58-4E76-A313-715D8D71712C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7F6DCD59-BF58-4E76-A313-715D8D71712C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7F6DCD59-BF58-4E76-A313-715D8D71712C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8080A1B5-DB1B-4BEF-BD2A-3005AF06D7B6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8080A1B5-DB1B-4BEF-BD2A-3005AF06D7B6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8080A1B5-DB1B-4BEF-BD2A-3005AF06D7B6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8080A1B5-DB1B-4BEF-BD2A-3005AF06D7B6}.Release|Any CPU.Build.0 = Release|Any CPU
 		{BC93130B-6FF0-4F24-98BC-D0881D95B0F3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{BC93130B-6FF0-4F24-98BC-D0881D95B0F3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BC93130B-6FF0-4F24-98BC-D0881D95B0F3}.Release|Any CPU.ActiveCfg = Release|Any CPU
