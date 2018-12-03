@@ -1,105 +1,105 @@
 {
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
-  "parameters": {
-    "appServiceName": {
-      "type": "string"
-    },
-    "apiAppServiceName": {
-      "type": "string"
-    },
-    "sharedAppServicePlanName": {
-      "type": "string"
-    },
-    "sharedAppServicePlanResourceGroup": {
-      "type": "string"
-    },
-    "authentication": {
-      "type": "secureObject",
-      "defaultValue": {
-        "Authority": "",
-        "MetaDataAddress": "",
-        "ClientId": "",
-        "ClientSecret": ""
-      }
-    },
-    "externalLinks": {
-      "type": "object",
-      "defaultValue": {
-        "FindApprenticeshipTrainingSiteUrl": "",
-        "ManageApprenticeshipSiteUrl": "",
-        "EmployerIdamsSiteUrl": "",
-        "FeedbackSurveyUrl": ""
-      }
-    },
-    "loggingRedisConnectionString": {
-      "type": "string",
-      "defaultValue": ""
-    },
-    "apprenticeshipApiBaseUrl": {
-      "type": "string"
-    },
-    "aspNetCoreEnvironment": {
-      "type": "string"
-    },
-    "customHostname": {
-      "type": "string"
-    },
-    "certificateName": {
-      "type": "string"
-    },
-    "cosmosDbName": {
-      "type": "string"
-    },
-    "workerAppServiceName": {
-      "type": "string"
-    },
-    "workerAppServicePlanName": {
-      "type": "string"
-    },
-    "aseHostingEnvironmentName": {
-      "type": "string"
-    },
-    "aseResourceGroup": {
-      "type": "string"
-    },
-    "notificationApiCredentials": {
-      "type": "secureObject",
-      "defaultValue": {
-        "BaseUrl": "",
-        "ClientToken": ""
-      }
-    },
-    "emailBatchSize": {
-      "type": "int",
-      "defaultValue": 25
-    },
-    "feedbackApiAuth": {
-      "type": "secureObject",
-      "defaultValue": {
-        "Key": ""
-      }
-    },
-    "feedbackApiData": {
-      "type": "object",
-      "defaultValue": {
-        "DatabaseName": "",
-        "TokenCollection": "",
-        "FeedbackCollection": ""
-      }
-    },
-    "storageAccountName": {
-      "type": "string"
-    },
-    "dbConnectionString": {
-      "type": "secureString"
-    },
-    "gaTrackingId": {
-      "type": "string"
-    },
-    "appRedisConnectionString": {
-      "type": "secureString"
-    }
+    "parameters": {
+        "appServiceName": {
+            "type": "string"
+        },
+        "apiAppServiceName": {
+            "type": "string"
+        },
+        "sharedAppServicePlanName": {
+            "type": "string"
+        },
+        "sharedAppServicePlanResourceGroup": {
+            "type": "string"
+        },
+        "authentication": {
+            "type": "secureObject",
+            "defaultValue": {
+                "Authority": "",
+                "MetaDataAddress": "",
+                "ClientId": "",
+                "ClientSecret": ""
+            }
+        },
+        "externalLinks": {
+            "type": "object",
+            "defaultValue": {
+                "FindApprenticeshipTrainingSiteUrl": "",
+                "ManageApprenticeshipSiteUrl": "",
+                "EmployerIdamsSiteUrl": "",
+                "FeedbackSurveyUrl": ""
+            }
+        },
+        "loggingRedisConnectionString": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "apprenticeshipApiBaseUrl": {
+            "type": "string"
+          },
+        "aspNetCoreEnvironment": {
+            "type": "string"
+        },
+        "customHostname": {
+            "type": "string"
+        },
+        "certificateName": {
+            "type": "string"
+        },
+        "cosmosDbName": {
+            "type": "string"
+        },
+        "functionAppName": {
+            "type": "string"
+        },
+        "functionAppServicePlanName": {
+            "type": "string"
+        },
+        "aseHostingEnvironmentName": {
+            "type": "string"
+        },
+        "aseResourceGroup": {
+            "type": "string"
+        },
+        "notificationApiCredentials": {
+            "type": "secureObject",
+            "defaultValue": {
+                "BaseUrl": "",
+                "ClientToken": ""
+            }
+        },
+        "emailBatchSize": {
+            "type": "int",
+            "defaultValue": 25
+        },
+        "feedbackApiAuth": {
+            "type": "secureObject",
+            "defaultValue": {
+                "Key": ""
+            }
+        },
+        "feedbackApiData": {
+            "type": "object",
+            "defaultValue": {
+                "DatabaseName": "",
+                "TokenCollection": "",
+                "FeedbackCollection": ""
+            }
+        },
+        "storageAccountName": {
+            "type": "string"
+        },
+        "dbConnectionString": {
+            "type": "secureString"
+        },
+        "gaTrackingId": {
+            "type": "string"
+        },
+        "appRedisConnectionString": {
+            "type": "secureString"
+        }
   },
     "variables": {},
     "resources": [
@@ -352,7 +352,7 @@
         },
         {
             "apiVersion": "2017-05-10",
-            "name": "WorkerAppServicePlan",
+            "name": "FunctionAppServicePlan",
             "type": "Microsoft.Resources/deployments",
             "properties": {
                 "mode": "Incremental",
@@ -362,7 +362,7 @@
                 },
                 "parameters": {
                     "appServicePlanName": {
-                        "value": "[parameters('workerAppServicePlanName')]"
+                        "value": "[parameters('functionAppServicePlanName')]"
                     },
                     "aseHostingEnvironmentName": {
                         "value": "[parameters('aseHostingEnvironmentName')]"
@@ -381,25 +381,25 @@
         },
         {
             "apiVersion": "2017-05-10",
-            "name": "WorkerAppService",
+            "name": "FunctionApp",
             "type": "Microsoft.Resources/deployments",
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/app-service.json",
+                    "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/function-app.json",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
-                    "appServiceName": {
-                        "value": "[parameters('workerAppServiceName')]"
+                    "functionAppName": {
+                        "value": "[parameters('functionAppName')]"
                     },
                     "appServicePlanName": {
-                        "value": "[parameters('workerAppServicePlanName')]"
+                        "value": "[parameters('functionappServicePlanName')]"
                     },
                     "appServicePlanResourceGroup": {
                         "value": "[resourceGroup().name]"
                     },
-                    "appServiceAppSettings": {
+                    "functionAppAppSettings": {
                         "value": [
                             {
                                 "name": "ASPNETCORE_ENVIRONMENT",
@@ -423,7 +423,7 @@
                             }
                         ]
                     },
-                    "appServiceConnectionStrings": {
+                    "functionAppConnectionStrings": {
                         "value": [
                             {
                                 "name": "WebJobsDashboard",
@@ -447,13 +447,16 @@
                             }
                         ]
                     },
-                    "deployStagingSlot": {
-                        "value": false
+                    "customHostName": {
+                        "value": ""
+                    },
+                    "certificateThumbprint": {
+                        "value": ""
                     }
                 }
             },
             "dependsOn": [
-                "WorkerAppServicePlan"
+                "FunctionAppServicePlan"
             ]
         },
         {
