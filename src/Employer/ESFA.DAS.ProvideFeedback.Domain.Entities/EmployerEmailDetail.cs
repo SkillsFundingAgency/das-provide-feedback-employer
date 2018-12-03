@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Esfa.Das.ProvideFeedback.Domain.Entities
+namespace ESFA.DAS.ProvideFeedback.Domain.Entities
 {
     public class EmployerEmailDetail
     {
