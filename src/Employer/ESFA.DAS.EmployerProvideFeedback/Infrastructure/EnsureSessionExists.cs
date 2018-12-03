@@ -14,11 +14,11 @@ namespace ESFA.DAS.EmployerProvideFeedback.Infrastructure
             _sessionService = sessionService;
         }
 
-        public async override void OnActionExecuting(ActionExecutingContext context)
+        public override void OnActionExecuting(ActionExecutingContext context)
         {
             var uniqueCode = (Guid)context.ActionArguments["uniqueCode"];
 
-            if (!await _sessionService.ExistsAsync(uniqueCode.ToString()))
+            if (!_sessionService.ExistsAsync(uniqueCode.ToString()).Result)
             {
                 var controller = context.Controller as Controller;
                 context.Result = controller.RedirectToRoute(RouteNames.Landing_Get);

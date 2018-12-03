@@ -48,7 +48,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
 
             await _sessionService.SetAsync(uniqueCode.ToString(), sessionAnswer);
 
-            return HandleRedirect(RouteNames.QuestionTwo_Get);
+            return await HandleRedirect(RouteNames.QuestionTwo_Get);
         }
 
         private void SetStengths(SurveyModel sessionAnswer, IEnumerable<ProviderAttributeModel> currentAnswerAttributes)
@@ -89,7 +89,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
 
             SetWeaknesses(sessionAnswer, surveyModel.Attributes.Where(x => x.Bad));
             await _sessionService.SetAsync(uniqueCode.ToString(), sessionAnswer);
-            return HandleRedirect(RouteNames.QuestionThree_Get);
+            return await HandleRedirect(RouteNames.QuestionThree_Get);
         }
 
         
@@ -113,13 +113,13 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
             var sessionAnswer = await _sessionService.GetAsync<SurveyModel>(uniqueCode.ToString());
             sessionAnswer.Rating = surveyModel.Rating;
             await _sessionService.SetAsync(uniqueCode.ToString(), sessionAnswer);
-            return HandleRedirect(RouteNames.ReviewAnswers_Get);
+            return await HandleRedirect(RouteNames.ReviewAnswers_Get);
         }
 
-        private IActionResult HandleRedirect(string nextRoute)
+        private async Task<IActionResult> HandleRedirect(string nextRoute)
         {
             var returnRoute = Convert.ToString(TempData[ReturnUrlKey]);
-            return RedirectToRoute(string.IsNullOrEmpty(returnRoute) ? nextRoute : returnRoute);
+            return await Task.Run(() => RedirectToRoute(string.IsNullOrEmpty(returnRoute) ? nextRoute : returnRoute) as IActionResult);
         }
 
         private bool IsProviderAttributesValid(SurveyModel surveyModel)
