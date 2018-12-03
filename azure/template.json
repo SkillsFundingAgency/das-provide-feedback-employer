@@ -100,50 +100,7 @@
         "appRedisConnectionString": {
             "type": "secureString"
         }
-    },,
-    "aseHostingEnvironmentName": {
-      "type": "string"
     },
-    "aseResourceGroup": {
-      "type": "string"
-    },
-    "notificationApiCredentials": {
-      "type": "secureObject",
-      "defaultValue": {
-        "BaseUrl": "",
-        "ClientToken": ""
-      }
-    },
-    "emailBatchSize": {
-      "type": "int",
-      "defaultValue": 25
-    },
-    "feedbackApiAuth": {
-      "type": "secureObject",
-      "defaultValue": {
-        "Key": ""
-      }
-    },
-    "feedbackApiData": {
-      "type": "object",
-      "defaultValue": {
-        "DatabaseName": "",
-        "TokenCollection": "",
-        "FeedbackCollection": ""
-      }
-    },
-    "storageAccountName": {
-      "type": "string"
-    },
-    "dbConnectionString": {
-      "type": "secureString"
-    },
-    "gaTrackingId": {
-      "type": "string"
-    },
-    "appRedisConnectionString": {
-      "type": "secureString"
-    }
   },
     "variables": {},
     "resources": [
