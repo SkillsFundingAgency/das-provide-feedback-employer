@@ -420,6 +420,10 @@
                             {
                                 "name": "EmailSettings:BatchSize",
                                 "value": "[parameters('emailBatchSize')]"
+                            },
+                            {
+                                "name": "FUNCTIONS_EXTENSION_VERSION",
+                                "value": "~2"
                             }
                         ]
                     },
