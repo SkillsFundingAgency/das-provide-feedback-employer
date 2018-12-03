@@ -1,102 +1,106 @@
 {
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
-    "parameters": {
-        "appServiceName": {
-            "type": "string"
-        },
-        "apiAppServiceName": {
-            "type": "string"
-        },
-        "sharedAppServicePlanName": {
-            "type": "string"
-        },
-        "sharedAppServicePlanResourceGroup": {
-            "type": "string"
-        },
-        "authentication": {
-            "type": "secureObject",
-            "defaultValue": {
-                "Authority": "",
-                "MetaDataAddress": "",
-                "ClientId": "",
-                "ClientSecret": ""
-            }
-        },
-        "externalLinks": {
-            "type": "object",
-            "defaultValue": {
-                "ManageApprenticeshipSiteUrl": "",
-                "EmployerIdamsSiteUrl": "",
-                "FeedbackSurveyUrl": ""
-            }
-        },
-        "loggingRedisConnectionString": {
-            "type": "string",
-            "defaultValue": ""
-        },
-        "aspNetCoreEnvironment": {
-            "type": "string"
-        },
-        "customHostname": {
-            "type": "string"
-        },
-        "certificateName": {
-            "type": "string"
-        },
-        "cosmosDbName": {
-            "type": "string"
-        },
-        "workerAppServiceName": {
-            "type": "string"
-        },
-        "workerAppServicePlanName": {
-            "type": "string"
-        },
-        "aseHostingEnvironmentName": {
-            "type": "string"
-        },
-        "aseResourceGroup": {
-            "type": "string"
-        },
-        "notificationApiCredentials": {
-            "type": "secureObject",
-            "defaultValue": {
-                "BaseUrl": "",
-                "ClientToken": ""
-            }
-        },
-        "emailBatchSize": {
-            "type": "int",
-            "defaultValue": 25
-        },
-        "feedbackApiAuth": {
-            "type": "secureObject",
-            "defaultValue": {
-                "Key": ""
-            }
-        },
-        "feedbackApiData": {
-            "type": "object",
-            "defaultValue": {
-                "DatabaseName": "",
-                "TokenCollection": "",
-                "FeedbackCollection": ""
-            }
-        },
-        "storageAccountName": {
-            "type": "string"
-        },
-        "dbConnectionString": {
-            "type": "secureString"
-        },
-        "gaTrackingId": {
-            "type": "string"
-        },
-        "appRedisConnectionString": {
-            "type": "secureString"
-        }
+  "parameters": {
+    "appServiceName": {
+      "type": "string"
     },
+    "apiAppServiceName": {
+      "type": "string"
+    },
+    "sharedAppServicePlanName": {
+      "type": "string"
+    },
+    "sharedAppServicePlanResourceGroup": {
+      "type": "string"
+    },
+    "authentication": {
+      "type": "secureObject",
+      "defaultValue": {
+        "Authority": "",
+        "MetaDataAddress": "",
+        "ClientId": "",
+        "ClientSecret": ""
+      }
+    },
+    "externalLinks": {
+      "type": "object",
+      "defaultValue": {
+        "FindApprenticeshipTrainingSiteUrl": "",
+        "ManageApprenticeshipSiteUrl": "",
+        "EmployerIdamsSiteUrl": "",
+        "FeedbackSurveyUrl": ""
+      }
+    },
+    "loggingRedisConnectionString": {
+      "type": "string",
+      "defaultValue": ""
+    },
+    "apprenticeshipApiBaseUrl": {
+      "type": "string"
+    },
+    "aspNetCoreEnvironment": {
+      "type": "string"
+    },
+    "customHostname": {
+      "type": "string"
+    },
+    "certificateName": {
+      "type": "string"
+    },
+    "cosmosDbName": {
+      "type": "string"
+    },
+    "workerAppServiceName": {
+      "type": "string"
+    },
+    "workerAppServicePlanName": {
+      "type": "string"
+    },
+    "aseHostingEnvironmentName": {
+      "type": "string"
+    },
+    "aseResourceGroup": {
+      "type": "string"
+    },
+    "notificationApiCredentials": {
+      "type": "secureObject",
+      "defaultValue": {
+        "BaseUrl": "",
+        "ClientToken": ""
+      }
+    },
+    "emailBatchSize": {
+      "type": "int",
+      "defaultValue": 25
+    },
+    "feedbackApiAuth": {
+      "type": "secureObject",
+      "defaultValue": {
+        "Key": ""
+      }
+    },
+    "feedbackApiData": {
+      "type": "object",
+      "defaultValue": {
+        "DatabaseName": "",
+        "TokenCollection": "",
+        "FeedbackCollection": ""
+      }
+    },
+    "storageAccountName": {
+      "type": "string"
+    },
+    "dbConnectionString": {
+      "type": "secureString"
+    },
+    "gaTrackingId": {
+      "type": "string"
+    },
+    "appRedisConnectionString": {
+      "type": "secureString"
+    }
+  },
     "variables": {},
     "resources": [
         {
@@ -175,6 +179,10 @@
                                 "value": "[parameters('authentication').ClientSecret]"
                             },
                             {
+                                "name": "ExternalLinks:FindApprenticeshipTrainingSiteUrl",
+                                "value": "[parameters('externalLinks').FindApprenticeshipTrainingSiteUrl]"
+                            },  
+                            {
                                 "name": "ExternalLinks:ManageApprenticeshipSiteUrl",
                                 "value": "[parameters('externalLinks').ManageApprenticeshipSiteUrl]"
                             },
@@ -185,6 +193,10 @@
                             {
                                 "name": "ExternalLinks:FeedbackSurveyUrl",
                                 "value": "[parameters('externalLinks').FeedbackSurveyUrl]"
+                            },
+                            {
+                                "name": "ApprenticeshipApiBaseUrl",
+                                "value": "[parameters('apprenticeshipApiBaseUrl')]"
                             },
                             {
                                 "name": "GoogleAnalytics:TrackingId",

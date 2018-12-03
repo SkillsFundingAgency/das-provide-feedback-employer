@@ -82,7 +82,7 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
             var result = await _controller.Index(uniqueCode) as ViewResult;
 
             // Assert
-            _sessionServiceMock.Verify(mock => mock.Set(uniqueCode.ToString(), It.IsAny<SurveyModel>()), Times.Once);
+            _sessionServiceMock.Verify(mock => mock.SetAsync(uniqueCode.ToString(), It.IsAny<SurveyModel>()), Times.Once);
         }
 
         [Fact]
