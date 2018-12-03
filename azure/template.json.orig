@@ -1,6 +1,7 @@
 {
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
+<<<<<<< HEAD
     "parameters": {
         "appServiceName": {
             "type": "string"
@@ -26,7 +27,6 @@
         "externalLinks": {
             "type": "object",
             "defaultValue": {
-                "FindApprenticeshipTrainingSiteUrl": "",
                 "ManageApprenticeshipSiteUrl": "",
                 "EmployerIdamsSiteUrl": "",
                 "FeedbackSurveyUrl": ""
@@ -36,9 +36,6 @@
             "type": "string",
             "defaultValue": ""
         },
-        "apprenticeshipApiBaseUrl": {
-            "type": "string"
-          },
         "aspNetCoreEnvironment": {
             "type": "string"
         },
@@ -100,7 +97,64 @@
         "appRedisConnectionString": {
             "type": "secureString"
         }
-    },,
+=======
+  "parameters": {
+    "appServiceName": {
+      "type": "string"
+    },
+    "apiAppServiceName": {
+      "type": "string"
+    },
+    "sharedAppServicePlanName": {
+      "type": "string"
+    },
+    "sharedAppServicePlanResourceGroup": {
+      "type": "string"
+    },
+    "authentication": {
+      "type": "secureObject",
+      "defaultValue": {
+        "Authority": "",
+        "MetaDataAddress": "",
+        "ClientId": "",
+        "ClientSecret": ""
+      }
+    },
+    "externalLinks": {
+      "type": "object",
+      "defaultValue": {
+        "FindApprenticeshipTrainingSiteUrl": "",
+        "ManageApprenticeshipSiteUrl": "",
+        "EmployerIdamsSiteUrl": "",
+        "FeedbackSurveyUrl": ""
+      }
+    },
+    "loggingRedisConnectionString": {
+      "type": "string",
+      "defaultValue": ""
+    },
+    "apprenticeshipApiBaseUrl": {
+      "type": "string"
+    },
+    "aspNetCoreEnvironment": {
+      "type": "string"
+    },
+    "customHostname": {
+      "type": "string"
+    },
+    "certificateName": {
+      "type": "string"
+    },
+    "cosmosDbName": {
+      "type": "string"
+    },
+    "workerAppServiceName": {
+      "type": "string"
+>>>>>>> master
+    },
+    "workerAppServicePlanName": {
+      "type": "string"
+    },
     "aseHostingEnvironmentName": {
       "type": "string"
     },
