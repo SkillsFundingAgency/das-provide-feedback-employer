@@ -422,6 +422,14 @@
                     "functionAppAppSettings": {
                         "value": [
                             {
+                                "name": "AzureWebJobsDashboard",
+                                "value": "[reference('StorageAccount').outputs.storageConnectionString.value]"
+                            },
+                            {
+                                "name": "AzureWebJobsStorage",
+                                "value": "[reference('StorageAccount').outputs.storageConnectionString.value]"
+                            },
+                            {
                                 "name": "ASPNETCORE_ENVIRONMENT",
                                 "value": "[parameters('aspNetCoreEnvironment')]"
                             },
@@ -448,30 +456,14 @@
                             {
                                 "name": "FUNCTIONS_EXTENSION_VERSION",
                                 "value": "~2"
-                            }
-                        ]
-                    },
-                    "functionAppConnectionStrings": {
-                        "value": [
-                            {
-                                "name": "WebJobsDashboard",
-                                "connectionString": "[reference('StorageAccount').outputs.storageConnectionString.value]",
-                                "type": "Custom"
-                            },
-                            {
-                                "name": "WebJobsStorage",
-                                "connectionString": "[reference('StorageAccount').outputs.storageConnectionString.value]",
-                                "type": "Custom"
                             },
                             {
                                 "name": "Redis",
-                                "connectionString": "[parameters('loggingRedisConnectionString')]",
-                                "type": "Custom"
+                                "value": "[parameters('loggingRedisConnectionString')]"
                             },
                             {
                                 "name": "EmployerEmailStoreConnection",
-                                "connectionString": "[parameters('dbConnectionString')]",
-                                "type": "Custom"
+                                "value": "[parameters('dbConnectionString')]"
                             }
                         ]
                     },
