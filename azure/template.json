@@ -381,6 +381,26 @@
         },
         {
             "apiVersion": "2017-05-10",
+            "name": "FunctionAppApplicationInsights",
+            "type": "Microsoft.Resources/deployments",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/application-insights.json",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "appInsightsName": {
+                        "value": "[parameters('functionAppName')]"
+                    },
+                    "attachedService": {
+                        "value": "[parameters('functionAppName')]"
+                    }
+                }
+            }
+        },
+        {
+            "apiVersion": "2017-05-10",
             "name": "FunctionApp",
             "type": "Microsoft.Resources/deployments",
             "properties": {
@@ -404,6 +424,10 @@
                             {
                                 "name": "ASPNETCORE_ENVIRONMENT",
                                 "value": "[parameters('aspNetCoreEnvironment')]"
+                            },
+                            {
+                                "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
+                                "value": "[reference('FunctionAppApplicationInsights').outputs.InstrumentationKey.value]"
                             },
                             {
                                 "name": "NotificationApi:BaseUrl",
