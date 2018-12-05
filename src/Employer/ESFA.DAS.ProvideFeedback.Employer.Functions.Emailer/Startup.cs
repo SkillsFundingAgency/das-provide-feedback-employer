@@ -37,7 +37,7 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
         {
             services.AddSingleton<ILoggerFactory, LoggerFactory>();
             services.AddSingleton(typeof(ILogger<>), typeof(Logger<>));
-            services.AddSingleton<IDbConnection>(c => new SqlConnection(_configuration.GetConnectionString("EmployerEmailStoreConnection")));
+            services.AddSingleton<IDbConnection>(c => new SqlConnection(_configuration.GetConnectionStringOrSetting("EmployerEmailStoreConnection")));
             services.AddLogging((options) =>
             {
                 options.AddConfiguration(_configuration.GetSection("Logging"));

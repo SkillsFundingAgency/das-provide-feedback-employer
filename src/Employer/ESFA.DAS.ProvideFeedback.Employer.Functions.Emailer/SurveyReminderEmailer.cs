@@ -2,7 +2,9 @@ using System;
 using System.Threading.Tasks;
 using ESFA.DAS.Feedback.Employer.Emailer;
 using ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer.DependencyInjection;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Azure.WebJobs;
+using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
 
 namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
@@ -11,7 +13,7 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
     {
         [FunctionName("SurveyReminderEmailer")]
         public static async Task Run(
-            [TimerTrigger("0 0 10 * * MON-FRI", RunOnStartup = true)]TimerInfo myTimer,
+            [HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequest req,
             [Inject] EmployerSurveyReminderEmailer reminderEmailer,
             ILogger log)
         {
