@@ -39,10 +39,14 @@ namespace ESFA.DAS.ProvideFeedback.Data
 
         public async Task<IEnumerable<EmployerEmailDetail>> GetEmailDetailsToBeSentReminder()
         {
+            // if concurrent processing we don't want to send reminders for emails just sent
+            var yesterdayDate = DateTime.Now.AddDays(-1);
             return await _dbConnection.QueryAsync<EmployerEmailDetail>(sql: @"
                                         SELECT * 
                                         FROM EmployerEmailDetails
-                                        WHERE CodeBurntDate IS NULL", param: null, transaction: null, commandTimeout: _commandTimeoutSeconds);
+                                        WHERE EmailSentDate IS NOT NULL
+                                        AND EmailSentDate > @{nameof(yesterdayDate)}
+                                        AND CodeBurntDate IS NULL", param: new { yesterdayDate }, transaction: null, commandTimeout: _commandTimeoutSeconds);
         }
 
         public async Task<bool> IsCodeBurnt(Guid emailCode)
