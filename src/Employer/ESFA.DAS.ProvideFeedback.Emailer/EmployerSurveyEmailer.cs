@@ -19,12 +19,12 @@ namespace ESFA.DAS.Feedback.Employer.Emailer
         private readonly string _feedbackBaseUrl;
         private readonly int _numberOfEmailsToSend;
 
-        public EmployerSurveyEmailer(INotificationsApi emailService, ILogger<EmployerSurveyEmailer> logger, IOptions<EmailSettings> settings)
+        public EmployerSurveyEmailer(INotificationsApi emailService, ILogger<EmployerSurveyEmailer> logger, EmailSettings settings)
         {
             _emailService = emailService;
             _logger = logger;
-            _feedbackBaseUrl = settings.Value.FeedbackSiteBaseUrl.Last() != '/' ? settings.Value.FeedbackSiteBaseUrl + "/" : settings.Value.FeedbackSiteBaseUrl;
-            _numberOfEmailsToSend = settings.Value.BatchSize;
+            _feedbackBaseUrl = settings.FeedbackSiteBaseUrl.Last() != '/' ? settings.FeedbackSiteBaseUrl + "/" : settings.FeedbackSiteBaseUrl;
+            _numberOfEmailsToSend = settings.BatchSize;
         }
 
         protected async Task SendFeedbackEmail(IGrouping<Guid, EmployerEmailDetail> userGroup, string templateId)

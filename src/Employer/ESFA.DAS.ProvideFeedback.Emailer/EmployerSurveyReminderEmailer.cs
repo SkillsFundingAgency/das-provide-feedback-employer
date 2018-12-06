@@ -17,7 +17,7 @@ namespace ESFA.DAS.Feedback.Employer.Emailer
         public EmployerSurveyReminderEmailer(
             IStoreEmployerEmailDetails emailDetailsStore,
             INotificationsApi emailService,
-            IOptions<EmailSettings> settings,
+            EmailSettings settings,
             ILogger<EmployerSurveyEmailer> logger) : base(emailService, logger, settings)
         {
             _emailDetailsStore = emailDetailsStore;

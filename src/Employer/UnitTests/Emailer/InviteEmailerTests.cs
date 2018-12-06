@@ -21,12 +21,12 @@ namespace ESFA.DAS.Feedback.Employer.UnitTests.Emailer
             private readonly Mock<IStoreEmployerEmailDetails> _mockStore = new Mock<IStoreEmployerEmailDetails>();
             private readonly Mock<INotificationsApi> _mockEmailService = new Mock<INotificationsApi>();
             private readonly Mock<ILogger<EmployerSurveyInviteEmailer>> _mockLogger = new Mock<ILogger<EmployerSurveyInviteEmailer>>();
-            private readonly IOptions<EmailSettings> _options;
+            private readonly EmailSettings _options;
             private readonly EmployerSurveyInviteEmailer _emailer;
 
             public UserWithSingleEntry()
             {
-                _options = Options.Create(new EmailSettings { FeedbackSiteBaseUrl = "https://test-site.com/", BatchSize = 10 });
+                _options = new EmailSettings { FeedbackSiteBaseUrl = "https://test-site.com/", BatchSize = 10 };
 
                 var emailDetails = new List<EmployerEmailDetail>
                 {
@@ -69,12 +69,12 @@ namespace ESFA.DAS.Feedback.Employer.UnitTests.Emailer
             private Mock<INotificationsApi> _mockEmailService = new Mock<INotificationsApi>();
             private readonly Mock<ILogger<EmployerSurveyInviteEmailer>> _mockLogger = new Mock<ILogger<EmployerSurveyInviteEmailer>>();
 
-            private readonly IOptions<EmailSettings> _options;
+            private readonly EmailSettings _options;
             private readonly EmployerSurveyInviteEmailer _emailer;
 
             public UserWithMultipleEntries()
             {
-                _options = Options.Create(new EmailSettings { FeedbackSiteBaseUrl = "https://test-site.com/", BatchSize = 10 });
+                _options = new EmailSettings { FeedbackSiteBaseUrl = "https://test-site.com/", BatchSize = 10 };
 
                 var emailDetails = new List<EmployerEmailDetail>
                 {

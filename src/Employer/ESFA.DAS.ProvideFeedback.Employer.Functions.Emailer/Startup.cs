@@ -46,20 +46,29 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
                 options.AddDebug();
             });
 
-            services.Configure<EmailSettings>(_configuration.GetSection("EmailSettings"));
+            services.AddSingleton((sp) =>
+            {
+                return new EmailSettings
+                {
+                    BatchSize = int.Parse(_configuration.GetConnectionStringOrSetting("EmailBatchSize")),
+                    FeedbackSiteBaseUrl = _configuration.GetConnectionStringOrSetting("FeedbackSiteBaseUrl")
+                };
+            });
 
-            var notificationApiConfig = _configuration.GetSection("NotificationApi").Get<NotificationApiConfig>();
+            // services.Configure<EmailSettings>(_configuration.GetSection("EmailSettings"));
+
+            // var notificationApiConfig = _configuration.GetSection("NotificationApi").Get<NotificationApiConfig>();
 
             services.AddHttpClient<INotificationsApi, NotificationsApi>(c =>
             {
-                c.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", notificationApiConfig.ClientToken);
+                c.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _configuration.GetConnectionStringOrSetting("ClientToken"));
             });
 
             services.AddSingleton<INotificationsApiClientConfiguration, NotificationsApiClientConfiguration>(a =>
                 new NotificationsApiClientConfiguration
                 {
-                    ApiBaseUrl = notificationApiConfig.BaseUrl,
-                    ClientToken = notificationApiConfig.ClientToken
+                    ApiBaseUrl = _configuration.GetConnectionStringOrSetting("NotificationApiBaseUrl"),
+                    ClientToken = _configuration.GetConnectionStringOrSetting("ClientToken")
                 }
             );
 

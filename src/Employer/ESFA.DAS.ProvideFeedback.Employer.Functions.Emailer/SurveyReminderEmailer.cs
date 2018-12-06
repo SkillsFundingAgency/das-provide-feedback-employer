@@ -17,7 +17,7 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
             [Inject] EmployerSurveyReminderEmailer reminderEmailer,
             ILogger log)
         {
-            log.LogInformation("Starting employer invite emailer.");
+            log.LogInformation("Starting employer reminder emailer.");
 
             try
             {
