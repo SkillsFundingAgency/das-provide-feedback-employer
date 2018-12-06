@@ -381,6 +381,26 @@
         },
         {
             "apiVersion": "2017-05-10",
+            "name": "FunctionAppApplicationInsights",
+            "type": "Microsoft.Resources/deployments",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/application-insights.json",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "appInsightsName": {
+                        "value": "[parameters('functionAppName')]"
+                    },
+                    "attachedService": {
+                        "value": "[parameters('functionAppName')]"
+                    }
+                }
+            }
+        },
+        {
+            "apiVersion": "2017-05-10",
             "name": "FunctionApp",
             "type": "Microsoft.Resources/deployments",
             "properties": {
@@ -402,8 +422,20 @@
                     "functionAppAppSettings": {
                         "value": [
                             {
+                                "name": "AzureWebJobsDashboard",
+                                "value": "[reference('StorageAccount').outputs.storageConnectionString.value]"
+                            },
+                            {
+                                "name": "AzureWebJobsStorage",
+                                "value": "[reference('StorageAccount').outputs.storageConnectionString.value]"
+                            },
+                            {
                                 "name": "ASPNETCORE_ENVIRONMENT",
                                 "value": "[parameters('aspNetCoreEnvironment')]"
+                            },
+                            {
+                                "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
+                                "value": "[reference('FunctionAppApplicationInsights').outputs.InstrumentationKey.value]"
                             },
                             {
                                 "name": "NotificationApi:BaseUrl",
@@ -424,30 +456,14 @@
                             {
                                 "name": "FUNCTIONS_EXTENSION_VERSION",
                                 "value": "~2"
-                            }
-                        ]
-                    },
-                    "functionAppConnectionStrings": {
-                        "value": [
-                            {
-                                "name": "WebJobsDashboard",
-                                "connectionString": "[reference('StorageAccount').outputs.storageConnectionString.value]",
-                                "type": "Custom"
-                            },
-                            {
-                                "name": "WebJobsStorage",
-                                "connectionString": "[reference('StorageAccount').outputs.storageConnectionString.value]",
-                                "type": "Custom"
                             },
                             {
                                 "name": "Redis",
-                                "connectionString": "[parameters('loggingRedisConnectionString')]",
-                                "type": "Custom"
+                                "value": "[parameters('loggingRedisConnectionString')]"
                             },
                             {
                                 "name": "EmployerEmailStoreConnection",
-                                "connectionString": "[parameters('dbConnectionString')]",
-                                "type": "Custom"
+                                "value": "[parameters('dbConnectionString')]"
                             }
                         ]
                     },
