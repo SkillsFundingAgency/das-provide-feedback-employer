@@ -23,20 +23,20 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
         }
 
         [HttpGet("review-answers", Name = RouteNames.ReviewAnswers_Get)]
-        public IActionResult Index(Guid uniqueCode)
+        public async Task<IActionResult> Index(Guid uniqueCode)
         {
-            var vm = _sessionService.Get<SurveyModel>(uniqueCode.ToString());
+            var vm = await _sessionService.GetAsync<SurveyModel>(uniqueCode.ToString());
             return View(vm);
         }
 
         [HttpPost("review-answers", Name = RouteNames.ReviewAnswers_Post)]
         public async Task<IActionResult> Confirmation(Guid uniqueCode)
         {
-            var answers = _sessionService.Get<SurveyModel>(uniqueCode.ToString());
+            var answers = await _sessionService.GetAsync<SurveyModel>(uniqueCode.ToString());
 
             answers.Submitted = true;
             await _orchestrator.SubmitConfirmedEmployerFeedback(answers, uniqueCode);
-            _sessionService.Set(uniqueCode.ToString(), answers);
+            await _sessionService.SetAsync(uniqueCode.ToString(), answers);
 
             return RedirectToRoute(RouteNames.Confirmation_Get);
         }

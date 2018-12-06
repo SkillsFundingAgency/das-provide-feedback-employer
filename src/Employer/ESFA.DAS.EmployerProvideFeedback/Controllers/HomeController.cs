@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Esfa.Das.ProvideFeedback.Domain.Entities;
 using ESFA.DAS.EmployerProvideFeedback.Configuration.Routing;
 using ESFA.DAS.EmployerProvideFeedback.Infrastructure;
 using ESFA.DAS.EmployerProvideFeedback.ViewModels;
 using ESFA.DAS.ProvideFeedback.Data;
+using ESFA.DAS.ProvideFeedback.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -37,7 +37,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
         [HttpGet]
         public async Task<IActionResult> Index(Guid uniqueCode)
         {
-            var sessionSurvey = _sessionService.Get<SurveyModel>(uniqueCode.ToString());
+            var sessionSurvey = await _sessionService.GetAsync<SurveyModel>(uniqueCode.ToString());
 
             if (sessionSurvey == null)
             {
@@ -51,7 +51,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
                 }
 
                 var newSurveyModel = MapToNewSurveyModel(employerEmailDetail);
-                _sessionService.Set(uniqueCode.ToString(), newSurveyModel);
+                await _sessionService.SetAsync(uniqueCode.ToString(), newSurveyModel);
                 ViewData.Add("ProviderName", employerEmailDetail.ProviderName);
             }
             else

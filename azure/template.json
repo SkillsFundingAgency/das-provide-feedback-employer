@@ -26,6 +26,7 @@
         "externalLinks": {
             "type": "object",
             "defaultValue": {
+                "FindApprenticeshipTrainingSiteUrl": "",
                 "ManageApprenticeshipSiteUrl": "",
                 "EmployerIdamsSiteUrl": "",
                 "FeedbackSurveyUrl": ""
@@ -35,6 +36,9 @@
             "type": "string",
             "defaultValue": ""
         },
+        "apprenticeshipApiBaseUrl": {
+            "type": "string"
+          },
         "aspNetCoreEnvironment": {
             "type": "string"
         },
@@ -47,10 +51,10 @@
         "cosmosDbName": {
             "type": "string"
         },
-        "workerAppServiceName": {
+        "functionAppName": {
             "type": "string"
         },
-        "workerAppServicePlanName": {
+        "functionAppServicePlanName": {
             "type": "string"
         },
         "aseHostingEnvironmentName": {
@@ -96,7 +100,7 @@
         "appRedisConnectionString": {
             "type": "secureString"
         }
-    },
+  },
     "variables": {},
     "resources": [
         {
@@ -175,6 +179,10 @@
                                 "value": "[parameters('authentication').ClientSecret]"
                             },
                             {
+                                "name": "ExternalLinks:FindApprenticeshipTrainingSiteUrl",
+                                "value": "[parameters('externalLinks').FindApprenticeshipTrainingSiteUrl]"
+                            },  
+                            {
                                 "name": "ExternalLinks:ManageApprenticeshipSiteUrl",
                                 "value": "[parameters('externalLinks').ManageApprenticeshipSiteUrl]"
                             },
@@ -185,6 +193,10 @@
                             {
                                 "name": "ExternalLinks:FeedbackSurveyUrl",
                                 "value": "[parameters('externalLinks').FeedbackSurveyUrl]"
+                            },
+                            {
+                                "name": "ApprenticeshipApiBaseUrl",
+                                "value": "[parameters('apprenticeshipApiBaseUrl')]"
                             },
                             {
                                 "name": "GoogleAnalytics:TrackingId",
@@ -340,7 +352,7 @@
         },
         {
             "apiVersion": "2017-05-10",
-            "name": "WorkerAppServicePlan",
+            "name": "FunctionAppServicePlan",
             "type": "Microsoft.Resources/deployments",
             "properties": {
                 "mode": "Incremental",
@@ -350,7 +362,7 @@
                 },
                 "parameters": {
                     "appServicePlanName": {
-                        "value": "[parameters('workerAppServicePlanName')]"
+                        "value": "[parameters('functionAppServicePlanName')]"
                     },
                     "aseHostingEnvironmentName": {
                         "value": "[parameters('aseHostingEnvironmentName')]"
@@ -369,29 +381,61 @@
         },
         {
             "apiVersion": "2017-05-10",
-            "name": "WorkerAppService",
+            "name": "FunctionAppApplicationInsights",
             "type": "Microsoft.Resources/deployments",
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/app-service.json",
+                    "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/application-insights.json",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
-                    "appServiceName": {
-                        "value": "[parameters('workerAppServiceName')]"
+                    "appInsightsName": {
+                        "value": "[parameters('functionAppName')]"
+                    },
+                    "attachedService": {
+                        "value": "[parameters('functionAppName')]"
+                    }
+                }
+            }
+        },
+        {
+            "apiVersion": "2017-05-10",
+            "name": "FunctionApp",
+            "type": "Microsoft.Resources/deployments",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/function-app.json",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "functionAppName": {
+                        "value": "[parameters('functionAppName')]"
                     },
                     "appServicePlanName": {
-                        "value": "[parameters('workerAppServicePlanName')]"
+                        "value": "[parameters('functionappServicePlanName')]"
                     },
                     "appServicePlanResourceGroup": {
                         "value": "[resourceGroup().name]"
                     },
-                    "appServiceAppSettings": {
+                    "functionAppAppSettings": {
                         "value": [
+                            {
+                                "name": "AzureWebJobsDashboard",
+                                "value": "[reference('StorageAccount').outputs.storageConnectionString.value]"
+                            },
+                            {
+                                "name": "AzureWebJobsStorage",
+                                "value": "[reference('StorageAccount').outputs.storageConnectionString.value]"
+                            },
                             {
                                 "name": "ASPNETCORE_ENVIRONMENT",
                                 "value": "[parameters('aspNetCoreEnvironment')]"
+                            },
+                            {
+                                "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
+                                "value": "[reference('FunctionAppApplicationInsights').outputs.InstrumentationKey.value]"
                             },
                             {
                                 "name": "NotificationApi:BaseUrl",
@@ -408,40 +452,31 @@
                             {
                                 "name": "EmailSettings:BatchSize",
                                 "value": "[parameters('emailBatchSize')]"
-                            }
-                        ]
-                    },
-                    "appServiceConnectionStrings": {
-                        "value": [
-                            {
-                                "name": "WebJobsDashboard",
-                                "connectionString": "[reference('StorageAccount').outputs.storageConnectionString.value]",
-                                "type": "Custom"
                             },
                             {
-                                "name": "WebJobsStorage",
-                                "connectionString": "[reference('StorageAccount').outputs.storageConnectionString.value]",
-                                "type": "Custom"
+                                "name": "FUNCTIONS_EXTENSION_VERSION",
+                                "value": "~2"
                             },
                             {
                                 "name": "Redis",
-                                "connectionString": "[parameters('loggingRedisConnectionString')]",
-                                "type": "Custom"
+                                "value": "[parameters('loggingRedisConnectionString')]"
                             },
                             {
                                 "name": "EmployerEmailStoreConnection",
-                                "connectionString": "[parameters('dbConnectionString')]",
-                                "type": "Custom"
+                                "value": "[parameters('dbConnectionString')]"
                             }
                         ]
                     },
-                    "deployStagingSlot": {
-                        "value": false
+                    "customHostName": {
+                        "value": ""
+                    },
+                    "certificateThumbprint": {
+                        "value": ""
                     }
                 }
             },
             "dependsOn": [
-                "WorkerAppServicePlan"
+                "FunctionAppServicePlan"
             ]
         },
         {

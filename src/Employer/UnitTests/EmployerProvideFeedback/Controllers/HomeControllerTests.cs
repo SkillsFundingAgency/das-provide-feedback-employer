@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoFixture;
-using Esfa.Das.ProvideFeedback.Domain.Entities;
 using ESFA.DAS.EmployerProvideFeedback.Controllers;
 using ESFA.DAS.EmployerProvideFeedback.Infrastructure;
 using ESFA.DAS.EmployerProvideFeedback.ViewModels;
 using ESFA.DAS.ProvideFeedback.Data;
+using ESFA.DAS.ProvideFeedback.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -82,7 +82,7 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
             var result = await _controller.Index(uniqueCode) as ViewResult;
 
             // Assert
-            _sessionServiceMock.Verify(mock => mock.Set(uniqueCode.ToString(), It.IsAny<SurveyModel>()), Times.Once);
+            _sessionServiceMock.Verify(mock => mock.SetAsync(uniqueCode.ToString(), It.IsAny<SurveyModel>()), Times.Once);
         }
 
         [Fact]

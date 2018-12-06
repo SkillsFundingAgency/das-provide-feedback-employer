@@ -18,7 +18,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Infrastructure
         {
             var uniqueCode = (Guid)context.ActionArguments["uniqueCode"];
 
-            if (!_sessionService.Exists(uniqueCode.ToString()))
+            if (!_sessionService.ExistsAsync(uniqueCode.ToString()).Result)
             {
                 var controller = context.Controller as Controller;
                 context.Result = controller.RedirectToRoute(RouteNames.Landing_Get);
