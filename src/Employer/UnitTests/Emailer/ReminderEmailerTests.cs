@@ -19,12 +19,12 @@ namespace Esfa.Das.Feedback.Employer.UnitTests.Emailer
         private readonly Mock<IStoreEmployerEmailDetails> _mockStore = new Mock<IStoreEmployerEmailDetails>();
         private readonly Mock<INotificationsApi> _mockEmailService = new Mock<INotificationsApi>();
         private readonly Mock<ILogger<EmployerSurveyEmailer>> _mockLogger = new Mock<ILogger<EmployerSurveyEmailer>>();
-        private readonly EmailSettings _options;
+        private readonly IOptions<EmailSettings> _options;
         private readonly EmployerSurveyReminderEmailer _emailer;
 
         public ReminderEmailerTests()
         {
-            _options = new EmailSettings { FeedbackSiteBaseUrl = "https://test-site.com/", BatchSize = 10 };
+            _options = Options.Create(new EmailSettings { FeedbackSiteBaseUrl = "https://test-site.com/", BatchSize = 10 });
 
             var emailDetails = new List<EmployerEmailDetail>
                 {

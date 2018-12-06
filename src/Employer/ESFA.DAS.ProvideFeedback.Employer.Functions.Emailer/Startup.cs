@@ -46,29 +46,29 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
                 options.AddDebug();
             });
 
-            services.AddSingleton((sp) =>
-            {
-                return new EmailSettings
-                {
-                    BatchSize = int.Parse(_configuration.GetConnectionStringOrSetting("EmailBatchSize")),
-                    FeedbackSiteBaseUrl = _configuration.GetConnectionStringOrSetting("FeedbackSiteBaseUrl")
-                };
-            });
+            //services.AddSingleton((sp) =>
+            //{
+            //    return new EmailSettings
+            //    {
+            //        BatchSize = int.Parse(_configuration.GetConnectionStringOrSetting("EmailBatchSize")),
+            //        FeedbackSiteBaseUrl = _configuration.GetConnectionStringOrSetting("FeedbackSiteBaseUrl")
+            //    };
+            //});
 
-            // services.Configure<EmailSettings>(_configuration.GetSection("EmailSettings"));
+            services.Configure<EmailSettings>(_configuration.GetSection("EmailSettings"));
 
-            // var notificationApiConfig = _configuration.GetSection("NotificationApi").Get<NotificationApiConfig>();
+            var notificationApiConfig = _configuration.GetSection("NotificationApi").Get<NotificationApiConfig>();
 
             services.AddHttpClient<INotificationsApi, NotificationsApi>(c =>
             {
-                c.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _configuration.GetConnectionStringOrSetting("ClientToken"));
+                c.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", notificationApiConfig.ClientToken);
             });
 
             services.AddSingleton<INotificationsApiClientConfiguration, NotificationsApiClientConfiguration>(a =>
                 new NotificationsApiClientConfiguration
                 {
-                    ApiBaseUrl = _configuration.GetConnectionStringOrSetting("NotificationApiBaseUrl"),
-                    ClientToken = _configuration.GetConnectionStringOrSetting("ClientToken")
+                    ApiBaseUrl = notificationApiConfig.BaseUrl,
+                    ClientToken = notificationApiConfig.ClientToken
                 }
             );
 
