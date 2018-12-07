@@ -22,7 +22,7 @@
                 <fieldset class="@(!ViewData.ModelState.IsValid ? "form-group-error" : "")">
                     <!-- dynamically add this class in fieldset in case of error-->
                     <legend>
-                        <h2 class="heading-medium">How would you rate @Model.ProviderName’s training and service overall?</h2>
+                        <h2 class="heading-medium">How would you rate @(Model.ProviderName.EndsWith("'s") ? @Model.ProviderName : $"{@Model.ProviderName}'s") training and service overall?</h2>
                     </legend>
                     <input type="hidden" asp-for="@Model.ProviderName" />
                     @if (!ViewData.ModelState.IsValid)
