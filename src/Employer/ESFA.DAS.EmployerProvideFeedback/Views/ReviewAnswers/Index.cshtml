@@ -12,9 +12,13 @@
         <form asp-route="@RouteNames.ReviewAnswers_Post">
             <ul class="check-your-answers">
                 <li>
-                    <span class="question">@Model.ProviderName's strengths</span>
+                    <span class="question">
+                        @(Model.ProviderName.EndsWith("'s") ? @Model.ProviderName : $"{@Model.ProviderName}'s") strengths
+                    </span>
+                        
                     <span class="answer">
-                        @{ if (Model.HasStrengths)
+                        @{
+                            if (Model.HasStrengths)
                             {
                                 <ul class="list">
                                     @foreach (var item in Model.Attributes.Where(x => x.Good))
@@ -30,7 +34,7 @@
                         }
                     </span>
                     <span class="change">
-                        <a asp-route="@RouteNames.QuestionOne_Get" asp-route-returnUrl="@RouteNames.ReviewAnswers_Get">Change<span class="visually-hidden"> strength answers</a>
+                        <a asp-route="@RouteNames.QuestionOne_Get" asp-route-returnUrl="@RouteNames.ReviewAnswers_Get">Change<span class="visually-hidden" /> strength answers</a>
                     </span>
                 </li>
                 <li>
@@ -54,7 +58,7 @@
                         }
                     </span>
                     <span class="change">
-                        <a asp-route="@RouteNames.QuestionTwo_Get" asp-route-returnUrl="@RouteNames.ReviewAnswers_Get">Change<span class="visually-hidden"> improvements answers</a>
+                        <a asp-route="@RouteNames.QuestionTwo_Get" asp-route-returnUrl="@RouteNames.ReviewAnswers_Get">Change<span class="visually-hidden"/> improvements answers</a>
                     </span>
                 </li>
                 <li>
@@ -65,7 +69,7 @@
                         <p>@Model.Rating.GetDisplayName()</p>
                     </span>
                     <span class="change">
-                        <a asp-route="@RouteNames.QuestionThree_Get" asp-route-returnUrl="@RouteNames.ReviewAnswers_Get">Change<span class="visually-hidden"> quality rating answer</a>
+                        <a asp-route="@RouteNames.QuestionThree_Get" asp-route-returnUrl="@RouteNames.ReviewAnswers_Get">Change<span class="visually-hidden"/> quality rating answer</a>
                     </span>
                 </li>
             </ul>
