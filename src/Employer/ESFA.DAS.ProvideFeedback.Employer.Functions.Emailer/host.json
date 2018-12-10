@@ -8,7 +8,7 @@
     "healthCheckThreshold": 6,
     "counterThreshold": 0.80
   },
-  "functionTimeout": "00:30:00",
+  "functionTimeout": "00:10:00",
   "logging": {
     "fileLoggingMode": "debugOnly",
     "applicationInsights": {
