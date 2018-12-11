@@ -12,6 +12,7 @@ using Microsoft.Azure.WebJobs.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using NLog.Extensions.Logging;
 using SFA.DAS.Notifications.Api.Client;
 using SFA.DAS.Notifications.Api.Client.Configuration;
 
@@ -35,25 +36,16 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
 
         private void ConfigureServices(IServiceCollection services)
         {
-            services.AddSingleton<ILoggerFactory, LoggerFactory>();
             services.AddSingleton(typeof(ILogger<>), typeof(Logger<>));
             services.AddSingleton<IDbConnection>(c => new SqlConnection(_configuration.GetConnectionStringOrSetting("EmployerEmailStoreConnection")));
             services.AddLogging((options) =>
             {
                 options.AddConfiguration(_configuration.GetSection("Logging"));
                 options.SetMinimumLevel(LogLevel.Trace);
+                options.AddNLog();
                 options.AddConsole();
                 options.AddDebug();
             });
-
-            //services.AddSingleton((sp) =>
-            //{
-            //    return new EmailSettings
-            //    {
-            //        BatchSize = int.Parse(_configuration.GetConnectionStringOrSetting("EmailBatchSize")),
-            //        FeedbackSiteBaseUrl = _configuration.GetConnectionStringOrSetting("FeedbackSiteBaseUrl")
-            //    };
-            //});
 
             services.Configure<EmailSettings>(_configuration.GetSection("EmailSettings"));
 
