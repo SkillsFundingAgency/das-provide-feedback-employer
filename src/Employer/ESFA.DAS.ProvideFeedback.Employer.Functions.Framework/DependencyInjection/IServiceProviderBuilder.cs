@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer.DependencyInjection
+namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Framework.DependencyInjection
 {
     public interface IServiceProviderBuilder
     {

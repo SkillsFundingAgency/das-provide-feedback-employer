@@ -1,8 +1,8 @@
 ﻿using System.Threading.Tasks;
-using ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer.DependencyInjection.Services;
+using ESFA.DAS.ProvideFeedback.Employer.Functions.Framework.DependencyInjection.Services;
 using Microsoft.Azure.WebJobs.Host.Bindings;
 
-namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer.DependencyInjection.Bindings
+namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Framework.DependencyInjection.Bindings
 {
     internal class InjectBindingProvider : IBindingProvider
     {

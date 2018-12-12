@@ -1,7 +1,7 @@
-﻿using ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer.DependencyInjection.Bindings;
+﻿using ESFA.DAS.ProvideFeedback.Employer.Functions.Framework.DependencyInjection.Bindings;
 using Microsoft.Azure.WebJobs.Host.Config;
 
-namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer.DependencyInjection.Config
+namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Framework.DependencyInjection.Config
 {
     internal class InjectConfiguration : IExtensionConfigProvider
     {

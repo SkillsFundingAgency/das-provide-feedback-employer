@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.Azure.WebJobs.Host;
 
-namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer.DependencyInjection.Services
+namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Framework.DependencyInjection.Services
 {
     internal class ScopeCleanupFilter : IFunctionInvocationFilter, IFunctionExceptionFilter
     {
