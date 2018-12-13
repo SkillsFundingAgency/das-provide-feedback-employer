@@ -1,12 +1,12 @@
 ﻿using System;
-using ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer.DependencyInjection.Bindings;
-using ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer.DependencyInjection.Services;
+using ESFA.DAS.ProvideFeedback.Employer.Functions.Framework.DependencyInjection.Bindings;
+using ESFA.DAS.ProvideFeedback.Employer.Functions.Framework.DependencyInjection.Services;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Host;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
-namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer.DependencyInjection.Config
+namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Framework.DependencyInjection.Config
 {
     public static class DependencyInjectionWebJobsBuilderExtensions
     {

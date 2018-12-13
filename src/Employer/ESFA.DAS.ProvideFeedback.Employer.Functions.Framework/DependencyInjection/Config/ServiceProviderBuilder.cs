@@ -2,7 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 
 
-namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer.DependencyInjection.Config
+namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Framework.DependencyInjection.Config
 {
     internal class ServiceProviderBuilder : IServiceProviderBuilder
     {

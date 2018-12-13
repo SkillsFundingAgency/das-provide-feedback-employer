@@ -2,7 +2,7 @@
 using System.Collections.Concurrent;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer.DependencyInjection.Services
+namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Framework.DependencyInjection.Services
 {
     internal class ServiceProviderHolder
     {
