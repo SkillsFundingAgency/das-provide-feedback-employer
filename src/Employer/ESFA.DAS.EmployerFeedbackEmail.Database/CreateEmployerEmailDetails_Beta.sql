@@ -12,6 +12,7 @@ AS
 	,r.Name
 	,NULL AS 'EmailSentDate'
 	,NULL AS 'CodeBurntDate'
+	,NULL AS 'ReminderEmailSentDate'
 	FROM staging_employer_accounts ea
 	INNER JOIN staging_commitment c
 	ON ea.AccountId = c.EmployerAccountId
