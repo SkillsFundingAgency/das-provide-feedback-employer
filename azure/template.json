@@ -105,6 +105,10 @@
         },
         "reminderEmailerSchedule": {
             "type": "string"
+        },
+        "emailerAppName": {
+            "type": "string",
+            "defaultValue": "das-provide-feedback-emailer"
         }
   },
     "variables": {},
@@ -478,6 +482,10 @@
                             {
                                 "name": "ReminderEmailerSchedule",
                                 "value": "[parameters('reminderEmailerSchedule')]"
+                            },
+                            {
+                                "name": "AppName",
+                                "value": "[parameters('emailerAppName')]"
                             }
                         ]
                     },

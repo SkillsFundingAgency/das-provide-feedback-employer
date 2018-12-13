@@ -1,7 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using ESFA.DAS.Feedback.Employer.Emailer;
-using ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer.DependencyInjection;
+using ESFA.DAS.ProvideFeedback.Employer.Functions.Framework.DependencyInjection;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
 
