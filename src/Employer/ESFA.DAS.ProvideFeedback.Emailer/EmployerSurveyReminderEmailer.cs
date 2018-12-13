@@ -37,7 +37,7 @@ namespace ESFA.DAS.Feedback.Employer.Emailer
         {
             var userRef = userGroup.First().UserRef;
             await SendFeedbackEmail(userGroup, EmailTemplates.ReminderTemplateId);
-            await _emailDetailsStore.SetReminderAsSent(userRef);
+            await _emailDetailsStore.SetEmailReminderAsSent(userRef);
         }
     }
 }

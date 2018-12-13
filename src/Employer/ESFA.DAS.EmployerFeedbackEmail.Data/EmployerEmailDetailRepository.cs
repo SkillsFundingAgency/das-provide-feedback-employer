@@ -78,7 +78,7 @@ namespace ESFA.DAS.ProvideFeedback.Data
             await ExecuteUpdateAsync(sql, new { now, userRef });
         }
 
-        public async Task SetReminderAsSent(Guid userRef)
+        public async Task SetEmailReminderAsSent(Guid userRef)
         {
             var now = DateTime.Now;
             var sql = $@"

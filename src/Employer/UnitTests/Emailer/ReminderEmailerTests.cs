@@ -53,11 +53,11 @@ namespace Esfa.Das.Feedback.Employer.UnitTests.Emailer
         }
 
         [Fact]
-        public async Task StoreReflectsThatEmailSent()
+        public async Task StoreReflectsThatEmailReminderSent()
         {
             await _emailer.SendEmailsAsync();
 
-            _mockStore.Verify(x => x.SetEmailDetailsAsSent(It.IsAny<Guid>()), Times.Once);
+            _mockStore.Verify(x => x.SetEmailReminderAsSent(It.IsAny<Guid>()), Times.Once);
         }
 
         [Fact]
