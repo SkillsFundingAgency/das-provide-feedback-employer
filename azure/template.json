@@ -76,7 +76,7 @@
         },
         "minDaysSinceInvite": {
             "type": "int",
-            "defaultValue": "14"
+            "defaultValue": 14
         },
         "feedbackApiAuth": {
             "type": "secureObject",
