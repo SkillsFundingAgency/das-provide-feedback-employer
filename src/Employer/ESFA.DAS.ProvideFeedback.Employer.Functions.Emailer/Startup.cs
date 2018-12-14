@@ -90,7 +90,7 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
             var env = _configuration.GetConnectionStringOrSetting("ASPNETCORE_ENVIRONMENT");
             var config = new LoggingConfiguration();
 
-            if (env == "Dev")
+            if (string.IsNullOrEmpty(env))
             {
                 AddLocalTarget(config, localLogPath, appName);
             }
@@ -121,7 +121,7 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
             {
                 Name = "RedisLog",
                 AppName = appName,
-                EnvironmentKeyName = environment,
+                EnvironmentKeyName = "ASPNETCORE_ENVIRONMENT",
                 ConnectionStringName = "Redis",
                 IncludeAllProperties = true,
                 Layout = "${message}"
