@@ -4,5 +4,6 @@
     {
         public string FeedbackSiteBaseUrl { get; set; }
         public int BatchSize { get; set; }
+        public int MinDaysSinceInvite { get;set; }
     }
 }

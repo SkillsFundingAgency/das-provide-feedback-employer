@@ -12,6 +12,7 @@ namespace ESFA.DAS.ProvideFeedback.Data
         Task<EmployerEmailDetail> GetEmailDetailsForUniqueCode(Guid guid);
         Task SetCodeBurntDate(Guid uniqueCode);
         Task<bool> IsCodeBurnt(Guid emailCode);
-        Task<IEnumerable<EmployerEmailDetail>> GetEmailDetailsToBeSentReminder();
+        Task<IEnumerable<EmployerEmailDetail>> GetEmailDetailsToBeSentReminder(int minDaysSinceSent);
+        Task SetEmailReminderAsSent(Guid userRef);
     }
 }

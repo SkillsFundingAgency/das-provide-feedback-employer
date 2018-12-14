@@ -74,6 +74,10 @@
             "type": "int",
             "defaultValue": 25
         },
+        "minDaysSinceInvite": {
+            "type": "int",
+            "defaultValue": 14
+        },
         "feedbackApiAuth": {
             "type": "secureObject",
             "defaultValue": {
@@ -462,6 +466,10 @@
                             {
                                 "name": "EmailSettings:BatchSize",
                                 "value": "[parameters('emailBatchSize')]"
+                            },
+                            {
+                                "name": "EmailSettings:MinDaysSinceInvite",
+                                "value": "[parameters('minDaysSinceInvite')]"
                             },
                             {
                                 "name": "FUNCTIONS_EXTENSION_VERSION",

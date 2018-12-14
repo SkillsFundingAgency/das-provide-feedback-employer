@@ -9,7 +9,9 @@
     [Ukprn] INT NOT NULL,
 	[ProviderName] NVARCHAR(100) NOT NULL,
     [EmailSentDate] DATETIME NULL, 
-    [CodeBurntDate] DATETIME NULL
+    [CodeBurntDate] DATETIME NULL,
+	[EmailReminderSentDate] DATETIME NULL
+    
 )
 
 

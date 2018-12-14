@@ -31,7 +31,7 @@ namespace Esfa.Das.Feedback.Employer.UnitTests.Emailer
                     new EmployerEmailDetail { UserRef = new Guid("7f11a6b0-a25b-45a5-bdfc-4424dfba85e8"), EmailAddress = "test@test.com" }
                 };
 
-            _mockStore.Setup(x => x.GetEmailDetailsToBeSentReminder()).ReturnsAsync(emailDetails);
+            _mockStore.Setup(x => x.GetEmailDetailsToBeSentReminder(It.IsAny<int>())).ReturnsAsync(emailDetails);
 
             _emailer = new EmployerSurveyReminderEmailer(_mockStore.Object, _mockEmailService.Object, _options, _mockLogger.Object);
         }
@@ -53,11 +53,11 @@ namespace Esfa.Das.Feedback.Employer.UnitTests.Emailer
         }
 
         [Fact]
-        public async Task StoreReflectsThatEmailSent()
+        public async Task StoreReflectsThatEmailReminderSent()
         {
             await _emailer.SendEmailsAsync();
 
-            _mockStore.Verify(x => x.SetEmailDetailsAsSent(It.IsAny<Guid>()), Times.Once);
+            _mockStore.Verify(x => x.SetEmailReminderAsSent(It.IsAny<Guid>()), Times.Once);
         }
 
         [Fact]
