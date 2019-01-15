@@ -13,7 +13,7 @@ namespace ESFA.DAS.Feedback.Employer.Emailer
     public class EmployerSurveyReminderEmailer : EmployerSurveyEmailer
     {
         private readonly IStoreEmployerEmailDetails _emailDetailsStore;
-        private readonly int _minDaysSinceInvite;
+        private readonly int _reminderDays;
 
         public EmployerSurveyReminderEmailer(
             IStoreEmployerEmailDetails emailDetailsStore,
@@ -22,12 +22,12 @@ namespace ESFA.DAS.Feedback.Employer.Emailer
             ILogger<EmployerSurveyEmailer> logger) : base(emailService, logger, settings)
         {
             _emailDetailsStore = emailDetailsStore;
-            _minDaysSinceInvite = settings.Value.MinDaysSinceInvite;
+            _reminderDays = settings.Value.ReminderDays;
         }
 
         public async Task SendEmailsAsync()
         {
-            var emailsToSend = await _emailDetailsStore.GetEmailDetailsToBeSentReminder(_minDaysSinceInvite);
+            var emailsToSend = await _emailDetailsStore.GetEmailDetailsToBeSentReminder(_reminderDays);
 
             // Group by user
             var emailsGroupByUser = GroupEmailsToSendByUser(emailsToSend);

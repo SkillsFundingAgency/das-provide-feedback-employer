@@ -74,9 +74,13 @@
             "type": "int",
             "defaultValue": 25
         },
-        "minDaysSinceInvite": {
+        "reminderDays": {
             "type": "int",
             "defaultValue": 14
+        },
+        "inviteCycleDays": {
+            "type": "int",
+            "defaultValue": 90
         },
         "feedbackApiAuth": {
             "type": "secureObject",
@@ -468,8 +472,12 @@
                                 "value": "[parameters('emailBatchSize')]"
                             },
                             {
-                                "name": "EmailSettings:MinDaysSinceInvite",
-                                "value": "[parameters('minDaysSinceInvite')]"
+                                "name": "EmailSettings:ReminderDays",
+                                "value": "[parameters('reminderDays')]"
+                            },
+                            {
+                                "name": "EmailSettings:InviteCycleDays",
+                                "value": "[parameters('inviteCycleDays')]"
                             },
                             {
                                 "name": "FUNCTIONS_EXTENSION_VERSION",

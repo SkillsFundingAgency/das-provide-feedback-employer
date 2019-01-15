@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
 using ESFA.DAS.ProvideFeedback.Domain.Entities;
@@ -29,24 +28,27 @@ namespace ESFA.DAS.ProvideFeedback.Data
                                           new { uniqueCode });
         }
 
-        public async Task<IEnumerable<EmployerEmailDetail>> GetEmailDetailsToBeSentInvite()
+        public async Task<IEnumerable<EmployerEmailDetail>> GetEmailDetailsToBeSentInvite(int minDaysSincePreviousSurvey)
         {
-            return await _dbConnection.QueryAsync<EmployerEmailDetail>(sql: @"
+            var minAllowedSendDate = DateTime.Now.AddDays(-minDaysSincePreviousSurvey);
+            return await _dbConnection.QueryAsync<EmployerEmailDetail>(sql: $@"
                                         SELECT * 
                                         FROM EmployerEmailDetails
-                                        WHERE EmailSentDate IS NULL", param: null, transaction: null, commandTimeout: _commandTimeoutSeconds);
+                                        WHERE EmailSentDate IS NULL
+                                        OR EmailSentDate < @{nameof(minAllowedSendDate)}", param: new { minAllowedSendDate }, transaction: null, commandTimeout: _commandTimeoutSeconds);
         }
 
-        public async Task<IEnumerable<EmployerEmailDetail>> GetEmailDetailsToBeSentReminder(int minDaysSinceSent)
+        public async Task<IEnumerable<EmployerEmailDetail>> GetEmailDetailsToBeSentReminder(int minDaysSinceInvite)
         {
-            var minSentDate = DateTime.Now.AddDays(-minDaysSinceSent);
+            var minSentDate = DateTime.Now.AddDays(-minDaysSinceInvite);
             return await _dbConnection.QueryAsync<EmployerEmailDetail>(sql: $@"
                                         SELECT * 
                                         FROM EmployerEmailDetails
                                         WHERE EmailSentDate IS NOT NULL
+                                        AND (EmailReminderSentDate IS NULL OR EmailReminderSentDate < EmailSentDate)
                                         AND EmailSentDate < @{nameof(minSentDate)}
-                                        AND EmailReminderSentDate IS NULL
-                                        AND CodeBurntDate IS NULL", param: new { minSentDate }, transaction: null, commandTimeout: _commandTimeoutSeconds);
+                                        AND (CodeBurntDate IS NULL
+                                        OR CodeBurntDate < EmailSentDate)", param: new { minSentDate }, transaction: null, commandTimeout: _commandTimeoutSeconds);
         }
 
         public async Task<bool> IsCodeBurnt(Guid emailCode)
@@ -74,8 +76,7 @@ namespace ESFA.DAS.ProvideFeedback.Data
             var sql = $@"
                         UPDATE EmployerEmailDetails
                         SET EmailSentDate = @{nameof(now)}
-                        WHERE UserRef = @{nameof(userRef)}
-                        AND CodeBurntDate IS NULL";
+                        WHERE UserRef = @{nameof(userRef)}";
 
             await ExecuteUpdateAsync(sql, new { now, userRef });
         }
@@ -87,7 +88,8 @@ namespace ESFA.DAS.ProvideFeedback.Data
                         UPDATE EmployerEmailDetails
                         SET EmailReminderSentDate = @{nameof(now)}
                         WHERE UserRef = @{nameof(userRef)}
-                        AND CodeBurntDate IS NULL";
+                        AND (CodeBurntDate IS NULL
+                        OR CodeBurntDate < EmailSentDate)";
 
             await ExecuteUpdateAsync(sql, new { now, userRef });
         }

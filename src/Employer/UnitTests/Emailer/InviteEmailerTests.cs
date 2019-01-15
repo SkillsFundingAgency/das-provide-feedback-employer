@@ -33,7 +33,7 @@ namespace ESFA.DAS.Feedback.Employer.UnitTests.Emailer
                     new EmployerEmailDetail { UserRef = new Guid("7f11a6b0-a25b-45a5-bdfc-4424dfba85e8"), EmailAddress = "test@test.com" }
                 };
 
-                _mockStore.Setup(x => x.GetEmailDetailsToBeSentInvite()).ReturnsAsync(emailDetails);
+                _mockStore.Setup(x => x.GetEmailDetailsToBeSentInvite(It.IsAny<int>())).ReturnsAsync(emailDetails);
 
                 _emailer = new EmployerSurveyInviteEmailer(_mockStore.Object, _mockEmailService.Object, _options, _mockLogger.Object);
             }
@@ -82,7 +82,7 @@ namespace ESFA.DAS.Feedback.Employer.UnitTests.Emailer
                     new EmployerEmailDetail { UserRef = new Guid("7f11a6b0-a25b-45a5-bdfc-4424dfba85e8"), EmailAddress = "test@test.com" }
                 };
 
-                _mockStore.Setup(x => x.GetEmailDetailsToBeSentInvite()).ReturnsAsync(emailDetails);
+                _mockStore.Setup(x => x.GetEmailDetailsToBeSentInvite(It.IsAny<int>())).ReturnsAsync(emailDetails);
 
                 _emailer = new EmployerSurveyInviteEmailer(_mockStore.Object, _mockEmailService.Object, _options, _mockLogger.Object);
 
