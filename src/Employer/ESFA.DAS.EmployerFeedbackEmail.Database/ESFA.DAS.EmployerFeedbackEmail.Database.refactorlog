@@ -77,4 +77,53 @@
     <Property Name="ParentElementType" Value="SqlTable" />
     <Property Name="NewName" Value="[IX_EmployerEmailDetails_EmailCode]" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="76a33084-a943-4270-8e92-adefc5cd69d4" ChangeDateTime="01/17/2019 11:42:01">
+    <Property Name="ElementName" Value="[dbo].[Accounts].[Id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[Accounts]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="AccountId" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="260ca2dc-b896-4efd-87fb-6954f159cd3c" ChangeDateTime="01/17/2019 11:48:15">
+    <Property Name="ElementName" Value="[dbo].[Users].[Id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[Users]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="UserRef" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="b38c7e81-932c-4088-a42f-8a5cb0b8779e" ChangeDateTime="01/17/2019 11:52:20">
+    <Property Name="ElementName" Value="[dbo].[EmployerSurveyCodes].[Id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[EmployerSurveyCodes]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="SurveyCode" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="7b756962-8fd3-4825-91a2-f3276b8d369f" ChangeDateTime="01/17/2019 11:55:00">
+    <Property Name="ElementName" Value="[dbo].[Providers].[Id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[Providers]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="Ukprn" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="67f8f8ce-f220-4105-943b-0f85631b1eb6" ChangeDateTime="01/17/2019 13:28:46">
+    <Property Name="ElementName" Value="[dbo].[EmployerSurveyCodes].[SurveyCode]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[EmployerSurveyCodes]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="UniqueSurveyCode" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="ae5df15e-60bb-45eb-8e00-df7499b13469" ChangeDateTime="01/17/2019 13:28:50">
+    <Property Name="ElementName" Value="[dbo].[EmployerSurveyHistory].[EmailCode]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[EmployerSurveyHistory]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="UniqueSurveyCode" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="47fe52a2-999c-4c95-9260-9ec8d3c9424c" ChangeDateTime="01/17/2019 13:29:57">
+    <Property Name="ElementName" Value="[dbo].[EmployerSurveyHistory].[BurntDate]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[EmployerSurveyHistory]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="BurnDate" />
+  </Operation>
 </Operations>

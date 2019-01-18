@@ -67,7 +67,11 @@
     <Build Include="staging_employer_accounts.sql" />
     <Build Include="CreateEmployerEmailDetails.sql" />
     <Build Include="staging_roatp.sql" />
-    <Build Include="staging_beta_users.sql" />
-    <Build Include="CreateEmployerEmailDetails_Beta.sql" />
+    <Build Include="EmployerSurveyHistory.sql" />
+    <Build Include="Accounts.sql" />
+    <Build Include="Users.sql" />
+    <Build Include="EmployerSurveyCodes.sql" />
+    <Build Include="Providers.sql" />
+    <Build Include="vw_EmployerSurveyInvites.sql" />
   </ItemGroup>
 </Project>
