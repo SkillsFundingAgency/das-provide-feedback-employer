@@ -28,9 +28,9 @@ namespace ESFA.DAS.Feedback.Employer.UnitTests.Emailer
             {
                 _options = Options.Create(new EmailSettings { FeedbackSiteBaseUrl = "https://test-site.com/", BatchSize = 10 });
 
-                var emailDetails = new List<EmployerEmailDetail>
+                var emailDetails = new List<EmployerSurveyInvite>
                 {
-                    new EmployerEmailDetail { UserRef = new Guid("7f11a6b0-a25b-45a5-bdfc-4424dfba85e8"), EmailAddress = "test@test.com" }
+                    new EmployerSurveyInvite { UserRef = new Guid("7f11a6b0-a25b-45a5-bdfc-4424dfba85e8"), EmailAddress = "test@test.com" }
                 };
 
                 _mockStore.Setup(x => x.GetEmailDetailsToBeSentInvite(It.IsAny<int>())).ReturnsAsync(emailDetails);
@@ -59,7 +59,7 @@ namespace ESFA.DAS.Feedback.Employer.UnitTests.Emailer
             {
                 await _emailer.SendEmailsAsync();
 
-                _mockStore.Verify(x => x.SetEmailDetailsAsSent(It.IsAny<Guid>()), Times.Once);
+                _mockStore.Verify(x => x.InsertSurveyInviteHistory(It.IsAny<IEnumerable<Guid>>(), It.IsAny<int>()), Times.Once);
             }
         }
 
@@ -76,10 +76,10 @@ namespace ESFA.DAS.Feedback.Employer.UnitTests.Emailer
             {
                 _options = Options.Create(new EmailSettings { FeedbackSiteBaseUrl = "https://test-site.com/", BatchSize = 10 });
 
-                var emailDetails = new List<EmployerEmailDetail>
+                var emailDetails = new List<EmployerSurveyInvite>
                 {
-                    new EmployerEmailDetail { UserRef = new Guid("7f11a6b0-a25b-45a5-bdfc-4424dfba85e8"), EmailAddress = "test@test.com" },
-                    new EmployerEmailDetail { UserRef = new Guid("7f11a6b0-a25b-45a5-bdfc-4424dfba85e8"), EmailAddress = "test@test.com" }
+                    new EmployerSurveyInvite { UserRef = new Guid("7f11a6b0-a25b-45a5-bdfc-4424dfba85e8"), EmailAddress = "test@test.com" },
+                    new EmployerSurveyInvite { UserRef = new Guid("7f11a6b0-a25b-45a5-bdfc-4424dfba85e8"), EmailAddress = "test@test.com" }
                 };
 
                 _mockStore.Setup(x => x.GetEmailDetailsToBeSentInvite(It.IsAny<int>())).ReturnsAsync(emailDetails);
@@ -109,7 +109,7 @@ namespace ESFA.DAS.Feedback.Employer.UnitTests.Emailer
             {
                 await _emailer.SendEmailsAsync();
 
-                _mockStore.Verify(x => x.SetEmailDetailsAsSent(It.IsAny<Guid>()), Times.Once);
+                _mockStore.Verify(x => x.InsertSurveyInviteHistory(It.IsAny < IEnumerable<Guid>>(), It.IsAny<int>()), Times.Once);
             }
         }
     }

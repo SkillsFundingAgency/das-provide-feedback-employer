@@ -27,10 +27,10 @@ namespace ESFA.DAS.Feedback.Employer.Emailer
             _numberOfEmailsToSend = settings.Value.BatchSize;
         }
 
-        protected async Task SendFeedbackEmail(IGrouping<Guid, EmployerEmailDetail> userGroup, string templateId)
+        protected async Task SendFeedbackEmail(IGrouping<Guid, EmployerSurveyInvite> userGroup, string templateId)
         {
             var emailAddress = userGroup.First().EmailAddress;
-            var feedbackUrlStrings = userGroup.Select(employerEmailDetail => $"{employerEmailDetail.ProviderName} {Environment.NewLine} {_feedbackBaseUrl}{employerEmailDetail.EmailCode}");
+            var feedbackUrlStrings = userGroup.Select(employerEmailDetail => $"{employerEmailDetail.ProviderName} {Environment.NewLine} {_feedbackBaseUrl}{employerEmailDetail.UniqueSurveyCode}");
             var feedbackUrls = string.Join("\r\n \r\n", feedbackUrlStrings);
 
             var email = new Email
@@ -43,7 +43,7 @@ namespace ESFA.DAS.Feedback.Employer.Emailer
                 Tokens = new Dictionary<string, string>
                     {
                         {"provider_name", userGroup.First().ProviderName},
-                        { "first_name", userGroup.First().UserFirstName},
+                        { "first_name", userGroup.First().FirstName},
                         {"feedback_urls", feedbackUrls}
                     }
             };
@@ -51,14 +51,14 @@ namespace ESFA.DAS.Feedback.Employer.Emailer
             await SendEmail(emailAddress, email);
         }
 
-        protected IEnumerable<IGrouping<Guid, EmployerEmailDetail>> GroupEmailsToSendByUser(IEnumerable<EmployerEmailDetail> emailsToSend)
+        protected IEnumerable<IGrouping<Guid, EmployerSurveyInvite>> GroupEmailsToSendByUser(IEnumerable<EmployerSurveyInvite> emailsToSend)
         {
             return emailsToSend
                 .GroupBy(email => email.UserRef)
                 .Take(_numberOfEmailsToSend);
         }
 
-        protected async Task SendGroupedEmails(IEnumerable<IGrouping<Guid, EmployerEmailDetail>> emailsGroupByUser)
+        protected async Task SendGroupedEmails(IEnumerable<IGrouping<Guid, EmployerSurveyInvite>> emailsGroupByUser)
         {
             foreach (var userGroup in emailsGroupByUser)
             {
@@ -66,7 +66,7 @@ namespace ESFA.DAS.Feedback.Employer.Emailer
             }
         }
 
-        protected abstract Task HandleSendAsync(IGrouping<Guid, EmployerEmailDetail> userGroup);
+        protected abstract Task HandleSendAsync(IGrouping<Guid, EmployerSurveyInvite> userGroup);
 
         private async Task SendEmail(string sendToAddress, Email email)
         {

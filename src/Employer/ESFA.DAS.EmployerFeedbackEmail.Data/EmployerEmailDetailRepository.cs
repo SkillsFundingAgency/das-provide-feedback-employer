@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
 using ESFA.DAS.ProvideFeedback.Domain.Entities;
@@ -12,6 +13,7 @@ namespace ESFA.DAS.ProvideFeedback.Data
     {
         private int _commandTimeoutSeconds = 120;
         private readonly IDbConnection _dbConnection;
+        private const string EmployerSurveyInvites = "vw_EmployerSurveyInvites";
 
         public EmployerEmailDetailRepository(IDbConnection dbConnection)
         {
@@ -19,44 +21,42 @@ namespace ESFA.DAS.ProvideFeedback.Data
             _dbConnection.Open();
         }
 
-        public async Task<EmployerEmailDetail> GetEmailDetailsForUniqueCode(Guid uniqueCode)
+        public async Task<EmployerSurveyInvite> GetEmailDetailsForUniqueCode(Guid uniqueCode)
         {
-            return await _dbConnection.QueryFirstOrDefaultAsync<EmployerEmailDetail>(
+            return await _dbConnection.QueryFirstOrDefaultAsync<EmployerSurveyInvite>(
                                         $@"SELECT TOP(1) *
-                                          FROM EmployerEmailDetails
-                                          WHERE EmailCode = @{nameof(uniqueCode)}",
+                                          FROM {EmployerSurveyInvites}
+                                          WHERE UniqueSurveyCode = @{nameof(uniqueCode)}",
                                           new { uniqueCode });
         }
 
-        public async Task<IEnumerable<EmployerEmailDetail>> GetEmailDetailsToBeSentInvite(int minDaysSincePreviousSurvey)
+        public async Task<IEnumerable<EmployerSurveyInvite>> GetEmailDetailsToBeSentInvite(int minDaysSincePreviousSurvey)
         {
             var minAllowedSendDate = DateTime.Now.AddDays(-minDaysSincePreviousSurvey);
-            return await _dbConnection.QueryAsync<EmployerEmailDetail>(sql: $@"
+            return await _dbConnection.QueryAsync<EmployerSurveyInvite>(sql: $@"
                                         SELECT * 
-                                        FROM EmployerEmailDetails
-                                        WHERE EmailSentDate IS NULL
-                                        OR EmailSentDate < @{nameof(minAllowedSendDate)}", param: new { minAllowedSendDate }, transaction: null, commandTimeout: _commandTimeoutSeconds);
+                                        FROM {EmployerSurveyInvites}
+                                        WHERE InviteSentDate IS NULL", commandTimeout: _commandTimeoutSeconds);
         }
 
-        public async Task<IEnumerable<EmployerEmailDetail>> GetEmailDetailsToBeSentReminder(int minDaysSinceInvite)
+        public async Task<IEnumerable<EmployerSurveyInvite>> GetEmailDetailsToBeSentReminder(int minDaysSinceInvite)
         {
             var minSentDate = DateTime.Now.AddDays(-minDaysSinceInvite);
-            return await _dbConnection.QueryAsync<EmployerEmailDetail>(sql: $@"
+            return await _dbConnection.QueryAsync<EmployerSurveyInvite>(sql: $@"
                                         SELECT * 
-                                        FROM EmployerEmailDetails
-                                        WHERE EmailSentDate IS NOT NULL
-                                        AND (EmailReminderSentDate IS NULL OR EmailReminderSentDate < EmailSentDate)
-                                        AND EmailSentDate < @{nameof(minSentDate)}
-                                        AND (CodeBurntDate IS NULL
-                                        OR CodeBurntDate < EmailSentDate)", param: new { minSentDate }, transaction: null, commandTimeout: _commandTimeoutSeconds);
+                                        FROM {EmployerSurveyInvites}
+                                        WHERE InviteSentDate IS NOT NULL
+                                        AND LastReminderSentDate IS NULL
+                                        AND InviteSentDate < @{nameof(minSentDate)}
+                                        AND CodeBurntDate IS NULL", param: new { minSentDate }, transaction: null, commandTimeout: _commandTimeoutSeconds);
         }
 
         public async Task<bool> IsCodeBurnt(Guid emailCode)
         {
             return await _dbConnection.QueryFirstOrDefaultAsync<bool>($@"
                                         SELECT CASE WHEN CodeBurntDate IS NULL THEN 0 ELSE 1 END
-                                        FROM EmployerEmailDetails
-                                        WHERE EmailCode = @{nameof(emailCode)}",
+                                        FROM {EmployerSurveyInvites}
+                                        WHERE UniqueSurveyCode = @{nameof(emailCode)}",
                                         new { emailCode });
         }
 
@@ -64,35 +64,44 @@ namespace ESFA.DAS.ProvideFeedback.Data
         {
             var now = DateTime.Now;
             await _dbConnection.QueryAsync($@"
-                                UPDATE EmployerEmailDetails
+                                UPDATE {EmployerSurveyInvites}
                                 SET CodeBurntDate = @now
-                                WHERE EmailCode = @{nameof(uniqueCode)}",
+                                WHERE UniqueSurveyCode = @{nameof(uniqueCode)}",
                                 new { now, uniqueCode });
         }
 
-        public async Task SetEmailDetailsAsSent(Guid userRef)
+        public async Task InsertSurveyInviteHistory(IEnumerable<Guid> uniqueSurveyCodes, int inviteType)
         {
             var now = DateTime.Now;
+            var toInsert = uniqueSurveyCodes.Select(uniqueSurveyCode =>
+            {
+                return new
+                {
+                    uniqueSurveyCode,
+                    inviteType,
+                    now
+                };
+            });
+            
             var sql = $@"
-                        UPDATE EmployerEmailDetails
-                        SET EmailSentDate = @{nameof(now)}
-                        WHERE UserRef = @{nameof(userRef)}";
+                        INSERT INTO EmployerSurveyHistory
+                        VALUES(@uniqueSurveyCode, @inviteType, @now)";
 
-            await ExecuteUpdateAsync(sql, new { now, userRef });
+            await _dbConnection.ExecuteAsync(sql, toInsert);
         }
 
-        public async Task SetEmailReminderAsSent(Guid userRef)
-        {
-            var now = DateTime.Now;
-            var sql = $@"
-                        UPDATE EmployerEmailDetails
-                        SET EmailReminderSentDate = @{nameof(now)}
-                        WHERE UserRef = @{nameof(userRef)}
-                        AND (CodeBurntDate IS NULL
-                        OR CodeBurntDate < EmailSentDate)";
+        //public async Task SetEmailReminderAsSent(Guid userRef)
+        //{
+        //    var now = DateTime.Now;
+        //    var sql = $@"
+        //                UPDATE EmployerEmailDetails
+        //                SET EmailReminderSentDate = @{nameof(now)}
+        //                WHERE UserRef = @{nameof(userRef)}
+        //                AND (CodeBurntDate IS NULL
+        //                OR CodeBurntDate < EmailSentDate)";
 
-            await ExecuteUpdateAsync(sql, new { now, userRef });
-        }
+        //    await ExecuteUpdateAsync(sql, new { now, userRef });
+        //}
 
         private async Task ExecuteUpdateAsync(string sql, object param)
         {

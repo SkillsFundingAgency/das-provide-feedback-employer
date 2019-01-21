@@ -35,11 +35,11 @@ namespace ESFA.DAS.Feedback.Employer.Emailer
             await SendGroupedEmails(emailsGroupByUser);
         }
 
-        protected override async Task HandleSendAsync(IGrouping<Guid, EmployerEmailDetail> userGroup)
+        protected override async Task HandleSendAsync(IGrouping<Guid, EmployerSurveyInvite> userGroup)
         {
-            var userRef = userGroup.First().UserRef;
+            var uniqueSurveyCodes = userGroup.Select(x => x.UniqueSurveyCode);
             await SendFeedbackEmail(userGroup, EmailTemplates.ReminderTemplateId);
-            await _emailDetailsStore.SetEmailReminderAsSent(userRef);
+            await _emailDetailsStore.InsertSurveyInviteHistory(uniqueSurveyCodes, 2);
         }
     }
 }

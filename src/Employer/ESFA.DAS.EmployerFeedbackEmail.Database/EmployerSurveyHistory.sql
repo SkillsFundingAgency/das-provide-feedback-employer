@@ -1,6 +1,6 @@
 ﻿CREATE TABLE [dbo].[EmployerSurveyHistory]
 (
-	[Id] INT NOT NULL PRIMARY KEY, 
+	[Id] INT NOT NULL IDENTITY(1,1) PRIMARY KEY, 
 	[UniqueSurveyCode] UNIQUEIDENTIFIER NOT NULL,
     [EmailType] INT NOT NULL, 
     [SentDate] DATETIME NOT NULL, 

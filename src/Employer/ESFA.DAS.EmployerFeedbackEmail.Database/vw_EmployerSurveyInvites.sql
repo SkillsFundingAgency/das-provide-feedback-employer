@@ -9,7 +9,7 @@
 	prov.ProviderName,
 	inviteHistory.SentDate as 'InviteSentDate',
 	reminderHistory.SentDate as 'LastReminderSentDate',
-	esc.BurnDate
+	esc.BurnDate as 'CodeBurntDate'
 	FROM EmployerSurveyCodes esc
 	RIGHT JOIN Users u on u.UserRef = esc.UserRef
 	RIGHT JOIN Accounts acc on acc.AccountId = u.AccountId

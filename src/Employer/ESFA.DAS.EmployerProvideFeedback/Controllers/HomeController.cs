@@ -75,7 +75,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
             return View();
         }
 
-        private SurveyModel MapToNewSurveyModel(EmployerEmailDetail employerEmailDetail)
+        private SurveyModel MapToNewSurveyModel(EmployerSurveyInvite employerEmailDetail)
         {
             return new SurveyModel
             {

@@ -25,11 +25,11 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
         private readonly List<ProviderAttributeModel> _providerAttributes;
         private IFixture _fixture = new Fixture();
         private readonly IOptions<List<ProviderAttributeModel>> _providerAttributeOptions;
-        private readonly EmployerEmailDetail _employerEmailDetail;
+        private readonly EmployerSurveyInvite _employerEmailDetail;
 
         public HomeControllerTests()
         {
-            _employerEmailDetail = _fixture.Create<EmployerEmailDetail>();
+            _employerEmailDetail = _fixture.Create<EmployerSurveyInvite>();
             _providerAttributes = GetProviderAttributes();
             _sessionServiceMock = new Mock<ISessionService>();
             _employerEmailDetailsRepoMock = new Mock<IStoreEmployerEmailDetails>();
@@ -48,7 +48,7 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
         {
             // Arrange
             var uniqueCode = Guid.NewGuid();
-            _employerEmailDetailsRepoMock.Setup(mock => mock.GetEmailDetailsForUniqueCode(uniqueCode)).ReturnsAsync(null as EmployerEmailDetail);
+            _employerEmailDetailsRepoMock.Setup(mock => mock.GetEmailDetailsForUniqueCode(uniqueCode)).ReturnsAsync(null as EmployerSurveyInvite);
 
             // Act
             var result = await _controller.Index(uniqueCode);
