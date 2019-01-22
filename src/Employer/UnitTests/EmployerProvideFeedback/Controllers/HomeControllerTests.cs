@@ -40,7 +40,7 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
                 _sessionServiceMock.Object,
                 _loggerMock.Object,
                 _providerAttributeOptions);
-            _employerEmailDetailsRepoMock.Setup(mock => mock.GetEmployerInviteForUniqueCode(It.IsAny<Guid>())).Returns(Task.FromResult(_employerEmailDetail));
+            _employerEmailDetailsRepoMock.Setup(mock => mock.GetEmailDetailsForUniqueCode(It.IsAny<Guid>())).Returns(Task.FromResult(_employerEmailDetail));
         }
 
         [Fact]
@@ -48,7 +48,7 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
         {
             // Arrange
             var uniqueCode = Guid.NewGuid();
-            _employerEmailDetailsRepoMock.Setup(mock => mock.GetEmployerInviteForUniqueCode(uniqueCode)).ReturnsAsync(null as EmployerSurveyInvite);
+            _employerEmailDetailsRepoMock.Setup(mock => mock.GetEmailDetailsForUniqueCode(uniqueCode)).ReturnsAsync(null as EmployerSurveyInvite);
 
             // Act
             var result = await _controller.Index(uniqueCode);

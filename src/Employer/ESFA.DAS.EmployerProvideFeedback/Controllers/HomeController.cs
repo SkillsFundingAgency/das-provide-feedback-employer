@@ -41,7 +41,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
 
             if (sessionSurvey == null)
             {
-                var employerEmailDetail = await _employerEmailDetailsRepository.GetEmployerInviteForUniqueCode(uniqueCode);
+                var employerEmailDetail = await _employerEmailDetailsRepository.GetEmailDetailsForUniqueCode(uniqueCode);
 
                 if (employerEmailDetail == null)
                 {
