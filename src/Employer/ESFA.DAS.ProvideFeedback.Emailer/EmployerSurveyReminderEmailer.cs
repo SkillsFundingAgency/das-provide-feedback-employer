@@ -27,7 +27,7 @@ namespace ESFA.DAS.Feedback.Employer.Emailer
 
         public async Task SendEmailsAsync()
         {
-            var emailsToSend = await _emailDetailsStore.GetEmailDetailsToBeSentReminder(_reminderDays);
+            var emailsToSend = await _emailDetailsStore.GetEmployerInvitesToBeSentReminder(_reminderDays);
 
             // Group by user
             var emailsGroupByUser = GroupEmailsToSendByUser(emailsToSend);
