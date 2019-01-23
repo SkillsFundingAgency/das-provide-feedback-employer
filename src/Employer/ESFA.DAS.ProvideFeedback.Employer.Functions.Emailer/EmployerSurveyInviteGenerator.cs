@@ -14,7 +14,7 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
     {
         [FunctionName("EmployerSurveyInviteGenerator")]
         public static async Task Run(
-            [TimerTrigger("3 3 * * *", RunOnStartup = true)]TimerInfo myTimer,
+            [TimerTrigger("3 3 * * *")]TimerInfo myTimer,
             [Inject] IOptions<EmailSettings> options,
             [Inject] IStoreEmployerEmailDetails employerEmailDetailRepository, 
             ILogger log)
@@ -24,6 +24,8 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
             var newCodesRequired = await employerEmailDetailRepository.GetEmployerInvitesForNextCycleAsync(options.Value.InviteCycleDays);
 
             await employerEmailDetailRepository.InsertNewSurveyInviteCodes(newCodesRequired);
+
+            log.LogInformation($"Employer Survey Invite generator completed at: {DateTime.Now}");
         }
     }
 }
