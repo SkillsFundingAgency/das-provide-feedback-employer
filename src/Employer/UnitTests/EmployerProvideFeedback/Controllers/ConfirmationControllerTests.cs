@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Threading.Tasks;
 using AutoFixture;
 using ESFA.DAS.EmployerProvideFeedback.Configuration;
 using ESFA.DAS.EmployerProvideFeedback.Controllers;
@@ -38,7 +37,7 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
             _providerFeedbackRepoMock = new Mock<IGetProviderFeedback>();
             _loggerMock = new Mock<ILogger<ConfirmationController>>();
             _externalLinksOptions = Options.Create(_externalLinks);
-            _sessionServiceMock.Setup(mock => mock.GetAsync<SurveyModel>(It.IsAny<string>())).Returns(Task.FromResult(_cachedSurveyModel));
+            _sessionServiceMock.Setup(mock => mock.Get<SurveyModel>(It.IsAny<string>())).ReturnsAsync(_cachedSurveyModel);
             _controller = new ConfirmationController(
                 _sessionServiceMock.Object,
                 _providerFeedbackRepoMock.Object,
@@ -52,7 +51,7 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
             // Arrange
             var uniqueCode = Guid.NewGuid();
             var feedback = Fixture.Create<Feedback>();
-            _providerFeedbackRepoMock.Setup(mock => mock.GetProviderFeedbackAsync(It.IsAny<long>())).Returns(Task.FromResult(feedback));
+            _providerFeedbackRepoMock.Setup(mock => mock.GetProviderFeedbackAsync(It.IsAny<long>())).ReturnsAsync(feedback);
 
             // Act
             var result = await _controller.Index(uniqueCode) as ViewResult;
@@ -70,7 +69,7 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
         {
             // Arrange
             var uniqueCode = Guid.NewGuid();
-            _providerFeedbackRepoMock.Setup(mock => mock.GetProviderFeedbackAsync(It.IsAny<long>())).Returns(Task.FromResult(null as Feedback));
+            _providerFeedbackRepoMock.Setup(mock => mock.GetProviderFeedbackAsync(It.IsAny<long>())).ReturnsAsync(null as Feedback);
 
             // Act
             var result = await _controller.Index(uniqueCode) as ViewResult;

@@ -37,7 +37,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
         [HttpGet("feedback-confirmation", Name = RouteNames.Confirmation_Get)]
         public async Task<IActionResult> Index(Guid uniqueCode)
         {
-            var surveyModel = await _sessionService.GetAsync<SurveyModel>(uniqueCode.ToString());
+            var surveyModel = await _sessionService.Get<SurveyModel>(uniqueCode.ToString());
             Feedback previousFeedback = null;
 
             try
