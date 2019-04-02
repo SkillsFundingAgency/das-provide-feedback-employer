@@ -24,7 +24,7 @@ WITH subquery AS(
 
 SELECT v1.* 
 FROM subquery v1
-INNER JOIN (
+LEFT OUTER JOIN (
      SELECT AccountId, Ukprn, UserRef, Max(InviteSentDate) as 'InviteSentDate', Max(LastReminderSentDate) as 'LastReminderSentDate'
       FROM subquery
       GROUP BY AccountId, Ukprn, UserRef
