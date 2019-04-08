@@ -82,7 +82,7 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
             var result = await _controller.Index(uniqueCode) as ViewResult;
 
             // Assert
-            _sessionServiceMock.Verify(mock => mock.SetAsync(uniqueCode.ToString(), It.IsAny<SurveyModel>()), Times.Once);
+            _sessionServiceMock.Verify(mock => mock.Set(uniqueCode.ToString(), It.IsAny<SurveyModel>()), Times.Once);
         }
 
         [Fact]
@@ -91,7 +91,7 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
             // Arrange
             var existingSurvey = _fixture.Create<SurveyModel>();
             var uniqueCode = Guid.NewGuid();
-            _sessionServiceMock.Setup(mock => mock.Get<SurveyModel>(uniqueCode.ToString())).Returns(existingSurvey);
+            _sessionServiceMock.Setup(mock => mock.Get<SurveyModel>(uniqueCode.ToString())).ReturnsAsync(existingSurvey);
 
             // Act
             var result = await _controller.Index(uniqueCode) as ViewResult;

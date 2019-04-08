@@ -37,7 +37,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
         [HttpGet]
         public async Task<IActionResult> Index(Guid uniqueCode)
         {
-            var sessionSurvey = await _sessionService.GetAsync<SurveyModel>(uniqueCode.ToString());
+            var sessionSurvey = await _sessionService.Get<SurveyModel>(uniqueCode.ToString());
 
             if (sessionSurvey == null)
             {
@@ -45,13 +45,13 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
 
                 if (employerEmailDetail == null)
                 {
-                    _logger.LogWarning($"Attempt to use invaliid unique code: {uniqueCode}");
+                    _logger.LogWarning($"Attempt to use invalid unique code: {uniqueCode}");
                     //TODO: 
                     return NotFound();
                 }
 
                 var newSurveyModel = MapToNewSurveyModel(employerEmailDetail);
-                await _sessionService.SetAsync(uniqueCode.ToString(), newSurveyModel);
+                await _sessionService.Set(uniqueCode.ToString(), newSurveyModel);
                 ViewData.Add("ProviderName", employerEmailDetail.ProviderName);
             }
             else

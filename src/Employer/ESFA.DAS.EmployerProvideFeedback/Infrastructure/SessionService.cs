@@ -17,46 +17,11 @@ namespace ESFA.DAS.EmployerProvideFeedback.Infrastructure
             _environment = environment.EnvironmentName;
         }
 
-        public async Task<T> GetAsync<T>(string key)
-        {
-            return await Task.Run(() => Get<T>(key));
-        }
-
-        public async Task SetAsync(string key, object value)
-        {
-            await Task.Run(() => Set(key, value));
-        }
-
-        public async Task<bool> ExistsAsync(string key)
-        {
-            return await Task.Run(() => Exists(key));
-        }
-
-        public void Set(string key, object value)
-        {
-            _httpContextAccessor.HttpContext.Session.SetString(_environment + "_" + key,
-                JsonConvert.SerializeObject(value));
-        }
-
-        public void Set(string key, string stringValue)
-        {
-            _httpContextAccessor.HttpContext.Session.SetString(_environment + "_" + key,
-                stringValue);
-        }
-
-        public void Remove(string key)
-        {
-            _httpContextAccessor.HttpContext.Session.Remove(_environment + "_" + key);
-        }
-
-        public string Get(string key)
-        {
-            return _httpContextAccessor.HttpContext.Session.GetString(_environment + "_" + key);
-        }
-
-        public T Get<T>(string key)
+        public async Task<T> Get<T>(string key)
         {
             var session = _httpContextAccessor.HttpContext.Session;
+
+            await session.LoadAsync();
             key = _environment + "_" + key;
             var sessionObject = string.Empty;
 
@@ -68,13 +33,25 @@ namespace ESFA.DAS.EmployerProvideFeedback.Infrastructure
             return string.IsNullOrWhiteSpace(sessionObject) ? default(T) : JsonConvert.DeserializeObject<T>(sessionObject);
         }
 
-        public bool Exists(string key)
+        public async Task Set(string key, object value)
         {
-            key = _environment + "_" + key;
             var session = _httpContextAccessor.HttpContext.Session;
-            return KeyExists(session, key);
+
+            await session.LoadAsync();
+            session.SetString(_environment + "_" + key, JsonConvert.SerializeObject(value));
+            await session.CommitAsync();
         }
 
+        public async Task<bool> Exists(string key)
+        {
+            var session = _httpContextAccessor.HttpContext.Session;
+            await session.LoadAsync();
+
+            key = _environment + "_" + key;
+            
+            return KeyExists(session, key);
+        }
+       
         private bool KeyExists(ISession session, string key)
         {
             return session.Keys.Any(k => k == key);

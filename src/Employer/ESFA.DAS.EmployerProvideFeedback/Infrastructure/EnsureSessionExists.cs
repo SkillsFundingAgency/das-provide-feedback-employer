@@ -21,7 +21,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Infrastructure
         {
             var uniqueCode = (Guid)context.ActionArguments["uniqueCode"];
 
-            if (!_sessionService.ExistsAsync(uniqueCode.ToString()).Result)
+             if (!_sessionService.Exists(uniqueCode.ToString()).Result)
             {
                 _logger.LogWarning($"Session for code {uniqueCode} does not exist");
                 var controller = context.Controller as Controller;
