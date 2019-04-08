@@ -31,8 +31,6 @@ namespace ESFA.DAS.Feedback.Employer.Emailer
             var apprenticeships = GetValidApprenticeshipCommitments(GetApprenticeshipData());
             var messages = new List<DataRefreshMessage>();
             messages.AddRange(apprenticeships.SelectMany(Combine));
-
-            //Send Message Or Whatever
             return messages;
         }
 
@@ -62,7 +60,6 @@ namespace ESFA.DAS.Feedback.Employer.Emailer
             var commitApprenticeships = employerAccountIds.AsParallel()
                 .SelectMany(id => _commitmentApiClient.GetEmployerApprenticeships(id).Result)
                 .ToList();
-
             return commitApprenticeships;
         }
 
@@ -75,7 +72,6 @@ namespace ESFA.DAS.Feedback.Employer.Emailer
                 .GroupBy(ea => new { ea.EmployerAccountId, ea.ProviderId })
                 .Select(group => group.First())
                 .ToList();
-
             return validApps;
         }
 
@@ -93,9 +89,7 @@ namespace ESFA.DAS.Feedback.Employer.Emailer
         public IEnumerable<DataRefreshMessage> Combine(Apprenticeship apprenticeship)
         {
             var users = GetUsersFromAccountId(apprenticeship.EmployerAccountId);
-
             var messages = users.Select(u => CreateMessageFromUserAndApprenticeship(u, apprenticeship));
-
             return messages;
         }
 

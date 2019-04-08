@@ -3,24 +3,46 @@ using ESFA.DAS.Feedback.Employer.Emailer.Models;
 using System.Collections.Generic;
 using System.Data;
 using System.Threading.Tasks;
+using Microsoft.Azure.WebJobs;
+using Newtonsoft.Json;
+using Microsoft.Extensions.Logging;
+using System;
 
 namespace ESFA.DAS.Feedback.Employer.Emailer
 {
     public class DbRepository
     {
         IDbConnection _dbConnection;
+        IDbTransaction transaction;
+        ILogger _log;
 
-        public DbRepository(IDbConnection dbConnection)
+        public DbRepository(IDbConnection dbConnection,ILogger log)
         {
             _dbConnection = dbConnection;
             _dbConnection.Open();
+            _log = log;
         }
 
         public void ReceiveDataRefreshMessage(DataRefreshMessage message)
         {
-            UpsertIntoUsers(message.User);
-            UpsertIntoProvidersAsync(message.Provider);
-            UpsertIntoFeedbackAsync(message.User, message.Provider);
+            transaction = _dbConnection.BeginTransaction();
+            try
+            {
+                _log.LogInformation("Starting upserting users");
+                UpsertIntoUsers(message.User);
+                _log.LogInformation("Done upserting users\nStarting upserting providers");
+                UpsertIntoProvidersAsync(message.Provider);
+                _log.LogInformation("Done upserting providers\nStarting upserting feedback");
+                UpsertIntoFeedbackAsync(message.User, message.Provider);
+                _log.LogInformation("Done upserting feedback\nCommiting transaction");
+                transaction.Commit();
+                _log.LogInformation("Done commiting transaction");
+            }
+            catch(Exception ex)
+            {
+                transaction.Rollback();
+                _log.LogError("Error: " + ex.Message);
+            }
         }
 
         public async void UpsertIntoUsers(User user)
@@ -34,7 +56,8 @@ namespace ESFA.DAS.Feedback.Employer.Emailer
             (
                 sql: "[dbo].[UpsertUsers]",
                 param: parameters,
-                commandType: CommandType.StoredProcedure
+                commandType: CommandType.StoredProcedure,
+                transaction: transaction
             );
         }
 
@@ -47,7 +70,8 @@ namespace ESFA.DAS.Feedback.Employer.Emailer
             (
                 sql: "[dbo].[UpsertProviders]",
                 param: parameters,
-                commandType: CommandType.StoredProcedure
+                commandType: CommandType.StoredProcedure,
+                transaction: transaction
             );
         }
 
@@ -60,7 +84,8 @@ namespace ESFA.DAS.Feedback.Employer.Emailer
             (
                 sql: "[dbo].[UpsertFeedback]",
                 param: parameters,
-                commandType: CommandType.StoredProcedure
+                commandType: CommandType.StoredProcedure,
+                transaction: transaction
             );
         }
 
@@ -71,7 +96,6 @@ namespace ESFA.DAS.Feedback.Employer.Emailer
                 sql:"[dbo].[GetFeedbackToSend]",
                 commandType: CommandType.StoredProcedure
             );
-
             return result;
         }
 
@@ -83,6 +107,5 @@ namespace ESFA.DAS.Feedback.Employer.Emailer
                 commandType: CommandType.StoredProcedure
             );
         }
-
     }
 }
