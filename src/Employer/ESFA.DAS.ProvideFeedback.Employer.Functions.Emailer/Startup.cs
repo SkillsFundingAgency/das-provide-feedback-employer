@@ -20,7 +20,13 @@ using NLog.Targets;
 using SFA.DAS.NLog.Targets.Redis.DotNetCore;
 using SFA.DAS.Notifications.Api.Client;
 using SFA.DAS.Notifications.Api.Client.Configuration;
+using SFA.DAS.Http;
 using LogLevel = NLog.LogLevel;
+using SFA.DAS.Providers.Api.Client;
+using SFA.DAS.Http.TokenGenerators;
+using SFA.DAS.Commitments.Api.Client.Interfaces;
+using SFA.DAS.Commitments.Api.Client;
+using SFA.DAS.EAS.Account.Api.Client;
 
 [assembly: WebJobsStartup(typeof(Startup))]
 namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
@@ -42,7 +48,7 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
 
         private void ConfigureServices(IServiceCollection services)
         {
-            services.AddSingleton<IDbConnection>(c => new SqlConnection(_configuration.GetConnectionStringOrSetting("EmployerEmailStoreConnection")));
+            services.AddTransient<IDbConnection>(c => new SqlConnection(_configuration.GetConnectionStringOrSetting("EmployerEmailStoreConnection")));
 
             services.AddLogging((options) =>
             {
@@ -81,6 +87,25 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
             services.AddSingleton<EmployerSurveyInviteEmailer>();
             services.AddSingleton<EmployerSurveyReminderEmailer>();
             services.AddSingleton<IStoreEmployerEmailDetails, EmployerEmailDetailRepository>();
+            services.AddSingleton<EmailInviteDataRefresh>();
+            services.AddTransient<DbRepository>();
+
+            var providerApiConfig = _configuration.GetSection("ProviderApi").Get<ProviderApiConfig>();
+            services.AddSingleton<IProviderApiClient, ProviderApiClient>(a =>
+                 new ProviderApiClient(providerApiConfig.BaseUrl)
+            );
+
+            var commitmentApiConfig = _configuration.GetSection("CommitmentApi").Get<CommitmentsApiClientConfig>();
+            var bearerToken = (IGenerateBearerToken)new JwtBearerTokenGenerator(commitmentApiConfig);
+            var httpClient = new HttpClientBuilder().WithDefaultHeaders().WithBearerAuthorisationHeader(bearerToken).Build();
+            services.AddSingleton<IEmployerCommitmentApi, EmployerCommitmentApi>(a =>
+                 new EmployerCommitmentApi(httpClient, commitmentApiConfig)
+            );
+
+            var accApiConfig = _configuration.GetSection("AccountApi").Get<AccountApiConfiguration>();
+            services.AddSingleton<IAccountApiClient, AccountApiClient>(a =>
+                 new AccountApiClient(accApiConfig)
+            );
         }
 
         private void ConfigureNLog()
