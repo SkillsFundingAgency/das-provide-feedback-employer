@@ -73,7 +73,7 @@
     <Build Include="EmployerSurveyCodes.sql" />
     <Build Include="RefreshDatabases\Providers.sql" />
     <Build Include="RefreshDatabases\Users.sql" />
-    <Build Include="RefreshDatabases\Feedback.sql" />
+    <Build Include="RefreshDatabases\EmployerFeedback.sql" />
     <Build Include="StoredProcedures\UpsertProviders.sql" />
     <Build Include="StoredProcedures\UpsertFeedback.sql" />
     <Build Include="StoredProcedures\ResetFeedback.sql" />

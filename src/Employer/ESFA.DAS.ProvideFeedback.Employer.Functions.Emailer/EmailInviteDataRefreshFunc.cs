@@ -13,8 +13,12 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
     public static class EmailInviteDataRefreshFunc
     {
         [FunctionName("EmailInviteDataRefresh")]
-        public static void Run([TimerTrigger("0 0 3 * * MON-FRI", RunOnStartup = true)]TimerInfo myTimer, [Inject] EmailInviteDataRefresh inviteDataRefresh, ILogger log,
-            [ServiceBus("data-refresh-message", Connection = "ServiceBusConnection", EntityType = EntityType.Queue)] IAsyncCollector<DataRefreshMessage> queue, [Inject] EmployerFeedbackRepository dbRepository)
+        public static void Run(
+            [TimerTrigger("0 0 3 * * MON-FRI", RunOnStartup = true)]TimerInfo myTimer, 
+            [Inject] EmailInviteDataRefresh inviteDataRefresh, 
+            ILogger log,
+            [ServiceBus("data-refresh-message", Connection = "ServiceBusConnection", EntityType = EntityType.Queue)]IAsyncCollector<DataRefreshMessage> queue, 
+            [Inject] EmployerFeedbackRepository dbRepository)
         {
             log.LogInformation("Starting invite data refresh.");
             try
