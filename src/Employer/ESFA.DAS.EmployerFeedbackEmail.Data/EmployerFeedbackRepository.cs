@@ -3,19 +3,20 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Transactions;
 using Dapper;
 using ESFA.DAS.ProvideFeedback.Domain.Entities;
 using Polly;
 
 namespace ESFA.DAS.ProvideFeedback.Data
 {
-    public class EmployerEmailDetailRepository : IStoreEmployerEmailDetails
+    public class EmployerFeedbackRepository : IStoreEmployerEmailDetails
     {
         private int _commandTimeoutSeconds = 120;
         private readonly IDbConnection _dbConnection;
         private const string EmployerSurveyInvites = "vw_EmployerSurveyInvites";
 
-        public EmployerEmailDetailRepository(IDbConnection dbConnection)
+        public EmployerFeedbackRepository(IDbConnection dbConnection)
         {
             _dbConnection = dbConnection;
             _dbConnection.Open();
@@ -126,6 +127,66 @@ namespace ESFA.DAS.ProvideFeedback.Data
             {
                 return _dbConnection.QueryAsync(sql: sql, param: param, transaction: null, commandTimeout: _commandTimeoutSeconds);
             });
+        }
+
+        public async void UpsertIntoUsers(User user)
+        {
+            var parameters = new DynamicParameters();
+            parameters.Add("@UserRef", user.UserRef, DbType.Guid);
+            parameters.Add("@FirstName", user.FirstName, DbType.String);
+            parameters.Add("@EmailAddress", user.EmailAddress, DbType.String);
+            parameters.Add("@AccountId", user.AccountId, DbType.Int64);
+            await _dbConnection.ExecuteAsync
+            (
+                sql: "[dbo].[UpsertUsers]",
+                param: parameters,
+                commandType: CommandType.StoredProcedure
+            );
+        }
+
+        public async void UpsertIntoProvidersAsync(Provider provider)
+        {
+            var parameters = new DynamicParameters();
+            parameters.Add("@Ukprn", provider.Ukprn, DbType.Int64);
+            parameters.Add("@ProviderName", provider.ProviderName, DbType.String);
+            await _dbConnection.ExecuteAsync
+            (
+                sql: "[dbo].[UpsertProviders]",
+                param: parameters,
+                commandType: CommandType.StoredProcedure
+            );
+        }
+
+        public async void UpsertIntoFeedbackAsync(User user, Provider provider)
+        {
+            var parameters = new DynamicParameters();
+            parameters.Add("@UserRef", user.UserRef, DbType.Guid);
+            parameters.Add("@Ukprn", provider.Ukprn, DbType.Int64);
+            await _dbConnection.ExecuteAsync
+            (
+                sql: "[dbo].[UpsertFeedback]",
+                param: parameters,
+                commandType: CommandType.StoredProcedure
+            );
+        }
+
+        public async Task<IEnumerable<FeedbackToSendResponse>> GetFeedbackToSendResponses()
+        {
+            var result = await _dbConnection.QueryAsync<FeedbackToSendResponse>
+            (
+                sql: "[dbo].[GetFeedbackToSend]",
+                commandType: CommandType.StoredProcedure
+            );
+            return result;
+        }
+
+        public async void ResetFeedback()
+        {
+            await _dbConnection.ExecuteAsync
+            (
+                sql: "[dbo].[ResetFeedback]",
+                commandType: CommandType.StoredProcedure
+            );
         }
     }
 }

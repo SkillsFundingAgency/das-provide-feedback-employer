@@ -86,9 +86,8 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
 
             services.AddSingleton<EmployerSurveyInviteEmailer>();
             services.AddSingleton<EmployerSurveyReminderEmailer>();
-            services.AddSingleton<IStoreEmployerEmailDetails, EmployerEmailDetailRepository>();
+            services.AddSingleton<IStoreEmployerEmailDetails, EmployerFeedbackRepository>();
             services.AddSingleton<EmailInviteDataRefresh>();
-            services.AddTransient<DbRepository>();
 
             var providerApiConfig = _configuration.GetSection("ProviderApi").Get<ProviderApiConfig>();
             services.AddSingleton<IProviderApiClient, ProviderApiClient>(a =>

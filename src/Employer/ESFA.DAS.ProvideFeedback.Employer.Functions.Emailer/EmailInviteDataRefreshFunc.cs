@@ -1,7 +1,8 @@
 using System;
 using System.Linq;
 using ESFA.DAS.Feedback.Employer.Emailer;
-using ESFA.DAS.Feedback.Employer.Emailer.Models;
+using ESFA.DAS.ProvideFeedback.Data;
+using ESFA.DAS.ProvideFeedback.Domain.Entities;
 using ESFA.DAS.ProvideFeedback.Employer.Functions.Framework.DependencyInjection;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.ServiceBus;
@@ -13,7 +14,7 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
     {
         [FunctionName("EmailInviteDataRefresh")]
         public static void Run([TimerTrigger("0 0 3 * * MON-FRI", RunOnStartup = true)]TimerInfo myTimer, [Inject] EmailInviteDataRefresh inviteDataRefresh, ILogger log,
-            [ServiceBus("data-refresh-message", Connection = "ServiceBusConnection", EntityType = EntityType.Queue)] IAsyncCollector<DataRefreshMessage> queue, [Inject] DbRepository dbRepository)
+            [ServiceBus("data-refresh-message", Connection = "ServiceBusConnection", EntityType = EntityType.Queue)] IAsyncCollector<DataRefreshMessage> queue, [Inject] EmployerFeedbackRepository dbRepository)
         {
             log.LogInformation("Starting invite data refresh.");
             try

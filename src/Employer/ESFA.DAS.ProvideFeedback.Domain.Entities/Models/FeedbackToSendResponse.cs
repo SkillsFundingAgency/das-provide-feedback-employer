@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace ESFA.DAS.Feedback.Employer.Emailer.Models
+namespace ESFA.DAS.ProvideFeedback.Domain.Entities
 {
     public class FeedbackToSendResponse
     {

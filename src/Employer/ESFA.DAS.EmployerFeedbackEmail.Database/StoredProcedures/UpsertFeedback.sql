@@ -1,7 +1,7 @@
 ﻿CREATE PROCEDURE [dbo].[UpsertFeedback]
 	@UserRef UNIQUEIDENTIFIER, @Ukprn BIGINT
 AS
-	MERGE [dbo].[Feedback] AS [Target]
+	MERGE [dbo].[EmployerFeedback] AS [Target]
 	USING (SELECT(SELECT @UserRef) AS UserRef,(SELECT @Ukprn)AS Ukprn) AS [Source]
 	ON [Target].UserRef = [Source].UserRef AND [Target].Ukprn = [Source].Ukprn
 	WHEN MATCHED THEN UPDATE 

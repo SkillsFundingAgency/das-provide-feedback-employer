@@ -13,7 +13,7 @@ using SFA.DAS.Commitments.Api.Types;
 using FluentAssertions;
 using SFA.DAS.EAS.Account.Api.Client;
 using SFA.DAS.EAS.Account.Api.Types;
-using ESFA.DAS.Feedback.Employer.Emailer.Models;
+using ESFA.DAS.ProvideFeedback.Domain.Entities;
 
 namespace ESFA.DAS.Feedback.Employer.UnitTests.Emailer
 {

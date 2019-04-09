@@ -1,3 +1,3 @@
 ﻿CREATE PROCEDURE [dbo].[ResetFeedback]
 AS
-	UPDATE [dbo].[Feedback] SET IsActive = 0
+	UPDATE [dbo].[EmployerFeedback] SET IsActive = 0

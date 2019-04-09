@@ -1,4 +1,4 @@
-﻿CREATE TABLE [dbo].[Feedback]
+﻿CREATE TABLE [dbo].[EmployerFeedback]
 (
 	[UserRef] UNIQUEIDENTIFIER NOT NULL,
 	[Ukprn] BIGINT NOT NULL,

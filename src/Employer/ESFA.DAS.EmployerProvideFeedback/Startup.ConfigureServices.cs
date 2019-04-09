@@ -36,7 +36,7 @@ namespace ESFA.DAS.EmployerProvideFeedback
         {
             services.Configure<ExternalLinksConfiguration>(Configuration.GetSection("ExternalLinks"));
             services.Configure<GoogleAnalyticsConfiguration>(Configuration.GetSection("GoogleAnalytics"));
-            services.AddTransient<IStoreEmployerEmailDetails, EmployerEmailDetailRepository>();
+            services.AddTransient<IStoreEmployerEmailDetails, EmployerFeedbackRepository>();
             services.AddTransient<EnsureFeedbackNotSubmitted>();
             services.AddTransient<EnsureSessionExists>();
             services.Configure<List<ProviderAttributeModel>>(Configuration.GetSection("ProviderAttributes"));

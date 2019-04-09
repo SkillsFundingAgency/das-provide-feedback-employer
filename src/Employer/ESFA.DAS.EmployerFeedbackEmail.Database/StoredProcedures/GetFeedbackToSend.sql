@@ -7,7 +7,7 @@ AS
 	U.AccountId,
 	P.Ukprn,
 	U.UserRef
-	FROM [dbo].[Feedback] F
+	FROM [dbo].[EmployerFeedback] F
 	JOIN [dbo].[Users] U
 	ON F.UserRef = U.UserRef
 	JOIN [dbo].[Providers] P

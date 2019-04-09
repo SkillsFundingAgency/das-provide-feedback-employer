@@ -1,4 +1,4 @@
-﻿using ESFA.DAS.Feedback.Employer.Emailer.Models;
+﻿using ESFA.DAS.ProvideFeedback.Domain.Entities;
 using SFA.DAS.Commitments.Api.Client.Interfaces;
 using SFA.DAS.Commitments.Api.Types.Apprenticeship;
 using SFA.DAS.Commitments.Api.Types.Apprenticeship.Types;
@@ -7,7 +7,6 @@ using SFA.DAS.EAS.Account.Api.Types;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Provider = ESFA.DAS.Feedback.Employer.Emailer.Models.Provider;
 
 namespace ESFA.DAS.Feedback.Employer.Emailer
 {
