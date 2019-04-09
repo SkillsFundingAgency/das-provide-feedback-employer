@@ -2,7 +2,6 @@ using ESFA.DAS.Feedback.Employer.Emailer;
 using ESFA.DAS.Feedback.Employer.Emailer.Models;
 using ESFA.DAS.ProvideFeedback.Employer.Functions.Framework.DependencyInjection;
 using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Host;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 

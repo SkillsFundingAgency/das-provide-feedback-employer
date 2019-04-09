@@ -3,8 +3,6 @@ using ESFA.DAS.Feedback.Employer.Emailer.Models;
 using System.Collections.Generic;
 using System.Data;
 using System.Threading.Tasks;
-using Microsoft.Azure.WebJobs;
-using Newtonsoft.Json;
 using Microsoft.Extensions.Logging;
 using System;
 

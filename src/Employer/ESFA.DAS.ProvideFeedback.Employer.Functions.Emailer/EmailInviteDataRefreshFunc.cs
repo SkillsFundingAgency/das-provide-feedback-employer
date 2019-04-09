@@ -1,6 +1,5 @@
 using System;
 using System.Linq;
-using System.Threading.Tasks;
 using ESFA.DAS.Feedback.Employer.Emailer;
 using ESFA.DAS.Feedback.Employer.Emailer.Models;
 using ESFA.DAS.ProvideFeedback.Employer.Functions.Framework.DependencyInjection;
