@@ -3,7 +3,7 @@
     <OutputType>Library</OutputType>
     <TargetFramework>netstandard2.0</TargetFramework>
     <UserSecretsId>759fd71d-4d3e-43e2-af78-140169b06b64</UserSecretsId>
-    <RootNamespace>Esfa.Das.Feedback.Employer.Emailer</RootNamespace>
+    <RootNamespace>ESFA.DAS.Feedback.Employer.Emailer</RootNamespace>
   </PropertyGroup>
   <PropertyGroup>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
