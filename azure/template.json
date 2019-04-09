@@ -99,6 +99,9 @@
         "storageAccountName": {
             "type": "string"
         },
+        "serviceBusNamespaceName": {
+            "type": "string"
+        },
         "dbConnectionString": {
             "type": "secureString"
         },
@@ -118,8 +121,12 @@
             "type": "string",
             "defaultValue": "das-provide-feedback-emailer"
         }
-  },
-    "variables": {},
+    },
+    "variables": {
+        "queues": {
+            "DataRefreshMessagesQueueName": "data-refresh-messages"
+        }
+    },
     "resources": [
         {
             "apiVersion": "2017-05-10",
@@ -502,6 +509,10 @@
                             {
                                 "name": "AppName",
                                 "value": "[parameters('emailerAppName')]"
+                            },
+                            {
+                                "name": "DataRefreshMessagesQueueName",
+                                "value": "[variables('queues').DataRefreshMessagesQueueName]"
                             }
                         ]
                     },
@@ -516,6 +527,28 @@
             "dependsOn": [
                 "FunctionAppServicePlan"
             ]
+        },
+        {
+            "apiVersion": "2017-05-10",
+            "name": "ServiceBus",
+            "type": "Microsoft.Resources/deployments",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/service-bus.json",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "serviceBusNamespaceName": {
+                        "value": "[parameters('serviceBusNamespaceName')]"
+                    },
+                    "serviceBusQueues": {
+                        "value": [
+                            "[variables('queues').DataRefreshMessagesQueueName]"
+                        ]
+                    }
+                }
+            }
         },
         {
             "apiVersion": "2017-05-10",

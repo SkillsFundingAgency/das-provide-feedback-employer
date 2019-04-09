@@ -10,7 +10,10 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
     public static class DataRefreshMessageReceiver
     {
         [FunctionName("DataRefreshMessageReceiver")]
-        public static void Run([ServiceBusTrigger("data-refresh-message", Connection = "ServiceBusConnection")]string myQueueItem, ILogger log, [Inject] DbRepository dbRepository)
+        public static void Run(
+            [ServiceBusTrigger("data-refresh-message", Connection = "ServiceBusConnection")]string myQueueItem, 
+            ILogger log, 
+            [Inject] DbRepository dbRepository)
         {
             DataRefreshMessage message = JsonConvert.DeserializeObject<DataRefreshMessage>(myQueueItem);
             dbRepository.ReceiveDataRefreshMessage(message);
