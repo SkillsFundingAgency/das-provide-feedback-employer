@@ -5,7 +5,6 @@ using SFA.DAS.Commitments.Api.Types.Apprenticeship;
 using Xunit;
 using ESFA.DAS.Feedback.Employer.Emailer;
 using SFA.DAS.Commitments.Api.Types.Apprenticeship.Types;
-using SFA.DAS.Providers.Api.Client;
 using Moq;
 using SFA.DAS.Apprenticeships.Api.Types.Providers;
 using SFA.DAS.Commitments.Api.Client.Interfaces;
@@ -20,7 +19,6 @@ namespace ESFA.DAS.Feedback.Employer.UnitTests.Emailer
 {
     public class EmailInviteDataRefreshTests
     {
-        Mock<IProviderApiClient> _providerApiClientMock;
         Mock<IEmployerCommitmentApi> _employerApiClientMock;
         Mock<IAccountApiClient> _accountApiClientMock;
         private EmailInviteDataRefresh _dataRefresh;
@@ -31,17 +29,9 @@ namespace ESFA.DAS.Feedback.Employer.UnitTests.Emailer
 
         public EmailInviteDataRefreshTests()
         {
-            _providerApiClientMock = new Mock<IProviderApiClient>();
             _employerApiClientMock = new Mock<IEmployerCommitmentApi>();
             _accountApiClientMock = new Mock<IAccountApiClient>();
-            _dataRefresh = new EmailInviteDataRefresh(_providerApiClientMock.Object,_employerApiClientMock.Object,_accountApiClientMock.Object);
-
-            providerApiReturn = new ProviderSummary[]
-            {
-                new ProviderSummary { Ukprn = 1, ProviderName = "Fancy School of Fancyness" },
-                new ProviderSummary { Ukprn = 2, ProviderName = "Hogwarts" },
-                new ProviderSummary { Ukprn = 3, ProviderName = "Test Academy" }
-            };
+            _dataRefresh = new EmailInviteDataRefresh(_employerApiClientMock.Object,_accountApiClientMock.Object);
 
             employerApiReturn = new List<Apprenticeship>
                 {
@@ -62,20 +52,9 @@ namespace ESFA.DAS.Feedback.Employer.UnitTests.Emailer
 
             employerIdsReturn = Task.Run(() => new List<long>{1,2,3,4}.AsEnumerable());
 
-            _providerApiClientMock.Setup(x => x.FindAll()).Returns(providerApiReturn);
             _employerApiClientMock.Setup(x => x.GetEmployerApprenticeships(It.IsAny<long>())).Returns(Task.Run(() => employerApiReturn));
             _employerApiClientMock.Setup(x => x.GetAllEmployerAccountIds()).Returns(employerIdsReturn);
             _accountApiClientMock.Setup(x => x.GetAccountUsers(It.IsAny<long>())).Returns(Task.Run(() => accountApiReturn));
-        }
-
-        [Fact]
-        public void RoatpAPIShouldBeReturningData()
-        {
-            //Act
-            var result =  _dataRefresh.GetRoatpProviders();
-
-            //Assert
-            Assert.Equal(providerApiReturn, result);
         }
 
         [Fact]

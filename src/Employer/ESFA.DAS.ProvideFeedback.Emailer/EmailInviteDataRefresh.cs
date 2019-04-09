@@ -1,11 +1,9 @@
 ﻿using ESFA.DAS.Feedback.Employer.Emailer.Models;
-using SFA.DAS.Apprenticeships.Api.Types.Providers;
 using SFA.DAS.Commitments.Api.Client.Interfaces;
 using SFA.DAS.Commitments.Api.Types.Apprenticeship;
 using SFA.DAS.Commitments.Api.Types.Apprenticeship.Types;
 using SFA.DAS.EAS.Account.Api.Client;
 using SFA.DAS.EAS.Account.Api.Types;
-using SFA.DAS.Providers.Api.Client;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,13 +13,11 @@ namespace ESFA.DAS.Feedback.Employer.Emailer
 {
     public class EmailInviteDataRefresh
     {
-        IProviderApiClient _providerApiClient;
         IEmployerCommitmentApi _commitmentApiClient;
         IAccountApiClient _accountApiClient;
 
-        public EmailInviteDataRefresh(IProviderApiClient providerApiClient, IEmployerCommitmentApi commitmentApiClient, IAccountApiClient accountApiClient)
+        public EmailInviteDataRefresh(IEmployerCommitmentApi commitmentApiClient, IAccountApiClient accountApiClient)
         {
-            _providerApiClient = providerApiClient;
             _commitmentApiClient = commitmentApiClient;
             _accountApiClient = accountApiClient;
         }
@@ -32,12 +28,6 @@ namespace ESFA.DAS.Feedback.Employer.Emailer
             var messages = new List<DataRefreshMessage>();
             messages.AddRange(apprenticeships.SelectMany(Combine));
             return messages;
-        }
-
-        public IEnumerable<ProviderSummary> GetRoatpProviders()
-        {
-            var result = _providerApiClient.FindAll();
-            return result;
         }
 
         public IEnumerable<long> GetCommitmentEmployerIdsData()
