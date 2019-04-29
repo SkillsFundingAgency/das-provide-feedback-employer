@@ -1,32 +1,43 @@
 ﻿using ESFA.DAS.ProvideFeedback.Domain.Entities;
+using SFA.DAS.Apprenticeships.Api.Types.Providers;
 using SFA.DAS.Commitments.Api.Client.Interfaces;
 using SFA.DAS.Commitments.Api.Types.Apprenticeship;
 using SFA.DAS.Commitments.Api.Types.Apprenticeship.Types;
 using SFA.DAS.EAS.Account.Api.Client;
 using SFA.DAS.EAS.Account.Api.Types;
+using SFA.DAS.Providers.Api.Client;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Provider = ESFA.DAS.ProvideFeedback.Domain.Entities.Provider;
 
 namespace ESFA.DAS.Feedback.Employer.Emailer
 {
-    public class EmailInviteDataRefresh
+    public class EmployerFeedbackDataRefresh
     {
+        IProviderApiClient _providerApiClient;
         IEmployerCommitmentApi _commitmentApiClient;
         IAccountApiClient _accountApiClient;
 
-        public EmailInviteDataRefresh(IEmployerCommitmentApi commitmentApiClient, IAccountApiClient accountApiClient)
+        public EmployerFeedbackDataRefresh(IProviderApiClient providerApiClient, IEmployerCommitmentApi commitmentApiClient, IAccountApiClient accountApiClient)
         {
+            _providerApiClient = providerApiClient;
             _commitmentApiClient = commitmentApiClient;
             _accountApiClient = accountApiClient;
         }
 
-        public List<DataRefreshMessage> GetRefreshData()
+        public List<EmployerFeedbackRefreshMessage> GetRefreshData()
         {
             var apprenticeships = GetValidApprenticeshipCommitments(GetApprenticeshipData());
-            var messages = new List<DataRefreshMessage>();
+            var messages = new List<EmployerFeedbackRefreshMessage>();
             messages.AddRange(apprenticeships.SelectMany(Combine));
             return messages;
+        }
+
+        public IEnumerable<ProviderSummary> GetRoatpProviders()
+        {
+            var result = _providerApiClient.FindAll();
+            return result;
         }
 
         public IEnumerable<long> GetCommitmentEmployerIdsData()
@@ -54,10 +65,12 @@ namespace ESFA.DAS.Feedback.Employer.Emailer
 
         public List<Apprenticeship> GetValidApprenticeshipCommitments(List<Apprenticeship> apprenticeships)
         {
+            var providersFromRoatp = GetRoatpProviders();
             var validApps = apprenticeships
                 .Where(app => app != null)
                 .Where(app => app.HasHadDataLockSuccess == true)
                 .Where(app => app.PaymentStatus == PaymentStatus.Active || app.PaymentStatus == PaymentStatus.Paused)
+                .Where(app => providersFromRoatp.Select(p => p.Ukprn).Contains(app.ProviderId) == true)
                 .GroupBy(ea => new { ea.EmployerAccountId, ea.ProviderId })
                 .Select(group => group.First())
                 .ToList();
@@ -75,16 +88,16 @@ namespace ESFA.DAS.Feedback.Employer.Emailer
             };
         }
 
-        public IEnumerable<DataRefreshMessage> Combine(Apprenticeship apprenticeship)
+        public IEnumerable<EmployerFeedbackRefreshMessage> Combine(Apprenticeship apprenticeship)
         {
             var users = GetUsersFromAccountId(apprenticeship.EmployerAccountId);
             var messages = users.Select(u => CreateMessageFromUserAndApprenticeship(u, apprenticeship));
             return messages;
         }
 
-        public DataRefreshMessage CreateMessageFromUserAndApprenticeship(User user, Apprenticeship apprenticeship)
+        public EmployerFeedbackRefreshMessage CreateMessageFromUserAndApprenticeship(User user, Apprenticeship apprenticeship)
         {
-            return new DataRefreshMessage
+            return new EmployerFeedbackRefreshMessage
             {
                 Provider = new Provider
                 {

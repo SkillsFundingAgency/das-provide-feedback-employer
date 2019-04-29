@@ -5,6 +5,7 @@ using SFA.DAS.Commitments.Api.Types.Apprenticeship;
 using Xunit;
 using ESFA.DAS.Feedback.Employer.Emailer;
 using SFA.DAS.Commitments.Api.Types.Apprenticeship.Types;
+using SFA.DAS.Providers.Api.Client;
 using Moq;
 using SFA.DAS.Apprenticeships.Api.Types.Providers;
 using SFA.DAS.Commitments.Api.Client.Interfaces;
@@ -19,9 +20,10 @@ namespace ESFA.DAS.Feedback.Employer.UnitTests.Emailer
 {
     public class EmailInviteDataRefreshTests
     {
+        Mock<IProviderApiClient> _providerApiClientMock;
         Mock<IEmployerCommitmentApi> _employerApiClientMock;
         Mock<IAccountApiClient> _accountApiClientMock;
-        private EmailInviteDataRefresh _dataRefresh;
+        private EmployerFeedbackDataRefresh _dataRefresh;
         ProviderSummary[] providerApiReturn;
         List<Apprenticeship> employerApiReturn;
         ICollection<TeamMemberViewModel> accountApiReturn;
@@ -29,9 +31,17 @@ namespace ESFA.DAS.Feedback.Employer.UnitTests.Emailer
 
         public EmailInviteDataRefreshTests()
         {
+            _providerApiClientMock = new Mock<IProviderApiClient>();
             _employerApiClientMock = new Mock<IEmployerCommitmentApi>();
             _accountApiClientMock = new Mock<IAccountApiClient>();
-            _dataRefresh = new EmailInviteDataRefresh(_employerApiClientMock.Object,_accountApiClientMock.Object);
+            _dataRefresh = new EmployerFeedbackDataRefresh(_providerApiClientMock.Object, _employerApiClientMock.Object, _accountApiClientMock.Object);
+
+            providerApiReturn = new ProviderSummary[]
+            {
+                new ProviderSummary { Ukprn = 1, ProviderName = "Fancy School of Fancyness" },
+                new ProviderSummary { Ukprn = 2, ProviderName = "Hogwarts" },
+                new ProviderSummary { Ukprn = 3, ProviderName = "Test Academy" }
+            };
 
             employerApiReturn = new List<Apprenticeship>
                 {
@@ -52,10 +62,22 @@ namespace ESFA.DAS.Feedback.Employer.UnitTests.Emailer
 
             employerIdsReturn = Task.Run(() => new List<long>{1,2,3,4}.AsEnumerable());
 
+            _providerApiClientMock.Setup(x => x.FindAll()).Returns(providerApiReturn);
             _employerApiClientMock.Setup(x => x.GetEmployerApprenticeships(It.IsAny<long>())).Returns(Task.Run(() => employerApiReturn));
             _employerApiClientMock.Setup(x => x.GetAllEmployerAccountIds()).Returns(employerIdsReturn);
             _accountApiClientMock.Setup(x => x.GetAccountUsers(It.IsAny<long>())).Returns(Task.Run(() => accountApiReturn));
         }
+
+        [Fact]
+        public void RoatpAPIShouldBeReturningData()
+        {
+            //Act	
+            var result = _dataRefresh.GetRoatpProviders();
+
+            //Assert	
+            Assert.Equal(providerApiReturn, result);
+        }
+
 
         [Fact]
         public void CommitmentsAPIShouldBeReturningEmployerIds()
@@ -135,14 +157,19 @@ namespace ESFA.DAS.Feedback.Employer.UnitTests.Emailer
         public static IEnumerable<object[]> ApprenticeshipData =>
             new List<object[]>
             {
-                new object[] { new List<Apprenticeship> { new Apprenticeship { EmployerAccountId = 1, HasHadDataLockSuccess = true, PaymentStatus = PaymentStatus.Active } },1 },
-                new object[] { new List<Apprenticeship> { new Apprenticeship { EmployerAccountId = 1, HasHadDataLockSuccess = true, PaymentStatus = PaymentStatus.Paused } },1 },
-                new object[] { new List<Apprenticeship> { new Apprenticeship { EmployerAccountId = 1, HasHadDataLockSuccess = false, PaymentStatus = PaymentStatus.Active } },0 },
-                new object[] { new List<Apprenticeship> { new Apprenticeship { EmployerAccountId = 1, HasHadDataLockSuccess = true, PaymentStatus = PaymentStatus.Completed } },0 },
-                new object[] { new List<Apprenticeship> { new Apprenticeship { EmployerAccountId = 1, HasHadDataLockSuccess = true, PaymentStatus = PaymentStatus.Active }, new Apprenticeship { HasHadDataLockSuccess = true, PaymentStatus = PaymentStatus.Active } },2 },
-                new object[] { new List<Apprenticeship> { new Apprenticeship { EmployerAccountId = 1, HasHadDataLockSuccess = true, PaymentStatus = PaymentStatus.Paused }, new Apprenticeship { HasHadDataLockSuccess = true, PaymentStatus = PaymentStatus.Active } },2 },
-                new object[] { new List<Apprenticeship> { new Apprenticeship { EmployerAccountId = 1, HasHadDataLockSuccess = false, PaymentStatus = PaymentStatus.Active }, new Apprenticeship { HasHadDataLockSuccess = true, PaymentStatus = PaymentStatus.Active } },1 },
-                new object[] { new List<Apprenticeship> { new Apprenticeship { EmployerAccountId = 1, HasHadDataLockSuccess = true, PaymentStatus = PaymentStatus.Completed }, new Apprenticeship { HasHadDataLockSuccess = true, PaymentStatus = PaymentStatus.Active } },1 },
+                new object[] { new List<Apprenticeship> { new Apprenticeship { EmployerAccountId = 1, HasHadDataLockSuccess = true, PaymentStatus = PaymentStatus.Active, ProviderId = 1 } },1 },
+                new object[] { new List<Apprenticeship> { new Apprenticeship { EmployerAccountId = 1, HasHadDataLockSuccess = true, PaymentStatus = PaymentStatus.Paused, ProviderId = 1 } },1 },
+                new object[] { new List<Apprenticeship> { new Apprenticeship { EmployerAccountId = 1, HasHadDataLockSuccess = true, PaymentStatus = PaymentStatus.Paused, ProviderId = 2 } },1 },
+                new object[] { new List<Apprenticeship> { new Apprenticeship { EmployerAccountId = 1, HasHadDataLockSuccess = false, PaymentStatus = PaymentStatus.Active, ProviderId = 4 } },0 },
+                new object[] { new List<Apprenticeship> { new Apprenticeship { EmployerAccountId = 1, HasHadDataLockSuccess = false, PaymentStatus = PaymentStatus.Active, ProviderId = 1 } },0 },
+                new object[] { new List<Apprenticeship> { new Apprenticeship { EmployerAccountId = 1, HasHadDataLockSuccess = true, PaymentStatus = PaymentStatus.Completed, ProviderId = 1 } },0 },
+                new object[] { new List<Apprenticeship> { new Apprenticeship { EmployerAccountId = 1, HasHadDataLockSuccess = true, PaymentStatus = PaymentStatus.Active, ProviderId = 1 }, new Apprenticeship { HasHadDataLockSuccess = true, PaymentStatus = PaymentStatus.Active, ProviderId = 1 } },2 },
+                new object[] { new List<Apprenticeship> { new Apprenticeship { EmployerAccountId = 1, HasHadDataLockSuccess = true, PaymentStatus = PaymentStatus.Paused, ProviderId = 1 }, new Apprenticeship { HasHadDataLockSuccess = true, PaymentStatus = PaymentStatus.Active, ProviderId = 1 } },2 },
+                new object[] { new List<Apprenticeship> { new Apprenticeship { EmployerAccountId = 1, HasHadDataLockSuccess = true, PaymentStatus = PaymentStatus.Paused, ProviderId = 1 }, new Apprenticeship { HasHadDataLockSuccess = true, PaymentStatus = PaymentStatus.Active, ProviderId = 2 } },2 },
+                new object[] { new List<Apprenticeship> { new Apprenticeship { EmployerAccountId = 1, HasHadDataLockSuccess = false, PaymentStatus = PaymentStatus.Active, ProviderId = 1 }, new Apprenticeship { HasHadDataLockSuccess = true, PaymentStatus = PaymentStatus.Active, ProviderId = 4 } },0 },
+                new object[] { new List<Apprenticeship> { new Apprenticeship { EmployerAccountId = 1, HasHadDataLockSuccess = false, PaymentStatus = PaymentStatus.Active, ProviderId = 1 }, new Apprenticeship { HasHadDataLockSuccess = true, PaymentStatus = PaymentStatus.Active, ProviderId = 1 } },1 },
+                new object[] { new List<Apprenticeship> { new Apprenticeship { EmployerAccountId = 1, HasHadDataLockSuccess = true, PaymentStatus = PaymentStatus.Completed, ProviderId = 1 }, new Apprenticeship { HasHadDataLockSuccess = true, PaymentStatus = PaymentStatus.Active, ProviderId = 1 } },1 },
+                new object[] { new List<Apprenticeship> { new Apprenticeship { EmployerAccountId = 1, HasHadDataLockSuccess = true, PaymentStatus = PaymentStatus.Paused, ProviderId = 4 }, new Apprenticeship { HasHadDataLockSuccess = true, PaymentStatus = PaymentStatus.Active, ProviderId = 4 } },0 }
             };
     }
 }

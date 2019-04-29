@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 
 namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
 {
-    public static class DataRefreshMessageReceiver
+    public static class EmployerFeedbackRefreshMessageReceiver
     {
         [FunctionName("DataRefreshMessageReceiver")]
         public static void Run(
@@ -15,7 +15,7 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
             ILogger log, 
             [Inject] EmployerFeedbackRepository dbRepository)
         {
-            DataRefreshMessage message = JsonConvert.DeserializeObject<DataRefreshMessage>(myQueueItem);
+            EmployerFeedbackRefreshMessage message = JsonConvert.DeserializeObject<EmployerFeedbackRefreshMessage>(myQueueItem);
             log.LogInformation("Starting upserting users");
             dbRepository.UpsertIntoUsers(message.User);
             log.LogInformation("Done upserting users\nStarting upserting providers");

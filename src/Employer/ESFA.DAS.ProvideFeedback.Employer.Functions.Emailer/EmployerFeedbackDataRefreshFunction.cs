@@ -10,14 +10,14 @@ using Microsoft.Extensions.Logging;
 
 namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
 {
-    public static class EmailInviteDataRefreshFunc
+    public static class EmployerFeedbackDataRefreshFunction
     {
-        [FunctionName("EmailInviteDataRefresh")]
+        [FunctionName("EmployerFeedbackDataRefreshFunction")]
         public static void Run(
             [TimerTrigger("0 0 3 * * MON-FRI", RunOnStartup = true)]TimerInfo myTimer, 
-            [Inject] EmailInviteDataRefresh inviteDataRefresh, 
+            [Inject] EmployerFeedbackDataRefresh inviteDataRefresh, 
             ILogger log,
-            [ServiceBus("data-refresh-message", Connection = "ServiceBusConnection", EntityType = EntityType.Queue)]IAsyncCollector<DataRefreshMessage> queue, 
+            [ServiceBus("data-refresh-message", Connection = "ServiceBusConnection", EntityType = EntityType.Queue)]IAsyncCollector<EmployerFeedbackRefreshMessage> queue, 
             [Inject] EmployerFeedbackRepository dbRepository)
         {
             log.LogInformation("Starting invite data refresh.");
