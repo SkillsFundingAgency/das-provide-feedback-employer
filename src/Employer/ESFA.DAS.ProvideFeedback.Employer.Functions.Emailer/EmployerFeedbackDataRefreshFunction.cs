@@ -17,8 +17,8 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
             [TimerTrigger("0 0 3 * * MON-FRI", RunOnStartup = true)]TimerInfo myTimer, 
             [Inject] EmployerFeedbackDataRefresh inviteDataRefresh, 
             ILogger log,
-            [ServiceBus("data-refresh-message", Connection = "ServiceBusConnection", EntityType = EntityType.Queue)]IAsyncCollector<EmployerFeedbackRefreshMessage> queue, 
-            [Inject] EmployerFeedbackRepository dbRepository)
+            [ServiceBus("data-refresh-messages", Connection = "ServiceBusConnection", EntityType = EntityType.Queue)]IAsyncCollector<EmployerFeedbackRefreshMessage> queue, 
+            [Inject] IStoreEmployerEmailDetails dbRepository)
         {
             log.LogInformation("Starting invite data refresh.");
             try
@@ -27,7 +27,7 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
                 var result = inviteDataRefresh.GetRefreshData();
                 log.LogInformation("Finished getting the data from APIs");
                 result.AsParallel().ForAll(x => queue.AddAsync(x));
-                log.LogInformation("Placed the data in the DB");
+                log.LogInformation("Placed the data in the queue");
             }
             catch (Exception ex)
             {

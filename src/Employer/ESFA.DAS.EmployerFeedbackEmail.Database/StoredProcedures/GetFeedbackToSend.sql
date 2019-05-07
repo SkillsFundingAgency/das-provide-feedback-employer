@@ -4,7 +4,7 @@ AS
 	U.EmailAddress,
 	U.FirstName,
 	P.ProviderName,
-	U.AccountId,
+	F.AccountId,
 	P.Ukprn,
 	U.UserRef
 	FROM [dbo].[EmployerFeedback] F

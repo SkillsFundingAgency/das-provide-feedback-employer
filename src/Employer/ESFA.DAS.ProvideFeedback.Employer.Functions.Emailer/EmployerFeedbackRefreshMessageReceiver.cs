@@ -11,9 +11,9 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
     {
         [FunctionName("DataRefreshMessageReceiver")]
         public static void Run(
-            [ServiceBusTrigger("data-refresh-message", Connection = "ServiceBusConnection")]string myQueueItem, 
+            [ServiceBusTrigger("data-refresh-messages", Connection = "ServiceBusConnection")]string myQueueItem, 
             ILogger log, 
-            [Inject] EmployerFeedbackRepository dbRepository)
+            [Inject] IStoreEmployerEmailDetails dbRepository)
         {
             EmployerFeedbackRefreshMessage message = JsonConvert.DeserializeObject<EmployerFeedbackRefreshMessage>(myQueueItem);
             log.LogInformation("Starting upserting users");

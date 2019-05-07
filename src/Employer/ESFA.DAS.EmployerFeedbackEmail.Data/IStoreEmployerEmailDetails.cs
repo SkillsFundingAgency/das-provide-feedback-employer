@@ -15,5 +15,9 @@ namespace ESFA.DAS.ProvideFeedback.Data
         Task InsertSurveyInviteHistory(IEnumerable<Guid> uniqueSurveyCodes, int inviteType);
         Task<IEnumerable<EmployerSurveyInvite>> GetEmployerInvitesForNextCycleAsync(int inviteCycleDays);
         Task InsertNewSurveyInviteCodes(IEnumerable<EmployerSurveyInvite> newCodesRequired);
+        void UpsertIntoUsers(User user);
+        void ResetFeedback();
+        void UpsertIntoProvidersAsync(Provider provider);
+        void UpsertIntoFeedbackAsync(User user, Provider provider);
     }
 }

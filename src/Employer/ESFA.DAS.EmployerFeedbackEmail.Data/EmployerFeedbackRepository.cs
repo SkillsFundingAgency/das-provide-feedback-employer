@@ -135,7 +135,6 @@ namespace ESFA.DAS.ProvideFeedback.Data
             parameters.Add("@UserRef", user.UserRef, DbType.Guid);
             parameters.Add("@FirstName", user.FirstName, DbType.String);
             parameters.Add("@EmailAddress", user.EmailAddress, DbType.String);
-            parameters.Add("@AccountId", user.AccountId, DbType.Int64);
             await _dbConnection.ExecuteAsync
             (
                 sql: "[dbo].[UpsertUsers]",
@@ -162,6 +161,7 @@ namespace ESFA.DAS.ProvideFeedback.Data
             var parameters = new DynamicParameters();
             parameters.Add("@UserRef", user.UserRef, DbType.Guid);
             parameters.Add("@Ukprn", provider.Ukprn, DbType.Int64);
+            parameters.Add("@AccountId", user.AccountId, DbType.Int64);
             await _dbConnection.ExecuteAsync
             (
                 sql: "[dbo].[UpsertFeedback]",
