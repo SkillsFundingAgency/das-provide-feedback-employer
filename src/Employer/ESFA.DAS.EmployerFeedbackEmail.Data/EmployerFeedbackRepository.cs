@@ -19,7 +19,6 @@ namespace ESFA.DAS.ProvideFeedback.Data
         public EmployerFeedbackRepository(IDbConnection dbConnection)
         {
             _dbConnection = dbConnection;
-            _dbConnection.Open();
         }
 
         public async Task<EmployerSurveyInvite> GetEmployerInviteForUniqueCode(Guid uniqueCode)
@@ -129,7 +128,7 @@ namespace ESFA.DAS.ProvideFeedback.Data
             });
         }
 
-        public async void UpsertIntoUsers(User user)
+        public async Task UpsertIntoUsers(User user)
         {
             var parameters = new DynamicParameters();
             parameters.Add("@UserRef", user.UserRef, DbType.Guid);
@@ -143,7 +142,7 @@ namespace ESFA.DAS.ProvideFeedback.Data
             );
         }
 
-        public async void UpsertIntoProvidersAsync(Provider provider)
+        public async Task UpsertIntoProvidersAsync(Provider provider)
         {
             var parameters = new DynamicParameters();
             parameters.Add("@Ukprn", provider.Ukprn, DbType.Int64);
@@ -156,7 +155,7 @@ namespace ESFA.DAS.ProvideFeedback.Data
             );
         }
 
-        public async void UpsertIntoFeedbackAsync(User user, Provider provider)
+        public async Task UpsertIntoFeedbackAsync(User user, Provider provider)
         {
             var parameters = new DynamicParameters();
             parameters.Add("@UserRef", user.UserRef, DbType.Guid);
@@ -180,7 +179,7 @@ namespace ESFA.DAS.ProvideFeedback.Data
             return result;
         }
 
-        public async void ResetFeedback()
+        public async Task ResetFeedback()
         {
             await _dbConnection.ExecuteAsync
             (
