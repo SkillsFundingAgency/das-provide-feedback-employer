@@ -75,6 +75,7 @@ namespace ESFA.DAS.ProvideFeedback.Data
                         UPDATE EmployerEmailDetails
                         SET EmailSentDate = @{nameof(now)}
                         WHERE UserRef = @{nameof(userRef)}
+                        AND EmailSentDate IS NULL
                         AND CodeBurntDate IS NULL";
 
             await ExecuteUpdateAsync(sql, new { now, userRef });
@@ -87,6 +88,7 @@ namespace ESFA.DAS.ProvideFeedback.Data
                         UPDATE EmployerEmailDetails
                         SET EmailReminderSentDate = @{nameof(now)}
                         WHERE UserRef = @{nameof(userRef)}
+                        AND EmailReminderSentDate IS NULL
                         AND CodeBurntDate IS NULL";
 
             await ExecuteUpdateAsync(sql, new { now, userRef });
