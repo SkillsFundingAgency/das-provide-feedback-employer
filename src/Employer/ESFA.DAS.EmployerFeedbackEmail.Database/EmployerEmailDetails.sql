@@ -18,3 +18,5 @@
 GO
 
 CREATE NONCLUSTERED INDEX [IX_EmployerEmailDetails_EmailCode] ON [dbo].[EmployerEmailDetails] ([EmailCode]) WITH (ONLINE = ON)
+GO
+CREATE NONCLUSTERED INDEX [IX_EmployerEmailDetails_UserRef] ON [dbo].[EmployerEmailDetails] (UserRef) WITH (ONLINE = ON)
