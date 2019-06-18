@@ -1,83 +1,45 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Caching.Distributed;
 using Newtonsoft.Json;
 
 namespace ESFA.DAS.EmployerProvideFeedback.Infrastructure
 {
     public class SessionService : ISessionService
     {
-        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IDistributedCache _sessionCache;
         private readonly string _environment;
 
-        public SessionService(IHttpContextAccessor httpContextAccessor, IHostingEnvironment environment)
+        public SessionService(IDistributedCache sessionCache, IHostingEnvironment environment)
         {
-            _httpContextAccessor = httpContextAccessor;
+            _sessionCache = sessionCache;
             _environment = environment.EnvironmentName;
         }
 
-        public async Task<T> GetAsync<T>(string key)
+        public async Task<T> Get<T>(string key)
         {
-            return await Task.Run(() => Get<T>(key));
+            var sessionObject = await GetString(key);
+            return string.IsNullOrWhiteSpace(sessionObject) ? default(T) : JsonConvert.DeserializeObject<T>(sessionObject);
         }
 
-        public async Task SetAsync(string key, object value)
+        public async Task<string> GetString(string key)
         {
-            await Task.Run(() => Set(key, value));
+            return await _sessionCache.GetStringAsync(_environment + "_" + key);
+        }
+
+        public async Task Set(string key, object value)
+        {
+            await _sessionCache.SetStringAsync(_environment + "_" + key, JsonConvert.SerializeObject(value));
+        }
+
+        public async Task Remove(string key)
+        {
+            await _sessionCache.RemoveAsync(_environment + "_" + key);
         }
 
         public async Task<bool> ExistsAsync(string key)
         {
-            return await Task.Run(() => Exists(key));
-        }
-
-        public void Set(string key, object value)
-        {
-            _httpContextAccessor.HttpContext.Session.SetString(_environment + "_" + key,
-                JsonConvert.SerializeObject(value));
-        }
-
-        public void Set(string key, string stringValue)
-        {
-            _httpContextAccessor.HttpContext.Session.SetString(_environment + "_" + key,
-                stringValue);
-        }
-
-        public void Remove(string key)
-        {
-            _httpContextAccessor.HttpContext.Session.Remove(_environment + "_" + key);
-        }
-
-        public string Get(string key)
-        {
-            return _httpContextAccessor.HttpContext.Session.GetString(_environment + "_" + key);
-        }
-
-        public T Get<T>(string key)
-        {
-            var session = _httpContextAccessor.HttpContext.Session;
-            key = _environment + "_" + key;
-            var sessionObject = string.Empty;
-
-            if (KeyExists(session, key))
-            {
-                sessionObject = session.GetString(key);
-            }
-
-            return string.IsNullOrWhiteSpace(sessionObject) ? default(T) : JsonConvert.DeserializeObject<T>(sessionObject);
-        }
-
-        public bool Exists(string key)
-        {
-            key = _environment + "_" + key;
-            var session = _httpContextAccessor.HttpContext.Session;
-            return KeyExists(session, key);
-        }
-
-        private bool KeyExists(ISession session, string key)
-        {
-            return session.Keys.Any(k => k == key);
+            return await GetString(key) != null;
         }
     }
 }
