@@ -38,7 +38,9 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
             _providerFeedbackRepoMock = new Mock<IGetProviderFeedback>();
             _loggerMock = new Mock<ILogger<ConfirmationController>>();
             _externalLinksOptions = Options.Create(_externalLinks);
-            _sessionServiceMock.Setup(mock => mock.GetAsync<SurveyModel>(It.IsAny<string>())).Returns(Task.FromResult(_cachedSurveyModel));
+            _sessionServiceMock
+                .Setup(mock => mock.Get<SurveyModel>(It.IsAny<string>()))
+                .Returns(Task.FromResult(_cachedSurveyModel));
             _controller = new ConfirmationController(
                 _sessionServiceMock.Object,
                 _providerFeedbackRepoMock.Object,

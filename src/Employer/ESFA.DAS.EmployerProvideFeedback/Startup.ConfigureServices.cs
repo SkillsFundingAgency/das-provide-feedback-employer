@@ -55,7 +55,7 @@ namespace ESFA.DAS.EmployerProvideFeedback
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
-            services.AddDistributedRedisCache(options => {
+            services.AddStackExchangeRedisCache(options => {
                 options.Configuration = Configuration.GetConnectionString("RedisApplication");
                 options.InstanceName = "";
             });
