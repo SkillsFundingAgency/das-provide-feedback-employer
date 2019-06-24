@@ -57,7 +57,7 @@
   <Import Condition="'$(SQLDBExtensionsRefPath)' == ''" Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\SSDT\Microsoft.Data.Tools.Schema.SqlTasks.targets" />
   <ItemGroup>
     <Folder Include="Properties" />
-    <Folder Include="RefreshDatabases" />
+    <Folder Include="Tables" />
     <Folder Include="StoredProcedures" />
     <Folder Include="Views" />
   </ItemGroup>
@@ -65,20 +65,18 @@
     <RefactorLog Include="ESFA.DAS.EmployerFeedbackEmail.Database.refactorlog" />
   </ItemGroup>
   <ItemGroup>
-    <Build Include="staging_commitment.sql" />
-    <Build Include="staging_employer_accounts.sql" />
-    <Build Include="CreateEmployerEmailDetails.sql" />
-    <Build Include="staging_roatp.sql" />
-    <Build Include="EmployerSurveyHistory.sql" />
-    <Build Include="EmployerSurveyCodes.sql" />
-    <Build Include="RefreshDatabases\Providers.sql" />
-    <Build Include="RefreshDatabases\Users.sql" />
-    <Build Include="RefreshDatabases\EmployerFeedback.sql" />
+    <Build Include="Tables\Providers.sql" />
+    <Build Include="Tables\Users.sql" />
+    <Build Include="Tables\EmployerFeedback.sql" />
     <Build Include="StoredProcedures\UpsertProviders.sql" />
     <Build Include="StoredProcedures\UpsertFeedback.sql" />
     <Build Include="StoredProcedures\ResetFeedback.sql" />
     <Build Include="StoredProcedures\UpsertUsers.sql" />
     <Build Include="Views\vw_EmployerSurveyInvites.sql" />
-    <Build Include="Views\vw_GetFeedbackToSend.sql" />
+    <Build Include="Views\vw_FeedbackToSend.sql" />
+    <Build Include="Tables\EmployerSurveyHistory.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <Build Include="Tables\EmployerSurveyCodes.sql" />
   </ItemGroup>
 </Project>
