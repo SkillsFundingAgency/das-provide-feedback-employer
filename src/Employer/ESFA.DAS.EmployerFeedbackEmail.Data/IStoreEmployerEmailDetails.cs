@@ -7,7 +7,7 @@ namespace ESFA.DAS.ProvideFeedback.Data
 {
     public interface IStoreEmployerEmailDetails
     {
-        Task<IEnumerable<EmployerSurveyInvite>> GetEmployerUsersToBeSentInvite(int minDaysSincePreviousSurvey);
+        Task<IEnumerable<EmployerSurveyInvite>> GetEmployerUsersToBeSentInvite();
         Task<EmployerSurveyInvite> GetEmployerInviteForUniqueCode(Guid guid);
         Task SetCodeBurntDate(Guid uniqueCode);
         Task<bool> IsCodeBurnt(Guid emailCode);

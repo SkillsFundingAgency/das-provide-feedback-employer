@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE [dbo].[GetFeedbackToSend]
+﻿CREATE VIEW [dbo].[vw_GetFeedbackToSend]
 AS
 	SELECT 
 	U.EmailAddress,

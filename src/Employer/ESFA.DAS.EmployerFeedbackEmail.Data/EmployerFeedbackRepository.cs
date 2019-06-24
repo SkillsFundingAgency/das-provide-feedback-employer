@@ -30,7 +30,7 @@ namespace ESFA.DAS.ProvideFeedback.Data
                                           new { uniqueCode });
         }
 
-        public async Task<IEnumerable<EmployerSurveyInvite>> GetEmployerUsersToBeSentInvite(int minDaysSincePreviousSurvey)
+        public async Task<IEnumerable<EmployerSurveyInvite>> GetEmployerUsersToBeSentInvite()
         {
             return await _dbConnection.QueryAsync<EmployerSurveyInvite>(sql: $@"
                                         SELECT * 
@@ -167,16 +167,6 @@ namespace ESFA.DAS.ProvideFeedback.Data
                 param: parameters,
                 commandType: CommandType.StoredProcedure
             );
-        }
-
-        public async Task<IEnumerable<FeedbackToSendResponse>> GetFeedbackToSendResponses()
-        {
-            var result = await _dbConnection.QueryAsync<FeedbackToSendResponse>
-            (
-                sql: "[dbo].[GetFeedbackToSend]",
-                commandType: CommandType.StoredProcedure
-            );
-            return result;
         }
 
         public async Task ResetFeedback()

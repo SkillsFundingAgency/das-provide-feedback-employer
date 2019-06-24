@@ -59,12 +59,12 @@
     <Folder Include="Properties" />
     <Folder Include="RefreshDatabases" />
     <Folder Include="StoredProcedures" />
+    <Folder Include="Views" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="ESFA.DAS.EmployerFeedbackEmail.Database.refactorlog" />
   </ItemGroup>
   <ItemGroup>
-    <Build Include="EmployerEmailDetails.sql" />
     <Build Include="staging_commitment.sql" />
     <Build Include="staging_employer_accounts.sql" />
     <Build Include="CreateEmployerEmailDetails.sql" />
@@ -77,7 +77,8 @@
     <Build Include="StoredProcedures\UpsertProviders.sql" />
     <Build Include="StoredProcedures\UpsertFeedback.sql" />
     <Build Include="StoredProcedures\ResetFeedback.sql" />
-    <Build Include="StoredProcedures\GetFeedbackToSend.sql" />
     <Build Include="StoredProcedures\UpsertUsers.sql" />
+    <Build Include="Views\vw_EmployerSurveyInvites.sql" />
+    <Build Include="Views\vw_GetFeedbackToSend.sql" />
   </ItemGroup>
 </Project>
