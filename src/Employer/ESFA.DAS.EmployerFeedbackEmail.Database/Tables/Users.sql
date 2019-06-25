@@ -1,6 +1,6 @@
 ﻿CREATE TABLE [dbo].[Users]
 (
 	[UserRef] UNIQUEIDENTIFIER NOT NULL PRIMARY KEY, 
-	[EmailAddress] NCHAR(150) NOT NULL, 
-    [FirstName] NCHAR(50) NOT NULL, 
+	[EmailAddress] VARCHAR(150) NOT NULL, 
+    [FirstName] VARCHAR(50) NOT NULL, 
 )

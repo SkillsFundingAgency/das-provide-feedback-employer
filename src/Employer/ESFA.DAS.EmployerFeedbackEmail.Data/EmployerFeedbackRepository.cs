@@ -105,15 +105,45 @@ namespace ESFA.DAS.ProvideFeedback.Data
                 {
                     UniqueSurveyCode = Guid.NewGuid(),
                     x.UserRef, 
-                    x.Ukprn
+                    x.Ukprn,
+                    x.AccountId
                 };
             });
 
             var sql = $@"
                         INSERT INTO EmployerSurveyCodes
-                        VALUES(@UniqueSurveyCode, @UserRef, @Ukprn, NULL)";
+                        VALUES(@UniqueSurveyCode, @UserRef, @Ukprn, @AccountId, NULL)";
 
             await _dbConnection.ExecuteAsync(sql, newCodesToCreate);
+        }
+
+        public async Task<Guid> GetOrCreateSurveyCode(Guid UserRefParam, long UkprnParam, long AccountIdParam)
+        {
+            var sql = $@"
+                        SELECT UniqueSurveyCode FROM EmployerSurveyCodes
+                        WHERE UserRef = @UserRefParam AND Ukprn = @UkprnParam AND AccountId = @AccountIdParam";
+            var result = await _dbConnection.QueryAsync<Guid>(sql,new{UserRefParam,UkprnParam, AccountIdParam });
+            if (result.Count() == 0)
+            {
+                var newCode = new
+                {
+                    UniqueSurveyCode = Guid.NewGuid(),
+                    UserRef = UserRefParam,
+                    Ukprn = UkprnParam,
+                    AccountId = AccountIdParam
+                };
+
+                var sql2 = $@"
+                        INSERT INTO EmployerSurveyCodes
+                        VALUES(@UniqueSurveyCode, @UserRef, @Ukprn, @AccountId, NULL)";
+
+                await _dbConnection.ExecuteAsync(sql2, newCode);
+                return newCode.UniqueSurveyCode;
+            }
+            else
+            {
+                return result.Single();
+            }
         }
 
 
@@ -176,6 +206,13 @@ namespace ESFA.DAS.ProvideFeedback.Data
                 sql: "[dbo].[ResetFeedback]",
                 commandType: CommandType.StoredProcedure
             );
+        }
+
+        public async Task ClearSurveyCodes(Guid userRef)
+        {
+            await _dbConnection.ExecuteAsync($@"
+            DELETE FROM EmployerSurveyHistory where uniqueSurveyCode in (SELECT UniqueSurveyCode from EmployerSurveyCodes where UserRef = @userRef)
+            DELETE FROM EmployerSurveyCodes where UserRef = @userRef", new{userRef});
         }
     }
 }

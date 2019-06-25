@@ -2,6 +2,7 @@
 (
 	[UniqueSurveyCode] UNIQUEIDENTIFIER NOT NULL PRIMARY KEY, 
     [UserRef] UNIQUEIDENTIFIER NOT NULL, 
-    [Ukprn] INT NOT NULL, 
+    [Ukprn] BIGINT NOT NULL,
+	[AccountId] BIGINT NOT NULL,
     [BurnDate] DATETIME NULL 
 )

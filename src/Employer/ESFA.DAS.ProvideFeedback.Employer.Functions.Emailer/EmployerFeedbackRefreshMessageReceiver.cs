@@ -26,7 +26,9 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
                 await dbRepository.UpsertIntoProvidersAsync(message.Provider);
                 log.LogInformation("Done upserting providers\nStarting upserting feedback");
                 await dbRepository.UpsertIntoFeedbackAsync(message.User, message.Provider);
-                log.LogInformation("Done upserting feedback\nCommiting transaction");
+                log.LogInformation("Done upserting feedback\nStarting code generation");
+                await dbRepository.GetOrCreateSurveyCode(message.User.UserRef, message.Provider.Ukprn,message.User.AccountId);
+                log.LogInformation("Done code generation\nCommiting transaction");
             }
             catch(Exception ex)
             {
