@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using System.Transactions;
 using Dapper;
 using ESFA.DAS.ProvideFeedback.Domain.Entities;
-using Polly;
 
 namespace ESFA.DAS.ProvideFeedback.Data
 {
@@ -125,37 +124,27 @@ namespace ESFA.DAS.ProvideFeedback.Data
                         SELECT UniqueSurveyCode FROM {EmployerSurveyCodes}
                         WHERE UserRef = @UserRef AND Ukprn = @Ukprn AND AccountId = @AccountId";
             var result = await _dbConnection.QueryAsync<Guid>(sql,new{UserRef,Ukprn, AccountId });
-            if (!result.Any())
+            if (result.Any())
             {
-                var newCode = new
-                {
-                    UniqueSurveyCode = Guid.NewGuid(),
-                    UserRef,
-                    Ukprn,
-                    AccountId
-                };
+                return result.Single();
+            }
 
-                var sql2 = $@"
+            var newCode = new
+            {
+                UniqueSurveyCode = Guid.NewGuid(),
+                UserRef,
+                Ukprn,
+                AccountId
+            };
+
+            var sql2 = $@"
                         INSERT INTO {EmployerSurveyCodes}
                         VALUES(@UniqueSurveyCode, @UserRef, @Ukprn, @AccountId, NULL)";
 
-                await _dbConnection.ExecuteAsync(sql2, newCode);
-                return newCode.UniqueSurveyCode;
-            }
-            return result.Single();
+            await _dbConnection.ExecuteAsync(sql2, newCode);
+            return newCode.UniqueSurveyCode;
         }
 
-
-        private async Task ExecuteUpdateAsync(string sql, object param)
-        {
-            var policy = Policy.Handle<Exception>()
-                .WaitAndRetryAsync(3, x => TimeSpan.FromSeconds(3));
-
-            await policy.ExecuteAsync(() =>
-            {
-                return _dbConnection.QueryAsync(sql: sql, param: param, transaction: null, commandTimeout: _commandTimeoutSeconds);
-            });
-        }
 
         public async Task UpsertIntoUsers(User user)
         {
