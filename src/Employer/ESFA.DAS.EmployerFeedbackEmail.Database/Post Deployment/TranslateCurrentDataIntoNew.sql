@@ -14,4 +14,3 @@ VALUES (SELECT EmailUID, EmailSentDate, 1 FROM EmployerEmailDetails WHERE EmailS
 
 INSERT INTO EmployerSurveyHistory (UniqueSurveyCode, SentDate, EmailType)
 VALUES (SELECT EmailUID, EmailReminderSentDate, 2 FROM EmployerEmailDetails WHERE EmailReminderSentDate IS NOT NULL)
-

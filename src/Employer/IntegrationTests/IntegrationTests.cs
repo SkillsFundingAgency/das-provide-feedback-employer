@@ -51,6 +51,7 @@ namespace IntegrationTests
 
         private readonly Guid _user1Guid;
         private readonly Guid _user2Guid;
+        private readonly Guid _user3Guid;
 
         public IntegrationTest_NeedsToBeRanAsOne()
         {
@@ -83,6 +84,7 @@ namespace IntegrationTests
 
             _user1Guid = Guid.Parse("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa");
             _user2Guid = Guid.Parse("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb");
+            _user3Guid = Guid.Parse("cccccccc-cccc-cccc-cccc-cccccccccccc");
 
             _accountApiClientReturn = new List<TeamMemberViewModel>
             {
@@ -114,14 +116,15 @@ namespace IntegrationTests
             await _dbEmployerFeedbackRepository.ResetFeedback();
             await _dbEmployerFeedbackRepository.ClearSurveyCodes(_user1Guid);
             await _dbEmployerFeedbackRepository.ClearSurveyCodes(_user2Guid);
+            await _dbEmployerFeedbackRepository.ClearSurveyCodes(_user3Guid);
             var expectedInvites = new List<EmployerSurveyInvite>
             {
-                new EmployerSurveyInvite {UserRef = _user1Guid, EmailAddress = "Test@test.com", FirstName = "Master", AccountId = 1, Ukprn = 1},
-                new EmployerSurveyInvite {UserRef = _user1Guid, EmailAddress = "Test@test.com", FirstName = "Master", AccountId = 2, Ukprn = 1},
-                new EmployerSurveyInvite {UserRef = _user1Guid, EmailAddress = "Test@test.com", FirstName = "Master", AccountId = 2, Ukprn = 2},
-                new EmployerSurveyInvite {UserRef = _user2Guid, EmailAddress = "TheBestThereEverWas@90sReference.com", FirstName = "Flash", AccountId = 1, Ukprn = 1},
-                new EmployerSurveyInvite {UserRef = _user2Guid, EmailAddress = "TheBestThereEverWas@90sReference.com", FirstName = "Flash", AccountId = 2, Ukprn = 1},
-                new EmployerSurveyInvite {UserRef = _user2Guid, EmailAddress = "TheBestThereEverWas@90sReference.com", FirstName = "Flash", AccountId = 2, Ukprn = 2},
+                new EmployerSurveyInvite {UserRef = _user1Guid, EmailAddress = "Test@test.com", FirstName = "Master", AccountId = 1, Ukprn = 1, ProviderName = "Test Academy"},
+                new EmployerSurveyInvite {UserRef = _user1Guid, EmailAddress = "Test@test.com", FirstName = "Master", AccountId = 2, Ukprn = 1, ProviderName = "Test Academy"},
+                new EmployerSurveyInvite {UserRef = _user1Guid, EmailAddress = "Test@test.com", FirstName = "Master", AccountId = 2, Ukprn = 2, ProviderName = "Worst School"},
+                new EmployerSurveyInvite {UserRef = _user2Guid, EmailAddress = "TheBestThereEverWas@90sReference.com", FirstName = "Flash", AccountId = 1, Ukprn = 1, ProviderName = "Test Academy"},
+                new EmployerSurveyInvite {UserRef = _user2Guid, EmailAddress = "TheBestThereEverWas@90sReference.com", FirstName = "Flash", AccountId = 2, Ukprn = 1, ProviderName = "Test Academy"},
+                new EmployerSurveyInvite {UserRef = _user2Guid, EmailAddress = "TheBestThereEverWas@90sReference.com", FirstName = "Flash", AccountId = 2, Ukprn = 2, ProviderName = "Worst School"},
             };
             _notificationsApiClientMock = new Mock<INotificationsApi>();
 
@@ -135,16 +138,8 @@ namespace IntegrationTests
             //Assert
             var invites = await _dbEmployerFeedbackRepository.GetEmployerUsersToBeSentInvite();
             invites.Count().Should().Be(6);
-            var invitesList = invites.OrderBy(x => x.UserRef).ThenBy(x => x.AccountId).ThenBy(x => x.Ukprn).ToList();
-            for (int i = 0; i < invitesList.Count(); i++)
-            {
-                invitesList[i].UserRef.Should().Be(expectedInvites[i].UserRef);
-                invitesList[i].EmailAddress.Should().Be(expectedInvites[i].EmailAddress);
-                invitesList[i].FirstName.Should().Be(expectedInvites[i].FirstName);
-                invitesList[i].AccountId.Should().Be(expectedInvites[i].AccountId);
-                invitesList[i].Ukprn.Should().Be(expectedInvites[i].Ukprn);
-                invitesList[i].Should().NotBeNull();
-            }
+            invites.ShouldBeEquivalentTo(expectedInvites, options => options.Excluding(
+                s => s.SelectedMemberPath.EndsWith(".UniqueSurveyCode")));
         }
 
         [Test, Order(2)]
@@ -195,8 +190,8 @@ namespace IntegrationTests
             await _dbEmployerFeedbackRepository.ResetFeedback();
             var expectedInvites = new List<EmployerSurveyInvite>
             {
-                new EmployerSurveyInvite {UserRef = _user1Guid, EmailAddress = "Test@test.com", FirstName = "Master", AccountId = 2, Ukprn = 3},
-                new EmployerSurveyInvite {UserRef = _user2Guid, EmailAddress = "TheBestThereEverWas@90sReference.com", FirstName = "Flash", AccountId = 2, Ukprn = 3},
+                new EmployerSurveyInvite {UserRef = _user1Guid, EmailAddress = "Test@test.com", FirstName = "Master", AccountId = 2, Ukprn = 3, ProviderName = "Worst School"},
+                new EmployerSurveyInvite {UserRef = _user2Guid, EmailAddress = "TheBestThereEverWas@90sReference.com", FirstName = "Flash", AccountId = 2, Ukprn = 3, ProviderName = "Worst School"},
             };
             _notificationsApiClientMock = new Mock<INotificationsApi>();
 
@@ -211,15 +206,8 @@ namespace IntegrationTests
             var invites = await _dbEmployerFeedbackRepository.GetEmployerUsersToBeSentInvite();
             invites.Count().Should().Be(2);
             var invitesList = invites.OrderBy(x => x.UserRef).ThenBy(x => x.AccountId).ThenBy(x => x.Ukprn).ToList();
-            for (int i = 0; i < invitesList.Count(); i++)
-            {
-                invitesList[i].UserRef.Should().Be(expectedInvites[i].UserRef);
-                invitesList[i].EmailAddress.Should().Be(expectedInvites[i].EmailAddress);
-                invitesList[i].FirstName.Should().Be(expectedInvites[i].FirstName);
-                invitesList[i].AccountId.Should().Be(expectedInvites[i].AccountId);
-                invitesList[i].Ukprn.Should().Be(expectedInvites[i].Ukprn);
-                invitesList[i].Should().NotBeNull();
-            }
+            invites.ShouldBeEquivalentTo(expectedInvites, options => options.Excluding(
+                s => s.SelectedMemberPath.EndsWith(".UniqueSurveyCode")));
         }
 
         [Test, Order(5)]
@@ -297,7 +285,7 @@ namespace IntegrationTests
                 new TeamMemberViewModel
                 {
                     Email = "InWestPhiladelphiaBornAndRaised@PlaygroundDayz.com", Name = "Fresh Prince",
-                    UserRef = new Guid("cccccccc-cccc-cccc-cccc-cccccccccccc").ToString(), CanReceiveNotifications = true
+                    UserRef = _user3Guid.ToString(), CanReceiveNotifications = true
                 }
             };
             _accountApiClientMock.Setup(x => x.GetAccountUsers(It.IsAny<long>())).ReturnsAsync(_accountApiClientReturn);
@@ -308,9 +296,9 @@ namespace IntegrationTests
             await _dbEmployerFeedbackRepository.ResetFeedback();
             var expectedInvites = new List<EmployerSurveyInvite>
             {
-                new EmployerSurveyInvite {UserRef = new Guid("cccccccc-cccc-cccc-cccc-cccccccccccc"), EmailAddress = "InWestPhiladelphiaBornAndRaised@PlaygroundDayz.com", FirstName = "Fresh", AccountId = 1, Ukprn = 1},
-                new EmployerSurveyInvite {UserRef = new Guid("cccccccc-cccc-cccc-cccc-cccccccccccc"), EmailAddress = "InWestPhiladelphiaBornAndRaised@PlaygroundDayz.com", FirstName = "Fresh", AccountId = 2, Ukprn = 1},
-                new EmployerSurveyInvite {UserRef = new Guid("cccccccc-cccc-cccc-cccc-cccccccccccc"), EmailAddress = "InWestPhiladelphiaBornAndRaised@PlaygroundDayz.com", FirstName = "Fresh", AccountId = 2, Ukprn = 3},
+                new EmployerSurveyInvite {UserRef = _user3Guid, EmailAddress = "InWestPhiladelphiaBornAndRaised@PlaygroundDayz.com", FirstName = "Fresh", AccountId = 1, Ukprn = 1, ProviderName = "Test Academy"},
+                new EmployerSurveyInvite {UserRef = _user3Guid, EmailAddress = "InWestPhiladelphiaBornAndRaised@PlaygroundDayz.com", FirstName = "Fresh", AccountId = 2, Ukprn = 1, ProviderName = "Test Academy"},
+                new EmployerSurveyInvite {UserRef = _user3Guid, EmailAddress = "InWestPhiladelphiaBornAndRaised@PlaygroundDayz.com", FirstName = "Fresh", AccountId = 2, Ukprn = 3 , ProviderName = "Worst School"},
             };
             _notificationsApiClientMock = new Mock<INotificationsApi>();
 
@@ -324,16 +312,8 @@ namespace IntegrationTests
             //Assert
             var invites = await _dbEmployerFeedbackRepository.GetEmployerUsersToBeSentInvite();
             invites.Count().Should().Be(3);
-            var invitesList = invites.OrderBy(x => x.UserRef).ThenBy(x => x.AccountId).ThenBy(x => x.Ukprn).ToList();
-            for (int i = 0; i < invitesList.Count(); i++)
-            {
-                invitesList[i].UserRef.Should().Be(expectedInvites[i].UserRef);
-                invitesList[i].EmailAddress.Should().Be(expectedInvites[i].EmailAddress);
-                invitesList[i].FirstName.Should().Be(expectedInvites[i].FirstName);
-                invitesList[i].AccountId.Should().Be(expectedInvites[i].AccountId);
-                invitesList[i].Ukprn.Should().Be(expectedInvites[i].Ukprn);
-                invitesList[i].Should().NotBeNull();
-            }
+            invites.ShouldBeEquivalentTo(expectedInvites, options => options.Excluding(
+                s => s.SelectedMemberPath.EndsWith(".UniqueSurveyCode")));
         }
 
         [Test, Order(9)]
@@ -344,7 +324,7 @@ namespace IntegrationTests
                 UPDATE EmployerSurveyHistory
                 SET SentDate = DATEADD(DAY,-15,SentDate)
                 WHERE UniqueSurveyCode IN (SELECT UniqueSurveyCode FROM EmployerSurveyCodes WHERE UserRef IN @userRefs)",
-                new { userRefs = new[] { new Guid("cccccccc-cccc-cccc-cccc-cccccccccccc") } });
+                new { userRefs = new[] { _user3Guid } });
             _notificationsApiClientMock = new Mock<INotificationsApi>();
             _employerSurveyReminderEmailer = new EmployerSurveyReminderEmailer(_dbEmployerFeedbackRepository,
                 _notificationsApiClientMock.Object, _options, _surveyLoggerMock.Object);

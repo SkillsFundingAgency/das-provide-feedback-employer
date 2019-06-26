@@ -60,6 +60,7 @@
     <Folder Include="Tables" />
     <Folder Include="StoredProcedures" />
     <Folder Include="Views" />
+    <Folder Include="Post Deployment" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="ESFA.DAS.EmployerFeedbackEmail.Database.refactorlog" />
@@ -79,5 +80,8 @@
   </ItemGroup>
   <ItemGroup>
     <Build Include="Tables\EmployerSurveyCodes.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Post Deployment\TranslateCurrentDataIntoNew.sql" />
   </ItemGroup>
 </Project>
