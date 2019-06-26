@@ -15,6 +15,8 @@ namespace ESFA.DAS.ProvideFeedback.Data
         private int _commandTimeoutSeconds = 120;
         private readonly IDbConnection _dbConnection;
         private const string EmployerSurveyInvites = "vw_EmployerSurveyInvites";
+        private const string EmployerSurveyCodes = "EmployerSurveyCodes";
+        private const string EmployerSurveyHistoryComplete = "vw_EmployerSurveyHistoryComplete";
 
         public EmployerFeedbackRepository(IDbConnection dbConnection)
         {
@@ -25,7 +27,7 @@ namespace ESFA.DAS.ProvideFeedback.Data
         {
             return await _dbConnection.QueryFirstOrDefaultAsync<EmployerSurveyInvite>(
                                         $@"SELECT TOP(1) *
-                                          FROM {EmployerSurveyInvites}
+                                          FROM {EmployerSurveyHistoryComplete}
                                           WHERE UniqueSurveyCode = @{nameof(uniqueCode)}",
                                           new { uniqueCode });
         }
@@ -54,7 +56,7 @@ namespace ESFA.DAS.ProvideFeedback.Data
         {
             return await _dbConnection.QueryFirstOrDefaultAsync<bool>($@"
                                         SELECT CASE WHEN CodeBurntDate IS NULL THEN 0 ELSE 1 END
-                                        FROM {EmployerSurveyInvites}
+                                        FROM {EmployerSurveyCodes}
                                         WHERE UniqueSurveyCode = @{nameof(emailCode)}",
                                         new { emailCode });
         }
@@ -63,7 +65,7 @@ namespace ESFA.DAS.ProvideFeedback.Data
         {
             var now = DateTime.Now;
             await _dbConnection.QueryAsync($@"
-                                UPDATE {EmployerSurveyInvites}
+                                UPDATE {EmployerSurveyCodes}
                                 SET CodeBurntDate = @now
                                 WHERE UniqueSurveyCode = @{nameof(uniqueCode)}",
                                 new { now, uniqueCode });
@@ -111,7 +113,7 @@ namespace ESFA.DAS.ProvideFeedback.Data
             });
 
             var sql = $@"
-                        INSERT INTO EmployerSurveyCodes
+                        INSERT INTO {EmployerSurveyCodes}
                         VALUES(@UniqueSurveyCode, @UserRef, @Ukprn, @AccountId, NULL)";
 
             await _dbConnection.ExecuteAsync(sql, newCodesToCreate);
@@ -120,7 +122,7 @@ namespace ESFA.DAS.ProvideFeedback.Data
         public async Task<Guid> GetOrCreateSurveyCode(Guid UserRefParam, long UkprnParam, long AccountIdParam)
         {
             var sql = $@"
-                        SELECT UniqueSurveyCode FROM EmployerSurveyCodes
+                        SELECT UniqueSurveyCode FROM {EmployerSurveyCodes}
                         WHERE UserRef = @UserRefParam AND Ukprn = @UkprnParam AND AccountId = @AccountIdParam";
             var result = await _dbConnection.QueryAsync<Guid>(sql,new{UserRefParam,UkprnParam, AccountIdParam });
             if (result.Count() == 0)
@@ -134,7 +136,7 @@ namespace ESFA.DAS.ProvideFeedback.Data
                 };
 
                 var sql2 = $@"
-                        INSERT INTO EmployerSurveyCodes
+                        INSERT INTO {EmployerSurveyCodes}
                         VALUES(@UniqueSurveyCode, @UserRef, @Ukprn, @AccountId, NULL)";
 
                 await _dbConnection.ExecuteAsync(sql2, newCode);
@@ -212,7 +214,7 @@ namespace ESFA.DAS.ProvideFeedback.Data
         {
             await _dbConnection.ExecuteAsync($@"
             DELETE FROM EmployerSurveyHistory where uniqueSurveyCode in (SELECT UniqueSurveyCode from EmployerSurveyCodes where UserRef = @userRef)
-            DELETE FROM EmployerSurveyCodes where UserRef = @userRef", new{userRef});
+            DELETE FROM {EmployerSurveyCodes} where UserRef = @userRef", new{userRef});
         }
     }
 }

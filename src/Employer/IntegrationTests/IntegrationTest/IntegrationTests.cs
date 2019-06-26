@@ -10,6 +10,7 @@ using ESFA.DAS.Feedback.Employer.Emailer;
 using ESFA.DAS.Feedback.Employer.Emailer.Configuration;
 using ESFA.DAS.ProvideFeedback.Data;
 using ESFA.DAS.ProvideFeedback.Domain.Entities;
+using ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer;
 using FluentAssertions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -48,6 +49,7 @@ namespace ESFA.DAS.Feedback.Employer.IntegrationTests
         private EmployerFeedbackDataRefresh employerFeedbackDataRefresh;
         private EmployerSurveyInviteEmailer employerSurveyInviteEmailer;
         private EmployerSurveyReminderEmailer employerSurveyReminderEmailer;
+        private DataRefreshMessageHelper helper;
         private IOptions<EmailSettings> options;
         private DbConnection _dbConnection;
 
@@ -79,33 +81,9 @@ namespace ESFA.DAS.Feedback.Employer.IntegrationTests
             _dbEmployerFeedbackRepository = new EmployerFeedbackRepository(_dbConnection);
             employerFeedbackDataRefresh = new EmployerFeedbackDataRefresh(_providerApiClientMock.Object,
                 _commitmentApiClientMock.Object, _accountApiClientMock.Object);
+            helper = new DataRefreshMessageHelper(new Mock<ILogger>().Object,_dbEmployerFeedbackRepository);
             
-
-
-            providerApiClientReturn = new ProviderSummary[]
-            {
-                new ProviderSummary {Ukprn = 1, ProviderName = "Test Academy"},
-                new ProviderSummary {Ukprn = 2, ProviderName = "Worst School"},
-            };
-
-            commitmentApiClientReturn = new List<Apprenticeship>
-            {
-                new Apprenticeship
-                {
-                    HasHadDataLockSuccess = true, PaymentStatus = PaymentStatus.Active, ULN = "1",
-                    EmployerAccountId = 1, ProviderId = 1, ProviderName = "Test Academy"
-                },
-                new Apprenticeship
-                {
-                    HasHadDataLockSuccess = true, PaymentStatus = PaymentStatus.Active, ULN = "2",
-                    EmployerAccountId = 2, ProviderId = 1, ProviderName = "Test Academy"
-                },
-                new Apprenticeship
-                {
-                    HasHadDataLockSuccess = true, PaymentStatus = PaymentStatus.Active, ULN = "3",
-                    EmployerAccountId = 2, ProviderId = 2, ProviderName = "Worst School"
-                }
-            };
+            SetUpApiReturn(2);
 
             user1Guid = Guid.Parse("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa");
             user2Guid = Guid.Parse("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb");
@@ -129,10 +107,12 @@ namespace ESFA.DAS.Feedback.Employer.IntegrationTests
             _commitmentApiClientMock.Setup(x => x.GetEmployerApprenticeships(It.IsAny<long>()))
                 .ReturnsAsync(commitmentApiClientReturn);
             _commitmentApiClientMock.Setup(x => x.GetAllEmployerAccountIds()).ReturnsAsync(new long[] {1});
+
+            
         }
 
         [Test, Order(1)]
-        public async Task DatabasePopulatedCorrectly()
+        public async Task InitialDatabasePopulatedCorrectly()
         {
             //Assert
             await _dbEmployerFeedbackRepository.ResetFeedback();
@@ -153,10 +133,7 @@ namespace ESFA.DAS.Feedback.Employer.IntegrationTests
             var result = employerFeedbackDataRefresh.GetRefreshData();
             foreach (var x in result)
             {
-                await _dbEmployerFeedbackRepository.UpsertIntoUsers(x.User);
-                await _dbEmployerFeedbackRepository.UpsertIntoProvidersAsync(x.Provider);
-                await _dbEmployerFeedbackRepository.UpsertIntoFeedbackAsync(x.User, x.Provider);
-                await _dbEmployerFeedbackRepository.GetOrCreateSurveyCode(x.User.UserRef, x.Provider.Ukprn,x.User.AccountId);
+                await helper.SaveMessageToDatabase(x);
             }
 
             //Assert
@@ -175,7 +152,7 @@ namespace ESFA.DAS.Feedback.Employer.IntegrationTests
         }
 
         [Test, Order(2)]
-        public async Task InitialInviteEmailsSentCorrectly()
+        public async Task FirstRoundInviteEmailsSentCorrectly()
         {
             //Assign
             _notificationsApiClientMock = new Mock<INotificationsApi>();
@@ -190,7 +167,7 @@ namespace ESFA.DAS.Feedback.Employer.IntegrationTests
         }
 
         [Test, Order(3)]
-        public async Task InitialReminderEmailsSentCorrectly()
+        public async Task FirstRoundReminderEmailsSentCorrectly()
         {
             //Assign
             await _dbConnection.ExecuteAsync($@" 
@@ -210,7 +187,47 @@ namespace ESFA.DAS.Feedback.Employer.IntegrationTests
         }
 
         [Test, Order(4)]
-        public async Task AdditionalInviteEmailsSentCorrectly()
+        public async Task SomeApprenticeshipsChangeProvider()
+        {
+            //Assign
+            SetUpApiReturn(3);
+            _accountApiClientMock.Setup(x => x.GetAccountUsers(It.IsAny<long>())).ReturnsAsync(accountApiClientReturn);
+            _providerApiClientMock.Setup(x => x.FindAll()).Returns(providerApiClientReturn);
+            _commitmentApiClientMock.Setup(x => x.GetEmployerApprenticeships(It.IsAny<long>()))
+                .ReturnsAsync(commitmentApiClientReturn);
+            _commitmentApiClientMock.Setup(x => x.GetAllEmployerAccountIds()).ReturnsAsync(new long[] { 1 });
+            await _dbEmployerFeedbackRepository.ResetFeedback();
+            var expectedInvites = new List<EmployerSurveyInvite>
+            {
+                new EmployerSurveyInvite {UserRef = user1Guid, EmailAddress = "Test@test.com", FirstName = "Master", AccountId = 2, Ukprn = 3},
+                new EmployerSurveyInvite {UserRef = user2Guid, EmailAddress = "TheBestThereEverWas@90sReference.com", FirstName = "Flash", AccountId = 2, Ukprn = 3},
+            };
+            _notificationsApiClientMock = new Mock<INotificationsApi>();
+
+            //Act
+            var result = employerFeedbackDataRefresh.GetRefreshData();
+            foreach (var x in result)
+            {
+                await helper.SaveMessageToDatabase(x);
+            }
+
+            //Assert
+            var invites = await _dbEmployerFeedbackRepository.GetEmployerUsersToBeSentInvite();
+            invites.Count().Should().Be(2);
+            var invitesList = invites.OrderBy(x => x.UserRef).ThenBy(x => x.AccountId).ThenBy(x => x.Ukprn).ToList();
+            for (int i = 0; i < invitesList.Count(); i++)
+            {
+                invitesList[i].UserRef.Should().Be(expectedInvites[i].UserRef);
+                invitesList[i].EmailAddress.Should().Be(expectedInvites[i].EmailAddress);
+                invitesList[i].FirstName.Should().Be(expectedInvites[i].FirstName);
+                invitesList[i].AccountId.Should().Be(expectedInvites[i].AccountId);
+                invitesList[i].Ukprn.Should().Be(expectedInvites[i].Ukprn);
+                invitesList[i].Should().NotBeNull();
+            }
+        }
+
+        [Test, Order(5)]
+        public async Task SecondRoundInviteEmailsSentCorrectly()
         {
             //Assign
             await _dbConnection.ExecuteAsync($@" 
@@ -232,8 +249,8 @@ namespace ESFA.DAS.Feedback.Employer.IntegrationTests
             _notificationsApiClientMock.Verify(x => x.SendEmail(It.IsAny<Email>()), Times.Exactly(2));
         }
 
-        [Test, Order(5)]
-        public async Task AdditionalReminderEmailsSentCorrectly()
+        [Test, Order(6)]
+        public async Task SecondRoundReminderEmailsSentCorrectly()
         {
             //Assign
             await _dbConnection.ExecuteAsync($@" 
@@ -252,6 +269,123 @@ namespace ESFA.DAS.Feedback.Employer.IntegrationTests
             _notificationsApiClientMock.Verify(x => x.SendEmail(It.IsAny<Email>()), Times.Exactly(2));
         }
 
+        [Test,Order(7)]
+        public async Task ThirdRoundInviteEmailsSentCorrectly()
+        {
+            await _dbConnection.ExecuteAsync($@" 
+                UPDATE EmployerSurveyHistory
+                SET SentDate = @newSentDate
+                WHERE EmailType = 1 AND UniqueSurveyCode IN (SELECT UniqueSurveyCode FROM EmployerSurveyCodes WHERE UserRef IN @userRefs)",
+                new { newSentDate = DateTime.Now - TimeSpan.FromDays(91), userRefs = new Guid[] { user1Guid, user2Guid } });
+            _notificationsApiClientMock = new Mock<INotificationsApi>();
+            employerSurveyInviteEmailer = new EmployerSurveyInviteEmailer(_dbEmployerFeedbackRepository,
+                _notificationsApiClientMock.Object, options, _surveyLoggerMock.Object);
 
+            //Act
+            var newCodesRequired =
+                await _dbEmployerFeedbackRepository.GetEmployerInvitesForNextCycleAsync(options.Value.InviteCycleDays);
+            await _dbEmployerFeedbackRepository.InsertNewSurveyInviteCodes(newCodesRequired);
+            await employerSurveyInviteEmailer.SendEmailsAsync();
+
+            //Assert
+            _notificationsApiClientMock.Verify(x => x.SendEmail(It.IsAny<Email>()), Times.Exactly(2));
+        }
+
+        [Test, Order(8)]
+        public async Task CurrentUsersLeftCompanyNewPersonJoins()
+        {
+            //Assign
+            SetUpApiReturn(3);
+            accountApiClientReturn = new List<TeamMemberViewModel>
+            {
+                new TeamMemberViewModel
+                {
+                    Email = "InWestPhiladelphiaBornAndRaised@PlaygroundDayz.com", Name = "Fresh Prince",
+                    UserRef = new Guid("cccccccc-cccc-cccc-cccc-cccccccccccc").ToString(), CanReceiveNotifications = true
+                }
+            };
+            _accountApiClientMock.Setup(x => x.GetAccountUsers(It.IsAny<long>())).ReturnsAsync(accountApiClientReturn);
+            _providerApiClientMock.Setup(x => x.FindAll()).Returns(providerApiClientReturn);
+            _commitmentApiClientMock.Setup(x => x.GetEmployerApprenticeships(It.IsAny<long>()))
+                .ReturnsAsync(commitmentApiClientReturn);
+            _commitmentApiClientMock.Setup(x => x.GetAllEmployerAccountIds()).ReturnsAsync(new long[] { 1 });
+            await _dbEmployerFeedbackRepository.ResetFeedback();
+            var expectedInvites = new List<EmployerSurveyInvite>
+            {
+                new EmployerSurveyInvite {UserRef = new Guid("cccccccc-cccc-cccc-cccc-cccccccccccc"), EmailAddress = "InWestPhiladelphiaBornAndRaised@PlaygroundDayz.com", FirstName = "Fresh", AccountId = 1, Ukprn = 1},
+                new EmployerSurveyInvite {UserRef = new Guid("cccccccc-cccc-cccc-cccc-cccccccccccc"), EmailAddress = "InWestPhiladelphiaBornAndRaised@PlaygroundDayz.com", FirstName = "Fresh", AccountId = 2, Ukprn = 1},
+                new EmployerSurveyInvite {UserRef = new Guid("cccccccc-cccc-cccc-cccc-cccccccccccc"), EmailAddress = "InWestPhiladelphiaBornAndRaised@PlaygroundDayz.com", FirstName = "Fresh", AccountId = 2, Ukprn = 3},
+            };
+            _notificationsApiClientMock = new Mock<INotificationsApi>();
+
+            //Act
+            var result = employerFeedbackDataRefresh.GetRefreshData();
+            foreach (var x in result)
+            {
+                await helper.SaveMessageToDatabase(x);
+            }
+
+            //Assert
+            var invites = await _dbEmployerFeedbackRepository.GetEmployerUsersToBeSentInvite();
+            invites.Count().Should().Be(3);
+            var invitesList = invites.OrderBy(x => x.UserRef).ThenBy(x => x.AccountId).ThenBy(x => x.Ukprn).ToList();
+            for (int i = 0; i < invitesList.Count(); i++)
+            {
+                invitesList[i].UserRef.Should().Be(expectedInvites[i].UserRef);
+                invitesList[i].EmailAddress.Should().Be(expectedInvites[i].EmailAddress);
+                invitesList[i].FirstName.Should().Be(expectedInvites[i].FirstName);
+                invitesList[i].AccountId.Should().Be(expectedInvites[i].AccountId);
+                invitesList[i].Ukprn.Should().Be(expectedInvites[i].Ukprn);
+                invitesList[i].Should().NotBeNull();
+            }
+        }
+
+        [Test, Order(9)]
+        public async Task ThirdRoundReminderEmailsSentCorrectly()
+        {
+            //Assign
+            await _dbConnection.ExecuteAsync($@" 
+                UPDATE EmployerSurveyHistory
+                SET SentDate = DATEADD(DAY,-15,SentDate)
+                WHERE UniqueSurveyCode IN (SELECT UniqueSurveyCode FROM EmployerSurveyCodes WHERE UserRef IN @userRefs)",
+                new { userRefs = new Guid[] { new Guid("cccccccc-cccc-cccc-cccc-cccccccccccc") } });
+            _notificationsApiClientMock = new Mock<INotificationsApi>();
+            employerSurveyReminderEmailer = new EmployerSurveyReminderEmailer(_dbEmployerFeedbackRepository,
+                _notificationsApiClientMock.Object, options, _surveyLoggerMock.Object);
+
+            //Act
+            await employerSurveyReminderEmailer.SendEmailsAsync();
+
+            //Assert
+            _notificationsApiClientMock.Verify(x => x.SendEmail(It.IsAny<Email>()), Times.Exactly(0));
+        }
+
+        private void SetUpApiReturn(long changeableUkprn)
+        {
+            providerApiClientReturn = new ProviderSummary[]
+            {
+                new ProviderSummary {Ukprn = 1, ProviderName = "Test Academy"},
+                new ProviderSummary {Ukprn = changeableUkprn, ProviderName = "Worst School"},
+            };
+
+            commitmentApiClientReturn = new List<Apprenticeship>
+            {
+                new Apprenticeship
+                {
+                    HasHadDataLockSuccess = true, PaymentStatus = PaymentStatus.Active, ULN = "1",
+                    EmployerAccountId = 1, ProviderId = 1, ProviderName = "Test Academy"
+                },
+                new Apprenticeship
+                {
+                    HasHadDataLockSuccess = true, PaymentStatus = PaymentStatus.Active, ULN = "2",
+                    EmployerAccountId = 2, ProviderId = 1, ProviderName = "Test Academy"
+                },
+                new Apprenticeship
+                {
+                    HasHadDataLockSuccess = true, PaymentStatus = PaymentStatus.Active, ULN = "3",
+                    EmployerAccountId = 2, ProviderId = changeableUkprn, ProviderName = "Worst School"
+                }
+            };
+        }
     }
 }

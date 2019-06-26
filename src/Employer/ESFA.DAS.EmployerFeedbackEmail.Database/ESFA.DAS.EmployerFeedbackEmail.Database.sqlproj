@@ -75,6 +75,7 @@
     <Build Include="Views\vw_EmployerSurveyInvites.sql" />
     <Build Include="Views\vw_FeedbackToSend.sql" />
     <Build Include="Tables\EmployerSurveyHistory.sql" />
+    <Build Include="Views\vw_EmployerSurveyHistoryComplete.sql" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Tables\EmployerSurveyCodes.sql" />

@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
 using System.Threading.Tasks;
+using ESFA.DAS.Feedback.Employer.Emailer;
 
 namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
 {
@@ -15,20 +16,12 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
         public static async Task Run(
             [ServiceBusTrigger("data-refresh-messages", Connection = "ServiceBusConnection")]string myQueueItem, 
             ILogger log, 
-            [Inject] IStoreEmployerEmailDetails dbRepository)
+            [Inject] DataRefreshMessageHelper helper)
         {
             EmployerFeedbackRefreshMessage message = JsonConvert.DeserializeObject<EmployerFeedbackRefreshMessage>(myQueueItem);
             try
             {
-                log.LogInformation("Starting upserting users");
-                await dbRepository.UpsertIntoUsers(message.User);
-                log.LogInformation("Done upserting users\nStarting upserting providers");
-                await dbRepository.UpsertIntoProvidersAsync(message.Provider);
-                log.LogInformation("Done upserting providers\nStarting upserting feedback");
-                await dbRepository.UpsertIntoFeedbackAsync(message.User, message.Provider);
-                log.LogInformation("Done upserting feedback\nStarting code generation");
-                await dbRepository.GetOrCreateSurveyCode(message.User.UserRef, message.Provider.Ukprn,message.User.AccountId);
-                log.LogInformation("Done code generation\nCommiting transaction");
+                await helper.SaveMessageToDatabase(message);
             }
             catch(Exception ex)
             {
@@ -36,5 +29,7 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
                 log.LogError(ex.StackTrace);
             }
         }
+
+        
     }
 }
