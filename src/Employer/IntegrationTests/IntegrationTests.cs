@@ -10,12 +10,12 @@ using ESFA.DAS.Feedback.Employer.Emailer;
 using ESFA.DAS.Feedback.Employer.Emailer.Configuration;
 using ESFA.DAS.ProvideFeedback.Data;
 using ESFA.DAS.ProvideFeedback.Domain.Entities;
-using ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer;
 using FluentAssertions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
+using NUnit.Framework;
 using SFA.DAS.Apprenticeships.Api.Types.Providers;
 using SFA.DAS.Commitments.Api.Client.Interfaces;
 using SFA.DAS.Commitments.Api.Types.Apprenticeship;
@@ -25,40 +25,36 @@ using SFA.DAS.EAS.Account.Api.Types;
 using SFA.DAS.Notifications.Api.Client;
 using SFA.DAS.Notifications.Api.Types;
 using SFA.DAS.Providers.Api.Client;
-using NUnit.Framework;
 
-
-namespace ESFA.DAS.Feedback.Employer.IntegrationTests
+namespace IntegrationTests
 {
     public class IntegrationTest_NeedsToBeRanAsOne
     {
-        private Mock<IProviderApiClient> _providerApiClientMock;
-        private Mock<IEmployerCommitmentApi> _commitmentApiClientMock;
-        private Mock<IAccountApiClient> _accountApiClientMock;
+        private readonly Mock<IProviderApiClient> _providerApiClientMock;
+        private readonly Mock<IEmployerCommitmentApi> _commitmentApiClientMock;
+        private readonly Mock<IAccountApiClient> _accountApiClientMock;
         private Mock<INotificationsApi> _notificationsApiClientMock;
 
-        private ProviderSummary[] providerApiClientReturn;
-        private List<Apprenticeship> commitmentApiClientReturn;
-        private ICollection<TeamMemberViewModel> accountApiClientReturn;
+        private ProviderSummary[] _providerApiClientReturn;
+        private List<Apprenticeship> _commitmentApiClientReturn;
+        private ICollection<TeamMemberViewModel> _accountApiClientReturn;
 
-        private Mock<ILogger<EmployerSurveyEmailer>> _surveyLoggerMock;
+        private readonly Mock<ILogger<EmployerSurveyEmailer>> _surveyLoggerMock;
 
-        private readonly IConfigurationRoot _configuration;
+        private readonly IStoreEmployerEmailDetails _dbEmployerFeedbackRepository;
+        private readonly EmployerFeedbackDataRefresh _employerFeedbackDataRefresh;
+        private EmployerSurveyInviteEmailer _employerSurveyInviteEmailer;
+        private EmployerSurveyReminderEmailer _employerSurveyReminderEmailer;
+        private readonly DataRefreshMessageHelper _helper;
+        private readonly IOptions<EmailSettings> _options;
+        private readonly DbConnection _dbConnection;
 
-        private IStoreEmployerEmailDetails _dbEmployerFeedbackRepository;
-        private EmployerFeedbackDataRefresh employerFeedbackDataRefresh;
-        private EmployerSurveyInviteEmailer employerSurveyInviteEmailer;
-        private EmployerSurveyReminderEmailer employerSurveyReminderEmailer;
-        private DataRefreshMessageHelper helper;
-        private IOptions<EmailSettings> options;
-        private DbConnection _dbConnection;
-
-        private Guid user1Guid;
-        private Guid user2Guid;
+        private readonly Guid _user1Guid;
+        private readonly Guid _user2Guid;
 
         public IntegrationTest_NeedsToBeRanAsOne()
         {
-            _configuration = new ConfigurationBuilder()
+            var configuration = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("local.settings.json", optional: true, reloadOnChange: true)
                 .AddEnvironmentVariables()
@@ -70,42 +66,42 @@ namespace ESFA.DAS.Feedback.Employer.IntegrationTests
             _notificationsApiClientMock = new Mock<INotificationsApi>();
             _surveyLoggerMock = new Mock<ILogger<EmployerSurveyEmailer>>();
 
-            options = new OptionsWrapper<EmailSettings>(new EmailSettings
+            _options = new OptionsWrapper<EmailSettings>(new EmailSettings
             {
                 BatchSize = 5,
                 FeedbackSiteBaseUrl = "test.com",
                 InviteCycleDays = 90,
                 ReminderDays = 14
             });
-            _dbConnection = new SqlConnection(_configuration.GetConnectionString("EmployerEmailStoreConnection"));
+            _dbConnection = new SqlConnection(configuration.GetConnectionString("EmployerEmailStoreConnection"));
             _dbEmployerFeedbackRepository = new EmployerFeedbackRepository(_dbConnection);
-            employerFeedbackDataRefresh = new EmployerFeedbackDataRefresh(_providerApiClientMock.Object,
+            _employerFeedbackDataRefresh = new EmployerFeedbackDataRefresh(_providerApiClientMock.Object,
                 _commitmentApiClientMock.Object, _accountApiClientMock.Object);
-            helper = new DataRefreshMessageHelper(new Mock<ILogger>().Object,_dbEmployerFeedbackRepository);
+            _helper = new DataRefreshMessageHelper(new Mock<ILogger>().Object,_dbEmployerFeedbackRepository);
             
             SetUpApiReturn(2);
 
-            user1Guid = Guid.Parse("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa");
-            user2Guid = Guid.Parse("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb");
+            _user1Guid = Guid.Parse("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa");
+            _user2Guid = Guid.Parse("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb");
 
-            accountApiClientReturn = new List<TeamMemberViewModel>
+            _accountApiClientReturn = new List<TeamMemberViewModel>
             {
                 new TeamMemberViewModel
                 {
-                    Email = "Test@test.com", Name = "Master Chef", UserRef = user1Guid.ToString(),
+                    Email = "Test@test.com", Name = "Master Chef", UserRef = _user1Guid.ToString(),
                     CanReceiveNotifications = true
                 },
                 new TeamMemberViewModel
                 {
                     Email = "TheBestThereEverWas@90sReference.com", Name = "Flash Ketchup",
-                    UserRef = user2Guid.ToString(), CanReceiveNotifications = true
+                    UserRef = _user2Guid.ToString(), CanReceiveNotifications = true
                 }
             };
 
-            _accountApiClientMock.Setup(x => x.GetAccountUsers(It.IsAny<long>())).ReturnsAsync(accountApiClientReturn);
-            _providerApiClientMock.Setup(x => x.FindAll()).Returns(providerApiClientReturn);
+            _accountApiClientMock.Setup(x => x.GetAccountUsers(It.IsAny<long>())).ReturnsAsync(_accountApiClientReturn);
+            _providerApiClientMock.Setup(x => x.FindAll()).Returns(_providerApiClientReturn);
             _commitmentApiClientMock.Setup(x => x.GetEmployerApprenticeships(It.IsAny<long>()))
-                .ReturnsAsync(commitmentApiClientReturn);
+                .ReturnsAsync(_commitmentApiClientReturn);
             _commitmentApiClientMock.Setup(x => x.GetAllEmployerAccountIds()).ReturnsAsync(new long[] {1});
 
             
@@ -116,24 +112,24 @@ namespace ESFA.DAS.Feedback.Employer.IntegrationTests
         {
             //Assert
             await _dbEmployerFeedbackRepository.ResetFeedback();
-            await _dbEmployerFeedbackRepository.ClearSurveyCodes(user1Guid);
-            await _dbEmployerFeedbackRepository.ClearSurveyCodes(user2Guid);
+            await _dbEmployerFeedbackRepository.ClearSurveyCodes(_user1Guid);
+            await _dbEmployerFeedbackRepository.ClearSurveyCodes(_user2Guid);
             var expectedInvites = new List<EmployerSurveyInvite>
             {
-                new EmployerSurveyInvite {UserRef = user1Guid, EmailAddress = "Test@test.com", FirstName = "Master", AccountId = 1, Ukprn = 1},
-                new EmployerSurveyInvite {UserRef = user1Guid, EmailAddress = "Test@test.com", FirstName = "Master", AccountId = 2, Ukprn = 1},
-                new EmployerSurveyInvite {UserRef = user1Guid, EmailAddress = "Test@test.com", FirstName = "Master", AccountId = 2, Ukprn = 2},
-                new EmployerSurveyInvite {UserRef = user2Guid, EmailAddress = "TheBestThereEverWas@90sReference.com", FirstName = "Flash", AccountId = 1, Ukprn = 1},
-                new EmployerSurveyInvite {UserRef = user2Guid, EmailAddress = "TheBestThereEverWas@90sReference.com", FirstName = "Flash", AccountId = 2, Ukprn = 1},
-                new EmployerSurveyInvite {UserRef = user2Guid, EmailAddress = "TheBestThereEverWas@90sReference.com", FirstName = "Flash", AccountId = 2, Ukprn = 2},
+                new EmployerSurveyInvite {UserRef = _user1Guid, EmailAddress = "Test@test.com", FirstName = "Master", AccountId = 1, Ukprn = 1},
+                new EmployerSurveyInvite {UserRef = _user1Guid, EmailAddress = "Test@test.com", FirstName = "Master", AccountId = 2, Ukprn = 1},
+                new EmployerSurveyInvite {UserRef = _user1Guid, EmailAddress = "Test@test.com", FirstName = "Master", AccountId = 2, Ukprn = 2},
+                new EmployerSurveyInvite {UserRef = _user2Guid, EmailAddress = "TheBestThereEverWas@90sReference.com", FirstName = "Flash", AccountId = 1, Ukprn = 1},
+                new EmployerSurveyInvite {UserRef = _user2Guid, EmailAddress = "TheBestThereEverWas@90sReference.com", FirstName = "Flash", AccountId = 2, Ukprn = 1},
+                new EmployerSurveyInvite {UserRef = _user2Guid, EmailAddress = "TheBestThereEverWas@90sReference.com", FirstName = "Flash", AccountId = 2, Ukprn = 2},
             };
             _notificationsApiClientMock = new Mock<INotificationsApi>();
 
             //Act
-            var result = employerFeedbackDataRefresh.GetRefreshData();
+            var result = _employerFeedbackDataRefresh.GetRefreshData();
             foreach (var x in result)
             {
-                await helper.SaveMessageToDatabase(x);
+                await _helper.SaveMessageToDatabase(x);
             }
 
             //Assert
@@ -156,11 +152,11 @@ namespace ESFA.DAS.Feedback.Employer.IntegrationTests
         {
             //Assign
             _notificationsApiClientMock = new Mock<INotificationsApi>();
-            employerSurveyInviteEmailer = new EmployerSurveyInviteEmailer(_dbEmployerFeedbackRepository,
-                _notificationsApiClientMock.Object, options, _surveyLoggerMock.Object);
+            _employerSurveyInviteEmailer = new EmployerSurveyInviteEmailer(_dbEmployerFeedbackRepository,
+                _notificationsApiClientMock.Object, _options, _surveyLoggerMock.Object);
 
             //Act
-            await employerSurveyInviteEmailer.SendEmailsAsync();
+            await _employerSurveyInviteEmailer.SendEmailsAsync();
 
             //Assert
             _notificationsApiClientMock.Verify(x => x.SendEmail(It.IsAny<Email>()), Times.Exactly(2));
@@ -174,13 +170,13 @@ namespace ESFA.DAS.Feedback.Employer.IntegrationTests
                 UPDATE EmployerSurveyHistory
                 SET SentDate = @newSentDate
                 WHERE UniqueSurveyCode IN (SELECT UniqueSurveyCode FROM EmployerSurveyCodes WHERE UserRef IN @userRefs)",
-                new {newSentDate = DateTime.Now - TimeSpan.FromDays(15), userRefs = new Guid[] {user1Guid, user2Guid}});
+                new {newSentDate = DateTime.Now - TimeSpan.FromDays(15), userRefs = new[] {_user1Guid, _user2Guid}});
             _notificationsApiClientMock = new Mock<INotificationsApi>();
-            employerSurveyReminderEmailer = new EmployerSurveyReminderEmailer(_dbEmployerFeedbackRepository,
-                _notificationsApiClientMock.Object, options, _surveyLoggerMock.Object);
+            _employerSurveyReminderEmailer = new EmployerSurveyReminderEmailer(_dbEmployerFeedbackRepository,
+                _notificationsApiClientMock.Object, _options, _surveyLoggerMock.Object);
 
             //Act
-            await employerSurveyReminderEmailer.SendEmailsAsync();
+            await _employerSurveyReminderEmailer.SendEmailsAsync();
 
             //Assert
             _notificationsApiClientMock.Verify(x => x.SendEmail(It.IsAny<Email>()), Times.Exactly(2));
@@ -191,24 +187,24 @@ namespace ESFA.DAS.Feedback.Employer.IntegrationTests
         {
             //Assign
             SetUpApiReturn(3);
-            _accountApiClientMock.Setup(x => x.GetAccountUsers(It.IsAny<long>())).ReturnsAsync(accountApiClientReturn);
-            _providerApiClientMock.Setup(x => x.FindAll()).Returns(providerApiClientReturn);
+            _accountApiClientMock.Setup(x => x.GetAccountUsers(It.IsAny<long>())).ReturnsAsync(_accountApiClientReturn);
+            _providerApiClientMock.Setup(x => x.FindAll()).Returns(_providerApiClientReturn);
             _commitmentApiClientMock.Setup(x => x.GetEmployerApprenticeships(It.IsAny<long>()))
-                .ReturnsAsync(commitmentApiClientReturn);
+                .ReturnsAsync(_commitmentApiClientReturn);
             _commitmentApiClientMock.Setup(x => x.GetAllEmployerAccountIds()).ReturnsAsync(new long[] { 1 });
             await _dbEmployerFeedbackRepository.ResetFeedback();
             var expectedInvites = new List<EmployerSurveyInvite>
             {
-                new EmployerSurveyInvite {UserRef = user1Guid, EmailAddress = "Test@test.com", FirstName = "Master", AccountId = 2, Ukprn = 3},
-                new EmployerSurveyInvite {UserRef = user2Guid, EmailAddress = "TheBestThereEverWas@90sReference.com", FirstName = "Flash", AccountId = 2, Ukprn = 3},
+                new EmployerSurveyInvite {UserRef = _user1Guid, EmailAddress = "Test@test.com", FirstName = "Master", AccountId = 2, Ukprn = 3},
+                new EmployerSurveyInvite {UserRef = _user2Guid, EmailAddress = "TheBestThereEverWas@90sReference.com", FirstName = "Flash", AccountId = 2, Ukprn = 3},
             };
             _notificationsApiClientMock = new Mock<INotificationsApi>();
 
             //Act
-            var result = employerFeedbackDataRefresh.GetRefreshData();
+            var result = _employerFeedbackDataRefresh.GetRefreshData();
             foreach (var x in result)
             {
-                await helper.SaveMessageToDatabase(x);
+                await _helper.SaveMessageToDatabase(x);
             }
 
             //Assert
@@ -234,16 +230,16 @@ namespace ESFA.DAS.Feedback.Employer.IntegrationTests
                 UPDATE EmployerSurveyHistory
                 SET SentDate = @newSentDate
                 WHERE EmailType = 1 AND UniqueSurveyCode IN (SELECT UniqueSurveyCode FROM EmployerSurveyCodes WHERE UserRef IN @userRefs)",
-                new {newSentDate = DateTime.Now - TimeSpan.FromDays(91), userRefs = new Guid[] {user1Guid, user2Guid}});
+                new {newSentDate = DateTime.Now - TimeSpan.FromDays(91), userRefs = new[] {_user1Guid, _user2Guid}});
             _notificationsApiClientMock = new Mock<INotificationsApi>();
-            employerSurveyInviteEmailer = new EmployerSurveyInviteEmailer(_dbEmployerFeedbackRepository,
-                _notificationsApiClientMock.Object, options, _surveyLoggerMock.Object);
+            _employerSurveyInviteEmailer = new EmployerSurveyInviteEmailer(_dbEmployerFeedbackRepository,
+                _notificationsApiClientMock.Object, _options, _surveyLoggerMock.Object);
 
             //Act
             var newCodesRequired =
-                await _dbEmployerFeedbackRepository.GetEmployerInvitesForNextCycleAsync(options.Value.InviteCycleDays);
+                await _dbEmployerFeedbackRepository.GetEmployerInvitesForNextCycleAsync(_options.Value.InviteCycleDays);
             await _dbEmployerFeedbackRepository.InsertNewSurveyInviteCodes(newCodesRequired);
-            await employerSurveyInviteEmailer.SendEmailsAsync();
+            await _employerSurveyInviteEmailer.SendEmailsAsync();
 
             //Assert
             _notificationsApiClientMock.Verify(x => x.SendEmail(It.IsAny<Email>()), Times.Exactly(2));
@@ -257,13 +253,13 @@ namespace ESFA.DAS.Feedback.Employer.IntegrationTests
                 UPDATE EmployerSurveyHistory
                 SET SentDate = DATEADD(DAY,-15,SentDate)
                 WHERE UniqueSurveyCode IN (SELECT UniqueSurveyCode FROM EmployerSurveyCodes WHERE UserRef IN @userRefs)",
-                new { userRefs = new Guid[] { user1Guid, user2Guid } });
+                new { userRefs = new[] { _user1Guid, _user2Guid } });
             _notificationsApiClientMock = new Mock<INotificationsApi>();
-            employerSurveyReminderEmailer = new EmployerSurveyReminderEmailer(_dbEmployerFeedbackRepository,
-                _notificationsApiClientMock.Object, options, _surveyLoggerMock.Object);
+            _employerSurveyReminderEmailer = new EmployerSurveyReminderEmailer(_dbEmployerFeedbackRepository,
+                _notificationsApiClientMock.Object, _options, _surveyLoggerMock.Object);
 
             //Act
-            await employerSurveyReminderEmailer.SendEmailsAsync();
+            await _employerSurveyReminderEmailer.SendEmailsAsync();
 
             //Assert
             _notificationsApiClientMock.Verify(x => x.SendEmail(It.IsAny<Email>()), Times.Exactly(2));
@@ -276,16 +272,16 @@ namespace ESFA.DAS.Feedback.Employer.IntegrationTests
                 UPDATE EmployerSurveyHistory
                 SET SentDate = @newSentDate
                 WHERE EmailType = 1 AND UniqueSurveyCode IN (SELECT UniqueSurveyCode FROM EmployerSurveyCodes WHERE UserRef IN @userRefs)",
-                new { newSentDate = DateTime.Now - TimeSpan.FromDays(91), userRefs = new Guid[] { user1Guid, user2Guid } });
+                new { newSentDate = DateTime.Now - TimeSpan.FromDays(91), userRefs = new[] { _user1Guid, _user2Guid } });
             _notificationsApiClientMock = new Mock<INotificationsApi>();
-            employerSurveyInviteEmailer = new EmployerSurveyInviteEmailer(_dbEmployerFeedbackRepository,
-                _notificationsApiClientMock.Object, options, _surveyLoggerMock.Object);
+            _employerSurveyInviteEmailer = new EmployerSurveyInviteEmailer(_dbEmployerFeedbackRepository,
+                _notificationsApiClientMock.Object, _options, _surveyLoggerMock.Object);
 
             //Act
             var newCodesRequired =
-                await _dbEmployerFeedbackRepository.GetEmployerInvitesForNextCycleAsync(options.Value.InviteCycleDays);
+                await _dbEmployerFeedbackRepository.GetEmployerInvitesForNextCycleAsync(_options.Value.InviteCycleDays);
             await _dbEmployerFeedbackRepository.InsertNewSurveyInviteCodes(newCodesRequired);
-            await employerSurveyInviteEmailer.SendEmailsAsync();
+            await _employerSurveyInviteEmailer.SendEmailsAsync();
 
             //Assert
             _notificationsApiClientMock.Verify(x => x.SendEmail(It.IsAny<Email>()), Times.Exactly(2));
@@ -296,7 +292,7 @@ namespace ESFA.DAS.Feedback.Employer.IntegrationTests
         {
             //Assign
             SetUpApiReturn(3);
-            accountApiClientReturn = new List<TeamMemberViewModel>
+            _accountApiClientReturn = new List<TeamMemberViewModel>
             {
                 new TeamMemberViewModel
                 {
@@ -304,10 +300,10 @@ namespace ESFA.DAS.Feedback.Employer.IntegrationTests
                     UserRef = new Guid("cccccccc-cccc-cccc-cccc-cccccccccccc").ToString(), CanReceiveNotifications = true
                 }
             };
-            _accountApiClientMock.Setup(x => x.GetAccountUsers(It.IsAny<long>())).ReturnsAsync(accountApiClientReturn);
-            _providerApiClientMock.Setup(x => x.FindAll()).Returns(providerApiClientReturn);
+            _accountApiClientMock.Setup(x => x.GetAccountUsers(It.IsAny<long>())).ReturnsAsync(_accountApiClientReturn);
+            _providerApiClientMock.Setup(x => x.FindAll()).Returns(_providerApiClientReturn);
             _commitmentApiClientMock.Setup(x => x.GetEmployerApprenticeships(It.IsAny<long>()))
-                .ReturnsAsync(commitmentApiClientReturn);
+                .ReturnsAsync(_commitmentApiClientReturn);
             _commitmentApiClientMock.Setup(x => x.GetAllEmployerAccountIds()).ReturnsAsync(new long[] { 1 });
             await _dbEmployerFeedbackRepository.ResetFeedback();
             var expectedInvites = new List<EmployerSurveyInvite>
@@ -319,10 +315,10 @@ namespace ESFA.DAS.Feedback.Employer.IntegrationTests
             _notificationsApiClientMock = new Mock<INotificationsApi>();
 
             //Act
-            var result = employerFeedbackDataRefresh.GetRefreshData();
+            var result = _employerFeedbackDataRefresh.GetRefreshData();
             foreach (var x in result)
             {
-                await helper.SaveMessageToDatabase(x);
+                await _helper.SaveMessageToDatabase(x);
             }
 
             //Assert
@@ -348,13 +344,13 @@ namespace ESFA.DAS.Feedback.Employer.IntegrationTests
                 UPDATE EmployerSurveyHistory
                 SET SentDate = DATEADD(DAY,-15,SentDate)
                 WHERE UniqueSurveyCode IN (SELECT UniqueSurveyCode FROM EmployerSurveyCodes WHERE UserRef IN @userRefs)",
-                new { userRefs = new Guid[] { new Guid("cccccccc-cccc-cccc-cccc-cccccccccccc") } });
+                new { userRefs = new[] { new Guid("cccccccc-cccc-cccc-cccc-cccccccccccc") } });
             _notificationsApiClientMock = new Mock<INotificationsApi>();
-            employerSurveyReminderEmailer = new EmployerSurveyReminderEmailer(_dbEmployerFeedbackRepository,
-                _notificationsApiClientMock.Object, options, _surveyLoggerMock.Object);
+            _employerSurveyReminderEmailer = new EmployerSurveyReminderEmailer(_dbEmployerFeedbackRepository,
+                _notificationsApiClientMock.Object, _options, _surveyLoggerMock.Object);
 
             //Act
-            await employerSurveyReminderEmailer.SendEmailsAsync();
+            await _employerSurveyReminderEmailer.SendEmailsAsync();
 
             //Assert
             _notificationsApiClientMock.Verify(x => x.SendEmail(It.IsAny<Email>()), Times.Exactly(0));
@@ -362,13 +358,13 @@ namespace ESFA.DAS.Feedback.Employer.IntegrationTests
 
         private void SetUpApiReturn(long changeableUkprn)
         {
-            providerApiClientReturn = new ProviderSummary[]
+            _providerApiClientReturn = new[]
             {
                 new ProviderSummary {Ukprn = 1, ProviderName = "Test Academy"},
                 new ProviderSummary {Ukprn = changeableUkprn, ProviderName = "Worst School"},
             };
 
-            commitmentApiClientReturn = new List<Apprenticeship>
+            _commitmentApiClientReturn = new List<Apprenticeship>
             {
                 new Apprenticeship
                 {

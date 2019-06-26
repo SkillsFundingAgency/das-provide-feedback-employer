@@ -119,20 +119,20 @@ namespace ESFA.DAS.ProvideFeedback.Data
             await _dbConnection.ExecuteAsync(sql, newCodesToCreate);
         }
 
-        public async Task<Guid> GetOrCreateSurveyCode(Guid UserRefParam, long UkprnParam, long AccountIdParam)
+        public async Task<Guid> GetOrCreateSurveyCode(Guid UserRef, long Ukprn, long AccountId)
         {
             var sql = $@"
                         SELECT UniqueSurveyCode FROM {EmployerSurveyCodes}
-                        WHERE UserRef = @UserRefParam AND Ukprn = @UkprnParam AND AccountId = @AccountIdParam";
-            var result = await _dbConnection.QueryAsync<Guid>(sql,new{UserRefParam,UkprnParam, AccountIdParam });
-            if (result.Count() == 0)
+                        WHERE UserRef = @UserRef AND Ukprn = @Ukprn AND AccountId = @AccountId";
+            var result = await _dbConnection.QueryAsync<Guid>(sql,new{UserRef,Ukprn, AccountId });
+            if (!result.Any())
             {
                 var newCode = new
                 {
                     UniqueSurveyCode = Guid.NewGuid(),
-                    UserRef = UserRefParam,
-                    Ukprn = UkprnParam,
-                    AccountId = AccountIdParam
+                    UserRef,
+                    Ukprn,
+                    AccountId
                 };
 
                 var sql2 = $@"
@@ -142,10 +142,7 @@ namespace ESFA.DAS.ProvideFeedback.Data
                 await _dbConnection.ExecuteAsync(sql2, newCode);
                 return newCode.UniqueSurveyCode;
             }
-            else
-            {
-                return result.Single();
-            }
+            return result.Single();
         }
 
 
