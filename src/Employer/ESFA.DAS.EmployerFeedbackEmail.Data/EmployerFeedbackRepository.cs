@@ -105,24 +105,28 @@ namespace ESFA.DAS.ProvideFeedback.Data
                 return new
                 {
                     UniqueSurveyCode = Guid.NewGuid(),
-                    x.UserRef, 
-                    x.Ukprn,
-                    x.AccountId
+                    FeedbackId = GetFeedbackId(x.UserRef,x.Ukprn,x.AccountId).Result
                 };
             });
 
             var sql = $@"
                         INSERT INTO {EmployerSurveyCodes}
-                        VALUES(@UniqueSurveyCode, @UserRef, @Ukprn, @AccountId, NULL)";
+                        VALUES(@UniqueSurveyCode, @FeedbackId, NULL)";
 
             await _dbConnection.ExecuteAsync(sql, newCodesToCreate);
+        }
+
+        private async Task<long> GetFeedbackId(Guid UserRef, long Ukprn, long AccountId)
+        {
+            return await _dbConnection.QuerySingleAsync<long>($@"
+            SELECT FeedbackID FROM EmployerFeedback WHERE UserRef = @UserRef AND Ukprn = @Ukprn AND AccountId = @AccountID", new {UserRef,Ukprn,AccountId });
         }
 
         public async Task<Guid> GetOrCreateSurveyCode(Guid UserRef, long Ukprn, long AccountId)
         {
             var sql = $@"
                         SELECT UniqueSurveyCode FROM {EmployerSurveyCodes}
-                        WHERE UserRef = @UserRef AND Ukprn = @Ukprn AND AccountId = @AccountId";
+                        WHERE FeedbackId = (SELECT FeedbackId FROM EmployerFeedback WHERE UserRef = @UserRef AND Ukprn = @Ukprn AND AccountId = @AccountId)";
             var result = await _dbConnection.QueryAsync<Guid>(sql,new{UserRef,Ukprn, AccountId });
             if (result.Any())
             {
@@ -139,7 +143,7 @@ namespace ESFA.DAS.ProvideFeedback.Data
 
             var sql2 = $@"
                         INSERT INTO {EmployerSurveyCodes}
-                        VALUES(@UniqueSurveyCode, @UserRef, @Ukprn, @AccountId, NULL)";
+                        VALUES(@UniqueSurveyCode,(SELECT FeedbackId FROM EmployerFeedback WHERE UserRef = @UserRef AND Ukprn = @Ukprn AND AccountId = @AccountId), NULL)";
 
             await _dbConnection.ExecuteAsync(sql2, newCode);
             return newCode.UniqueSurveyCode;
@@ -199,8 +203,8 @@ namespace ESFA.DAS.ProvideFeedback.Data
         public async Task ClearSurveyCodes(Guid userRef)
         {
             await _dbConnection.ExecuteAsync($@"
-            DELETE FROM EmployerSurveyHistory where uniqueSurveyCode in (SELECT UniqueSurveyCode from EmployerSurveyCodes where FeedbackId = (SELECT FeedbackId FROM EmployerFeedback WHERE UserRef = @userRef))
-            DELETE FROM {EmployerSurveyCodes} where UserRef = @userRef", new{userRef});
+            DELETE FROM EmployerSurveyHistory where uniqueSurveyCode in (SELECT UniqueSurveyCode from EmployerSurveyCodes where FeedbackId in (SELECT FeedbackId FROM EmployerFeedback WHERE UserRef = @userRef))
+            DELETE FROM {EmployerSurveyCodes} where FeedbackId in (SELECT FeedbackId FROM EmployerFeedback WHERE UserRef = @userRef)", new{userRef});
         }
     }
 }

@@ -164,7 +164,7 @@ namespace IntegrationTests
             await _dbConnection.ExecuteAsync($@" 
                 UPDATE EmployerSurveyHistory
                 SET SentDate = @newSentDate
-                WHERE UniqueSurveyCode IN (SELECT UniqueSurveyCode FROM EmployerSurveyCodes WHERE UserRef IN @userRefs)",
+                WHERE UniqueSurveyCode IN (SELECT UniqueSurveyCode FROM EmployerSurveyCodes WHERE FeedbackId IN (SELECT FeedbackId FROM EmployerFeedback WHERE UserRef in @userRefs))",
                 new {newSentDate = DateTime.Now - TimeSpan.FromDays(15), userRefs = new[] {_user1Guid, _user2Guid}});
             _notificationsApiClientMock = new Mock<INotificationsApi>();
             _employerSurveyReminderEmailer = new EmployerSurveyReminderEmailer(_dbEmployerFeedbackRepository,
@@ -217,7 +217,7 @@ namespace IntegrationTests
             await _dbConnection.ExecuteAsync($@" 
                 UPDATE EmployerSurveyHistory
                 SET SentDate = @newSentDate
-                WHERE EmailType = 1 AND UniqueSurveyCode IN (SELECT UniqueSurveyCode FROM EmployerSurveyCodes WHERE UserRef IN @userRefs)",
+                WHERE EmailType = 1 AND UniqueSurveyCode IN (SELECT UniqueSurveyCode FROM EmployerSurveyCodes WHERE FeedbackId IN (SELECT FeedbackId FROM EmployerFeedback WHERE UserRef in @userRefs))",
                 new {newSentDate = DateTime.Now - TimeSpan.FromDays(91), userRefs = new[] {_user1Guid, _user2Guid}});
             _notificationsApiClientMock = new Mock<INotificationsApi>();
             _employerSurveyInviteEmailer = new EmployerSurveyInviteEmailer(_dbEmployerFeedbackRepository,
@@ -240,7 +240,7 @@ namespace IntegrationTests
             await _dbConnection.ExecuteAsync($@" 
                 UPDATE EmployerSurveyHistory
                 SET SentDate = DATEADD(DAY,-15,SentDate)
-                WHERE UniqueSurveyCode IN (SELECT UniqueSurveyCode FROM EmployerSurveyCodes WHERE UserRef IN @userRefs)",
+                WHERE UniqueSurveyCode IN (SELECT UniqueSurveyCode FROM EmployerSurveyCodes WHERE FeedbackId IN (SELECT FeedbackId FROM EmployerFeedback WHERE UserRef in @userRefs))",
                 new { userRefs = new[] { _user1Guid, _user2Guid } });
             _notificationsApiClientMock = new Mock<INotificationsApi>();
             _employerSurveyReminderEmailer = new EmployerSurveyReminderEmailer(_dbEmployerFeedbackRepository,
@@ -259,7 +259,7 @@ namespace IntegrationTests
             await _dbConnection.ExecuteAsync($@" 
                 UPDATE EmployerSurveyHistory
                 SET SentDate = @newSentDate
-                WHERE EmailType = 1 AND UniqueSurveyCode IN (SELECT UniqueSurveyCode FROM EmployerSurveyCodes WHERE UserRef IN @userRefs)",
+                WHERE EmailType = 1 AND UniqueSurveyCode IN (SELECT UniqueSurveyCode FROM EmployerSurveyCodes WHERE FeedbackId IN (SELECT FeedbackId FROM EmployerFeedback WHERE UserRef in @userRefs))",
                 new { newSentDate = DateTime.Now - TimeSpan.FromDays(91), userRefs = new[] { _user1Guid, _user2Guid } });
             _notificationsApiClientMock = new Mock<INotificationsApi>();
             _employerSurveyInviteEmailer = new EmployerSurveyInviteEmailer(_dbEmployerFeedbackRepository,
@@ -323,7 +323,7 @@ namespace IntegrationTests
             await _dbConnection.ExecuteAsync($@" 
                 UPDATE EmployerSurveyHistory
                 SET SentDate = DATEADD(DAY,-15,SentDate)
-                WHERE UniqueSurveyCode IN (SELECT UniqueSurveyCode FROM EmployerSurveyCodes WHERE UserRef IN @userRefs)",
+                WHERE UniqueSurveyCode IN (SELECT UniqueSurveyCode FROM EmployerSurveyCodes WHERE FeedbackId IN (SELECT FeedbackId FROM EmployerFeedback WHERE UserRef in @userRefs))",
                 new { userRefs = new[] { _user3Guid } });
             _notificationsApiClientMock = new Mock<INotificationsApi>();
             _employerSurveyReminderEmailer = new EmployerSurveyReminderEmailer(_dbEmployerFeedbackRepository,
