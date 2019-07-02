@@ -28,7 +28,7 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
             _fixture = new Fixture();
             _sessionServiceMock = new Mock<ISessionService>();
             _providerAttributes = GetProviderAttributes();
-            _sessionServiceMock.Setup(mock => mock.Get<SurveyModel>(It.IsAny<string>())).ReturnsAsync(new SurveyModel());
+            _sessionServiceMock.Setup(mock => mock.Get<SurveyModel>(It.IsAny<string>())).Returns(Task.FromResult(new SurveyModel()));
 
             InitializeController();
         }
@@ -67,7 +67,7 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
             var sessionDoingWellAtts = _providerAttributes.Take(3).ToList();
             sessionDoingWellAtts.ForEach(ps => ps.Good = true);
             surveyModel.Attributes = _providerAttributes;
-            _sessionServiceMock.Setup(mock => mock.Get<SurveyModel>(It.IsAny<string>())).ReturnsAsync(surveyModel);
+            _sessionServiceMock.Setup(mock => mock.Get<SurveyModel>(It.IsAny<string>())).Returns(Task.FromResult(surveyModel));
 
             // Act
             var result = await _controller.QuestionOne(_uniqueCode) as ViewResult;
@@ -132,7 +132,7 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
             var sessionDoingWellAtts = _providerAttributes.Take(3).ToList();
             sessionDoingWellAtts.ForEach(ps => ps.Bad = true);
             surveyModel.Attributes = _providerAttributes;
-            _sessionServiceMock.Setup(mock => mock.Get<SurveyModel>(It.IsAny<string>())).ReturnsAsync(surveyModel);
+            _sessionServiceMock.Setup(mock => mock.Get<SurveyModel>(It.IsAny<string>())).Returns(Task.FromResult(surveyModel));
 
             // Act
             var result = await _controller.QuestionTwo(_uniqueCode) as ViewResult;
@@ -196,7 +196,7 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
             // Arrange
             var surveyModel = new SurveyModel();
             surveyModel.Rating = ProviderRating.Poor;
-            _sessionServiceMock.Setup(mock => mock.Get<SurveyModel>(It.IsAny<string>())).ReturnsAsync(surveyModel);
+            _sessionServiceMock.Setup(mock => mock.Get<SurveyModel>(It.IsAny<string>())).Returns(Task.FromResult(surveyModel));
 
             // Act
             var result = await _controller.QuestionThree(_uniqueCode) as ViewResult;

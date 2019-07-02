@@ -1,60 +1,45 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Caching.Distributed;
 using Newtonsoft.Json;
 
 namespace ESFA.DAS.EmployerProvideFeedback.Infrastructure
 {
     public class SessionService : ISessionService
     {
-        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IDistributedCache _sessionCache;
         private readonly string _environment;
 
-        public SessionService(IHttpContextAccessor httpContextAccessor, IHostingEnvironment environment)
+        public SessionService(IDistributedCache sessionCache, IHostingEnvironment environment)
         {
-            _httpContextAccessor = httpContextAccessor;
+            _sessionCache = sessionCache;
             _environment = environment.EnvironmentName;
         }
 
         public async Task<T> Get<T>(string key)
         {
-            var session = _httpContextAccessor.HttpContext.Session;
-
-            await session.LoadAsync();
-            key = _environment + "_" + key;
-            var sessionObject = string.Empty;
-
-            if (KeyExists(session, key))
-            {
-                sessionObject = session.GetString(key);
-            }
-
+            var sessionObject = await GetString(key);
             return string.IsNullOrWhiteSpace(sessionObject) ? default(T) : JsonConvert.DeserializeObject<T>(sessionObject);
+        }
+
+        public async Task<string> GetString(string key)
+        {
+            return await _sessionCache.GetStringAsync(_environment + "_" + key);
         }
 
         public async Task Set(string key, object value)
         {
-            var session = _httpContextAccessor.HttpContext.Session;
-
-            await session.LoadAsync();
-            session.SetString(_environment + "_" + key, JsonConvert.SerializeObject(value));
-            await session.CommitAsync();
+            await _sessionCache.SetStringAsync(_environment + "_" + key, JsonConvert.SerializeObject(value));
         }
 
-        public async Task<bool> Exists(string key)
+        public async Task Remove(string key)
         {
-            var session = _httpContextAccessor.HttpContext.Session;
-            await session.LoadAsync();
-
-            key = _environment + "_" + key;
-            
-            return KeyExists(session, key);
+            await _sessionCache.RemoveAsync(_environment + "_" + key);
         }
-       
-        private bool KeyExists(ISession session, string key)
+
+        public async Task<bool> ExistsAsync(string key)
         {
-            return session.Keys.Any(k => k == key);
+            return await GetString(key) != null;
         }
     }
 }

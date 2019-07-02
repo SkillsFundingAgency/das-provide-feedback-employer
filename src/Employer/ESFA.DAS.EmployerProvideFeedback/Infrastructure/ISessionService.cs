@@ -6,6 +6,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Infrastructure
     {
         Task<T> Get<T>(string key);
         Task Set(string key, object value);
-        Task<bool> Exists(string key);
+        Task Remove(string key);
+        Task<bool> ExistsAsync(string key);
     }
 }
