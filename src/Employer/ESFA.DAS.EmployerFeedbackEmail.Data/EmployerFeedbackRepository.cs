@@ -199,7 +199,7 @@ namespace ESFA.DAS.ProvideFeedback.Data
         public async Task ClearSurveyCodes(Guid userRef)
         {
             await _dbConnection.ExecuteAsync($@"
-            DELETE FROM EmployerSurveyHistory where uniqueSurveyCode in (SELECT UniqueSurveyCode from EmployerSurveyCodes where UserRef = @userRef)
+            DELETE FROM EmployerSurveyHistory where uniqueSurveyCode in (SELECT UniqueSurveyCode from EmployerSurveyCodes where FeedbackId = (SELECT FeedbackId FROM EmployerFeedback WHERE UserRef = @userRef))
             DELETE FROM {EmployerSurveyCodes} where UserRef = @userRef", new{userRef});
         }
     }

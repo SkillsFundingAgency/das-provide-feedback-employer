@@ -1,8 +1,7 @@
 ﻿CREATE TABLE [dbo].[EmployerSurveyCodes]
 (
 	[UniqueSurveyCode] UNIQUEIDENTIFIER NOT NULL PRIMARY KEY, 
-    [UserRef] UNIQUEIDENTIFIER NOT NULL, 
-    [Ukprn] BIGINT NOT NULL,
-	[AccountId] BIGINT NOT NULL,
-    [BurnDate] DATETIME NULL 
+    [FeedbackId] BIGINT NOT NULL,
+    [BurnDate] DATETIME NULL,
+	CONSTRAINT FK_EmployerFeedbackFeedbackId FOREIGN KEY (FeedbackId) REFERENCES [dbo].[EmployerFeedback](FeedbackId),
 )

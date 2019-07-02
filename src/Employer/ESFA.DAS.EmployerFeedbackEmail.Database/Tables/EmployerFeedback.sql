@@ -1,5 +1,6 @@
 ﻿CREATE TABLE [dbo].[EmployerFeedback]
 (
+	[FeedbackId] BIGINT NOT NULL PRIMARY KEY,
 	[UserRef] UNIQUEIDENTIFIER NOT NULL,
 	[Ukprn] BIGINT NOT NULL,
 	[AccountId] BIGINT NOT NULL,

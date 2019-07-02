@@ -1,6 +1,7 @@
 ﻿CREATE VIEW [dbo].[vw_FeedbackToSend]
 AS
 	SELECT 
+	F.FeedbackId,
 	U.EmailAddress,
 	U.FirstName,
 	P.ProviderName,
