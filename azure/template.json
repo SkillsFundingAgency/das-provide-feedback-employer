@@ -1,6 +1,6 @@
 {
-    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
-    "contentVersion": "1.0.0.0",
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
   "parameters": {
     "appServiceName": {
       "type": "string"
@@ -73,22 +73,26 @@
     "providerApiBaseUrl": {
       "type": "string"
     },
-    "commitmentsApiCredentials": {
-      "type": "secureObject",
-      "defaultValue": {
-        "BaseUrl": "",
-        "ClientToken": ""
-      }
+    "commitmentsApiBaseUrl": {
+      "type": "string"
     },
-    "accountApiCredentials": {
-      "type": "secureObject",
-      "defaultValue": {
-        "ApiBaseUrl": "",
-        "ClientId": "",
-        "ClientSecret": "",
-        "IdentifierUri": "",
-        "Tenant": ""
-      }
+    "commitmentsApiClientToken": {
+      "type": "secureString"
+    },
+    "accountApiBaseUrl": {
+      "type": "string"
+    },
+    "accountApiClientId": {
+      "type": "string"
+    },
+    "accountApiClientSecret": {
+      "type": "secureString"
+    },
+    "accountApiIdentifierUri": {
+      "type": "string"
+    },
+    "accountApiTenant": {
+      "type": "string"
     },
     "emailBatchSize": {
       "type": "int",
@@ -142,489 +146,489 @@
       "defaultValue": "das-provide-feedback-emailer"
     }
   },
-    "variables": {
-        "queues": {
-            "DataRefreshMessagesQueueName": "data-refresh-messages"
+  "variables": {
+    "queues": {
+      "DataRefreshMessagesQueueName": "data-refresh-messages"
+    }
+  },
+  "resources": [
+    {
+      "apiVersion": "2017-05-10",
+      "name": "StorageAccount",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/storage-account-arm.json",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "storageAccountName": {
+            "value": "[parameters('storageAccountName')]"
+          }
         }
+      }
     },
-    "resources": [
-        {
-            "apiVersion": "2017-05-10",
-            "name": "StorageAccount",
-            "type": "Microsoft.Resources/deployments",
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/storage-account-arm.json",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "storageAccountName": {
-                        "value": "[parameters('storageAccountName')]"
-                    }
-                }
-            }
+    {
+      "apiVersion": "2017-05-10",
+      "name": "UIAppInsights",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/application-insights.json",
+          "contentVersion": "1.0.0.0"
         },
-        {
-            "apiVersion": "2017-05-10",
-            "name": "UIAppInsights",
-            "type": "Microsoft.Resources/deployments",
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/application-insights.json",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "appInsightsName": {
-                        "value": "[parameters('appServiceName')]"
-                    },
-                    "attachedService": {
-                        "value": "[parameters('appServiceName')]"
-                    }
-                }
-            }
-        },
-        {
-            "apiVersion": "2017-05-10",
-            "name": "UIAppService",
-            "type": "Microsoft.Resources/deployments",
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/app-service.json",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "appServiceName": {
-                        "value": "[parameters('appServiceName')]"
-                    },
-                    "appServicePlanName": {
-                        "value": "[parameters('sharedAppServicePlanName')]"
-                    },
-                    "appServicePlanResourceGroup": {
-                        "value": "[parameters('sharedAppServicePlanResourceGroup')]"
-                    },
-                    "appServiceAppSettings": {
-                        "value": [
-                            {
-                                "name": "Authentication:Authority",
-                                "value": "[parameters('authentication').Authority]"
-                            },
-                            {
-                                "name": "Authentication:MetaDataAddress",
-                                "value": "[parameters('authentication').MetaDataAddress]"
-                            },
-                            {
-                                "name": "Authentication:ClientId",
-                                "value": "[parameters('authentication').ClientId]"
-                            },
-                            {
-                                "name": "Authentication:ClientSecret",
-                                "value": "[parameters('authentication').ClientSecret]"
-                            },
-                            {
-                                "name": "ExternalLinks:FindApprenticeshipTrainingSiteUrl",
-                                "value": "[parameters('externalLinks').FindApprenticeshipTrainingSiteUrl]"
-                            },  
-                            {
-                                "name": "ExternalLinks:ManageApprenticeshipSiteUrl",
-                                "value": "[parameters('externalLinks').ManageApprenticeshipSiteUrl]"
-                            },
-                            {
-                                "name": "ExternalLinks:EmployerIdamsSiteUrl",
-                                "value": "[parameters('externalLinks').EmployerIdamsSiteUrl]"
-                            },
-                            {
-                                "name": "ExternalLinks:FeedbackSurveyUrl",
-                                "value": "[parameters('externalLinks').FeedbackSurveyUrl]"
-                            },
-                            {
-                                "name": "ApprenticeshipApiBaseUrl",
-                                "value": "[parameters('apprenticeshipApiBaseUrl')]"
-                            },
-                            {
-                                "name": "GoogleAnalytics:TrackingId",
-                                "value": "[parameters('gaTrackingId')]"
-                            },
-                            {
-                                "name": "ApplicationInsights:InstrumentationKey",
-                                "value": "[reference('UIAppInsights').outputs.InstrumentationKey.value]"
-                            },
-                            {
-                                "name": "CosmosConnectionSettings:EndpointUrl",
-                                "value": "[concat('https://', parameters('cosmosDbName'), '.documents.azure.com:443/')]"
-                            },
-                            {
-                                "name": "CosmosConnectionSettings:AuthorizationKey",
-                                "value": "[reference('CosmosDB').outputs.PrimaryMasterKey.value]"
-                            },
-                            {
-                                "name": "ASPNETCORE_ENVIRONMENT",
-                                "value": "[parameters('aspNetCoreEnvironment')]"
-                            }
-                        ]
-                    },
-                    "appServiceConnectionStrings": {
-                        "value": [
-                            {
-                                "name": "Redis",
-                                "connectionString": "[parameters('loggingRedisConnectionString')]",
-                                "type": "Custom"
-                            },
-                            {
-                                "name": "RedisApplication",
-                                "connectionString": "[parameters('appRedisConnectionString')]",
-                                "type": "Custom"
-                            },
-                            {
-                                "name": "EmployerEmailStoreConnection",
-                                "connectionString": "[parameters('dbConnectionString')]",
-                                "type": "Custom"
-                            }
-                        ]
-                    },
-                    "customHostName": {
-                        "value": "[parameters('customHostname')]"
-                    },
-                    "certificateThumbprint": {
-                        "value": "[reference(resourceId(parameters('sharedAppServicePlanResourceGroup'), 'Microsoft.Web/certificates', parameters('certificateName')), '2016-03-01').Thumbprint]"
-                    }
-                }
-            },
-            "dependsOn": [
-                "UIAppInsights"
-            ]
-        },
-        {
-            "apiVersion": "2017-05-10",
-            "name": "ApiAppInsights",
-            "type": "Microsoft.Resources/deployments",
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/application-insights.json",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "appInsightsName": {
-                        "value": "[parameters('apiAppServiceName')]"
-                    },
-                    "attachedService": {
-                        "value": "[parameters('apiAppServiceName')]"
-                    }
-                }
-            }
-        },
-        {
-            "apiVersion": "2017-05-10",
-            "name": "ApiAppService",
-            "type": "Microsoft.Resources/deployments",
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/app-service.json",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "appServiceName": {
-                        "value": "[parameters('apiAppServiceName')]"
-                    },
-                    "appServicePlanName": {
-                        "value": "[parameters('sharedAppServicePlanName')]"
-                    },
-                    "appServicePlanResourceGroup": {
-                        "value": "[parameters('sharedAppServicePlanResourceGroup')]"
-                    },
-                    "appServiceAppSettings": {
-                        "value": [
-                            {
-                                "name": "Azure:CosmosEndpoint",
-                                "value": "[concat('https://', parameters('cosmosDbName'), '.documents.azure.com:443/')]"
-                            },
-                            {
-                                "name": "Azure:CosmosKey",
-                                "value": "[reference('CosmosDB').outputs.PrimaryMasterKey.value]"
-                            },
-                            {
-                                "name": "Azure:DatabaseName",
-                                "value": "[parameters('feedbackApiData').DatabaseName]"
-                            },
-                            {
-                                "name": "Azure:EmployerFeedbackCollection",
-                                "value": "[parameters('feedbackApiData').FeedbackCollection]"
-                            },
-                            {
-                                "name": "Azure:TokenCollection",
-                                "value": "[parameters('feedbackApiData').TokenCollection]"
-                            },
-                            {
-                                "name": "Jwt:Key",
-                                "value": "[parameters('feedbackApiAuth').Key]"
-                            },
-                            {
-                                "name": "Jwt:Issuer",
-                                "value": "[concat('https://', parameters('apiAppServiceName'), '.apprenticeships.sfa.bis.gov.uk')]"
-                            },
-                            {
-                                "name": "ApplicationInsights:InstrumentationKey",
-                                "value": "[reference('ApiAppInsights').outputs.InstrumentationKey.value]"
-                            },
-                            {
-                                "name": "ASPNETCORE_ENVIRONMENT",
-                                "value": "[parameters('aspNetCoreEnvironment')]"
-                            }
-                        ]
-                    },
-                    "appServiceConnectionStrings": {
-                        "value": [
-                            {
-                                "name": "Redis",
-                                "connectionString": "[parameters('loggingRedisConnectionString')]",
-                                "type": "Custom"
-                            }
-                        ]
-                    },
-                    "certificateThumbprint": {
-                        "value": "[reference(resourceId(parameters('sharedAppServicePlanResourceGroup'), 'Microsoft.Web/certificates', parameters('certificateName')), '2016-03-01').Thumbprint]"
-                    }
-                }
-            },
-            "dependsOn": [
-                "ApiAppInsights",
-                "CosmosDB"
-            ]
-        },
-        {
-            "apiVersion": "2017-05-10",
-            "name": "FunctionAppServicePlan",
-            "type": "Microsoft.Resources/deployments",
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/app-service-plan.json",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "appServicePlanName": {
-                        "value": "[parameters('functionAppServicePlanName')]"
-                    },
-                    "aseHostingEnvironmentName": {
-                        "value": "[parameters('aseHostingEnvironmentName')]"
-                    },
-                    "aseResourceGroup": {
-                        "value": "[parameters('aseResourceGroup')]"
-                    },
-                    "aspSize": {
-                        "value": "1"
-                    },
-                    "aspInstances": {
-                        "value": 1
-                    }
-                }
-            }
-        },
-        {
-            "apiVersion": "2017-05-10",
-            "name": "FunctionAppApplicationInsights",
-            "type": "Microsoft.Resources/deployments",
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/application-insights.json",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "appInsightsName": {
-                        "value": "[parameters('functionAppName')]"
-                    },
-                    "attachedService": {
-                        "value": "[parameters('functionAppName')]"
-                    }
-                }
-            }
-        },
-        {
-            "apiVersion": "2017-05-10",
-            "name": "FunctionApp",
-            "type": "Microsoft.Resources/deployments",
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/function-app.json",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "functionAppName": {
-                        "value": "[parameters('functionAppName')]"
-                    },
-                    "appServicePlanName": {
-                        "value": "[parameters('functionappServicePlanName')]"
-                    },
-                    "appServicePlanResourceGroup": {
-                        "value": "[resourceGroup().name]"
-                    },
-                    "functionAppAppSettings": {
-                      "value": [
-                        {
-                          "name": "AzureWebJobsDashboard",
-                          "value": "[reference('StorageAccount').outputs.storageConnectionString.value]"
-                        },
-                        {
-                          "name": "AzureWebJobsStorage",
-                          "value": "[reference('StorageAccount').outputs.storageConnectionString.value]"
-                        },
-                        {
-                          "name": "ASPNETCORE_ENVIRONMENT",
-                          "value": "[parameters('aspNetCoreEnvironment')]"
-                        },
-                        {
-                          "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
-                          "value": "[reference('FunctionAppApplicationInsights').outputs.InstrumentationKey.value]"
-                        },
-                        {
-                          "name": "NotificationApi:BaseUrl",
-                          "value": "[parameters('notificationApiCredentials').BaseUrl]"
-                        },
-                        {
-                          "name": "NotificationApi:ClientToken",
-                          "value": "[parameters('notificationApiCredentials').ClientToken]"
-                        },
-                        {
-                          "name": "AccountApi:ApiBaseUrl",
-                          "value": "[parameters('accountApiCredentials').ApiBaseUrl]"
-                        },
-                        {
-                          "name": "AccountApi:ClientId",
-                          "value": "[parameters('accountApiCredentials').ClientId]"
-                        },
-                        {
-                          "name": "AccountApi:ClientSecret",
-                          "value": "[parameters('accountApiCredentials').ClientSecret]"
-                        },
-                        {
-                          "name": "AccountApi:IdentifierUri",
-                          "value": "[parameters('accountApiCredentials').IdentifierUri]"
-                        },
-                        {
-                          "name": "AccountApi:Tenant",
-                          "value": "[parameters('accountApiCredentials').Tenant]"
-                        },
-                        {
-                            "name": "ProviderApi:BaseUrl",
-                            "value": "[parameters('providerApiBaseUrl')]"
-                          },
-                        {
-                          "name": "CommitmentsApi:BaseUrl",
-                          "value": "[parameters('commitmentsApiCredentials').BaseUrl]"
-                        },
-                        {
-                          "name": "CommitmentsApi:ClientToken",
-                          "value": "[parameters('commitmentsApiCredentials').ClientToken]"
-                        },
-                        {
-                          "name": "EmailSettings:FeedbackSiteBaseUrl",
-                          "value": "[concat('https://', parameters('customHostname'), '/')]"
-                        },
-                        {
-                          "name": "EmailSettings:BatchSize",
-                          "value": "[parameters('emailBatchSize')]"
-                        },
-                        {
-                          "name": "EmailSettings:ReminderDays",
-                          "value": "[parameters('reminderDays')]"
-                        },
-                        {
-                          "name": "EmailSettings:InviteCycleDays",
-                          "value": "[parameters('inviteCycleDays')]"
-                        },
-                        {
-                          "name": "FUNCTIONS_EXTENSION_VERSION",
-                          "value": "~2"
-                        },
-                        {
-                          "name": "Redis",
-                          "value": "[parameters('loggingRedisConnectionString')]"
-                        },
-                        {
-                          "name": "EmployerEmailStoreConnection",
-                          "value": "[parameters('dbConnectionString')]"
-                        },
-                        {
-                          "name": "InviteEmailerSchedule",
-                          "value": "[parameters('inviteEmailerSchedule')]"
-                        },
-                        {
-                          "name": "ReminderEmailerSchedule",
-                          "value": "[parameters('reminderEmailerSchedule')]"
-                        },
-                        {
-                          "name": "AppName",
-                          "value": "[parameters('emailerAppName')]"
-                        },
-                        {
-                          "name": "DataRefreshMessagesQueueName",
-                          "value": "[variables('queues').DataRefreshMessagesQueueName]"
-                        }
-                      ]
-                    },
-                    "customHostName": {
-                        "value": ""
-                    },
-                    "certificateThumbprint": {
-                        "value": ""
-                    }
-                }
-            },
-            "dependsOn": [
-                "FunctionAppServicePlan"
-            ]
-        },
-        {
-            "apiVersion": "2017-05-10",
-            "name": "ServiceBus",
-            "type": "Microsoft.Resources/deployments",
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/service-bus.json",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "serviceBusNamespaceName": {
-                        "value": "[parameters('serviceBusNamespaceName')]"
-                    },
-                    "serviceBusQueues": {
-                        "value": [
-                            "[variables('queues').DataRefreshMessagesQueueName]"
-                        ]
-                    }
-                }
-            }
-        },
-        {
-            "apiVersion": "2017-05-10",
-            "name": "CosmosDB",
-            "type": "Microsoft.Resources/deployments",
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/cosmos-db.json",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "cosmosDbName": {
-                        "value": "[parameters('cosmosDbName')]"
-                    },
-                    "cosmosDbType": {
-                        "value": "GlobalDocumentDB"
-                    },
-                    "defaultConsistencyLevel": {
-                        "value": "Strong"
-                    }
-                }
-            }
+        "parameters": {
+          "appInsightsName": {
+            "value": "[parameters('appServiceName')]"
+          },
+          "attachedService": {
+            "value": "[parameters('appServiceName')]"
+          }
         }
-    ],
-    "outputs": {}
+      }
+    },
+    {
+      "apiVersion": "2017-05-10",
+      "name": "UIAppService",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/app-service.json",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "appServiceName": {
+            "value": "[parameters('appServiceName')]"
+          },
+          "appServicePlanName": {
+            "value": "[parameters('sharedAppServicePlanName')]"
+          },
+          "appServicePlanResourceGroup": {
+            "value": "[parameters('sharedAppServicePlanResourceGroup')]"
+          },
+          "appServiceAppSettings": {
+            "value": [
+              {
+                "name": "Authentication:Authority",
+                "value": "[parameters('authentication').Authority]"
+              },
+              {
+                "name": "Authentication:MetaDataAddress",
+                "value": "[parameters('authentication').MetaDataAddress]"
+              },
+              {
+                "name": "Authentication:ClientId",
+                "value": "[parameters('authentication').ClientId]"
+              },
+              {
+                "name": "Authentication:ClientSecret",
+                "value": "[parameters('authentication').ClientSecret]"
+              },
+              {
+                "name": "ExternalLinks:FindApprenticeshipTrainingSiteUrl",
+                "value": "[parameters('externalLinks').FindApprenticeshipTrainingSiteUrl]"
+              },
+              {
+                "name": "ExternalLinks:ManageApprenticeshipSiteUrl",
+                "value": "[parameters('externalLinks').ManageApprenticeshipSiteUrl]"
+              },
+              {
+                "name": "ExternalLinks:EmployerIdamsSiteUrl",
+                "value": "[parameters('externalLinks').EmployerIdamsSiteUrl]"
+              },
+              {
+                "name": "ExternalLinks:FeedbackSurveyUrl",
+                "value": "[parameters('externalLinks').FeedbackSurveyUrl]"
+              },
+              {
+                "name": "ApprenticeshipApiBaseUrl",
+                "value": "[parameters('apprenticeshipApiBaseUrl')]"
+              },
+              {
+                "name": "GoogleAnalytics:TrackingId",
+                "value": "[parameters('gaTrackingId')]"
+              },
+              {
+                "name": "ApplicationInsights:InstrumentationKey",
+                "value": "[reference('UIAppInsights').outputs.InstrumentationKey.value]"
+              },
+              {
+                "name": "CosmosConnectionSettings:EndpointUrl",
+                "value": "[concat('https://', parameters('cosmosDbName'), '.documents.azure.com:443/')]"
+              },
+              {
+                "name": "CosmosConnectionSettings:AuthorizationKey",
+                "value": "[reference('CosmosDB').outputs.PrimaryMasterKey.value]"
+              },
+              {
+                "name": "ASPNETCORE_ENVIRONMENT",
+                "value": "[parameters('aspNetCoreEnvironment')]"
+              }
+            ]
+          },
+          "appServiceConnectionStrings": {
+            "value": [
+              {
+                "name": "Redis",
+                "connectionString": "[parameters('loggingRedisConnectionString')]",
+                "type": "Custom"
+              },
+              {
+                "name": "RedisApplication",
+                "connectionString": "[parameters('appRedisConnectionString')]",
+                "type": "Custom"
+              },
+              {
+                "name": "EmployerEmailStoreConnection",
+                "connectionString": "[parameters('dbConnectionString')]",
+                "type": "Custom"
+              }
+            ]
+          },
+          "customHostName": {
+            "value": "[parameters('customHostname')]"
+          },
+          "certificateThumbprint": {
+            "value": "[reference(resourceId(parameters('sharedAppServicePlanResourceGroup'), 'Microsoft.Web/certificates', parameters('certificateName')), '2016-03-01').Thumbprint]"
+          }
+        }
+      },
+      "dependsOn": [
+        "UIAppInsights"
+      ]
+    },
+    {
+      "apiVersion": "2017-05-10",
+      "name": "ApiAppInsights",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/application-insights.json",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "appInsightsName": {
+            "value": "[parameters('apiAppServiceName')]"
+          },
+          "attachedService": {
+            "value": "[parameters('apiAppServiceName')]"
+          }
+        }
+      }
+    },
+    {
+      "apiVersion": "2017-05-10",
+      "name": "ApiAppService",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/app-service.json",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "appServiceName": {
+            "value": "[parameters('apiAppServiceName')]"
+          },
+          "appServicePlanName": {
+            "value": "[parameters('sharedAppServicePlanName')]"
+          },
+          "appServicePlanResourceGroup": {
+            "value": "[parameters('sharedAppServicePlanResourceGroup')]"
+          },
+          "appServiceAppSettings": {
+            "value": [
+              {
+                "name": "Azure:CosmosEndpoint",
+                "value": "[concat('https://', parameters('cosmosDbName'), '.documents.azure.com:443/')]"
+              },
+              {
+                "name": "Azure:CosmosKey",
+                "value": "[reference('CosmosDB').outputs.PrimaryMasterKey.value]"
+              },
+              {
+                "name": "Azure:DatabaseName",
+                "value": "[parameters('feedbackApiData').DatabaseName]"
+              },
+              {
+                "name": "Azure:EmployerFeedbackCollection",
+                "value": "[parameters('feedbackApiData').FeedbackCollection]"
+              },
+              {
+                "name": "Azure:TokenCollection",
+                "value": "[parameters('feedbackApiData').TokenCollection]"
+              },
+              {
+                "name": "Jwt:Key",
+                "value": "[parameters('feedbackApiAuth').Key]"
+              },
+              {
+                "name": "Jwt:Issuer",
+                "value": "[concat('https://', parameters('apiAppServiceName'), '.apprenticeships.sfa.bis.gov.uk')]"
+              },
+              {
+                "name": "ApplicationInsights:InstrumentationKey",
+                "value": "[reference('ApiAppInsights').outputs.InstrumentationKey.value]"
+              },
+              {
+                "name": "ASPNETCORE_ENVIRONMENT",
+                "value": "[parameters('aspNetCoreEnvironment')]"
+              }
+            ]
+          },
+          "appServiceConnectionStrings": {
+            "value": [
+              {
+                "name": "Redis",
+                "connectionString": "[parameters('loggingRedisConnectionString')]",
+                "type": "Custom"
+              }
+            ]
+          },
+          "certificateThumbprint": {
+            "value": "[reference(resourceId(parameters('sharedAppServicePlanResourceGroup'), 'Microsoft.Web/certificates', parameters('certificateName')), '2016-03-01').Thumbprint]"
+          }
+        }
+      },
+      "dependsOn": [
+        "ApiAppInsights",
+        "CosmosDB"
+      ]
+    },
+    {
+      "apiVersion": "2017-05-10",
+      "name": "FunctionAppServicePlan",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/app-service-plan.json",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "appServicePlanName": {
+            "value": "[parameters('functionAppServicePlanName')]"
+          },
+          "aseHostingEnvironmentName": {
+            "value": "[parameters('aseHostingEnvironmentName')]"
+          },
+          "aseResourceGroup": {
+            "value": "[parameters('aseResourceGroup')]"
+          },
+          "aspSize": {
+            "value": "1"
+          },
+          "aspInstances": {
+            "value": 1
+          }
+        }
+      }
+    },
+    {
+      "apiVersion": "2017-05-10",
+      "name": "FunctionAppApplicationInsights",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/application-insights.json",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "appInsightsName": {
+            "value": "[parameters('functionAppName')]"
+          },
+          "attachedService": {
+            "value": "[parameters('functionAppName')]"
+          }
+        }
+      }
+    },
+    {
+      "apiVersion": "2017-05-10",
+      "name": "FunctionApp",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/function-app.json",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "functionAppName": {
+            "value": "[parameters('functionAppName')]"
+          },
+          "appServicePlanName": {
+            "value": "[parameters('functionappServicePlanName')]"
+          },
+          "appServicePlanResourceGroup": {
+            "value": "[resourceGroup().name]"
+          },
+          "functionAppAppSettings": {
+            "value": [
+              {
+                "name": "AzureWebJobsDashboard",
+                "value": "[reference('StorageAccount').outputs.storageConnectionString.value]"
+              },
+              {
+                "name": "AzureWebJobsStorage",
+                "value": "[reference('StorageAccount').outputs.storageConnectionString.value]"
+              },
+              {
+                "name": "ASPNETCORE_ENVIRONMENT",
+                "value": "[parameters('aspNetCoreEnvironment')]"
+              },
+              {
+                "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
+                "value": "[reference('FunctionAppApplicationInsights').outputs.InstrumentationKey.value]"
+              },
+              {
+                "name": "NotificationApi:BaseUrl",
+                "value": "[parameters('notificationApiCredentials').BaseUrl]"
+              },
+              {
+                "name": "NotificationApi:ClientToken",
+                "value": "[parameters('notificationApiCredentials').ClientToken]"
+              },
+              {
+                "name": "AccountApi:ApiBaseUrl",
+                "value": "[parameters('accountApiBaseUrl')]"
+              },
+              {
+                "name": "AccountApi:ClientId",
+                "value": "[parameters('accountApiClientId')]"
+              },
+              {
+                "name": "AccountApi:ClientSecret",
+                "value": "[parameters('accountApiClientSecret')]"
+              },
+              {
+                "name": "AccountApi:IdentifierUri",
+                "value": "[parameters('accountApiIdentifierUri')]"
+              },
+              {
+                "name": "AccountApi:Tenant",
+                "value": "[parameters('accountApiTenant')]"
+              },
+              {
+                "name": "ProviderApi:BaseUrl",
+                "value": "[parameters('providerApiBaseUrl')]"
+              },
+              {
+                "name": "CommitmentsApi:BaseUrl",
+                "value": "[parameters('commitmentsApiBaseUrl')]"
+              },
+              {
+                "name": "CommitmentsApi:ClientToken",
+                "value": "[parameters('commitmentsApiClientToken')]"
+              },
+              {
+                "name": "EmailSettings:FeedbackSiteBaseUrl",
+                "value": "[concat('https://', parameters('customHostname'), '/')]"
+              },
+              {
+                "name": "EmailSettings:BatchSize",
+                "value": "[parameters('emailBatchSize')]"
+              },
+              {
+                "name": "EmailSettings:ReminderDays",
+                "value": "[parameters('reminderDays')]"
+              },
+              {
+                "name": "EmailSettings:InviteCycleDays",
+                "value": "[parameters('inviteCycleDays')]"
+              },
+              {
+                "name": "FUNCTIONS_EXTENSION_VERSION",
+                "value": "~2"
+              },
+              {
+                "name": "Redis",
+                "value": "[parameters('loggingRedisConnectionString')]"
+              },
+              {
+                "name": "EmployerEmailStoreConnection",
+                "value": "[parameters('dbConnectionString')]"
+              },
+              {
+                "name": "InviteEmailerSchedule",
+                "value": "[parameters('inviteEmailerSchedule')]"
+              },
+              {
+                "name": "ReminderEmailerSchedule",
+                "value": "[parameters('reminderEmailerSchedule')]"
+              },
+              {
+                "name": "AppName",
+                "value": "[parameters('emailerAppName')]"
+              },
+              {
+                "name": "DataRefreshMessagesQueueName",
+                "value": "[variables('queues').DataRefreshMessagesQueueName]"
+              }
+            ]
+          },
+          "customHostName": {
+            "value": ""
+          },
+          "certificateThumbprint": {
+            "value": ""
+          }
+        }
+      },
+      "dependsOn": [
+        "FunctionAppServicePlan"
+      ]
+    },
+    {
+      "apiVersion": "2017-05-10",
+      "name": "ServiceBus",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/service-bus.json",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "serviceBusNamespaceName": {
+            "value": "[parameters('serviceBusNamespaceName')]"
+          },
+          "serviceBusQueues": {
+            "value": [
+              "[variables('queues').DataRefreshMessagesQueueName]"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "apiVersion": "2017-05-10",
+      "name": "CosmosDB",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/cosmos-db.json",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "cosmosDbName": {
+            "value": "[parameters('cosmosDbName')]"
+          },
+          "cosmosDbType": {
+            "value": "GlobalDocumentDB"
+          },
+          "defaultConsistencyLevel": {
+            "value": "Strong"
+          }
+        }
+      }
+    }
+  ],
+  "outputs": {}
 }
