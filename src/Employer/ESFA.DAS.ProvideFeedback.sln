@@ -25,7 +25,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ESFA.DAS.ProvideFeedback.Em
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ESFA.DAS.ProvideFeedback.Employer.Functions.Framework", "ESFA.DAS.ProvideFeedback.Employer.Functions.Framework\ESFA.DAS.ProvideFeedback.Employer.Functions.Framework.csproj", "{55BFDC4A-E0D6-4226-8B93-0F1A1EA96159}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IntegrationTests", "IntegrationTests\IntegrationTests.csproj", "{95466EB8-F285-4086-8488-B2589B3A7D39}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IntegrationTests", "IntegrationTests\IntegrationTests.csproj", "{95466EB8-F285-4086-8488-B2589B3A7D39}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

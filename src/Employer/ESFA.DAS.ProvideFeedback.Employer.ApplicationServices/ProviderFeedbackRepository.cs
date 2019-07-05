@@ -16,8 +16,9 @@ namespace ESFA.DAS.ProvideFeedback.Employer.ApplicationServices
 
         public async Task<Feedback> GetProviderFeedbackAsync(long ukprn)
         {
-            var result = await _providerApiClient.GetAsync(ukprn);
-            return result.ProviderFeedback;
+            return null;
+            //var result = await _providerApiClient.GetAsync(ukprn);
+            //return result.ProviderFeedback;
         }
     }
 }

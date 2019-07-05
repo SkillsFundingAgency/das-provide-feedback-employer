@@ -569,6 +569,10 @@
               {
                 "name": "DataRefreshMessagesQueueName",
                 "value": "[variables('queues').DataRefreshMessagesQueueName]"
+              },
+              {
+                "name": "ServiceBusConnection",
+                "value": "[reference('ServiceBus').outputs.ServiceBusEndpoint.value]"
               }
             ]
           },
