@@ -73,10 +73,10 @@
     "providerApiBaseUrl": {
       "type": "string"
     },
-    "commitmentsApiBaseUrl": {
+    "commitmentApiBaseUrl": {
       "type": "string"
     },
-    "commitmentsApiClientToken": {
+    "commitmentApiClientToken": {
       "type": "secureString"
     },
     "accountApiBaseUrl": {
@@ -519,12 +519,12 @@
                 "value": "[parameters('providerApiBaseUrl')]"
               },
               {
-                "name": "CommitmentsApi:BaseUrl",
-                "value": "[parameters('commitmentsApiBaseUrl')]"
+                "name": "CommitmentApi:BaseUrl",
+                "value": "[parameters('commitmentApiBaseUrl')]"
               },
               {
-                "name": "CommitmentsApi:ClientToken",
-                "value": "[parameters('commitmentsApiClientToken')]"
+                "name": "CommitmentApi:ClientToken",
+                "value": "[parameters('commitmentApiClientToken')]"
               },
               {
                 "name": "EmailSettings:FeedbackSiteBaseUrl",
