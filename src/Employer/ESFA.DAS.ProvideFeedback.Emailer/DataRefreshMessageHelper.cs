@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using ESFA.DAS.ProvideFeedback.Data;
 using ESFA.DAS.ProvideFeedback.Domain.Entities;
 using Microsoft.Extensions.Logging;
@@ -10,11 +7,11 @@ namespace ESFA.DAS.Feedback.Employer.Emailer
 {
     public class DataRefreshMessageHelper
     {
-        private ILogger _logger;
+        private ILogger<DataRefreshMessageHelper> _logger;
         private IStoreEmployerEmailDetails _dbRepository;
 
         public DataRefreshMessageHelper(
-            ILogger logger,
+            ILogger<DataRefreshMessageHelper> logger,
             IStoreEmployerEmailDetails dbRepository)
         {
             _logger = logger;

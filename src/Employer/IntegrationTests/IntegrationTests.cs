@@ -78,7 +78,7 @@ namespace IntegrationTests
             _dbEmployerFeedbackRepository = new EmployerFeedbackRepository(_dbConnection);
             _employerFeedbackDataRefresh = new EmployerFeedbackDataRefresh(_providerApiClientMock.Object,
                 _commitmentApiClientMock.Object, _accountApiClientMock.Object);
-            _helper = new DataRefreshMessageHelper(new Mock<ILogger>().Object,_dbEmployerFeedbackRepository);
+            _helper = new DataRefreshMessageHelper(new Mock<ILogger<DataRefreshMessageHelper>>().Object,_dbEmployerFeedbackRepository);
             
             SetUpApiReturn(2);
 
