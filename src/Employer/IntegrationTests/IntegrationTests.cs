@@ -138,15 +138,8 @@ namespace IntegrationTests
             //Assert
             var invites = await _dbEmployerFeedbackRepository.GetEmployerUsersToBeSentInvite();
             invites.Count().Should().Be(6);
-            invites.ShouldBeEquivalentTo(expectedInvites, options => options.Excluding(
+            invites.Should().BeEquivalentTo(expectedInvites, options => options.Excluding(
                 s => s.SelectedMemberPath.EndsWith(".UniqueSurveyCode")));
-        }
-
-        private async Task ClearSurveyCodes(Guid userRef)
-        {
-            await _dbConnection.ExecuteAsync($@"
-            DELETE FROM EmployerSurveyHistory where uniqueSurveyCode in (SELECT UniqueSurveyCode from EmployerSurveyCodes where FeedbackId in (SELECT FeedbackId FROM EmployerFeedback WHERE UserRef = @userRef))
-            DELETE FROM EmployerSurveyCodes where FeedbackId in (SELECT FeedbackId FROM EmployerFeedback WHERE UserRef = @userRef)", new { userRef });
         }
 
         [Test, Order(2)]
@@ -213,7 +206,7 @@ namespace IntegrationTests
             var invites = await _dbEmployerFeedbackRepository.GetEmployerUsersToBeSentInvite();
             invites.Count().Should().Be(2);
             var invitesList = invites.OrderBy(x => x.UserRef).ThenBy(x => x.AccountId).ThenBy(x => x.Ukprn).ToList();
-            invites.ShouldBeEquivalentTo(expectedInvites, options => options.Excluding(
+            invites.Should().BeEquivalentTo(expectedInvites, options => options.Excluding(
                 s => s.SelectedMemberPath.EndsWith(".UniqueSurveyCode")));
         }
 
@@ -319,7 +312,7 @@ namespace IntegrationTests
             //Assert
             var invites = await _dbEmployerFeedbackRepository.GetEmployerUsersToBeSentInvite();
             invites.Count().Should().Be(3);
-            invites.ShouldBeEquivalentTo(expectedInvites, options => options.Excluding(
+            invites.Should().BeEquivalentTo(expectedInvites, options => options.Excluding(
                 s => s.SelectedMemberPath.EndsWith(".UniqueSurveyCode")));
         }
 
@@ -369,6 +362,13 @@ namespace IntegrationTests
                     EmployerAccountId = 2, ProviderId = changeableUkprn, ProviderName = "Worst School"
                 }
             };
+        }
+
+        private async Task ClearSurveyCodes(Guid userRef)
+        {
+            await _dbConnection.ExecuteAsync($@"
+            DELETE FROM EmployerSurveyHistory where uniqueSurveyCode in (SELECT UniqueSurveyCode from EmployerSurveyCodes where FeedbackId in (SELECT FeedbackId FROM EmployerFeedback WHERE UserRef = @userRef))
+            DELETE FROM EmployerSurveyCodes where FeedbackId in (SELECT FeedbackId FROM EmployerFeedback WHERE UserRef = @userRef)", new { userRef });
         }
     }
 }
