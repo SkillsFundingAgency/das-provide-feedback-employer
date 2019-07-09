@@ -114,9 +114,9 @@ namespace IntegrationTests
         {
             //Assert
             await _dbEmployerFeedbackRepository.ResetFeedback();
-            await _dbEmployerFeedbackRepository.ClearSurveyCodes(_user1Guid);
-            await _dbEmployerFeedbackRepository.ClearSurveyCodes(_user2Guid);
-            await _dbEmployerFeedbackRepository.ClearSurveyCodes(_user3Guid);
+            await ClearSurveyCodes(_user1Guid);
+            await ClearSurveyCodes(_user2Guid);
+            await ClearSurveyCodes(_user3Guid);
             var expectedInvites = new List<EmployerSurveyInvite>
             {
                 new EmployerSurveyInvite {UserRef = _user1Guid, EmailAddress = "Test@test.com", FirstName = "Master", AccountId = 1, Ukprn = 1, ProviderName = "Test Academy"},
@@ -140,6 +140,13 @@ namespace IntegrationTests
             invites.Count().Should().Be(6);
             invites.ShouldBeEquivalentTo(expectedInvites, options => options.Excluding(
                 s => s.SelectedMemberPath.EndsWith(".UniqueSurveyCode")));
+        }
+
+        private async Task ClearSurveyCodes(Guid userRef)
+        {
+            await _dbConnection.ExecuteAsync($@"
+            DELETE FROM EmployerSurveyHistory where uniqueSurveyCode in (SELECT UniqueSurveyCode from EmployerSurveyCodes where FeedbackId in (SELECT FeedbackId FROM EmployerFeedback WHERE UserRef = @userRef))
+            DELETE FROM EmployerSurveyCodes where FeedbackId in (SELECT FeedbackId FROM EmployerFeedback WHERE UserRef = @userRef)", new { userRef });
         }
 
         [Test, Order(2)]

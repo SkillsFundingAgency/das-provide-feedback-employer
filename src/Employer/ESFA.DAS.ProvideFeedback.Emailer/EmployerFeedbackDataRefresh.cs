@@ -50,7 +50,7 @@ namespace ESFA.DAS.Feedback.Employer.Emailer
             var accounts = _accountApiClient.GetAccountUsers(AccountId).Result;
             var Users = accounts
                 .Where(acc => acc.CanReceiveNotifications)
-                .Select(acc => MapTeamMemberToUser(acc,AccountId));
+                .Select(acc => MapTeamMemberToUser(acc, AccountId));
             return Users.ToList();
         }
 
@@ -77,7 +77,7 @@ namespace ESFA.DAS.Feedback.Employer.Emailer
             return validApps;
         }
 
-        public User MapTeamMemberToUser(TeamMemberViewModel tmvw,long AccountId)
+        public User MapTeamMemberToUser(TeamMemberViewModel tmvw, long AccountId)
         {
             return new User
             {

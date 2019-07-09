@@ -27,7 +27,7 @@ namespace ESFA.DAS.Feedback.Employer.Emailer
             _logger.LogInformation("Done upserting providers\nStarting upserting feedback");
             await _dbRepository.UpsertIntoFeedbackAsync(message.User, message.Provider);
             _logger.LogInformation("Done upserting feedback\nStarting code generation");
-            await _dbRepository.GetOrCreateSurveyCode(message.User.UserRef, message.Provider.Ukprn, message.User.AccountId);
+            await _dbRepository.CreateSurveyCode(message.User.UserRef, message.Provider.Ukprn, message.User.AccountId);
             _logger.LogInformation("Done code generation\nCommiting transaction");
         }
     }
