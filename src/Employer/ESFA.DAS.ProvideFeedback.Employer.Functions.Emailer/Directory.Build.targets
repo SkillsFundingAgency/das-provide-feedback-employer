@@ -2,7 +2,7 @@
   <PropertyGroup>
     <_IsFunctionsSdkBuild Condition="$(_FunctionsTaskFramework) != ''">true</_IsFunctionsSdkBuild>
     <_FunctionsExtensionsDir>$(TargetDir)</_FunctionsExtensionsDir>
-    <_FunctionsExtensionsDir Condition="$(_IsFunctionsSdkBuild) == 'true'">$(_FunctionsExtensionsDir)bin</_FunctionsExtensionsDir>
+    <_FunctionsExtensionsDir Condition="$(_IsFunctionsSdkBuild) == 'true'">$(_FunctionsExtensionsDir)</_FunctionsExtensionsDir>
   </PropertyGroup>
 
   <Target Name="CopyExtensionsJson" AfterTargets="_GenerateFunctionsAndCopyContentFiles">
