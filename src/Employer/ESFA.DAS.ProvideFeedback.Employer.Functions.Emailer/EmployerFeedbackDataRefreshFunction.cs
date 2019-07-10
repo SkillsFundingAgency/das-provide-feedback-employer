@@ -35,7 +35,7 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
                 var result = _inviteDataRefresh.GetRefreshData();
                 log.LogInformation("Finished getting the data from APIs");
                 result.AsParallel().ForAll(x => queue.AddAsync(x));
-                log.LogInformation("Placed the data in the queue");
+                log.LogInformation($"Placed {result.Count} messages in the queue");
             }
             catch (Exception ex)
             {

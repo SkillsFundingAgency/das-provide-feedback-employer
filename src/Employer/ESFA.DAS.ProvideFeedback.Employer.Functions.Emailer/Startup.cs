@@ -58,6 +58,8 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
                 ConfigureNLog();
             });
 
+            builder.Services.AddSingleton(typeof(ILogger<>), typeof(Logger<>));
+
             builder.Services.Configure<EmailSettings>(_configuration.GetSection("EmailSettings"));
 
             var notificationApiConfig = _configuration.GetSection("NotificationApi").Get<NotificationApiConfig>();
