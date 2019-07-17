@@ -81,7 +81,7 @@ namespace ESFA.DAS.ProvideFeedback.Data
                     now
                 };
             });
-            
+
             var sql = $@"
                         INSERT INTO EmployerSurveyHistory
                         VALUES(@uniqueSurveyCode, @inviteType, @now)";
@@ -104,7 +104,7 @@ namespace ESFA.DAS.ProvideFeedback.Data
                 return new
                 {
                     UniqueSurveyCode = Guid.NewGuid(),
-                    FeedbackId = GetFeedbackId(x.UserRef,x.Ukprn,x.AccountId).Result
+                    FeedbackId = GetFeedbackId(x.UserRef, x.Ukprn, x.AccountId).Result
                 };
             });
 
@@ -118,26 +118,23 @@ namespace ESFA.DAS.ProvideFeedback.Data
         private async Task<long> GetFeedbackId(Guid UserRef, long Ukprn, long AccountId)
         {
             return await _dbConnection.QuerySingleAsync<long>($@"
-            SELECT FeedbackID FROM EmployerFeedback WHERE UserRef = @UserRef AND Ukprn = @Ukprn AND AccountId = @AccountID", new {UserRef,Ukprn,AccountId });
+            SELECT FeedbackID FROM EmployerFeedback WHERE UserRef = @UserRef AND Ukprn = @Ukprn AND AccountId = @AccountID", new { UserRef, Ukprn, AccountId });
         }
 
         public async Task CreateSurveyCode(Guid UserRef, long Ukprn, long AccountId)
         {
-            var newCode = new
-            {
-                UniqueSurveyCode = Guid.NewGuid(),
-                UserRef,
-                Ukprn,
-                AccountId
-            };
 
-            var sql2 = $@"
-                        INSERT INTO {EmployerSurveyCodes}
-                        VALUES(@UniqueSurveyCode,(SELECT FeedbackId FROM EmployerFeedback WHERE UserRef = @UserRef AND Ukprn = @Ukprn AND AccountId = @AccountId), NULL)";
-
-            await _dbConnection.ExecuteAsync(sql2, newCode);
+            var parameters = new DynamicParameters();
+            parameters.Add("@UserRef", UserRef, DbType.Guid);
+            parameters.Add("@Ukprn", Ukprn, DbType.Int64);
+            parameters.Add("@AccountId", AccountId, DbType.Int64);
+            await _dbConnection.ExecuteAsync
+            (
+                sql: "[dbo].[CreateSurveyCode]",
+                param: parameters,
+                commandType: CommandType.StoredProcedure
+            );
         }
-
 
         public async Task UpsertIntoUsers(User user)
         {
