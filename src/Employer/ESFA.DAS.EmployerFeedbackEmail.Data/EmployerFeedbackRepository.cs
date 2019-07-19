@@ -47,13 +47,13 @@ namespace ESFA.DAS.ProvideFeedback.Data
                                         WHERE InviteSentDate IS NOT NULL
                                         AND LastReminderSentDate IS NULL
                                         AND InviteSentDate < @{nameof(minSentDate)}
-                                        AND CodeBurntDate IS NULL", param: new { minSentDate }, transaction: null, commandTimeout: _commandTimeoutSeconds);
+                                        AND BurnDate IS NULL", param: new { minSentDate }, transaction: null, commandTimeout: _commandTimeoutSeconds);
         }
 
         public async Task<bool> IsCodeBurnt(Guid emailCode)
         {
             return await _dbConnection.QueryFirstOrDefaultAsync<bool>($@"
-                                        SELECT CASE WHEN CodeBurntDate IS NULL THEN 0 ELSE 1 END
+                                        SELECT CASE WHEN BurnDate IS NULL THEN 0 ELSE 1 END
                                         FROM {EmployerSurveyCodes}
                                         WHERE UniqueSurveyCode = @{nameof(emailCode)}",
                                         new { emailCode });
@@ -64,7 +64,7 @@ namespace ESFA.DAS.ProvideFeedback.Data
             var now = DateTime.Now;
             await _dbConnection.QueryAsync($@"
                                 UPDATE {EmployerSurveyCodes}
-                                SET CodeBurntDate = @now
+                                SET BurnDate = @now
                                 WHERE UniqueSurveyCode = @{nameof(uniqueCode)}",
                                 new { now, uniqueCode });
         }
