@@ -113,6 +113,10 @@
         "emailerAppName": {
             "type": "string",
             "defaultValue": "das-provide-feedback-emailer"
+        },
+        "cosmosDbIpRangeFilter" : {
+            "type": "string",
+            "defaultValue": ""
         }
   },
     "variables": {},
@@ -528,6 +532,9 @@
                     },
                     "defaultConsistencyLevel": {
                         "value": "Strong"
+                    },
+                    "ipRangeFilter": {
+                        "value": "[parameters('cosmosDbIpRangeFilter')]"
                     }
                 }
             }
