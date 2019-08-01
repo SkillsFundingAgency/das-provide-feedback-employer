@@ -113,8 +113,11 @@
         "emailerAppName": {
             "type": "string",
             "defaultValue": "das-provide-feedback-emailer"
+        },
+        "slidingExpirationMinutes": {
+            "type": "int"
         }
-  },
+    },
     "variables": {},
     "resources": [
         {
@@ -466,6 +469,10 @@
                             {
                                 "name": "EmailSettings:BatchSize",
                                 "value": "[parameters('emailBatchSize')]"
+                            },
+                            {
+                                "name": "SlidingExpirationMinutes",
+                                "value": "[parameters('slidingExpirationMinutes')]"
                             },
                             {
                                 "name": "EmailSettings:MinDaysSinceInvite",
