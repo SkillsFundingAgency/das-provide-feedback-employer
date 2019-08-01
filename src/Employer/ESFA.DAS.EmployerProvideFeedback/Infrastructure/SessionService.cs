@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 
 namespace ESFA.DAS.EmployerProvideFeedback.Infrastructure
@@ -10,10 +11,14 @@ namespace ESFA.DAS.EmployerProvideFeedback.Infrastructure
     {
         private readonly IDistributedCache _sessionCache;
         private readonly string _environment;
-        private const int SlidingExpirationMinutes = 20;
+        private readonly int _slidingExpirationMinutes;
 
-        public SessionService(IDistributedCache sessionCache, IHostingEnvironment environment)
+        public SessionService(
+            IDistributedCache sessionCache,
+            IConfiguration configuration,
+            IHostingEnvironment environment)
         {
+            _slidingExpirationMinutes = configuration.GetValue<int>("SlidingExpirationMinutes");
             _sessionCache = sessionCache;
             _environment = environment.EnvironmentName;
         }
@@ -33,7 +38,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Infrastructure
         {
             await _sessionCache.SetStringAsync(_environment + "_" + key, JsonConvert.SerializeObject(value), new DistributedCacheEntryOptions
             {
-                SlidingExpiration = TimeSpan.FromMinutes(SlidingExpirationMinutes)
+                SlidingExpiration = TimeSpan.FromMinutes(_slidingExpirationMinutes)
             });
         }
 
