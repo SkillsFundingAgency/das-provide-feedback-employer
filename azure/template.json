@@ -114,6 +114,10 @@
             "type": "string",
             "defaultValue": "das-provide-feedback-emailer"
         },
+        "cosmosDbIpRangeFilter" : {
+            "type": "string",
+            "defaultValue": ""
+        },
         "slidingExpirationMinutes": {
             "type": "int"
         }
@@ -535,6 +539,9 @@
                     },
                     "defaultConsistencyLevel": {
                         "value": "Strong"
+                    },
+                    "ipRangeFilter": {
+                        "value": "[parameters('cosmosDbIpRangeFilter')]"
                     }
                 }
             }
