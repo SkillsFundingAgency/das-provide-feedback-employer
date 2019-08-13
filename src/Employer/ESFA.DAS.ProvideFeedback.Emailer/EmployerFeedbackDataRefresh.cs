@@ -1,4 +1,5 @@
 ﻿using ESFA.DAS.ProvideFeedback.Domain.Entities;
+using ESFA.DAS.ProvideFeedback.Domain.Entities.Messages;
 using SFA.DAS.Apprenticeships.Api.Types.Providers;
 using SFA.DAS.Commitments.Api.Client.Interfaces;
 using SFA.DAS.Commitments.Api.Types.Apprenticeship;
@@ -13,13 +14,13 @@ using Provider = ESFA.DAS.ProvideFeedback.Domain.Entities.Provider;
 
 namespace ESFA.DAS.Feedback.Employer.Emailer
 {
-    public class EmployerFeedbackDataRefresh
+    public class EmployerFeedbackDataRefreshService
     {
         IProviderApiClient _providerApiClient;
         IEmployerCommitmentApi _commitmentApiClient;
         IAccountApiClient _accountApiClient;
 
-        public EmployerFeedbackDataRefresh(IProviderApiClient providerApiClient, IEmployerCommitmentApi commitmentApiClient, IAccountApiClient accountApiClient)
+        public EmployerFeedbackDataRefreshService(IProviderApiClient providerApiClient, IEmployerCommitmentApi commitmentApiClient, IAccountApiClient accountApiClient)
         {
             _providerApiClient = providerApiClient;
             _commitmentApiClient = commitmentApiClient;

@@ -23,7 +23,7 @@ namespace ESFA.DAS.Feedback.Employer.UnitTests.Emailer
         Mock<IProviderApiClient> _providerApiClientMock;
         Mock<IEmployerCommitmentApi> _employerApiClientMock;
         Mock<IAccountApiClient> _accountApiClientMock;
-        private EmployerFeedbackDataRefresh _dataRefresh;
+        private EmployerFeedbackDataRefreshService _dataRefresh;
         ProviderSummary[] providerApiReturn;
         List<Apprenticeship> employerApiReturn;
         ICollection<TeamMemberViewModel> accountApiReturn;
@@ -34,7 +34,7 @@ namespace ESFA.DAS.Feedback.Employer.UnitTests.Emailer
             _providerApiClientMock = new Mock<IProviderApiClient>();
             _employerApiClientMock = new Mock<IEmployerCommitmentApi>();
             _accountApiClientMock = new Mock<IAccountApiClient>();
-            _dataRefresh = new EmployerFeedbackDataRefresh(_providerApiClientMock.Object, _employerApiClientMock.Object, _accountApiClientMock.Object);
+            _dataRefresh = new EmployerFeedbackDataRefreshService(_providerApiClientMock.Object, _employerApiClientMock.Object, _accountApiClientMock.Object);
 
             providerApiReturn = new ProviderSummary[]
             {

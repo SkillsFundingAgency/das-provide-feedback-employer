@@ -42,10 +42,10 @@ namespace IntegrationTests
         private readonly Mock<ILogger<EmployerSurveyEmailer>> _surveyLoggerMock;
 
         private readonly IStoreEmployerEmailDetails _dbEmployerFeedbackRepository;
-        private readonly EmployerFeedbackDataRefresh _employerFeedbackDataRefresh;
+        private readonly EmployerFeedbackDataRefreshService _employerFeedbackDataRefresh;
         private EmployerSurveyInviteEmailer _employerSurveyInviteEmailer;
         private EmployerSurveyReminderEmailer _employerSurveyReminderEmailer;
-        private readonly DataRefreshMessageHelper _helper;
+        private readonly DataRefreshHelper _helper;
         private readonly IOptions<EmailSettings> _options;
         private readonly DbConnection _dbConnection;
 
@@ -76,9 +76,9 @@ namespace IntegrationTests
             });
             _dbConnection = new SqlConnection(configuration.GetConnectionString("EmployerEmailStoreConnection"));
             _dbEmployerFeedbackRepository = new EmployerFeedbackRepository(_dbConnection);
-            _employerFeedbackDataRefresh = new EmployerFeedbackDataRefresh(_providerApiClientMock.Object,
+            _employerFeedbackDataRefresh = new EmployerFeedbackDataRefreshService(_providerApiClientMock.Object,
                 _commitmentApiClientMock.Object, _accountApiClientMock.Object);
-            _helper = new DataRefreshMessageHelper(new Mock<ILogger<DataRefreshMessageHelper>>().Object,_dbEmployerFeedbackRepository);
+            _helper = new DataRefreshHelper(new Mock<ILogger<DataRefreshHelper>>().Object,_dbEmployerFeedbackRepository);
             
             SetUpApiReturn(2);
 
@@ -132,7 +132,7 @@ namespace IntegrationTests
             var result = _employerFeedbackDataRefresh.GetRefreshData();
             foreach (var x in result)
             {
-                await _helper.SaveMessageToDatabase(x);
+                await _helper.RefreshFeedbackData(x);
             }
 
             //Assert
@@ -199,7 +199,7 @@ namespace IntegrationTests
             var result = _employerFeedbackDataRefresh.GetRefreshData();
             foreach (var x in result)
             {
-                await _helper.SaveMessageToDatabase(x);
+                await _helper.RefreshFeedbackData(x);
             }
 
             //Assert
@@ -224,9 +224,9 @@ namespace IntegrationTests
                 _notificationsApiClientMock.Object, _options, _surveyLoggerMock.Object);
 
             //Act
-            var newCodesRequired =
-                await _dbEmployerFeedbackRepository.GetEmployerInvitesForNextCycleAsync(_options.Value.InviteCycleDays);
-            await _dbEmployerFeedbackRepository.InsertNewSurveyInviteCodes(newCodesRequired);
+
+            //TODO: Fix integration tests to use new function to create survey codes.
+            //await _dbEmployerFeedbackRepository.InsertNewSurveyInviteCodes(newCodesRequired);
             await _employerSurveyInviteEmailer.SendEmailsAsync();
 
             //Assert
@@ -266,9 +266,9 @@ namespace IntegrationTests
                 _notificationsApiClientMock.Object, _options, _surveyLoggerMock.Object);
 
             //Act
-            var newCodesRequired =
-                await _dbEmployerFeedbackRepository.GetEmployerInvitesForNextCycleAsync(_options.Value.InviteCycleDays);
-            await _dbEmployerFeedbackRepository.InsertNewSurveyInviteCodes(newCodesRequired);
+            //var newCodesRequired =
+            //    await _dbEmployerFeedbackRepository.GetEmployerInvitesForNextCycleAsync(_options.Value.InviteCycleDays);
+            //await _dbEmployerFeedbackRepository.InsertNewSurveyInviteCodes(newCodesRequired);
             await _employerSurveyInviteEmailer.SendEmailsAsync();
 
             //Assert
@@ -306,7 +306,7 @@ namespace IntegrationTests
             var result = _employerFeedbackDataRefresh.GetRefreshData();
             foreach (var x in result)
             {
-                await _helper.SaveMessageToDatabase(x);
+                await _helper.RefreshFeedbackData(x);
             }
 
             //Assert

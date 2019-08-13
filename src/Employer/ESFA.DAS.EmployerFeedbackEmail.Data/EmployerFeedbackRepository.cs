@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
@@ -50,6 +51,22 @@ namespace ESFA.DAS.ProvideFeedback.Data
                                         AND BurnDate IS NULL", param: new { minSentDate }, transaction: null, commandTimeout: _commandTimeoutSeconds);
         }
 
+        public async Task<bool> GetNewCodeRequired(long feedbackId, int minDaysSinceInvite)
+        {
+            var minSentDate = DateTime.Now.AddDays(-minDaysSinceInvite);
+            var sql = $@"
+                        SELECT CASE WHEN InviteSentDate < @{nameof(minSentDate)} THEN 1 ELSE 0 END
+                        FROM EmployerSurveyCodes esc
+                        JOIN [dbo].[vw_EmployerSurveyInvites] esi
+                        ON esc.UniqueSurveyCode = esi.UniqueSurveyCode
+                        WHERE InviteSentDate IS NOT NULL";
+
+            return await _dbConnection.QueryFirstOrDefaultAsync<bool>(
+                sql: sql, 
+                param: new { minSentDate },
+                commandTimeout: _commandTimeoutSeconds);
+        }
+
         public async Task<bool> IsCodeBurnt(Guid emailCode)
         {
             return await _dbConnection.QueryFirstOrDefaultAsync<bool>($@"
@@ -89,51 +106,25 @@ namespace ESFA.DAS.ProvideFeedback.Data
             await _dbConnection.ExecuteAsync(sql, toInsert);
         }
 
-        public async Task<IEnumerable<EmployerSurveyInvite>> GetEmployerInvitesForNextCycleAsync(int inviteCycleDays)
+        public async Task InsertNewSurveyForFeedback(long feedbackId)
         {
-            var minAllowedSendDate = DateTime.Now.AddDays(-inviteCycleDays);
-            return await _dbConnection.QueryAsync<EmployerSurveyInvite>($@"
-                            SELECT * FROM {EmployerSurveyInvites}
-                            WHERE InviteSentDate < @{nameof(minAllowedSendDate)}", new { minAllowedSendDate });
-        }
-
-        public async Task InsertNewSurveyInviteCodes(IEnumerable<EmployerSurveyInvite> newCodesRequired)
-        {
-            var newCodesToCreate = newCodesRequired.Select(x =>
-            {
-                return new
-                {
-                    UniqueSurveyCode = Guid.NewGuid(),
-                    FeedbackId = GetFeedbackId(x.UserRef, x.Ukprn, x.AccountId).Result
-                };
-            });
-
             var sql = $@"
                         INSERT INTO {EmployerSurveyCodes}
                         VALUES(@UniqueSurveyCode, @FeedbackId, NULL)";
 
-            await _dbConnection.ExecuteAsync(sql, newCodesToCreate);
+            await _dbConnection.ExecuteAsync(
+                sql,
+                new
+                {
+                    UniqueSurveyCode = Guid.NewGuid(),
+                    FeedbackId = feedbackId
+                });
         }
 
         private async Task<long> GetFeedbackId(Guid UserRef, long Ukprn, long AccountId)
         {
             return await _dbConnection.QuerySingleAsync<long>($@"
             SELECT FeedbackID FROM EmployerFeedback WHERE UserRef = @UserRef AND Ukprn = @Ukprn AND AccountId = @AccountID", new { UserRef, Ukprn, AccountId });
-        }
-
-        public async Task CreateSurveyCode(Guid UserRef, long Ukprn, long AccountId)
-        {
-
-            var parameters = new DynamicParameters();
-            parameters.Add("@UserRef", UserRef, DbType.Guid);
-            parameters.Add("@Ukprn", Ukprn, DbType.Int64);
-            parameters.Add("@AccountId", AccountId, DbType.Int64);
-            await _dbConnection.ExecuteAsync
-            (
-                sql: "[dbo].[CreateSurveyCode]",
-                param: parameters,
-                commandType: CommandType.StoredProcedure
-            );
         }
 
         public async Task UpsertIntoUsers(User user)
@@ -150,7 +141,7 @@ namespace ESFA.DAS.ProvideFeedback.Data
             );
         }
 
-        public async Task UpsertIntoProvidersAsync(Provider provider)
+        public async Task UpsertIntoProviders(Provider provider)
         {
             var parameters = new DynamicParameters();
             parameters.Add("@Ukprn", provider.Ukprn, DbType.Int64);
@@ -163,18 +154,21 @@ namespace ESFA.DAS.ProvideFeedback.Data
             );
         }
 
-        public async Task UpsertIntoFeedbackAsync(User user, Provider provider)
+        public async Task<long> UpsertIntoFeedback(Guid userRef, long accountId, long ukprn)
         {
             var parameters = new DynamicParameters();
-            parameters.Add("@UserRef", user.UserRef, DbType.Guid);
-            parameters.Add("@Ukprn", provider.Ukprn, DbType.Int64);
-            parameters.Add("@AccountId", user.AccountId, DbType.Int64);
-            await _dbConnection.ExecuteAsync
+            parameters.Add("@UserRef", userRef, DbType.Guid);
+            parameters.Add("@Ukprn", ukprn, DbType.Int64);
+            parameters.Add("@AccountId", accountId, DbType.Int64);
+
+            var feedbackId = await _dbConnection.ExecuteScalarAsync<long>
             (
                 sql: "[dbo].[UpsertFeedback]",
                 param: parameters,
                 commandType: CommandType.StoredProcedure
             );
+
+            return feedbackId;
         }
 
         public async Task ResetFeedback()
@@ -184,6 +178,18 @@ namespace ESFA.DAS.ProvideFeedback.Data
                 sql: "[dbo].[ResetFeedback]",
                 commandType: CommandType.StoredProcedure
             );
+        }
+
+        public async Task<DateTime?> GetFeedbackLastSentDate(long feedbackId)
+        {
+            var parameters = new DynamicParameters();
+            parameters.Add("@FeedbackId", feedbackId, DbType.Int64);
+            return await _dbConnection.ExecuteScalarAsync<DateTime?>
+                (
+                    sql: "[dbo.GetFeedbackLastSentDate]",
+                    param: parameters,
+                    commandType: CommandType.StoredProcedure
+                );
         }
     }
 }
