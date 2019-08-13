@@ -186,7 +186,7 @@ namespace ESFA.DAS.ProvideFeedback.Data
             parameters.Add("@FeedbackId", feedbackId, DbType.Int64);
             return await _dbConnection.ExecuteScalarAsync<DateTime?>
                 (
-                    sql: "[dbo.GetFeedbackLastSentDate]",
+                    sql: "[dbo].[GetFeedbackLastSentDate]",
                     param: parameters,
                     commandType: CommandType.StoredProcedure
                 );
