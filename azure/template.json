@@ -117,8 +117,11 @@
         "cosmosDbIpRangeFilter" : {
             "type": "string",
             "defaultValue": ""
+        },
+        "slidingExpirationMinutes": {
+            "type": "int"
         }
-  },
+    },
     "variables": {},
     "resources": [
         {
@@ -470,6 +473,10 @@
                             {
                                 "name": "EmailSettings:BatchSize",
                                 "value": "[parameters('emailBatchSize')]"
+                            },
+                            {
+                                "name": "SlidingExpirationMinutes",
+                                "value": "[parameters('slidingExpirationMinutes')]"
                             },
                             {
                                 "name": "EmailSettings:MinDaysSinceInvite",
