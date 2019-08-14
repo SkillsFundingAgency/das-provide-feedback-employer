@@ -50,22 +50,6 @@ namespace ESFA.DAS.ProvideFeedback.Data
                                         AND BurnDate IS NULL", param: new { minSentDate }, transaction: null, commandTimeout: _commandTimeoutSeconds);
         }
 
-        public async Task<bool> GetNewCodeRequired(long feedbackId, int minDaysSinceInvite)
-        {
-            var minSentDate = DateTime.Now.AddDays(-minDaysSinceInvite);
-            var sql = $@"
-                        SELECT CASE WHEN InviteSentDate < @{nameof(minSentDate)} THEN 1 ELSE 0 END
-                        FROM EmployerSurveyCodes esc
-                        JOIN [dbo].[vw_EmployerSurveyInvites] esi
-                        ON esc.UniqueSurveyCode = esi.UniqueSurveyCode
-                        WHERE InviteSentDate IS NOT NULL";
-
-            return await _dbConnection.QueryFirstOrDefaultAsync<bool>(
-                sql: sql, 
-                param: new { minSentDate },
-                commandTimeout: _commandTimeoutSeconds);
-        }
-
         public async Task<bool> IsCodeBurnt(Guid emailCode)
         {
             return await _dbConnection.QueryFirstOrDefaultAsync<bool>($@"

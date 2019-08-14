@@ -18,7 +18,6 @@ namespace ESFA.DAS.ProvideFeedback.Data
         Task ResetFeedback();
         Task UpsertIntoProviders(Provider provider);
         Task<long> UpsertIntoFeedback(Guid userRef, long accountId, long ukprn);
-        Task<bool> GetNewCodeRequired(long feedbackId, int minDaysSinceInvite);
         Task<EmployerSurveyInvite> GetEmployerSurveyInvite(long feedbackId);
     }
 }
