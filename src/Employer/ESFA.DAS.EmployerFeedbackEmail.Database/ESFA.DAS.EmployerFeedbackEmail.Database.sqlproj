@@ -78,7 +78,7 @@
     <Build Include="Tables\EmployerSurveyHistory.sql" />
     <Build Include="Views\vw_EmployerSurveyHistoryComplete.sql" />
     <Build Include="Tables\EmployerEmailDetails.sql" />
-    <Build Include="StoredProcedures\GetFeedbackLastSentDate.sql" />
+    <Build Include="StoredProcedures\GetEmployerSurveyInvite.sql" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Tables\EmployerSurveyCodes.sql" />

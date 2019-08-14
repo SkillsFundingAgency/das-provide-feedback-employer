@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
-using ESFA.DAS.ProvideFeedback.Domain.Entities;
+using ESFA.DAS.ProvideFeedback.Domain.Entities.Models;
 
 namespace ESFA.DAS.ProvideFeedback.Data
 {
@@ -180,13 +179,13 @@ namespace ESFA.DAS.ProvideFeedback.Data
             );
         }
 
-        public async Task<DateTime?> GetFeedbackLastSentDate(long feedbackId)
+        public async Task<EmployerSurveyInvite> GetEmployerSurveyInvite(long feedbackId)
         {
             var parameters = new DynamicParameters();
             parameters.Add("@FeedbackId", feedbackId, DbType.Int64);
-            return await _dbConnection.ExecuteScalarAsync<DateTime?>
+            return await _dbConnection.QueryFirstOrDefaultAsync<EmployerSurveyInvite>
                 (
-                    sql: "[dbo].[GetFeedbackLastSentDate]",
+                    sql: "[dbo].[GetEmployerSurveyInvite]",
                     param: parameters,
                     commandType: CommandType.StoredProcedure
                 );

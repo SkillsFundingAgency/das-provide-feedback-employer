@@ -44,8 +44,8 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
 
         private async Task<bool> IsNewSurveyCodeRequired(long feedbackId)
         {
-            var feedbackLastSent = await _employerEmailDetailRepository.GetFeedbackLastSentDate(feedbackId);
-            return feedbackLastSent == null || feedbackLastSent < DateTime.UtcNow.AddDays(-_emailSettingsConfig.InviteCycleDays);
+            var feedbackLastSent = await _employerEmailDetailRepository.GetEmployerSurveyInvite(feedbackId);
+            return feedbackLastSent == null || feedbackLastSent.InviteSentDate < DateTime.UtcNow.AddDays(-_emailSettingsConfig.InviteCycleDays);
         }
     }
 }

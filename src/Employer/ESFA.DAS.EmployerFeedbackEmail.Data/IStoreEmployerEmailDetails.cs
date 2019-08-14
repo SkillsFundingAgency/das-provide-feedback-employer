@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using ESFA.DAS.ProvideFeedback.Domain.Entities;
+using ESFA.DAS.ProvideFeedback.Domain.Entities.Models;
 
 namespace ESFA.DAS.ProvideFeedback.Data
 {
@@ -19,6 +19,6 @@ namespace ESFA.DAS.ProvideFeedback.Data
         Task UpsertIntoProviders(Provider provider);
         Task<long> UpsertIntoFeedback(Guid userRef, long accountId, long ukprn);
         Task<bool> GetNewCodeRequired(long feedbackId, int minDaysSinceInvite);
-        Task<DateTime?> GetFeedbackLastSentDate(long feedbackId);
+        Task<EmployerSurveyInvite> GetEmployerSurveyInvite(long feedbackId);
     }
 }

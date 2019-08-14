@@ -1,4 +1,4 @@
-﻿namespace ESFA.DAS.ProvideFeedback.Domain.Entities
+﻿namespace ESFA.DAS.ProvideFeedback.Domain.Entities.Models
 {
     public class Provider
     {

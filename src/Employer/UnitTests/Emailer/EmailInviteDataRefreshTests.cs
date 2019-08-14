@@ -1,20 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using SFA.DAS.Commitments.Api.Types.Apprenticeship;
-using Xunit;
+using System.Threading.Tasks;
 using ESFA.DAS.Feedback.Employer.Emailer;
-using SFA.DAS.Commitments.Api.Types.Apprenticeship.Types;
-using SFA.DAS.Providers.Api.Client;
+using ESFA.DAS.ProvideFeedback.Domain.Entities.Models;
+using FluentAssertions;
 using Moq;
 using SFA.DAS.Apprenticeships.Api.Types.Providers;
 using SFA.DAS.Commitments.Api.Client.Interfaces;
-using System.Threading.Tasks;
 using SFA.DAS.Commitments.Api.Types;
-using FluentAssertions;
+using SFA.DAS.Commitments.Api.Types.Apprenticeship;
+using SFA.DAS.Commitments.Api.Types.Apprenticeship.Types;
 using SFA.DAS.EAS.Account.Api.Client;
 using SFA.DAS.EAS.Account.Api.Types;
-using ESFA.DAS.ProvideFeedback.Domain.Entities;
+using SFA.DAS.Providers.Api.Client;
+using Xunit;
 
 namespace ESFA.DAS.Feedback.Employer.UnitTests.Emailer
 {
