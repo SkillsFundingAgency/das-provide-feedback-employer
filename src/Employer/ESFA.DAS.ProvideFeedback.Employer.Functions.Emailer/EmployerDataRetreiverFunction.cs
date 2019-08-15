@@ -23,8 +23,8 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
 
         [FunctionName("EmployerDataRetreiverFunction")]
         public void Run(
-            [ServiceBusTrigger("retrieve-feedback-data", Connection = "ServiceBusConnection")]string myQueueItem,
-            [ServiceBus("data-refresh-messages", Connection = "ServiceBusConnection", EntityType = EntityType.Queue)]ICollector<EmployerFeedbackRefreshMessage> queue,
+            [ServiceBusTrigger("%RetrieveFeedbackDataMessageQueueName%", Connection = "ServiceBusConnection")]string myQueueItem,
+            [ServiceBus("%DataRefreshMessagesQueueName%", Connection = "ServiceBusConnection", EntityType = EntityType.Queue)]ICollector<EmployerFeedbackRefreshMessage> queue,
             ILogger log)
         {
             _logger.LogInformation($"Starting Data retrieval");

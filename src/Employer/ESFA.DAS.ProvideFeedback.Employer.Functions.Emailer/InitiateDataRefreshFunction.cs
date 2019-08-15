@@ -20,8 +20,8 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
         }
 
         [FunctionName("EmployerFeedbackDataRefreshFunction")]
-        [return: ServiceBus("retrieve-feedback-data", Connection = "ServiceBusConnection")]
-        public async Task<string> Run([TimerTrigger("0 0 3 * * MON-FRI", RunOnStartup = true)]TimerInfo myTimer, ILogger log)
+        [return: ServiceBus("%RetrieveFeedbackDataMessageQueueName%", Connection = "ServiceBusConnection")]
+        public async Task<string> Run([TimerTrigger("%DataRefreshSchedule%", RunOnStartup = true)]TimerInfo myTimer, ILogger log)
         {
             _logger.LogInformation("Starting invite data refresh.");
             try
