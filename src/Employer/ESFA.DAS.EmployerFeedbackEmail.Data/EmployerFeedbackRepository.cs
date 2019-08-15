@@ -12,7 +12,6 @@ namespace ESFA.DAS.ProvideFeedback.Data
     {
         private int _commandTimeoutSeconds = 120;
         private readonly IDbConnection _dbConnection;
-        private const string EmployerSurveyInvites = "vw_EmployerSurveyInvites";
         private const string EmployerSurveyCodes = "EmployerSurveyCodes";
         private const string EmployerSurveyHistoryComplete = "vw_EmployerSurveyHistoryComplete";
 
