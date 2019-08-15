@@ -1,5 +1,4 @@
 using System.Linq;
-using System.Threading.Tasks;
 using ESFA.DAS.Feedback.Employer.Emailer;
 using ESFA.DAS.ProvideFeedback.Domain.Entities.Messages;
 using Microsoft.Azure.WebJobs;
@@ -8,20 +7,20 @@ using Microsoft.Extensions.Logging;
 
 namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
 {
-    public class EmployerDataRetreiverFunction
+    public class EmployerDataRetrieverFunction
     {
         private readonly EmployerFeedbackDataRetrievalService _dataRetrievalService;
-        private readonly ILogger<EmployerDataRetreiverFunction> _logger;
+        private readonly ILogger<EmployerDataRetrieverFunction> _logger;
 
-        public EmployerDataRetreiverFunction(
+        public EmployerDataRetrieverFunction(
             EmployerFeedbackDataRetrievalService dataRetrievalService,
-            ILogger<EmployerDataRetreiverFunction> logger)
+            ILogger<EmployerDataRetrieverFunction> logger)
         {
             _dataRetrievalService = dataRetrievalService;
             _logger = logger;
         }
 
-        [FunctionName("EmployerDataRetreiverFunction")]
+        [FunctionName("EmployerDataRetrieverFunction")]
         public void Run(
             [ServiceBusTrigger("%RetrieveFeedbackDataMessageQueueName%", Connection = "ServiceBusConnection")]string myQueueItem,
             [ServiceBus("%DataRefreshMessagesQueueName%", Connection = "ServiceBusConnection", EntityType = EntityType.Queue)]ICollector<EmployerFeedbackRefreshMessage> queue,

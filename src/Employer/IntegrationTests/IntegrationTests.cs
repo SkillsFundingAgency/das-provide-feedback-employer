@@ -54,7 +54,7 @@ namespace IntegrationTests
         private EmployerSurveyInviteEmailer _employerSurveyInviteEmailer;
         private EmployerSurveyReminderEmailer _employerSurveyReminderEmailer;
         private InitiateDataRefreshFunction _initiateFunction;
-        private EmployerDataRetreiverFunction _dataRetrieveFunction;
+        private EmployerDataRetrieverFunction _dataRetrieveFunction;
         private EmployerFeedbackRefreshDataFunction _dataRefreshFunction;
         private EmployerSurveyInviteGeneratorFunction _surveyInviteGeneratorFunction;
         private DataRefreshHelper _helper;
@@ -107,7 +107,7 @@ namespace IntegrationTests
             SetupApiMocks(2);
 
             _initiateFunction = new InitiateDataRefreshFunction(_dbEmployerFeedbackRepository, Mock.Of<ILogger<InitiateDataRefreshFunction>>());
-            _dataRetrieveFunction = new EmployerDataRetreiverFunction(_employerFeedbackDataRefresh, Mock.Of<ILogger<EmployerDataRetreiverFunction>>());
+            _dataRetrieveFunction = new EmployerDataRetrieverFunction(_employerFeedbackDataRefresh, Mock.Of<ILogger<EmployerDataRetrieverFunction>>());
             _dataRefreshFunction = new EmployerFeedbackRefreshDataFunction(_helper, Mock.Of<ILogger<EmployerFeedbackRefreshDataFunction>>());
             _surveyInviteGeneratorFunction = new EmployerSurveyInviteGeneratorFunction(_surveyInviteGenerator);
         }
