@@ -9,11 +9,11 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
 {
     public class EmployerDataRetreiverFunction
     {
-        private readonly EmployerFeedbackDataRefreshService _dataRetrievalService;
+        private readonly EmployerFeedbackDataRetrievalService _dataRetrievalService;
         private readonly ILogger<EmployerDataRetreiverFunction> _logger;
 
         public EmployerDataRetreiverFunction(
-            EmployerFeedbackDataRefreshService dataRetrievalService,
+            EmployerFeedbackDataRetrievalService dataRetrievalService,
             ILogger<EmployerDataRetreiverFunction> logger)
         {
             _dataRetrievalService = dataRetrievalService;

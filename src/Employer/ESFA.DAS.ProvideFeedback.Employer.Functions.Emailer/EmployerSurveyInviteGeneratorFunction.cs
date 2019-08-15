@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using ESFA.DAS.Feedback.Employer.Emailer;
 using ESFA.DAS.Feedback.Employer.Emailer.Configuration;
 using ESFA.DAS.ProvideFeedback.Data;
 using ESFA.DAS.ProvideFeedback.Domain.Entities.Messages;
@@ -12,15 +13,11 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
 {
     public class EmployerSurveyInviteGeneratorFunction
     {
-        private readonly EmailSettings _emailSettingsConfig;
-        private readonly IStoreEmployerEmailDetails _employerEmailDetailRepository;
+        private readonly SurveyInviteGenerator _surveyInviteGenerator;
 
-        public EmployerSurveyInviteGeneratorFunction(
-            IOptions<EmailSettings> options,
-            IStoreEmployerEmailDetails employerEmailDetailRepository)
+        public EmployerSurveyInviteGeneratorFunction(SurveyInviteGenerator surveyInviteGenerator)
         {
-            _emailSettingsConfig = options.Value;
-            _employerEmailDetailRepository = employerEmailDetailRepository;
+            _surveyInviteGenerator = surveyInviteGenerator;
         }
 
         [FunctionName("EmployerSurveyInviteGenerator")]
@@ -31,21 +28,10 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
             log.LogInformation($"Employer Survey Invite generator executed at: {DateTime.Now}");
 
             var message = JsonConvert.DeserializeObject<GenerateSurveyCodeMessage>(feedbackForCodeGeneration);
-            var feedbackId = await _employerEmailDetailRepository.UpsertIntoFeedback(message.UserRef, message.AccountId, message.Ukprn);
-            log.LogInformation("Done upserting feedback");
 
-            if (await IsNewSurveyCodeRequired(feedbackId))
-            {
-                await _employerEmailDetailRepository.InsertNewSurveyForFeedback(feedbackId);
-            }
+            await _surveyInviteGenerator.GenerateSurveyInvites(message);
 
             log.LogInformation($"Employer Survey Invite generator completed at: {DateTime.Now}");
-        }
-
-        private async Task<bool> IsNewSurveyCodeRequired(long feedbackId)
-        {
-            var feedbackLastSent = await _employerEmailDetailRepository.GetEmployerSurveyInvite(feedbackId);
-            return feedbackLastSent == null || feedbackLastSent.InviteSentDate < DateTime.UtcNow.AddDays(-_emailSettingsConfig.InviteCycleDays);
         }
     }
 }

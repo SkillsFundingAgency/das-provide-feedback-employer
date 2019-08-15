@@ -14,13 +14,13 @@ using Provider = ESFA.DAS.ProvideFeedback.Domain.Entities.Models.Provider;
 
 namespace ESFA.DAS.Feedback.Employer.Emailer
 {
-    public class EmployerFeedbackDataRefreshService
+    public class EmployerFeedbackDataRetrievalService
     {
         IProviderApiClient _providerApiClient;
         IEmployerCommitmentApi _commitmentApiClient;
         IAccountApiClient _accountApiClient;
 
-        public EmployerFeedbackDataRefreshService(IProviderApiClient providerApiClient, IEmployerCommitmentApi commitmentApiClient, IAccountApiClient accountApiClient)
+        public EmployerFeedbackDataRetrievalService(IProviderApiClient providerApiClient, IEmployerCommitmentApi commitmentApiClient, IAccountApiClient accountApiClient)
         {
             _providerApiClient = providerApiClient;
             _commitmentApiClient = commitmentApiClient;

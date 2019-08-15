@@ -9,14 +9,14 @@ using Newtonsoft.Json;
 
 namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
 {
-    public class EmployerFeedbackRefreshMessageReceiver
+    public class EmployerFeedbackRefreshDataFunction
     {
         private readonly DataRefreshHelper _helper;
-        private readonly ILogger<EmployerFeedbackRefreshMessageReceiver> _logger;
+        private readonly ILogger<EmployerFeedbackRefreshDataFunction> _logger;
 
-        public EmployerFeedbackRefreshMessageReceiver(
+        public EmployerFeedbackRefreshDataFunction(
             DataRefreshHelper helper,
-            ILogger<EmployerFeedbackRefreshMessageReceiver> logger)
+            ILogger<EmployerFeedbackRefreshDataFunction> logger)
         {
             _helper = helper;
             _logger = logger;

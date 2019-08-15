@@ -18,23 +18,23 @@ using Xunit;
 
 namespace ESFA.DAS.Feedback.Employer.UnitTests.Emailer
 {
-    public class EmailInviteDataRefreshTests
+    public class EmailInviteDataRefreshServiceTests
     {
         Mock<IProviderApiClient> _providerApiClientMock;
         Mock<IEmployerCommitmentApi> _employerApiClientMock;
         Mock<IAccountApiClient> _accountApiClientMock;
-        private EmployerFeedbackDataRefreshService _dataRefresh;
+        private EmployerFeedbackDataRetrievalService _dataRefresh;
         ProviderSummary[] providerApiReturn;
         List<Apprenticeship> employerApiReturn;
         ICollection<TeamMemberViewModel> accountApiReturn;
         Task<IEnumerable<long>> employerIdsReturn;
 
-        public EmailInviteDataRefreshTests()
+        public EmailInviteDataRefreshServiceTests()
         {
             _providerApiClientMock = new Mock<IProviderApiClient>();
             _employerApiClientMock = new Mock<IEmployerCommitmentApi>();
             _accountApiClientMock = new Mock<IAccountApiClient>();
-            _dataRefresh = new EmployerFeedbackDataRefreshService(_providerApiClientMock.Object, _employerApiClientMock.Object, _accountApiClientMock.Object);
+            _dataRefresh = new EmployerFeedbackDataRetrievalService(_providerApiClientMock.Object, _employerApiClientMock.Object, _accountApiClientMock.Object);
 
             providerApiReturn = new ProviderSummary[]
             {

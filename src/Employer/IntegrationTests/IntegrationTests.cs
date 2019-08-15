@@ -4,17 +4,22 @@ using System.Data.Common;
 using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Dapper;
 using ESFA.DAS.Feedback.Employer.Emailer;
 using ESFA.DAS.Feedback.Employer.Emailer.Configuration;
 using ESFA.DAS.ProvideFeedback.Data;
+using ESFA.DAS.ProvideFeedback.Domain.Entities.Messages;
 using ESFA.DAS.ProvideFeedback.Domain.Entities.Models;
+using ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer;
 using FluentAssertions;
+using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
+using Newtonsoft.Json;
 using NUnit.Framework;
 using SFA.DAS.Apprenticeships.Api.Types.Providers;
 using SFA.DAS.Commitments.Api.Client.Interfaces;
@@ -28,44 +33,46 @@ using SFA.DAS.Providers.Api.Client;
 
 namespace IntegrationTests
 {
+    [NonParallelizable]
     public class IntegrationTest_NeedsToBeRanAsOne
     {
-        private readonly Mock<IProviderApiClient> _providerApiClientMock;
-        private readonly Mock<IEmployerCommitmentApi> _commitmentApiClientMock;
-        private readonly Mock<IAccountApiClient> _accountApiClientMock;
+        private IConfigurationRoot _configuration;
+        private Mock<IProviderApiClient> _providerApiClientMock;
+        private Mock<IEmployerCommitmentApi> _commitmentApiClientMock;
+        private Mock<IAccountApiClient> _accountApiClientMock;
         private Mock<INotificationsApi> _notificationsApiClientMock;
 
         private ProviderSummary[] _providerApiClientReturn;
         private List<Apprenticeship> _commitmentApiClientReturn;
         private ICollection<TeamMemberViewModel> _accountApiClientReturn;
 
-        private readonly Mock<ILogger<EmployerSurveyEmailer>> _surveyLoggerMock;
+        private Mock<ILogger<EmployerSurveyEmailer>> _surveyLoggerMock;
 
-        private readonly IStoreEmployerEmailDetails _dbEmployerFeedbackRepository;
-        private readonly EmployerFeedbackDataRefreshService _employerFeedbackDataRefresh;
+        private IStoreEmployerEmailDetails _dbEmployerFeedbackRepository;
+        private EmployerFeedbackDataRetrievalService _employerFeedbackDataRefresh;
         private EmployerSurveyInviteEmailer _employerSurveyInviteEmailer;
         private EmployerSurveyReminderEmailer _employerSurveyReminderEmailer;
-        private readonly DataRefreshHelper _helper;
-        private readonly IOptions<EmailSettings> _options;
-        private readonly DbConnection _dbConnection;
+        private InitiateDataRefreshFunction _initiateFunction;
+        private EmployerDataRetreiverFunction _dataRetrieveFunction;
+        private EmployerFeedbackRefreshDataFunction _dataRefreshFunction;
+        private EmployerSurveyInviteGeneratorFunction _surveyInviteGeneratorFunction;
+        private DataRefreshHelper _helper;
+        private SurveyInviteGenerator _surveyInviteGenerator;
+        private IOptions<EmailSettings> _options;
+        private DbConnection _dbConnection;
 
-        private readonly Guid _user1Guid;
-        private readonly Guid _user2Guid;
-        private readonly Guid _user3Guid;
+        private Guid _user1Guid;
+        private Guid _user2Guid;
+        private Guid _user3Guid;
 
-        public IntegrationTest_NeedsToBeRanAsOne()
+        [OneTimeSetUp]
+        public void OneTimeSetUp()
         {
-            var configuration = new ConfigurationBuilder()
+            _configuration = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("local.settings.json", optional: true, reloadOnChange: true)
                 .AddEnvironmentVariables()
                 .Build();
-
-            _providerApiClientMock = new Mock<IProviderApiClient>();
-            _commitmentApiClientMock = new Mock<IEmployerCommitmentApi>();
-            _accountApiClientMock = new Mock<IAccountApiClient>();
-            _notificationsApiClientMock = new Mock<INotificationsApi>();
-            _surveyLoggerMock = new Mock<ILogger<EmployerSurveyEmailer>>();
 
             _options = new OptionsWrapper<EmailSettings>(new EmailSettings
             {
@@ -74,49 +81,58 @@ namespace IntegrationTests
                 InviteCycleDays = 90,
                 ReminderDays = 14
             });
-            _dbConnection = new SqlConnection(configuration.GetConnectionString("EmployerEmailStoreConnection"));
-            _dbEmployerFeedbackRepository = new EmployerFeedbackRepository(_dbConnection);
-            _employerFeedbackDataRefresh = new EmployerFeedbackDataRefreshService(_providerApiClientMock.Object,
-                _commitmentApiClientMock.Object, _accountApiClientMock.Object);
-            _helper = new DataRefreshHelper(new Mock<ILogger<DataRefreshHelper>>().Object,_dbEmployerFeedbackRepository);
             
-            SetUpApiReturn(2);
-
             _user1Guid = Guid.Parse("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa");
             _user2Guid = Guid.Parse("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb");
             _user3Guid = Guid.Parse("cccccccc-cccc-cccc-cccc-cccccccccccc");
+        }
 
-            _accountApiClientReturn = new List<TeamMemberViewModel>
-            {
-                new TeamMemberViewModel
-                {
-                    Email = "Test@test.com", Name = "Master Chef", UserRef = _user1Guid.ToString(),
-                    CanReceiveNotifications = true
-                },
-                new TeamMemberViewModel
-                {
-                    Email = "TheBestThereEverWas@90sReference.com", Name = "Flash Ketchup",
-                    UserRef = _user2Guid.ToString(), CanReceiveNotifications = true
-                }
-            };
+        [SetUp]
+        public void SetUp()
+        {
+            _providerApiClientMock = new Mock<IProviderApiClient>();
+            _commitmentApiClientMock = new Mock<IEmployerCommitmentApi>();
+            _accountApiClientMock = new Mock<IAccountApiClient>();
+            _notificationsApiClientMock = new Mock<INotificationsApi>();
+            _surveyLoggerMock = new Mock<ILogger<EmployerSurveyEmailer>>();
 
-            _accountApiClientMock.Setup(x => x.GetAccountUsers(It.IsAny<long>())).ReturnsAsync(_accountApiClientReturn);
-            _providerApiClientMock.Setup(x => x.FindAll()).Returns(_providerApiClientReturn);
-            _commitmentApiClientMock.Setup(x => x.GetEmployerApprenticeships(It.IsAny<long>()))
-                .ReturnsAsync(_commitmentApiClientReturn);
-            _commitmentApiClientMock.Setup(x => x.GetAllEmployerAccountIds()).ReturnsAsync(new long[] {1});
+            _dbConnection = new SqlConnection(_configuration.GetConnectionString("EmployerEmailStoreConnection"));
+            _dbEmployerFeedbackRepository = new EmployerFeedbackRepository(_dbConnection);
+            _employerFeedbackDataRefresh = new EmployerFeedbackDataRetrievalService(_providerApiClientMock.Object,
+                _commitmentApiClientMock.Object, _accountApiClientMock.Object);
+            _helper = new DataRefreshHelper(new Mock<ILogger<DataRefreshHelper>>().Object, _dbEmployerFeedbackRepository);
+            _surveyInviteGenerator = new SurveyInviteGenerator(_options, _dbEmployerFeedbackRepository, Mock.Of<ILogger<SurveyInviteGenerator>>());
 
-            
+            SetupApiMocks(2);
+
+            _initiateFunction = new InitiateDataRefreshFunction(_dbEmployerFeedbackRepository, Mock.Of<ILogger<InitiateDataRefreshFunction>>());
+            _dataRetrieveFunction = new EmployerDataRetreiverFunction(_employerFeedbackDataRefresh, Mock.Of<ILogger<EmployerDataRetreiverFunction>>());
+            _dataRefreshFunction = new EmployerFeedbackRefreshDataFunction(_helper, Mock.Of<ILogger<EmployerFeedbackRefreshDataFunction>>());
+            _surveyInviteGeneratorFunction = new EmployerSurveyInviteGeneratorFunction(_surveyInviteGenerator);
+        }
+
+        [Test, Category("IntegrationTest")]
+        public async Task InitiateEmployerFeedbackDataRefresh_ShouldSetAllFeedbackAsInactive()
+        {
+            // Arrange
+            await CleanupData();
+            await RunThroughRefreshFunctions();
+
+            // Act
+            var result = await _initiateFunction.Run(null, Mock.Of<ILogger>());
+
+            // Assert
+            result.Should().Be(string.Empty);
+            var feedbackIsActiveFlags = await _dbConnection.QueryAsync<int>($@"SELECT IsActive FROM EmployerFeedback");
+            feedbackIsActiveFlags.Should().AllBeEquivalentTo(0);
         }
 
         [Test, Order(1)]
-        public async Task InitialDatabasePopulatedCorrectly()
+        public async Task FirstEmployerFeedbackDataRefresh()
         {
-            //Assert
-            await _dbEmployerFeedbackRepository.ResetFeedback();
-            await ClearSurveyCodes(_user1Guid);
-            await ClearSurveyCodes(_user2Guid);
-            await ClearSurveyCodes(_user3Guid);
+            // Assert
+            await CleanupData();
+
             var expectedInvites = new List<EmployerSurveyInvite>
             {
                 new EmployerSurveyInvite {UserRef = _user1Guid, EmailAddress = "Test@test.com", FirstName = "Master", AccountId = 1, Ukprn = 1, ProviderName = "Test Academy"},
@@ -126,16 +142,11 @@ namespace IntegrationTests
                 new EmployerSurveyInvite {UserRef = _user2Guid, EmailAddress = "TheBestThereEverWas@90sReference.com", FirstName = "Flash", AccountId = 2, Ukprn = 1, ProviderName = "Test Academy"},
                 new EmployerSurveyInvite {UserRef = _user2Guid, EmailAddress = "TheBestThereEverWas@90sReference.com", FirstName = "Flash", AccountId = 2, Ukprn = 2, ProviderName = "Worst School"},
             };
-            _notificationsApiClientMock = new Mock<INotificationsApi>();
+            
+            // Act
+            await RunThroughRefreshFunctions();
 
-            //Act
-            var result = _employerFeedbackDataRefresh.GetRefreshData();
-            foreach (var x in result)
-            {
-                await _helper.RefreshFeedbackData(x);
-            }
-
-            //Assert
+            // Assert
             var invites = await _dbEmployerFeedbackRepository.GetEmployerUsersToBeSentInvite();
             invites.Count().Should().Be(6);
             invites.Should().BeEquivalentTo(expectedInvites, options => options.Excluding(
@@ -147,8 +158,11 @@ namespace IntegrationTests
         {
             //Assign
             _notificationsApiClientMock = new Mock<INotificationsApi>();
-            _employerSurveyInviteEmailer = new EmployerSurveyInviteEmailer(_dbEmployerFeedbackRepository,
-                _notificationsApiClientMock.Object, _options, _surveyLoggerMock.Object);
+            _employerSurveyInviteEmailer = new EmployerSurveyInviteEmailer(
+                _dbEmployerFeedbackRepository,
+                _notificationsApiClientMock.Object, 
+                _options, 
+                _surveyLoggerMock.Object);
 
             //Act
             await _employerSurveyInviteEmailer.SendEmailsAsync();
@@ -165,7 +179,7 @@ namespace IntegrationTests
                 UPDATE EmployerSurveyHistory
                 SET SentDate = @newSentDate
                 WHERE UniqueSurveyCode IN (SELECT UniqueSurveyCode FROM EmployerSurveyCodes WHERE FeedbackId IN (SELECT FeedbackId FROM EmployerFeedback WHERE UserRef in @userRefs))",
-                new {newSentDate = DateTime.Now - TimeSpan.FromDays(15), userRefs = new[] {_user1Guid, _user2Guid}});
+                new {newSentDate = DateTime.UtcNow.AddDays(-15), userRefs = new[] {_user1Guid, _user2Guid}});
             _notificationsApiClientMock = new Mock<INotificationsApi>();
             _employerSurveyReminderEmailer = new EmployerSurveyReminderEmailer(_dbEmployerFeedbackRepository,
                 _notificationsApiClientMock.Object, _options, _surveyLoggerMock.Object);
@@ -181,26 +195,15 @@ namespace IntegrationTests
         public async Task SomeApprenticeshipsChangeProvider()
         {
             //Assign
-            SetUpApiReturn(3);
-            _accountApiClientMock.Setup(x => x.GetAccountUsers(It.IsAny<long>())).ReturnsAsync(_accountApiClientReturn);
-            _providerApiClientMock.Setup(x => x.FindAll()).Returns(_providerApiClientReturn);
-            _commitmentApiClientMock.Setup(x => x.GetEmployerApprenticeships(It.IsAny<long>()))
-                .ReturnsAsync(_commitmentApiClientReturn);
-            _commitmentApiClientMock.Setup(x => x.GetAllEmployerAccountIds()).ReturnsAsync(new long[] { 1 });
-            await _dbEmployerFeedbackRepository.ResetFeedback();
+            SetupApiMocks(3);
             var expectedInvites = new List<EmployerSurveyInvite>
             {
                 new EmployerSurveyInvite {UserRef = _user1Guid, EmailAddress = "Test@test.com", FirstName = "Master", AccountId = 2, Ukprn = 3, ProviderName = "Worst School"},
                 new EmployerSurveyInvite {UserRef = _user2Guid, EmailAddress = "TheBestThereEverWas@90sReference.com", FirstName = "Flash", AccountId = 2, Ukprn = 3, ProviderName = "Worst School"},
             };
-            _notificationsApiClientMock = new Mock<INotificationsApi>();
 
             //Act
-            var result = _employerFeedbackDataRefresh.GetRefreshData();
-            foreach (var x in result)
-            {
-                await _helper.RefreshFeedbackData(x);
-            }
+            await RunThroughRefreshFunctions();
 
             //Assert
             var invites = await _dbEmployerFeedbackRepository.GetEmployerUsersToBeSentInvite();
@@ -224,9 +227,6 @@ namespace IntegrationTests
                 _notificationsApiClientMock.Object, _options, _surveyLoggerMock.Object);
 
             //Act
-
-            //TODO: Fix integration tests to use new function to create survey codes.
-            //await _dbEmployerFeedbackRepository.InsertNewSurveyInviteCodes(newCodesRequired);
             await _employerSurveyInviteEmailer.SendEmailsAsync();
 
             //Assert
@@ -234,7 +234,7 @@ namespace IntegrationTests
         }
 
         [Test, Order(6)]
-        public async Task SecondRoundReminderEmailsSentCorrectly()
+        public async Task SecondRoundReminder_OnlySendWhereNoPreviousReminder()
         {
             //Assign
             await _dbConnection.ExecuteAsync($@" 
@@ -253,7 +253,7 @@ namespace IntegrationTests
             _notificationsApiClientMock.Verify(x => x.SendEmail(It.IsAny<Email>()), Times.Exactly(2));
         }
 
-        [Test,Order(7)]
+        [Test, Order(7)]
         public async Task ThirdRoundInviteEmailsSentCorrectly()
         {
             await _dbConnection.ExecuteAsync($@" 
@@ -261,14 +261,12 @@ namespace IntegrationTests
                 SET SentDate = @newSentDate
                 WHERE EmailType = 1 AND UniqueSurveyCode IN (SELECT UniqueSurveyCode FROM EmployerSurveyCodes WHERE FeedbackId IN (SELECT FeedbackId FROM EmployerFeedback WHERE UserRef in @userRefs))",
                 new { newSentDate = DateTime.Now - TimeSpan.FromDays(91), userRefs = new[] { _user1Guid, _user2Guid } });
-            _notificationsApiClientMock = new Mock<INotificationsApi>();
             _employerSurveyInviteEmailer = new EmployerSurveyInviteEmailer(_dbEmployerFeedbackRepository,
                 _notificationsApiClientMock.Object, _options, _surveyLoggerMock.Object);
 
+            await RunThroughRefreshFunctions();
+
             //Act
-            //var newCodesRequired =
-            //    await _dbEmployerFeedbackRepository.GetEmployerInvitesForNextCycleAsync(_options.Value.InviteCycleDays);
-            //await _dbEmployerFeedbackRepository.InsertNewSurveyInviteCodes(newCodesRequired);
             await _employerSurveyInviteEmailer.SendEmailsAsync();
 
             //Assert
@@ -279,7 +277,7 @@ namespace IntegrationTests
         public async Task CurrentUsersLeftCompanyNewPersonJoins()
         {
             //Assign
-            SetUpApiReturn(3);
+            SetupApiMocks(3);
             _accountApiClientReturn = new List<TeamMemberViewModel>
             {
                 new TeamMemberViewModel
@@ -289,25 +287,16 @@ namespace IntegrationTests
                 }
             };
             _accountApiClientMock.Setup(x => x.GetAccountUsers(It.IsAny<long>())).ReturnsAsync(_accountApiClientReturn);
-            _providerApiClientMock.Setup(x => x.FindAll()).Returns(_providerApiClientReturn);
-            _commitmentApiClientMock.Setup(x => x.GetEmployerApprenticeships(It.IsAny<long>()))
-                .ReturnsAsync(_commitmentApiClientReturn);
-            _commitmentApiClientMock.Setup(x => x.GetAllEmployerAccountIds()).ReturnsAsync(new long[] { 1 });
-            await _dbEmployerFeedbackRepository.ResetFeedback();
+
             var expectedInvites = new List<EmployerSurveyInvite>
             {
                 new EmployerSurveyInvite {UserRef = _user3Guid, EmailAddress = "InWestPhiladelphiaBornAndRaised@PlaygroundDayz.com", FirstName = "Fresh", AccountId = 1, Ukprn = 1, ProviderName = "Test Academy"},
                 new EmployerSurveyInvite {UserRef = _user3Guid, EmailAddress = "InWestPhiladelphiaBornAndRaised@PlaygroundDayz.com", FirstName = "Fresh", AccountId = 2, Ukprn = 1, ProviderName = "Test Academy"},
                 new EmployerSurveyInvite {UserRef = _user3Guid, EmailAddress = "InWestPhiladelphiaBornAndRaised@PlaygroundDayz.com", FirstName = "Fresh", AccountId = 2, Ukprn = 3 , ProviderName = "Worst School"},
             };
-            _notificationsApiClientMock = new Mock<INotificationsApi>();
 
             //Act
-            var result = _employerFeedbackDataRefresh.GetRefreshData();
-            foreach (var x in result)
-            {
-                await _helper.RefreshFeedbackData(x);
-            }
+            await RunThroughRefreshFunctions();
 
             //Assert
             var invites = await _dbEmployerFeedbackRepository.GetEmployerUsersToBeSentInvite();
@@ -325,7 +314,6 @@ namespace IntegrationTests
                 SET SentDate = DATEADD(DAY,-15,SentDate)
                 WHERE UniqueSurveyCode IN (SELECT UniqueSurveyCode FROM EmployerSurveyCodes WHERE FeedbackId IN (SELECT FeedbackId FROM EmployerFeedback WHERE UserRef in @userRefs))",
                 new { userRefs = new[] { _user3Guid } });
-            _notificationsApiClientMock = new Mock<INotificationsApi>();
             _employerSurveyReminderEmailer = new EmployerSurveyReminderEmailer(_dbEmployerFeedbackRepository,
                 _notificationsApiClientMock.Object, _options, _surveyLoggerMock.Object);
 
@@ -362,13 +350,70 @@ namespace IntegrationTests
                     EmployerAccountId = 2, ProviderId = changeableUkprn, ProviderName = "Worst School"
                 }
             };
+
+            _accountApiClientReturn = new List<TeamMemberViewModel>
+            {
+                new TeamMemberViewModel
+                {
+                    Email = "Test@test.com", Name = "Master Chef", UserRef = _user1Guid.ToString(),
+                    CanReceiveNotifications = true
+                },
+                new TeamMemberViewModel
+                {
+                    Email = "TheBestThereEverWas@90sReference.com", Name = "Flash Ketchup",
+                    UserRef = _user2Guid.ToString(), CanReceiveNotifications = true
+                }
+            };
         }
 
-        private async Task ClearSurveyCodes(Guid userRef)
+        private async Task CleanupData()
         {
-            await _dbConnection.ExecuteAsync($@"
-            DELETE FROM EmployerSurveyHistory where uniqueSurveyCode in (SELECT UniqueSurveyCode from EmployerSurveyCodes where FeedbackId in (SELECT FeedbackId FROM EmployerFeedback WHERE UserRef = @userRef))
-            DELETE FROM EmployerSurveyCodes where FeedbackId in (SELECT FeedbackId FROM EmployerFeedback WHERE UserRef = @userRef)", new { userRef });
+            await _dbConnection.ExecuteAsync($@" 
+                DELETE FROM EmployerSurveyHistory;
+                DELETE FROM EmployerSurveyCodes
+                DELETE FROM EmployerFeedback;
+                DELETE FROM Users
+                DELETE FROM Providers");                                    
+        }
+
+        private void SetupApiMocks(int changeableUkprn)
+        {
+            SetUpApiReturn(changeableUkprn);
+
+            _accountApiClientMock.Setup(x => x.GetAccountUsers(It.IsAny<long>())).ReturnsAsync(_accountApiClientReturn);
+            _providerApiClientMock.Setup(x => x.FindAll()).Returns(_providerApiClientReturn);
+            _commitmentApiClientMock.Setup(x => x.GetEmployerApprenticeships(It.IsAny<long>()))
+                .ReturnsAsync(_commitmentApiClientReturn);
+            _commitmentApiClientMock.Setup(x => x.GetAllEmployerAccountIds()).ReturnsAsync(new long[] { 1 });
+        }
+
+        private async Task RunThroughRefreshFunctions()
+        {
+            var refreshMessages = new List<string>();
+            var generateCodeMessages = new List<string>();
+
+            var refreshMessageCollectorMock = new Mock<IAsyncCollector<EmployerFeedbackRefreshMessage>>();
+            refreshMessageCollectorMock
+                .Setup(mock => mock.AddAsync(It.IsAny<EmployerFeedbackRefreshMessage>(), It.IsAny<CancellationToken>()))
+                .Callback((EmployerFeedbackRefreshMessage message, CancellationToken ct) => refreshMessages.Add(JsonConvert.SerializeObject(message)));
+
+            var generateSurveyCodeMessageCollectorMock = new Mock<IAsyncCollector<GenerateSurveyCodeMessage>>();
+            generateSurveyCodeMessageCollectorMock
+                .Setup(mock => mock.AddAsync(It.IsAny<GenerateSurveyCodeMessage>(), It.IsAny<CancellationToken>()))
+                .Callback((GenerateSurveyCodeMessage message, CancellationToken ct) => generateCodeMessages.Add(JsonConvert.SerializeObject(message)));
+
+            var initiateMessage = await _initiateFunction.Run(null, Mock.Of<ILogger>());
+
+            _dataRetrieveFunction.Run(initiateMessage, refreshMessageCollectorMock.Object, Mock.Of<ILogger>());
+            foreach (var refreshMessage in refreshMessages)
+            {
+                generateCodeMessages.Clear();
+                await _dataRefreshFunction.Run(refreshMessage, Mock.Of<ILogger>(), generateSurveyCodeMessageCollectorMock.Object);
+                foreach (var generateCodeMessage in generateCodeMessages)
+                {
+                    await _surveyInviteGeneratorFunction.Run(generateCodeMessage, Mock.Of<ILogger>());
+                }
+            }
         }
     }
 }

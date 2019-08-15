@@ -32,22 +32,22 @@ namespace ESFA.DAS.ProvideFeedback.Data
 
         public async Task<IEnumerable<EmployerSurveyInvite>> GetEmployerUsersToBeSentInvite()
         {
-            return await _dbConnection.QueryAsync<EmployerSurveyInvite>(sql: $@"
-                                        SELECT * 
-                                        FROM {EmployerSurveyInvites}
-                                        WHERE InviteSentDate IS NULL", commandTimeout: _commandTimeoutSeconds);
+            return await _dbConnection.QueryAsync<EmployerSurveyInvite>(
+                sql: "[dbo].[GetSurveyInvitesToSend]",
+                commandType: CommandType.StoredProcedure,
+                commandTimeout: _commandTimeoutSeconds);
         }
 
         public async Task<IEnumerable<EmployerSurveyInvite>> GetEmployerInvitesToBeSentReminder(int minDaysSinceInvite)
         {
             var minSentDate = DateTime.Now.AddDays(-minDaysSinceInvite);
-            return await _dbConnection.QueryAsync<EmployerSurveyInvite>(sql: $@"
-                                        SELECT * 
-                                        FROM {EmployerSurveyInvites}
-                                        WHERE InviteSentDate IS NOT NULL
-                                        AND LastReminderSentDate IS NULL
-                                        AND InviteSentDate < @{nameof(minSentDate)}
-                                        AND BurnDate IS NULL", param: new { minSentDate }, transaction: null, commandTimeout: _commandTimeoutSeconds);
+            var parameters = new DynamicParameters();
+            parameters.Add("@MinSentDate", minSentDate, DbType.DateTime2);
+            return await _dbConnection.QueryAsync<EmployerSurveyInvite>(
+                sql: "[dbo].[GetSurveyRemindersToSend]",
+                param: parameters,
+                commandType: CommandType.StoredProcedure,
+                commandTimeout: _commandTimeoutSeconds);
         }
 
         public async Task<bool> IsCodeBurnt(Guid emailCode)
@@ -102,12 +102,6 @@ namespace ESFA.DAS.ProvideFeedback.Data
                     UniqueSurveyCode = Guid.NewGuid(),
                     FeedbackId = feedbackId
                 });
-        }
-
-        private async Task<long> GetFeedbackId(Guid UserRef, long Ukprn, long AccountId)
-        {
-            return await _dbConnection.QuerySingleAsync<long>($@"
-            SELECT FeedbackID FROM EmployerFeedback WHERE UserRef = @UserRef AND Ukprn = @Ukprn AND AccountId = @AccountID", new { UserRef, Ukprn, AccountId });
         }
 
         public async Task UpsertIntoUsers(User user)
