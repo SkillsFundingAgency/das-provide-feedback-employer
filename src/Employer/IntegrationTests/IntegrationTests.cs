@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Data.SqlClient;
@@ -389,13 +390,14 @@ namespace IntegrationTests
 
         private async Task RunThroughRefreshFunctions()
         {
-            var refreshMessages = new List<string>();
-            var generateCodeMessages = new List<string>();
+            // Callback which populates these can be called on multiple threads. 
+            var refreshMessages = new ConcurrentBag<string>();
+            var generateCodeMessages = new ConcurrentBag<string>();
 
-            var refreshMessageCollectorMock = new Mock<IAsyncCollector<EmployerFeedbackRefreshMessage>>();
+            var refreshMessageCollectorMock = new Mock<ICollector<EmployerFeedbackRefreshMessage>>();
             refreshMessageCollectorMock
-                .Setup(mock => mock.AddAsync(It.IsAny<EmployerFeedbackRefreshMessage>(), It.IsAny<CancellationToken>()))
-                .Callback((EmployerFeedbackRefreshMessage message, CancellationToken ct) => refreshMessages.Add(JsonConvert.SerializeObject(message)));
+                .Setup(mock => mock.Add(It.IsAny<EmployerFeedbackRefreshMessage>()))
+                .Callback((EmployerFeedbackRefreshMessage message) => refreshMessages.Add(JsonConvert.SerializeObject(message)));
 
             var generateSurveyCodeMessageCollectorMock = new Mock<IAsyncCollector<GenerateSurveyCodeMessage>>();
             generateSurveyCodeMessageCollectorMock

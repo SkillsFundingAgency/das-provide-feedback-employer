@@ -163,7 +163,7 @@ namespace ESFA.DAS.ProvideFeedback.Data
             parameters.Add("@FeedbackId", feedbackId, DbType.Int64);
             return await _dbConnection.QueryFirstOrDefaultAsync<EmployerSurveyInvite>
                 (
-                    sql: "[dbo].[GetEmployerSurveyInvite]",
+                    sql: "[dbo].[GetEmployerSurveyHistory]",
                     param: parameters,
                     commandType: CommandType.StoredProcedure
                 );

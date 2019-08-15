@@ -1,4 +1,5 @@
 using System.Linq;
+using System.Threading.Tasks;
 using ESFA.DAS.Feedback.Employer.Emailer;
 using ESFA.DAS.ProvideFeedback.Domain.Entities.Messages;
 using Microsoft.Azure.WebJobs;
@@ -23,7 +24,7 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
         [FunctionName("EmployerDataRetreiverFunction")]
         public void Run(
             [ServiceBusTrigger("retrieve-feedback-data", Connection = "ServiceBusConnection")]string myQueueItem,
-            [ServiceBus("data-refresh-messages", Connection = "ServiceBusConnection", EntityType = EntityType.Queue)]IAsyncCollector<EmployerFeedbackRefreshMessage> queue,
+            [ServiceBus("data-refresh-messages", Connection = "ServiceBusConnection", EntityType = EntityType.Queue)]ICollector<EmployerFeedbackRefreshMessage> queue,
             ILogger log)
         {
             _logger.LogInformation($"Starting Data retrieval");
@@ -32,7 +33,7 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
 
             _logger.LogInformation("Finished getting the data from APIs");
 
-            result.AsParallel().ForAll(x => queue.AddAsync(x));
+            result.AsParallel().ForAll(queue.Add);
 
             _logger.LogInformation($"Placed {result.Count} messages in the queue");
         }
