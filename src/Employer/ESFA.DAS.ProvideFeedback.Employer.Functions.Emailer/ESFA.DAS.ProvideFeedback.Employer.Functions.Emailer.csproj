@@ -35,13 +35,16 @@
     <None Update="SurveyReminderEmailer/function.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="EmployerFeedbackDataRefreshFunction/function.json">
+    <None Update="InitiateDataRefreshFunction/function.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="EmployerFeedbackRefreshMessageReceiver/function.json">
+    <None Update="EmployerDataRetrieverFunction/function.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="EmployerSurveyInviteGenerator/function.json">
+    <None Update="EmployerFeedbackRefreshDataFunction/function.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="EmployerSurveyInviteGeneratorFunction/function.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

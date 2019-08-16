@@ -1,7 +1,8 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
+using ESFA.DAS.ProvideFeedback.Domain.Entities.Models;
+using Newtonsoft.Json;
 
-namespace ESFA.DAS.ProvideFeedback.Domain.Entities
+namespace ESFA.DAS.ProvideFeedback.Domain.Entities.Messages
 {
     [Serializable]
     public class EmployerFeedbackRefreshMessage

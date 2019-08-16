@@ -141,6 +141,9 @@
     "reminderEmailerSchedule": {
       "type": "string"
     },
+    "dataRefreshSchedule": {
+      "type": "string"
+    },
     "emailerAppName": {
       "type": "string",
       "defaultValue": "das-provide-feedback-emailer"
@@ -148,7 +151,9 @@
   },
   "variables": {
     "queues": {
-      "DataRefreshMessagesQueueName": "data-refresh-messages"
+      "RetrieveFeedbackDataMessageQueueName": "retrieve-feedback-data",
+      "DataRefreshMessagesQueueName": "data-refresh-messages",
+      "GenerateSurveyInviteMessageQueueName": "generate-survey-invite"
     }
   },
   "resources": [
@@ -563,12 +568,24 @@
                 "value": "[parameters('reminderEmailerSchedule')]"
               },
               {
+                "name": "DataRefreshSchedule",
+                "value": "[parameters('dataRefreshSchedule')]"
+              },
+              {
                 "name": "AppName",
                 "value": "[parameters('emailerAppName')]"
               },
               {
+                "name": "RetrieveFeedbackDataMessageQueueName",
+                "value": "[variables('queues').RetrieveFeedbackDataMessageQueueName]"
+              },
+              {
                 "name": "DataRefreshMessagesQueueName",
                 "value": "[variables('queues').DataRefreshMessagesQueueName]"
+              },
+              {
+                "name": "GenerateSurveyInviteMessageQueueName",
+                "value": "[variables('queues').GenerateSurveyInviteMessageQueueName]"
               },
               {
                 "name": "ServiceBusConnection",
@@ -604,7 +621,9 @@
           },
           "serviceBusQueues": {
             "value": [
-              "[variables('queues').DataRefreshMessagesQueueName]"
+              "[variables('queues').RetrieveFeedbackDataMessageQueueName]",
+              "[variables('queues').DataRefreshMessagesQueueName]",
+              "[variables('queues').GenerateSurveyInviteMessageQueueName]"
             ]
           }
         }

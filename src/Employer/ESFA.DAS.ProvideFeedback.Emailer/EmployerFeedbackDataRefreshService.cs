@@ -1,4 +1,8 @@
-﻿using ESFA.DAS.ProvideFeedback.Domain.Entities;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using ESFA.DAS.ProvideFeedback.Domain.Entities.Messages;
+using ESFA.DAS.ProvideFeedback.Domain.Entities.Models;
 using SFA.DAS.Apprenticeships.Api.Types.Providers;
 using SFA.DAS.Commitments.Api.Client.Interfaces;
 using SFA.DAS.Commitments.Api.Types.Apprenticeship;
@@ -6,20 +10,17 @@ using SFA.DAS.Commitments.Api.Types.Apprenticeship.Types;
 using SFA.DAS.EAS.Account.Api.Client;
 using SFA.DAS.EAS.Account.Api.Types;
 using SFA.DAS.Providers.Api.Client;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using Provider = ESFA.DAS.ProvideFeedback.Domain.Entities.Provider;
+using Provider = ESFA.DAS.ProvideFeedback.Domain.Entities.Models.Provider;
 
 namespace ESFA.DAS.Feedback.Employer.Emailer
 {
-    public class EmployerFeedbackDataRefresh
+    public class EmployerFeedbackDataRetrievalService
     {
         IProviderApiClient _providerApiClient;
         IEmployerCommitmentApi _commitmentApiClient;
         IAccountApiClient _accountApiClient;
 
-        public EmployerFeedbackDataRefresh(IProviderApiClient providerApiClient, IEmployerCommitmentApi commitmentApiClient, IAccountApiClient accountApiClient)
+        public EmployerFeedbackDataRetrievalService(IProviderApiClient providerApiClient, IEmployerCommitmentApi commitmentApiClient, IAccountApiClient accountApiClient)
         {
             _providerApiClient = providerApiClient;
             _commitmentApiClient = commitmentApiClient;

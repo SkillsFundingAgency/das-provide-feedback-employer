@@ -6,7 +6,6 @@ namespace ESFA.DAS.ProvideFeedback.Employer.ApplicationServices
 {
     public class ProviderFeedbackRepository : IGetProviderFeedback
     {
-
         private readonly IProviderApiClient _providerApiClient;
 
         public ProviderFeedbackRepository(IProviderApiClient providerApiClient)
