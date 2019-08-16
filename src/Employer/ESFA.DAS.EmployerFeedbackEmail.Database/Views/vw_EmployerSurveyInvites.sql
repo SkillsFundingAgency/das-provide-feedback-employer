@@ -30,4 +30,4 @@ FROM subquery v1 JOIN (
       FROM subquery
 	  WHERE InviteSentDate IS NULL OR LastReminderSentDate IS NULL
       GROUP BY AccountId, Ukprn, UserRef
-  ) v2 on v1.AccountId = v2.AccountId AND v1.Ukprn = v2.Ukprn AND v1.UserRef = v2.userRef and v1.InviteSentDate = v2.InviteSentDate
+  ) v2 on v1.AccountId = v2.AccountId AND v1.Ukprn = v2.Ukprn AND v1.UserRef = v2.userRef
