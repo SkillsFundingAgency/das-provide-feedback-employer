@@ -20,9 +20,13 @@ WITH subquery AS(
     )
 
 SELECT v1.* 
-FROM subquery v1
-LEFT OUTER JOIN (
-     SELECT AccountId, Ukprn, UserRef, Max(InviteSentDate) as 'InviteSentDate', Max(LastReminderSentDate) as 'LastReminderSentDate'
+FROM subquery v1 JOIN (
+      SELECT 
+	  AccountId, 
+	  Ukprn, 
+	  UserRef, 
+	  CASE WHEN MAX(COALESCE(InviteSentDate, '12-31-2099')) = '12-31-2099' THEN NULL ELSE Max(InviteSentDate) END as 'InviteSentDate', 
+	  CASE WHEN MAX(COALESCE(LastReminderSentDate, '12-31-2099')) = '12-31-2099' THEN NULL ELSE Max(LastReminderSentDate) END as 'LastReminderSentDate'
       FROM subquery
 	  WHERE InviteSentDate IS NULL OR LastReminderSentDate IS NULL
       GROUP BY AccountId, Ukprn, UserRef
