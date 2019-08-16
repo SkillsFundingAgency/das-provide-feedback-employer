@@ -147,6 +147,13 @@
     "emailerAppName": {
       "type": "string",
       "defaultValue": "das-provide-feedback-emailer"
+    },
+    "cosmosDbIpRangeFilter" : {
+      "type": "string",
+      "defaultValue": ""
+    },
+    "slidingExpirationMinutes": {
+      "type": "int"
     }
   },
   "variables": {
@@ -540,6 +547,10 @@
                 "value": "[parameters('emailBatchSize')]"
               },
               {
+                "name": "SlidingExpirationMinutes",
+                "value": "[parameters('slidingExpirationMinutes')]"
+              },
+              {
                 "name": "EmailSettings:ReminderDays",
                 "value": "[parameters('reminderDays')]"
               },
@@ -648,6 +659,9 @@
           },
           "defaultConsistencyLevel": {
             "value": "Strong"
+          },
+          "ipRangeFilter": {
+            "value": "[parameters('cosmosDbIpRangeFilter')]"
           }
         }
       }
