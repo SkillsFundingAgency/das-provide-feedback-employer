@@ -9,7 +9,5 @@
         public string DatabaseName { get; set; }
 
         public string EmployerFeedbackCollection { get; set; }
-
-        public string TokenCollection { get; set; }
     }
 }
