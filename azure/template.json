@@ -79,9 +79,10 @@
             "defaultValue": 14
         },
         "feedbackApiAuth": {
-            "type": "secureObject",
+            "type": "object",
             "defaultValue": {
-                "Key": ""
+                "Tenant": "",
+                "Identifier": ""
             }
         },
         "feedbackApiData": {
@@ -335,12 +336,12 @@
                                 "value": "[parameters('feedbackApiData').TokenCollection]"
                             },
                             {
-                                "name": "Jwt:Key",
-                                "value": "[parameters('feedbackApiAuth').Key]"
+                                "name": "AzureAd:Tenant",
+                                "value": "[parameters('feedbackApiAuth').Tenant]"
                             },
                             {
-                                "name": "Jwt:Issuer",
-                                "value": "[concat('https://', parameters('apiAppServiceName'), '.apprenticeships.sfa.bis.gov.uk')]"
+                                "name": "AzureAd:Identifier",
+                                "value": "[parameters('feedbackApiAuth').Identifier]"
                             },
                             {
                                 "name": "ApplicationInsights:InstrumentationKey",
