@@ -79,9 +79,10 @@
             "defaultValue": 14
         },
         "feedbackApiAuth": {
-            "type": "secureObject",
+            "type": "object",
             "defaultValue": {
-                "Key": ""
+                "Tenant": "",
+                "Identifier": ""
             }
         },
         "feedbackApiData": {
@@ -120,6 +121,22 @@
         },
         "slidingExpirationMinutes": {
             "type": "int"
+        },
+        "apiCustomHostname": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "apiCertificateName": {
+            "type": "string"
+        },
+        "keyVaultName": {
+            "type": "string"
+        },
+        "keyVaultResourceGroup": {
+            "type": "string"
+        },
+        "appServiceAllowedIPs": {
+            "type": "array"
         }
     },
     "variables": {},
@@ -274,6 +291,30 @@
         },
         {
             "apiVersion": "2017-05-10",
+            "name": "api-app-service-certificate",
+            "type": "Microsoft.Resources/deployments",
+            "resourceGroup": "[parameters('sharedAppServicePlanResourceGroup')]",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/app-service-certificate.json",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "keyVaultCertificateName": {
+                        "value": "[parameters('apiCertificateName')]"
+                    },
+                    "keyVaultName": {
+                        "value": "[parameters('keyVaultName')]"
+                    },
+                    "keyVaultResourceGroup": {
+                        "value": "[parameters('keyVaultResourceGroup')]"
+                    }
+                }
+            }
+        },
+        {
+            "apiVersion": "2017-05-10",
             "name": "ApiAppInsights",
             "type": "Microsoft.Resources/deployments",
             "properties": {
@@ -335,12 +376,12 @@
                                 "value": "[parameters('feedbackApiData').TokenCollection]"
                             },
                             {
-                                "name": "Jwt:Key",
-                                "value": "[parameters('feedbackApiAuth').Key]"
+                                "name": "AzureAd:Tenant",
+                                "value": "[parameters('feedbackApiAuth').Tenant]"
                             },
                             {
-                                "name": "Jwt:Issuer",
-                                "value": "[concat('https://', parameters('apiAppServiceName'), '.apprenticeships.sfa.bis.gov.uk')]"
+                                "name": "AzureAd:Identifier",
+                                "value": "[parameters('feedbackApiAuth').Identifier]"
                             },
                             {
                                 "name": "ApplicationInsights:InstrumentationKey",
@@ -361,14 +402,21 @@
                             }
                         ]
                     },
+                    "customHostName": {
+                        "value": "[parameters('apiCustomHostname')]"
+                    },
                     "certificateThumbprint": {
-                        "value": "[reference(resourceId(parameters('sharedAppServicePlanResourceGroup'), 'Microsoft.Web/certificates', parameters('certificateName')), '2016-03-01').Thumbprint]"
+                        "value": "[if(greater(length(parameters('apiCustomHostname')), 0), reference('api-app-service-certificate').outputs.certificateThumbprint.value, '')]"
+                    },
+                    "ipSecurityRestrictions": {
+                        "value": "[parameters('appServiceAllowedIPs')]"
                     }
                 }
             },
             "dependsOn": [
                 "ApiAppInsights",
-                "CosmosDB"
+                "CosmosDB",
+                "api-app-service-certificate"
             ]
         },
         {
