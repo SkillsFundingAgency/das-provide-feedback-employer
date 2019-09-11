@@ -22,7 +22,7 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
             _logger = logger;
         }
 
-        [FunctionName("DataRefreshMessageReceiver")]
+        [FunctionName("EmployerFeedbackRefreshDataFunction")]
         public async Task Run(
             [ServiceBusTrigger("%DataRefreshMessagesQueueName%", Connection = "ServiceBusConnection")]string myQueueItem,
             ILogger log,

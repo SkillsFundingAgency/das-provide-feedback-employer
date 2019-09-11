@@ -19,7 +19,7 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
             _logger = logger;
         }
 
-        [FunctionName("EmployerFeedbackDataRefreshFunction")]
+        [FunctionName("InitiateDataRefreshFunction")]
         [return: ServiceBus("%RetrieveFeedbackDataMessageQueueName%", Connection = "ServiceBusConnection")]
         public async Task<string> Run([TimerTrigger("%DataRefreshSchedule%", RunOnStartup = true)]TimerInfo myTimer, ILogger log)
         {
