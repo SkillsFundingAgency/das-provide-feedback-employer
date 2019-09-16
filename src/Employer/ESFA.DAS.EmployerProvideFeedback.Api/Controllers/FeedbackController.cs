@@ -20,6 +20,7 @@
     [Produces("application/json")]
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Roles = "GetFeedback")]
     public class FeedbackController : Controller
     {
         private readonly IEmployerFeedbackRepository feedback;
