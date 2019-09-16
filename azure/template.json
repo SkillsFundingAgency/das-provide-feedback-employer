@@ -70,13 +70,41 @@
                 "ClientToken": ""
             }
         },
+        "providerApiBaseUrl": {
+            "type": "string"
+        },
+        "commitmentApiBaseUrl": {
+            "type": "string"
+        },
+        "commitmentApiClientToken": {
+            "type": "secureString"
+        },
+        "accountApiBaseUrl": {
+            "type": "string"
+        },
+        "accountApiClientId": {
+            "type": "string"
+        },
+        "accountApiClientSecret": {
+            "type": "secureString"
+        },
+        "accountApiIdentifierUri": {
+            "type": "string"
+        },
+        "accountApiTenant": {
+            "type": "string"
+        },
         "emailBatchSize": {
             "type": "int",
             "defaultValue": 25
         },
-        "minDaysSinceInvite": {
+        "reminderDays": {
             "type": "int",
             "defaultValue": 14
+        },
+        "inviteCycleDays": {
+            "type": "int",
+            "defaultValue": 90
         },
         "feedbackApiAuth": {
             "type": "object",
@@ -96,6 +124,9 @@
         "storageAccountName": {
             "type": "string"
         },
+        "serviceBusNamespaceName": {
+            "type": "string"
+        },
         "dbConnectionString": {
             "type": "secureString"
         },
@@ -109,6 +140,9 @@
             "type": "string"
         },
         "reminderEmailerSchedule": {
+            "type": "string"
+        },
+        "dataRefreshSchedule": {
             "type": "string"
         },
         "emailerAppName": {
@@ -139,7 +173,13 @@
             "type": "array"
         }
     },
-    "variables": {},
+    "variables": {
+        "queues": {
+            "RetrieveFeedbackDataMessageQueueName": "retrieve-feedback-data",
+            "DataRefreshMessagesQueueName": "data-refresh-messages",
+            "GenerateSurveyInviteMessageQueueName": "generate-survey-invite"
+        }
+    },
     "resources": [
         {
             "apiVersion": "2017-05-10",
@@ -515,6 +555,38 @@
                                 "value": "[parameters('notificationApiCredentials').ClientToken]"
                             },
                             {
+                                "name": "AccountApi:ApiBaseUrl",
+                                "value": "[parameters('accountApiBaseUrl')]"
+                            },
+                            {
+                                "name": "AccountApi:ClientId",
+                                "value": "[parameters('accountApiClientId')]"
+                            },
+                            {
+                                "name": "AccountApi:ClientSecret",
+                                "value": "[parameters('accountApiClientSecret')]"
+                            },
+                            {
+                                "name": "AccountApi:IdentifierUri",
+                                "value": "[parameters('accountApiIdentifierUri')]"
+                            },
+                            {
+                                "name": "AccountApi:Tenant",
+                                "value": "[parameters('accountApiTenant')]"
+                            },
+                            {
+                                "name": "ProviderApi:BaseUrl",
+                                "value": "[parameters('providerApiBaseUrl')]"
+                            },
+                            {
+                                "name": "CommitmentApi:BaseUrl",
+                                "value": "[parameters('commitmentApiBaseUrl')]"
+                            },
+                            {
+                                "name": "CommitmentApi:ClientToken",
+                                "value": "[parameters('commitmentApiClientToken')]"
+                            },
+                            {
                                 "name": "EmailSettings:FeedbackSiteBaseUrl",
                                 "value": "[concat('https://', parameters('customHostname'), '/')]"
                             },
@@ -527,8 +599,12 @@
                                 "value": "[parameters('slidingExpirationMinutes')]"
                             },
                             {
-                                "name": "EmailSettings:MinDaysSinceInvite",
-                                "value": "[parameters('minDaysSinceInvite')]"
+                                "name": "EmailSettings:ReminderDays",
+                                "value": "[parameters('reminderDays')]"
+                            },
+                            {
+                                "name": "EmailSettings:InviteCycleDays",
+                                "value": "[parameters('inviteCycleDays')]"
                             },
                             {
                                 "name": "FUNCTIONS_EXTENSION_VERSION",
@@ -551,8 +627,28 @@
                                 "value": "[parameters('reminderEmailerSchedule')]"
                             },
                             {
+                                "name": "DataRefreshSchedule",
+                                "value": "[parameters('dataRefreshSchedule')]"
+                            },
+                            {
                                 "name": "AppName",
                                 "value": "[parameters('emailerAppName')]"
+                            },
+                            {
+                                "name": "RetrieveFeedbackDataMessageQueueName",
+                                "value": "[variables('queues').RetrieveFeedbackDataMessageQueueName]"
+                            },
+                            {
+                                "name": "DataRefreshMessagesQueueName",
+                                "value": "[variables('queues').DataRefreshMessagesQueueName]"
+                            },
+                            {
+                                "name": "GenerateSurveyInviteMessageQueueName",
+                                "value": "[variables('queues').GenerateSurveyInviteMessageQueueName]"
+                            },
+                            {
+                                "name": "ServiceBusConnection",
+                                "value": "[reference('ServiceBus').outputs.ServiceBusEndpoint.value]"
                             }
                         ]
                     },
@@ -567,6 +663,30 @@
             "dependsOn": [
                 "FunctionAppServicePlan"
             ]
+        },
+        {
+            "apiVersion": "2017-05-10",
+            "name": "ServiceBus",
+            "type": "Microsoft.Resources/deployments",
+            "properties": {
+              "mode": "Incremental",
+              "templateLink": {
+                "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/service-bus.json",
+                "contentVersion": "1.0.0.0"
+              },
+              "parameters": {
+                "serviceBusNamespaceName": {
+                  "value": "[parameters('serviceBusNamespaceName')]"
+                },
+                "serviceBusQueues": {
+                  "value": [
+                    "[variables('queues').RetrieveFeedbackDataMessageQueueName]",
+                    "[variables('queues').DataRefreshMessagesQueueName]",
+                    "[variables('queues').GenerateSurveyInviteMessageQueueName]"
+                  ]
+                }
+              }
+            }
         },
         {
             "apiVersion": "2017-05-10",
