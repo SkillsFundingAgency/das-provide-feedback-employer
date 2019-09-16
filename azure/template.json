@@ -38,7 +38,7 @@
         },
         "apprenticeshipApiBaseUrl": {
             "type": "string"
-          },
+        },
         "aspNetCoreEnvironment": {
             "type": "string"
         },
@@ -669,23 +669,23 @@
             "name": "ServiceBus",
             "type": "Microsoft.Resources/deployments",
             "properties": {
-              "mode": "Incremental",
-              "templateLink": {
-                "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/service-bus.json",
-                "contentVersion": "1.0.0.0"
-              },
-              "parameters": {
-                "serviceBusNamespaceName": {
-                  "value": "[parameters('serviceBusNamespaceName')]"
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/service-bus.json",
+                    "contentVersion": "1.0.0.0"
                 },
-                "serviceBusQueues": {
-                  "value": [
-                    "[variables('queues').RetrieveFeedbackDataMessageQueueName]",
-                    "[variables('queues').DataRefreshMessagesQueueName]",
-                    "[variables('queues').GenerateSurveyInviteMessageQueueName]"
-                  ]
+                "parameters": {
+                    "serviceBusNamespaceName": {
+                        "value": "[parameters('serviceBusNamespaceName')]"
+                    },
+                    "serviceBusQueues": {
+                        "value": [
+                            "[variables('queues').RetrieveFeedbackDataMessageQueueName]",
+                            "[variables('queues').DataRefreshMessagesQueueName]",
+                            "[variables('queues').GenerateSurveyInviteMessageQueueName]"
+                        ]
+                    }
                 }
-              }
             }
         },
         {
