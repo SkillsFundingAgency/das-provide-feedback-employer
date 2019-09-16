@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using ESFA.DAS.Feedback.Employer.Emailer;
 using ESFA.DAS.ProvideFeedback.Domain.Entities.Messages;
@@ -10,14 +11,11 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
     public class EmployerDataRetrieverFunction
     {
         private readonly EmployerFeedbackDataRetrievalService _dataRetrievalService;
-        private readonly ILogger<EmployerDataRetrieverFunction> _logger;
 
         public EmployerDataRetrieverFunction(
-            EmployerFeedbackDataRetrievalService dataRetrievalService,
-            ILogger<EmployerDataRetrieverFunction> logger)
+            EmployerFeedbackDataRetrievalService dataRetrievalService)
         {
             _dataRetrievalService = dataRetrievalService;
-            _logger = logger;
         }
 
         [FunctionName("EmployerDataRetrieverFunction")]
@@ -26,15 +24,23 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
             [ServiceBus("%DataRefreshMessagesQueueName%", Connection = "ServiceBusConnection", EntityType = EntityType.Queue)]ICollector<EmployerFeedbackRefreshMessage> queue,
             ILogger log)
         {
-            _logger.LogInformation($"Starting Data retrieval");
+            log.LogInformation($"Starting Data retrieval");
 
-            var result = _dataRetrievalService.GetRefreshData();
+            try
+            {
+                var result = _dataRetrievalService.GetRefreshData();
 
-            _logger.LogInformation("Finished getting the data from APIs");
+                log.LogInformation("Finished getting the data from APIs");
 
-            result.AsParallel().ForAll(queue.Add);
+                result.AsParallel().ForAll(queue.Add);
 
-            _logger.LogInformation($"Placed {result.Count} messages in the queue");
+                log.LogInformation($"Placed {result.Count} messages in the queue");
+            }
+            catch(Exception ex)
+            {
+                log.LogError(ex, $"Failed to retrieve feedback refresh data.");
+                throw;
+            }            
         }
     }
 }

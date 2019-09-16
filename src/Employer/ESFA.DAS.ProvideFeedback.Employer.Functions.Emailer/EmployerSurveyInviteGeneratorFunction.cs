@@ -1,12 +1,9 @@
 using System;
 using System.Threading.Tasks;
 using ESFA.DAS.Feedback.Employer.Emailer;
-using ESFA.DAS.Feedback.Employer.Emailer.Configuration;
-using ESFA.DAS.ProvideFeedback.Data;
 using ESFA.DAS.ProvideFeedback.Domain.Entities.Messages;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 
 namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
@@ -26,10 +23,17 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
             ILogger log)
         {
             log.LogInformation($"Employer Survey Invite generator executed at: {DateTime.Now}");
-
             var message = JsonConvert.DeserializeObject<GenerateSurveyCodeMessage>(feedbackForCodeGeneration);
 
-            await _surveyInviteGenerator.GenerateSurveyInvites(message);
+            try
+            {
+                await _surveyInviteGenerator.GenerateSurveyInvites(message);
+            }
+            catch(Exception ex)
+            {
+                log.LogError(ex, $"Failed to generate survey invite for Account: {message.AccountId}, Ukprn: {message.Ukprn}, User: {message.UserRef}");
+                throw;
+            }
 
             log.LogInformation($"Employer Survey Invite generator completed at: {DateTime.Now}");
         }

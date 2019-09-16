@@ -12,14 +12,10 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
     public class EmployerFeedbackRefreshDataFunction
     {
         private readonly DataRefreshHelper _helper;
-        private readonly ILogger<EmployerFeedbackRefreshDataFunction> _logger;
 
-        public EmployerFeedbackRefreshDataFunction(
-            DataRefreshHelper helper,
-            ILogger<EmployerFeedbackRefreshDataFunction> logger)
+        public EmployerFeedbackRefreshDataFunction(DataRefreshHelper helper)
         {
             _helper = helper;
-            _logger = logger;
         }
 
         [FunctionName("EmployerFeedbackRefreshDataFunction")]
@@ -28,7 +24,7 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
             ILogger log,
             [ServiceBus("%GenerateSurveyInviteMessageQueueName%", Connection = "ServiceBusConnection", EntityType = EntityType.Queue)]IAsyncCollector<GenerateSurveyCodeMessage> queue)
         {
-            _logger.LogInformation("Data refresh function started.");
+            log.LogInformation("Data refresh function started.");
             EmployerFeedbackRefreshMessage message = JsonConvert.DeserializeObject<EmployerFeedbackRefreshMessage>(myQueueItem);
 
             try
@@ -44,10 +40,11 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
             }
             catch(Exception ex)
             {
-                _logger.LogError(ex, "Error refreshing feedback data");
+                log.LogError(ex, "Error refreshing feedback data");
+                throw;
             }
 
-            _logger.LogInformation("Data refresh function complete.");
+            log.LogInformation("Data refresh function complete.");
         }
 
         
