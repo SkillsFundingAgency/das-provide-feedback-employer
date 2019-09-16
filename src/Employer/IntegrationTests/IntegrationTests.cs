@@ -106,9 +106,9 @@ namespace IntegrationTests
 
             SetupApiMocks(2);
 
-            _initiateFunction = new InitiateDataRefreshFunction(_dbEmployerFeedbackRepository, Mock.Of<ILogger<InitiateDataRefreshFunction>>());
-            _dataRetrieveFunction = new EmployerDataRetrieverFunction(_employerFeedbackDataRefresh, Mock.Of<ILogger<EmployerDataRetrieverFunction>>());
-            _dataRefreshFunction = new EmployerFeedbackRefreshDataFunction(_helper, Mock.Of<ILogger<EmployerFeedbackRefreshDataFunction>>());
+            _initiateFunction = new InitiateDataRefreshFunction(_dbEmployerFeedbackRepository);
+            _dataRetrieveFunction = new EmployerDataRetrieverFunction(_employerFeedbackDataRefresh);
+            _dataRefreshFunction = new EmployerFeedbackRefreshDataFunction(_helper);
             _surveyInviteGeneratorFunction = new EmployerSurveyInviteGeneratorFunction(_surveyInviteGenerator);
         }
 
@@ -402,7 +402,8 @@ namespace IntegrationTests
             var generateSurveyCodeMessageCollectorMock = new Mock<IAsyncCollector<GenerateSurveyCodeMessage>>();
             generateSurveyCodeMessageCollectorMock
                 .Setup(mock => mock.AddAsync(It.IsAny<GenerateSurveyCodeMessage>(), It.IsAny<CancellationToken>()))
-                .Callback((GenerateSurveyCodeMessage message, CancellationToken ct) => generateCodeMessages.Add(JsonConvert.SerializeObject(message)));
+                .Callback((GenerateSurveyCodeMessage message, CancellationToken ct) => generateCodeMessages.Add(JsonConvert.SerializeObject(message)))
+                .Returns(Task.CompletedTask);
 
             var initiateMessage = await _initiateFunction.Run(null, Mock.Of<ILogger>());
 
