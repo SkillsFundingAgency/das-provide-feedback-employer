@@ -38,7 +38,7 @@
         },
         "apprenticeshipApiBaseUrl": {
             "type": "string"
-          },
+        },
         "aspNetCoreEnvironment": {
             "type": "string"
         },
@@ -115,7 +115,7 @@
             "type": "string",
             "defaultValue": "das-provide-feedback-emailer"
         },
-        "cosmosDbIpRangeFilter" : {
+        "cosmosDbIpRangeFilter": {
             "type": "string",
             "defaultValue": ""
         },
@@ -219,7 +219,7 @@
                             {
                                 "name": "ExternalLinks:FindApprenticeshipTrainingSiteUrl",
                                 "value": "[parameters('externalLinks').FindApprenticeshipTrainingSiteUrl]"
-                            },  
+                            },
                             {
                                 "name": "ExternalLinks:ManageApprenticeshipSiteUrl",
                                 "value": "[parameters('externalLinks').ManageApprenticeshipSiteUrl]"
@@ -309,6 +309,9 @@
                     },
                     "keyVaultResourceGroup": {
                         "value": "[parameters('keyVaultResourceGroup')]"
+                    },
+                    "serverFarmId": {
+                        "value": "[resourceId(parameters('sharedAppServicePlanResourceGroup'), 'Microsoft.Web/serverfarms', parameters('sharedAppServicePlanName'))]"
                     }
                 }
             }
