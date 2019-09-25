@@ -50,12 +50,14 @@ namespace IntegrationTests
         private Mock<ILogger<EmployerSurveyEmailer>> _surveyLoggerMock;
 
         private IStoreEmployerEmailDetails _dbEmployerFeedbackRepository;
-        private EmployerFeedbackDataRetrievalService _employerFeedbackDataRefresh;
+        private EmployerFeedbackDataRetrievalService _dataRetreivalService;
         private EmployerSurveyInviteEmailer _employerSurveyInviteEmailer;
         private EmployerSurveyReminderEmailer _employerSurveyReminderEmailer;
         private InitiateDataRefreshFunction _initiateFunction;
-        private EmployerDataRetrieverFunction _dataRetrieveFunction;
-        private EmployerFeedbackRefreshDataFunction _dataRefreshFunction;
+        private EmployerDataRetrieveFeedbackAccountsFunction _accountRetrieveFunction;
+        private AccountRefreshFunction _accountDataRetrieveFunction;
+
+        private ProcessActiveFeedbackFunction _processActiveFeedbackFunction;
         private EmployerSurveyInviteGeneratorFunction _surveyInviteGeneratorFunction;
         private DataRefreshHelper _helper;
         private SurveyInviteGenerator _surveyInviteGenerator;
@@ -99,7 +101,7 @@ namespace IntegrationTests
 
             _dbConnection = new SqlConnection(_configuration.GetConnectionString("EmployerEmailStoreConnection"));
             _dbEmployerFeedbackRepository = new EmployerFeedbackRepository(_dbConnection);
-            _employerFeedbackDataRefresh = new EmployerFeedbackDataRetrievalService(_providerApiClientMock.Object,
+            _dataRetreivalService = new EmployerFeedbackDataRetrievalService(_providerApiClientMock.Object,
                 _commitmentApiClientMock.Object, _accountApiClientMock.Object);
             _helper = new DataRefreshHelper(new Mock<ILogger<DataRefreshHelper>>().Object, _dbEmployerFeedbackRepository);
             _surveyInviteGenerator = new SurveyInviteGenerator(_options, _dbEmployerFeedbackRepository, Mock.Of<ILogger<SurveyInviteGenerator>>());
@@ -107,8 +109,9 @@ namespace IntegrationTests
             SetupApiMocks(2);
 
             _initiateFunction = new InitiateDataRefreshFunction(_dbEmployerFeedbackRepository);
-            _dataRetrieveFunction = new EmployerDataRetrieverFunction(_employerFeedbackDataRefresh);
-            _dataRefreshFunction = new EmployerFeedbackRefreshDataFunction(_helper);
+            _accountRetrieveFunction = new EmployerDataRetrieveFeedbackAccountsFunction(_commitmentApiClientMock.Object);
+            _accountDataRetrieveFunction = new AccountRefreshFunction(_dataRetreivalService);
+            _processActiveFeedbackFunction = new ProcessActiveFeedbackFunction(_helper);
             _surveyInviteGeneratorFunction = new EmployerSurveyInviteGeneratorFunction(_surveyInviteGenerator);
         }
 
@@ -137,11 +140,9 @@ namespace IntegrationTests
             var expectedInvites = new List<EmployerSurveyInvite>
             {
                 new EmployerSurveyInvite {UserRef = _user1Guid, EmailAddress = "Test@test.com", FirstName = "Master", AccountId = 1, Ukprn = 1, ProviderName = "Test Academy"},
-                new EmployerSurveyInvite {UserRef = _user1Guid, EmailAddress = "Test@test.com", FirstName = "Master", AccountId = 2, Ukprn = 1, ProviderName = "Test Academy"},
-                new EmployerSurveyInvite {UserRef = _user1Guid, EmailAddress = "Test@test.com", FirstName = "Master", AccountId = 2, Ukprn = 2, ProviderName = "Worst School"},
+                new EmployerSurveyInvite {UserRef = _user1Guid, EmailAddress = "Test@test.com", FirstName = "Master", AccountId = 1, Ukprn = 2, ProviderName = "Worst School"},
                 new EmployerSurveyInvite {UserRef = _user2Guid, EmailAddress = "TheBestThereEverWas@90sReference.com", FirstName = "Flash", AccountId = 1, Ukprn = 1, ProviderName = "Test Academy"},
-                new EmployerSurveyInvite {UserRef = _user2Guid, EmailAddress = "TheBestThereEverWas@90sReference.com", FirstName = "Flash", AccountId = 2, Ukprn = 1, ProviderName = "Test Academy"},
-                new EmployerSurveyInvite {UserRef = _user2Guid, EmailAddress = "TheBestThereEverWas@90sReference.com", FirstName = "Flash", AccountId = 2, Ukprn = 2, ProviderName = "Worst School"},
+                new EmployerSurveyInvite {UserRef = _user2Guid, EmailAddress = "TheBestThereEverWas@90sReference.com", FirstName = "Flash", AccountId = 1, Ukprn = 2, ProviderName = "Worst School"},
             };
             
             // Act
@@ -149,7 +150,7 @@ namespace IntegrationTests
 
             // Assert
             var invites = await _dbEmployerFeedbackRepository.GetEmployerUsersToBeSentInvite();
-            invites.Count().Should().Be(6);
+            invites.Count().Should().Be(4);
             invites.Should().BeEquivalentTo(expectedInvites, options => options.Excluding(
                 s => s.SelectedMemberPath.EndsWith(".UniqueSurveyCode")));
         }
@@ -199,8 +200,8 @@ namespace IntegrationTests
             SetupApiMocks(3);
             var expectedInvites = new List<EmployerSurveyInvite>
             {
-                new EmployerSurveyInvite {UserRef = _user1Guid, EmailAddress = "Test@test.com", FirstName = "Master", AccountId = 2, Ukprn = 3, ProviderName = "Worst School"},
-                new EmployerSurveyInvite {UserRef = _user2Guid, EmailAddress = "TheBestThereEverWas@90sReference.com", FirstName = "Flash", AccountId = 2, Ukprn = 3, ProviderName = "Worst School"},
+                new EmployerSurveyInvite {UserRef = _user1Guid, EmailAddress = "Test@test.com", FirstName = "Master", AccountId = 1, Ukprn = 3, ProviderName = "Worst School"},
+                new EmployerSurveyInvite {UserRef = _user2Guid, EmailAddress = "TheBestThereEverWas@90sReference.com", FirstName = "Flash", AccountId = 1, Ukprn = 3, ProviderName = "Worst School"},
             };
 
             //Act
@@ -292,8 +293,7 @@ namespace IntegrationTests
             var expectedInvites = new List<EmployerSurveyInvite>
             {
                 new EmployerSurveyInvite {UserRef = _user3Guid, EmailAddress = "InWestPhiladelphiaBornAndRaised@PlaygroundDayz.com", FirstName = "Fresh", AccountId = 1, Ukprn = 1, ProviderName = "Test Academy"},
-                new EmployerSurveyInvite {UserRef = _user3Guid, EmailAddress = "InWestPhiladelphiaBornAndRaised@PlaygroundDayz.com", FirstName = "Fresh", AccountId = 2, Ukprn = 1, ProviderName = "Test Academy"},
-                new EmployerSurveyInvite {UserRef = _user3Guid, EmailAddress = "InWestPhiladelphiaBornAndRaised@PlaygroundDayz.com", FirstName = "Fresh", AccountId = 2, Ukprn = 3 , ProviderName = "Worst School"},
+                new EmployerSurveyInvite {UserRef = _user3Guid, EmailAddress = "InWestPhiladelphiaBornAndRaised@PlaygroundDayz.com", FirstName = "Fresh", AccountId = 1, Ukprn = 3 , ProviderName = "Worst School"},
             };
 
             //Act
@@ -301,7 +301,7 @@ namespace IntegrationTests
 
             //Assert
             var invites = await _dbEmployerFeedbackRepository.GetEmployerUsersToBeSentInvite();
-            invites.Count().Should().Be(3);
+            invites.Count().Should().Be(2);
             invites.Should().BeEquivalentTo(expectedInvites, options => options.Excluding(
                 s => s.SelectedMemberPath.EndsWith(".UniqueSurveyCode")));
         }
@@ -343,12 +343,12 @@ namespace IntegrationTests
                 new Apprenticeship
                 {
                     HasHadDataLockSuccess = true, PaymentStatus = PaymentStatus.Active, ULN = "2",
-                    EmployerAccountId = 2, ProviderId = 1, ProviderName = "Test Academy"
+                    EmployerAccountId = 1, ProviderId = 1, ProviderName = "Test Academy"
                 },
                 new Apprenticeship
                 {
                     HasHadDataLockSuccess = true, PaymentStatus = PaymentStatus.Active, ULN = "3",
-                    EmployerAccountId = 2, ProviderId = changeableUkprn, ProviderName = "Worst School"
+                    EmployerAccountId = 1, ProviderId = changeableUkprn, ProviderName = "Worst School"
                 }
             };
 
@@ -382,7 +382,7 @@ namespace IntegrationTests
             SetUpApiReturn(changeableUkprn);
 
             _accountApiClientMock.Setup(x => x.GetAccountUsers(It.IsAny<long>())).ReturnsAsync(_accountApiClientReturn);
-            _providerApiClientMock.Setup(x => x.FindAll()).Returns(_providerApiClientReturn);
+            _providerApiClientMock.Setup(x => x.FindAllAsync()).ReturnsAsync(_providerApiClientReturn);
             _commitmentApiClientMock.Setup(x => x.GetEmployerApprenticeships(It.IsAny<long>()))
                 .ReturnsAsync(_commitmentApiClientReturn);
             _commitmentApiClientMock.Setup(x => x.GetAllEmployerAccountIds()).ReturnsAsync(new long[] { 1 });
@@ -391,13 +391,19 @@ namespace IntegrationTests
         private async Task RunThroughRefreshFunctions()
         {
             // Callback which populates these can be called on multiple threads. 
-            var refreshMessages = new ConcurrentBag<string>();
+            var accountsMessages = new ConcurrentBag<string>();
             var generateCodeMessages = new ConcurrentBag<string>();
+            var processActiveMessages = new ConcurrentBag<string>();
 
-            var refreshMessageCollectorMock = new Mock<ICollector<EmployerFeedbackRefreshMessage>>();
-            refreshMessageCollectorMock
+            var accountsCollectorMock = new Mock<ICollector<string>>();
+            accountsCollectorMock
+                .Setup(mock => mock.Add(It.IsAny<string>()))
+                .Callback((string accountId) => accountsMessages.Add(accountId));
+
+            var processActiveFeedbackCollectorMock = new Mock<ICollector<EmployerFeedbackRefreshMessage>>();
+            processActiveFeedbackCollectorMock
                 .Setup(mock => mock.Add(It.IsAny<EmployerFeedbackRefreshMessage>()))
-                .Callback((EmployerFeedbackRefreshMessage message) => refreshMessages.Add(JsonConvert.SerializeObject(message)));
+                .Callback((EmployerFeedbackRefreshMessage message) => processActiveMessages.Add(JsonConvert.SerializeObject(message)));
 
             var generateSurveyCodeMessageCollectorMock = new Mock<IAsyncCollector<GenerateSurveyCodeMessage>>();
             generateSurveyCodeMessageCollectorMock
@@ -407,14 +413,20 @@ namespace IntegrationTests
 
             var initiateMessage = await _initiateFunction.Run(null, Mock.Of<ILogger>());
 
-            _dataRetrieveFunction.Run(initiateMessage, refreshMessageCollectorMock.Object, Mock.Of<ILogger>());
-            foreach (var refreshMessage in refreshMessages)
+            await _accountRetrieveFunction.Run(initiateMessage, accountsCollectorMock.Object, Mock.Of<ILogger>());
+
+            foreach (var accountId in accountsMessages)
             {
-                generateCodeMessages.Clear();
-                await _dataRefreshFunction.Run(refreshMessage, Mock.Of<ILogger>(), generateSurveyCodeMessageCollectorMock.Object);
-                foreach (var generateCodeMessage in generateCodeMessages)
+                await _accountDataRetrieveFunction.Run(accountId, processActiveFeedbackCollectorMock.Object, Mock.Of<ILogger>());
+                
+                foreach (var refreshMessage in processActiveMessages)
                 {
-                    await _surveyInviteGeneratorFunction.Run(generateCodeMessage, Mock.Of<ILogger>());
+                    generateCodeMessages.Clear();
+                    await _processActiveFeedbackFunction.Run(refreshMessage, Mock.Of<ILogger>(), generateSurveyCodeMessageCollectorMock.Object);
+                    foreach (var generateCodeMessage in generateCodeMessages)
+                    {
+                        await _surveyInviteGeneratorFunction.Run(generateCodeMessage, Mock.Of<ILogger>());
+                    }
                 }
             }
         }

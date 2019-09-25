@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using ESFA.DAS.ProvideFeedback.Domain.Entities.Messages;
 using ESFA.DAS.ProvideFeedback.Domain.Entities.Models;
-using SFA.DAS.Apprenticeships.Api.Types.Providers;
 using SFA.DAS.Commitments.Api.Client.Interfaces;
-using SFA.DAS.Commitments.Api.Types.Apprenticeship;
 using SFA.DAS.Commitments.Api.Types.Apprenticeship.Types;
 using SFA.DAS.EAS.Account.Api.Client;
 using SFA.DAS.EAS.Account.Api.Types;
@@ -27,58 +26,46 @@ namespace ESFA.DAS.Feedback.Employer.Emailer
             _accountApiClient = accountApiClient;
         }
 
-        public List<EmployerFeedbackRefreshMessage> GetRefreshData()
+        public async Task<IEnumerable<EmployerFeedbackRefreshMessage>> GetRefreshData(long accountId)
         {
-            var apprenticeships = GetValidApprenticeshipCommitments(GetApprenticeshipData());
             var messages = new List<EmployerFeedbackRefreshMessage>();
-            messages.AddRange(apprenticeships.SelectMany(Combine));
-            return messages;
-        }
 
-        public IEnumerable<ProviderSummary> GetRoatpProviders()
-        {
-            var result = _providerApiClient.FindAll();
-            return result;
-        }
+                var teamMembers = await _accountApiClient.GetAccountUsers(accountId);
+                var mappedUsers = teamMembers
+                    .Where(au => au.CanReceiveNotifications)
+                    .Select(au => MapTeamMemberToUser(au, accountId));
 
-        public IEnumerable<long> GetCommitmentEmployerIdsData()
-        {
-            return _commitmentApiClient.GetAllEmployerAccountIds().Result;
-        }
+                var accCommitments = await _commitmentApiClient.GetEmployerApprenticeships(accountId);
 
-        public List<User> GetUsersFromAccountId(long AccountId)
-        {
-            var accounts = _accountApiClient.GetAccountUsers(AccountId).Result;
-            var Users = accounts
-                .Where(acc => acc.CanReceiveNotifications)
-                .Select(acc => MapTeamMemberToUser(acc, AccountId));
-            return Users.ToList();
-        }
+                var providers = await _providerApiClient.FindAllAsync();
 
-        public List<Apprenticeship> GetApprenticeshipData()
-        {
-            var employerAccountIds = GetCommitmentEmployerIdsData();
-            var commitApprenticeships = employerAccountIds.AsParallel()
-                .SelectMany(id => _commitmentApiClient.GetEmployerApprenticeships(id).Result)
-                .ToList();
-            return commitApprenticeships;
-        }
+                var providersDictionary = providers
+                    .Select(p => new Provider { ProviderName = p.ProviderName, Ukprn = p.Ukprn })
+                    .ToDictionary(p2 => p2.Ukprn);
 
-        public List<Apprenticeship> GetValidApprenticeshipCommitments(List<Apprenticeship> apprenticeships)
-        {
-            var providersFromRoatp = GetRoatpProviders();
-            var validApps = apprenticeships
+                var validCommitments = accCommitments
                 .Where(app => app != null)
                 .Where(app => app.HasHadDataLockSuccess == true)
                 .Where(app => app.PaymentStatus == PaymentStatus.Active || app.PaymentStatus == PaymentStatus.Paused)
-                .Where(app => providersFromRoatp.Select(p => p.Ukprn).Contains(app.ProviderId) == true)
-                .GroupBy(ea => new { ea.EmployerAccountId, ea.ProviderId })
-                .Select(group => group.First())
-                .ToList();
-            return validApps;
+                .Where(app => providersDictionary.ContainsKey(app.ProviderId))
+                .GroupBy(app => new { app.EmployerAccountId, app.ProviderId });
+
+                foreach (var commitment in validCommitments)
+                {
+                    foreach (var user in mappedUsers)
+                    {
+                        messages.Add(new EmployerFeedbackRefreshMessage
+                        {
+                            Provider = providersDictionary[commitment.Key.ProviderId],
+                            User = user
+                        });
+                    }
+                }
+
+            return messages;
         }
 
-        public User MapTeamMemberToUser(TeamMemberViewModel tmvw, long AccountId)
+        private User MapTeamMemberToUser(TeamMemberViewModel tmvw, long AccountId)
         {
             return new User
             {
@@ -86,26 +73,6 @@ namespace ESFA.DAS.Feedback.Employer.Emailer
                 UserRef = Guid.Parse(tmvw.UserRef),
                 AccountId = AccountId,
                 FirstName = tmvw.Name.Split(' ')[0]
-            };
-        }
-
-        public IEnumerable<EmployerFeedbackRefreshMessage> Combine(Apprenticeship apprenticeship)
-        {
-            var users = GetUsersFromAccountId(apprenticeship.EmployerAccountId);
-            var messages = users.Select(u => CreateMessageFromUserAndApprenticeship(u, apprenticeship));
-            return messages;
-        }
-
-        public EmployerFeedbackRefreshMessage CreateMessageFromUserAndApprenticeship(User user, Apprenticeship apprenticeship)
-        {
-            return new EmployerFeedbackRefreshMessage
-            {
-                Provider = new Provider
-                {
-                    Ukprn = apprenticeship.ProviderId,
-                    ProviderName = apprenticeship.ProviderName
-                },
-                User = user
             };
         }
     }

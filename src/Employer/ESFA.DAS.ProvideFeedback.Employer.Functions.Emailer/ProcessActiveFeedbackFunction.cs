@@ -9,18 +9,18 @@ using Newtonsoft.Json;
 
 namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
 {
-    public class EmployerFeedbackRefreshDataFunction
+    public class ProcessActiveFeedbackFunction
     {
         private readonly DataRefreshHelper _helper;
 
-        public EmployerFeedbackRefreshDataFunction(DataRefreshHelper helper)
+        public ProcessActiveFeedbackFunction(DataRefreshHelper helper)
         {
             _helper = helper;
         }
 
-        [FunctionName("EmployerFeedbackRefreshDataFunction")]
+        [FunctionName("ProcessActiveFeedbackFunction")]
         public async Task Run(
-            [ServiceBusTrigger("%DataRefreshMessagesQueueName%", Connection = "ServiceBusConnection")]string myQueueItem,
+            [ServiceBusTrigger("%ProcessActiveFeedbackQueueName%", Connection = "ServiceBusConnection")]string myQueueItem,
             ILogger log,
             [ServiceBus("%GenerateSurveyInviteMessageQueueName%", Connection = "ServiceBusConnection", EntityType = EntityType.Queue)]IAsyncCollector<GenerateSurveyCodeMessage> queue)
         {

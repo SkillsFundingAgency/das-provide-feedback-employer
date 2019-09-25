@@ -175,8 +175,9 @@
     },
     "variables": {
         "queues": {
-            "RetrieveFeedbackDataMessageQueueName": "retrieve-feedback-data",
-            "DataRefreshMessagesQueueName": "data-refresh-messages",
+            "AccountRefreshQueueName": "refresh-account",
+            "RetrieveFeedbackAccountsQueueName": "retrieve-employer-accounts",
+            "ProcessActiveFeedbackQueueName": "process-active-feedback",
             "GenerateSurveyInviteMessageQueueName": "generate-survey-invite"
         }
     },
@@ -635,12 +636,16 @@
                                 "value": "[parameters('emailerAppName')]"
                             },
                             {
-                                "name": "RetrieveFeedbackDataMessageQueueName",
-                                "value": "[variables('queues').RetrieveFeedbackDataMessageQueueName]"
+                                "name": "RetrieveFeedbackAccountsQueueName",
+                                "value": "[variables('queues').RetrieveFeedbackAccountsQueueName]"
                             },
                             {
-                                "name": "DataRefreshMessagesQueueName",
-                                "value": "[variables('queues').DataRefreshMessagesQueueName]"
+                                "name": "AccountRefreshQueueName",
+                                "value": "[variables('queues').AccountRefreshQueueName]"
+                            },
+                            {
+                                "name": "ProcessActiveFeedbackQueueName",
+                                "value": "[variables('queues').ProcessActiveFeedbackQueueName]"
                             },
                             {
                                 "name": "GenerateSurveyInviteMessageQueueName",
@@ -680,8 +685,9 @@
                     },
                     "serviceBusQueues": {
                         "value": [
-                            "[variables('queues').RetrieveFeedbackDataMessageQueueName]",
-                            "[variables('queues').DataRefreshMessagesQueueName]",
+                            "[variables('queues').AccountRefreshQueueName]",
+                            "[variables('queues').RetrieveFeedbackAccountsQueueName]",
+                            "[variables('queues').ProcessActiveFeedbackQueueName]",
                             "[variables('queues').GenerateSurveyInviteMessageQueueName]"
                         ]
                     }
