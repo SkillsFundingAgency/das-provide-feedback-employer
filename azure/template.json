@@ -643,7 +643,7 @@
                             {
                                 "name": "RetrieveProvidersQueueName",
                                 "value": "[variables('queues').RetrieveProvidersQueueName]"
-                            }
+                            },
                             {
                                 "name": "AccountRefreshQueueName",
                                 "value": "[variables('queues').AccountRefreshQueueName]"
