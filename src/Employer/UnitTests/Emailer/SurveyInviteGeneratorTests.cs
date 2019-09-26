@@ -5,6 +5,7 @@ using ESFA.DAS.Feedback.Employer.Emailer.Configuration;
 using ESFA.DAS.ProvideFeedback.Data;
 using ESFA.DAS.ProvideFeedback.Domain.Entities.Messages;
 using ESFA.DAS.ProvideFeedback.Domain.Entities.Models;
+using ESFA.DAS.ProvideFeedback.Employer.Application;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;

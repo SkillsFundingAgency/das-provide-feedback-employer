@@ -3,7 +3,7 @@ using ESFA.DAS.ProvideFeedback.Data;
 using ESFA.DAS.ProvideFeedback.Domain.Entities.Messages;
 using Microsoft.Extensions.Logging;
 
-namespace ESFA.DAS.Feedback.Employer.Emailer
+namespace ESFA.DAS.ProvideFeedback.Employer.Application
 {
     public class DataRefreshHelper
     {

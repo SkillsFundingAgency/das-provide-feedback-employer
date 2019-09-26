@@ -1,7 +1,6 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using ESFA.DAS.Feedback.Employer.Emailer;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.ServiceBus;
 using Microsoft.Extensions.Logging;
@@ -11,7 +10,6 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
 {
     public class EmployerDataRetrieveFeedbackAccountsFunction
     {
-        private readonly EmployerFeedbackDataRetrievalService _dataRetrievalService;
         private readonly IEmployerCommitmentApi _commitmentApiClient;
 
         public EmployerDataRetrieveFeedbackAccountsFunction(IEmployerCommitmentApi commitmentApiClient)

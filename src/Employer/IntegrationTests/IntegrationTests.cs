@@ -13,6 +13,7 @@ using ESFA.DAS.Feedback.Employer.Emailer.Configuration;
 using ESFA.DAS.ProvideFeedback.Data;
 using ESFA.DAS.ProvideFeedback.Domain.Entities.Messages;
 using ESFA.DAS.ProvideFeedback.Domain.Entities.Models;
+using ESFA.DAS.ProvideFeedback.Employer.Application;
 using ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer;
 using FluentAssertions;
 using Microsoft.Azure.WebJobs;

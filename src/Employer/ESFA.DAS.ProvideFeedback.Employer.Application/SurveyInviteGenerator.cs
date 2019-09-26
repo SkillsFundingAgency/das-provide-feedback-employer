@@ -6,7 +6,7 @@ using ESFA.DAS.ProvideFeedback.Domain.Entities.Messages;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace ESFA.DAS.Feedback.Employer.Emailer
+namespace ESFA.DAS.ProvideFeedback.Employer.Application
 {
     public class SurveyInviteGenerator
     {

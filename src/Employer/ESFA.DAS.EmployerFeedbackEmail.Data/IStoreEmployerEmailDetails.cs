@@ -11,13 +11,16 @@ namespace ESFA.DAS.ProvideFeedback.Data
         Task<EmployerSurveyInvite> GetEmployerInviteForUniqueCode(Guid guid);
         Task SetCodeBurntDate(Guid uniqueCode);
         Task<bool> IsCodeBurnt(Guid emailCode);
+        Task MarkProviderInactive();
         Task<IEnumerable<EmployerSurveyInvite>> GetEmployerInvitesToBeSentReminder(int minDaysSinceSent);
         Task InsertSurveyInviteHistory(IEnumerable<Guid> uniqueSurveyCodes, int inviteType);
         Task InsertNewSurveyForFeedback(long feedbackId);
         Task UpsertIntoUsers(User user);
         Task ResetFeedback();
         Task UpsertIntoProviders(Provider provider);
+        Task InsertProviders(IEnumerable<Provider> cutDownProviders);
         Task<long> UpsertIntoFeedback(Guid userRef, long accountId, long ukprn);
         Task<EmployerSurveyInvite> GetEmployerSurveyInvite(long feedbackId);
+        Task<IEnumerable<Provider>> GetProvidersByUkprn(IEnumerable<long> commitmentUkprns);
     }
 }

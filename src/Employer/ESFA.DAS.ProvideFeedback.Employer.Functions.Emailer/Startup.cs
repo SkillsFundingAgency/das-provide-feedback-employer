@@ -5,6 +5,8 @@ using System.Net.Http.Headers;
 using ESFA.DAS.Feedback.Employer.Emailer;
 using ESFA.DAS.Feedback.Employer.Emailer.Configuration;
 using ESFA.DAS.ProvideFeedback.Data;
+using ESFA.DAS.ProvideFeedback.Employer.Application;
+using ESFA.DAS.ProvideFeedback.Employer.Application.Configuration;
 using ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
@@ -83,6 +85,7 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
             builder.Services.AddTransient<EmployerFeedbackDataRetrievalService>();
             builder.Services.AddTransient<DataRefreshHelper>();
             builder.Services.AddTransient<SurveyInviteGenerator>();
+            builder.Services.AddTransient<ProviderRefreshService>();
 
             var providerApiConfig = _configuration.GetSection("ProviderApi").Get<ProviderApiConfig>();
             builder.Services.AddSingleton<IProviderApiClient, ProviderApiClient>(a =>

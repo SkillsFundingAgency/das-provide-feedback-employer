@@ -1,7 +1,7 @@
 using System;
 using System.Threading.Tasks;
-using ESFA.DAS.Feedback.Employer.Emailer;
 using ESFA.DAS.ProvideFeedback.Domain.Entities.Messages;
+using ESFA.DAS.ProvideFeedback.Employer.Application;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;

@@ -167,5 +167,26 @@ namespace ESFA.DAS.ProvideFeedback.Data
                     commandType: CommandType.StoredProcedure
                 );
         }
+
+        public async Task MarkProviderInactive()
+        {
+            await _dbConnection.QueryAsync("UPDATE Providers SET IsActive = 0");
+        }
+
+        public async Task InsertProviders(IEnumerable<Provider> cutDownProviders)
+        {
+            var sql = $"INSERT INTO Providers VALUES (@Ukprn, @ProviderName)";
+
+            var affectedRows = await _dbConnection.ExecuteAsync(sql, cutDownProviders);
+        }
+
+        public async Task<IEnumerable<Provider>> GetProvidersByUkprn(IEnumerable<long> ukprns)
+        {
+            var sql = @"SELECT * FROM Providers
+                        WHERE IsActive = 1
+                        AND Ukprn in @ukprns";
+
+            return await _dbConnection.QueryAsync<Provider>(sql, new { ukprns });
+        }
     }
 }
