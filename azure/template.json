@@ -175,6 +175,7 @@
     },
     "variables": {
         "queues": {
+            "RetrieveProvidersQueueName": "retrieve-providers",
             "AccountRefreshQueueName": "refresh-account",
             "RetrieveFeedbackAccountsQueueName": "retrieve-employer-accounts",
             "ProcessActiveFeedbackQueueName": "process-active-feedback",
@@ -640,6 +641,10 @@
                                 "value": "[variables('queues').RetrieveFeedbackAccountsQueueName]"
                             },
                             {
+                                "name": "RetrieveProvidersQueueName",
+                                "value": "[variables('queues').RetrieveProvidersQueueName]"
+                            }
+                            {
                                 "name": "AccountRefreshQueueName",
                                 "value": "[variables('queues').AccountRefreshQueueName]"
                             },
@@ -685,6 +690,7 @@
                     },
                     "serviceBusQueues": {
                         "value": [
+                            "[variables('queues').RetrieveProvidersQueueName]",
                             "[variables('queues').AccountRefreshQueueName]",
                             "[variables('queues').RetrieveFeedbackAccountsQueueName]",
                             "[variables('queues').ProcessActiveFeedbackQueueName]",
