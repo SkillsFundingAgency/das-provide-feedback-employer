@@ -55,6 +55,7 @@ namespace IntegrationTests
         private EmployerSurveyInviteEmailer _employerSurveyInviteEmailer;
         private EmployerSurveyReminderEmailer _employerSurveyReminderEmailer;
         private InitiateDataRefreshFunction _initiateFunction;
+        private ProviderRefreshFunction _providersRefreshFunction;
         private EmployerDataRetrieveFeedbackAccountsFunction _accountRetrieveFunction;
         private AccountRefreshFunction _accountDataRetrieveFunction;
 
@@ -102,14 +103,20 @@ namespace IntegrationTests
 
             _dbConnection = new SqlConnection(_configuration.GetConnectionString("EmployerEmailStoreConnection"));
             _dbEmployerFeedbackRepository = new EmployerFeedbackRepository(_dbConnection);
-            _dataRetreivalService = new EmployerFeedbackDataRetrievalService(_providerApiClientMock.Object,
-                _commitmentApiClientMock.Object, _accountApiClientMock.Object);
+
+            _dataRetreivalService = new EmployerFeedbackDataRetrievalService(
+                _commitmentApiClientMock.Object, 
+                _accountApiClientMock.Object, 
+                _dbEmployerFeedbackRepository);
+
             _helper = new DataRefreshHelper(new Mock<ILogger<DataRefreshHelper>>().Object, _dbEmployerFeedbackRepository);
             _surveyInviteGenerator = new SurveyInviteGenerator(_options, _dbEmployerFeedbackRepository, Mock.Of<ILogger<SurveyInviteGenerator>>());
+            var providerRefreshSevice = new ProviderRefreshService(_dbEmployerFeedbackRepository, _providerApiClientMock.Object);
 
             SetupApiMocks(2);
 
             _initiateFunction = new InitiateDataRefreshFunction(_dbEmployerFeedbackRepository);
+            _providersRefreshFunction = new ProviderRefreshFunction(providerRefreshSevice);
             _accountRetrieveFunction = new EmployerDataRetrieveFeedbackAccountsFunction(_commitmentApiClientMock.Object);
             _accountDataRetrieveFunction = new AccountRefreshFunction(_dataRetreivalService);
             _processActiveFeedbackFunction = new ProcessActiveFeedbackFunction(_helper);
@@ -413,8 +420,8 @@ namespace IntegrationTests
                 .Returns(Task.CompletedTask);
 
             var initiateMessage = await _initiateFunction.Run(null, Mock.Of<ILogger>());
-
-            await _accountRetrieveFunction.Run(initiateMessage, accountsCollectorMock.Object, Mock.Of<ILogger>());
+            var providersRefreshedMessage = await _providersRefreshFunction.Run(initiateMessage, Mock.Of<ILogger>());
+            await _accountRetrieveFunction.Run(providersRefreshedMessage, accountsCollectorMock.Object, Mock.Of<ILogger>());
 
             foreach (var accountId in accountsMessages)
             {
