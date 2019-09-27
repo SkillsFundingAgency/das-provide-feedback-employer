@@ -18,10 +18,9 @@ using NLog.Config;
 using NLog.Extensions.Logging;
 using NLog.Targets;
 using SFA.DAS.Commitments.Api.Client;
+using SFA.DAS.Commitments.Api.Client.Configuration;
 using SFA.DAS.Commitments.Api.Client.Interfaces;
 using SFA.DAS.EAS.Account.Api.Client;
-using SFA.DAS.Http;
-using SFA.DAS.Http.TokenGenerators;
 using SFA.DAS.NLog.Targets.Redis.DotNetCore;
 using SFA.DAS.Notifications.Api.Client;
 using SFA.DAS.Notifications.Api.Client.Configuration;
@@ -93,11 +92,13 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
             );
 
             var commitmentApiConfig = _configuration.GetSection("CommitmentApi").Get<CommitmentsApiClientConfig>();
-            var bearerToken = (IGenerateBearerToken)new JwtBearerTokenGenerator(commitmentApiConfig);
-            var httpClient = new HttpClientBuilder().WithDefaultHeaders().WithBearerAuthorisationHeader(bearerToken).Build();
-            builder.Services.AddSingleton<IEmployerCommitmentApi, EmployerCommitmentApi>(a =>
-                 new EmployerCommitmentApi(httpClient, commitmentApiConfig)
-            );
+
+            builder.Services.AddSingleton<ICommitmentsApiClientConfiguration>(commitmentApiConfig);
+
+            builder.Services.AddHttpClient<IEmployerCommitmentApi, EmployerCommitmentApi>(http =>
+            {
+                http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", commitmentApiConfig.ClientToken);
+            });
 
             var accApiConfig = _configuration.GetSection("AccountApi").Get<AccountApiConfiguration>();
             builder.Services.AddSingleton<IAccountApiClient, AccountApiClient>(a =>
