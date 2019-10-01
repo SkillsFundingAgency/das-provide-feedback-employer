@@ -61,6 +61,7 @@
                     });
 
             app.UseAuthentication();
+            app.UseHealthChecks("/health");
 
             app.UseMvc();
         }

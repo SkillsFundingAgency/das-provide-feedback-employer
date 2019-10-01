@@ -44,6 +44,8 @@
             services.Configure<AzureOptions>(this.Configuration.GetSection("Azure"));
             services.Configure<AzureAdOptions>(Configuration.GetSection("AzureAd"));
 
+            services.AddHealthChecks();
+
             var serviceProvider = services.BuildServiceProvider();
 
             var azureActiveDirectoryConfiguration =
