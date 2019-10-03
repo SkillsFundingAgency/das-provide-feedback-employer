@@ -30,12 +30,11 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Application
 
         public async Task<IEnumerable<EmployerFeedbackRefreshMessage>> GetRefreshData(long accountId)
         {
+            //TODO: Parallelise some calls
+
             var messages = new List<EmployerFeedbackRefreshMessage>();
 
-            var teamMembers = await _accountApiClient.GetAccountUsers(accountId);
-            var mappedUsers = teamMembers
-                .Where(au => au.CanReceiveNotifications)
-                .Select(au => MapTeamMemberToUser(au, accountId));
+            var mappedUsers = await GetAccountUsersForFeedback(accountId);
 
             var accCommitments = await _commitmentApiClient.GetEmployerApprenticeships(accountId);
 
@@ -50,7 +49,8 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Application
             .Where(app => app.HasHadDataLockSuccess == true)
             .Where(app => app.PaymentStatus == PaymentStatus.Active || app.PaymentStatus == PaymentStatus.Paused)
             .Where(app => providers.Any(p => p.Ukprn == app.ProviderId))
-            .GroupBy(app => new { app.EmployerAccountId, app.ProviderId });
+            .GroupBy(app => new { app.EmployerAccountId, app.ProviderId })
+            .Select(app => app.First());
 
             foreach (var commitment in validCommitments)
             {
@@ -58,13 +58,21 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Application
                 {
                     messages.Add(new EmployerFeedbackRefreshMessage
                     {
-                        Provider = providers.Single(p => p.Ukprn == commitment.Key.ProviderId),
+                        Provider = providers.Single(p => p.Ukprn == commitment.ProviderId),
                         User = user
                     });
                 }
             }
 
             return messages;
+        }
+
+        private async Task<IEnumerable<User>> GetAccountUsersForFeedback(long accountId)
+        {
+            var users = await _accountApiClient.GetAccountUsers(accountId);
+            return users
+                .Where(au => au.CanReceiveNotifications)
+                .Select(au => MapTeamMemberToUser(au, accountId));
         }
 
         private User MapTeamMemberToUser(TeamMemberViewModel tmvw, long AccountId)
