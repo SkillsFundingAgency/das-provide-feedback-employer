@@ -1,9 +1,9 @@
 ﻿CREATE PROCEDURE [dbo].[UpsertProviders]
-	@Ukprn BIGINT, @ProviderName VARCHAR(150)
+	@ProvidersDt ProviderTemplate READONLY
 AS
 	MERGE [dbo].[Providers] AS [Target]
-	USING (SELECT @Ukprn AS Ukprn) AS [Source]
+	USING @ProvidersDt AS [Source]
 	ON [Target].Ukprn = [Source].Ukprn
-	WHEN MATCHED THEN UPDATE SET [Target].ProviderName = @ProviderName, [Target].IsActive = 1
+	WHEN MATCHED THEN UPDATE SET [Target].ProviderName = [Source].ProviderName, [Target].IsActive = 1
 	WHEN NOT MATCHED THEN INSERT (Ukprn, ProviderName, IsActive)
-	VALUES(@Ukprn,@ProviderName, 1);
+	VALUES([Source].Ukprn, [Source].ProviderName, 1);

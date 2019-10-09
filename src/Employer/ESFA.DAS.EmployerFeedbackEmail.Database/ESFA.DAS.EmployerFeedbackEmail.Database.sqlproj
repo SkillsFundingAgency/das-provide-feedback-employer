@@ -61,6 +61,7 @@
     <Folder Include="StoredProcedures" />
     <Folder Include="Views" />
     <Folder Include="Post Deployment" />
+    <Folder Include="Types" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="ESFA.DAS.EmployerFeedbackEmail.Database.refactorlog" />
@@ -81,6 +82,7 @@
     <Build Include="StoredProcedures\GetEmployerSurveyHistory.sql" />
     <Build Include="StoredProcedures\GetSurveyInvitesToSend.sql" />
     <Build Include="StoredProcedures\GetSurveyRemindersToSend.sql" />
+    <Build Include="Types\ProviderTemplate.sql" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Tables\EmployerSurveyCodes.sql" />

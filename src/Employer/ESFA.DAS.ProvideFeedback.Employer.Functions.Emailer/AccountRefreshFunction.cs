@@ -45,9 +45,8 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
             catch(Exception ex)
             {
                 log.LogError(ex, $"Account refresh function failed for accountId: {accountIdMessage}");
+                throw;
             }
-
-            
         }
     }
 }

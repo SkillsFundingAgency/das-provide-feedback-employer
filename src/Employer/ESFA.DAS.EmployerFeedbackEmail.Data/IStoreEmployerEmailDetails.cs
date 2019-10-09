@@ -17,7 +17,7 @@ namespace ESFA.DAS.ProvideFeedback.Data
         Task InsertNewSurveyForFeedback(long feedbackId);
         Task UpsertIntoUsers(User user);
         Task ResetFeedback();
-        Task UpsertIntoProviders(Provider provider);
+        Task UpsertIntoProviders(IEnumerable<Provider> providers);
         Task InsertProviders(IEnumerable<Provider> cutDownProviders);
         Task<long> UpsertIntoFeedback(Guid userRef, long accountId, long ukprn);
         Task<EmployerSurveyInvite> GetEmployerSurveyInvite(long feedbackId);

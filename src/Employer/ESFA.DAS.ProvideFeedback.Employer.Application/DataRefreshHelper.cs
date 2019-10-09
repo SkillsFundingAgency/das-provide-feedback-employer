@@ -20,11 +20,9 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Application
 
         public async Task RefreshFeedbackData(EmployerFeedbackRefreshMessage message)
         {
-            _logger.LogInformation("Starting upserting users");
+            _logger.LogInformation("Starting upserting user");
             await _dbRepository.UpsertIntoUsers(message.User);
-            _logger.LogInformation("Done upserting users\nStarting upserting providers");
-            await _dbRepository.UpsertIntoProviders(message.Provider);
-            _logger.LogInformation("Done upserting providers");
+            _logger.LogInformation("Done upserting user");
         }
     }
 }

@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Data;
+using System.Linq;
 using System.Threading.Tasks;
 using ESFA.DAS.ProvideFeedback.Data;
 using ESFA.DAS.ProvideFeedback.Domain.Entities.Models;
@@ -19,6 +21,8 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Application
 
         public async Task RefreshProviderData()
         {
+            await _dbRepository.MarkProviderInactive();
+
             var providers = await _providerApiClient.FindAllAsync();
             var cutDownProviders = providers.Select(p => new Provider
             {
@@ -26,12 +30,7 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Application
                 ProviderName = p.ProviderName
             });
 
-            await _dbRepository.MarkProviderInactive();
-
-            foreach (var provider in cutDownProviders)
-            {
-                await _dbRepository.UpsertIntoProviders(provider);
-            }
+            await _dbRepository.UpsertIntoProviders(cutDownProviders);
         }
     }
 }

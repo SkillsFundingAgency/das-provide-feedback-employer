@@ -117,15 +117,14 @@ namespace ESFA.DAS.ProvideFeedback.Data
             );
         }
 
-        public async Task UpsertIntoProviders(Provider provider)
+        public async Task UpsertIntoProviders(IEnumerable<Provider> providers)
         {
-            var parameters = new DynamicParameters();
-            parameters.Add("@Ukprn", provider.Ukprn, DbType.Int64);
-            parameters.Add("@ProviderName", provider.ProviderName, DbType.String);
+            var providerDt = ProvidersToDatatable(providers);
+
             await _dbConnection.ExecuteAsync
             (
                 sql: "[dbo].[UpsertProviders]",
-                param: parameters,
+                param: new { ProvidersDt = providerDt.AsTableValuedParameter("ProviderTemplate") },
                 commandType: CommandType.StoredProcedure
             );
         }
@@ -187,6 +186,20 @@ namespace ESFA.DAS.ProvideFeedback.Data
                         AND Ukprn in @ukprns";
 
             return await _dbConnection.QueryAsync<Provider>(sql, new { ukprns });
+        }
+
+        private DataTable ProvidersToDatatable(IEnumerable<Provider> providers)
+        {
+            var dt = new DataTable();
+            dt.Columns.Add("Ukprn", typeof(long));
+            dt.Columns.Add("ProviderName", typeof(string));
+
+            foreach (var provider in providers)
+            {
+                dt.Rows.Add(provider.Ukprn, provider.ProviderName);
+            }
+
+            return dt;
         }
     }
 }
