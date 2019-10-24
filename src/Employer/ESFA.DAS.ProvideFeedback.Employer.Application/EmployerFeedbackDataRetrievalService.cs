@@ -34,23 +34,24 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Application
 
             var messages = new List<EmployerFeedbackRefreshMessage>();
 
-            var mappedUsers = await GetAccountUsersForFeedback(accountId);
+            var mappedUsersTask = GetAccountUsersForFeedback(accountId);
 
-            var accCommitments = await _commitmentApiClient.GetEmployerApprenticeships(accountId);
+            var accCommitmentsTask = _commitmentApiClient.GetEmployerApprenticeships(accountId);
+
+            var accCommitments = await accCommitmentsTask;
 
             var commitmentUkprns = accCommitments
                 .GroupBy(acc => acc.ProviderId)
                 .Select(group => group.Key);
 
-            var providers = await _emailDetailsRepository.GetProvidersByUkprn(commitmentUkprns);
-
             var validCommitments = accCommitments
             .Where(app => app != null)
             .Where(app => app.HasHadDataLockSuccess == true)
             .Where(app => app.PaymentStatus == PaymentStatus.Active || app.PaymentStatus == PaymentStatus.Paused)
-            .Where(app => providers.Any(p => p.Ukprn == app.ProviderId))
             .GroupBy(app => new { app.EmployerAccountId, app.ProviderId })
             .Select(app => app.First());
+
+            var mappedUsers = await mappedUsersTask;
 
             foreach (var commitment in validCommitments)
             {
@@ -58,7 +59,7 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Application
                 {
                     messages.Add(new EmployerFeedbackRefreshMessage
                     {
-                        Provider = providers.Single(p => p.Ukprn == commitment.ProviderId),
+                        ProviderId = commitment.ProviderId,
                         User = user
                     });
                 }
