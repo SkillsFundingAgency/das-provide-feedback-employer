@@ -1,4 +1,5 @@
-﻿using System.Data;
+﻿using System;
+using System.Data;
 using System.Data.SqlClient;
 using System.IO;
 using System.Net.Http.Headers;
@@ -17,6 +18,7 @@ using NLog.Common;
 using NLog.Config;
 using NLog.Extensions.Logging;
 using NLog.Targets;
+using Polly;
 using SFA.DAS.Commitments.Api.Client;
 using SFA.DAS.Commitments.Api.Client.Configuration;
 using SFA.DAS.Commitments.Api.Client.Interfaces;
@@ -82,7 +84,7 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
             builder.Services.AddSingleton<EmployerSurveyReminderEmailer>();
             builder.Services.AddTransient<IStoreEmployerEmailDetails, EmployerFeedbackRepository>();
             builder.Services.AddTransient<EmployerFeedbackDataRetrievalService>();
-            builder.Services.AddTransient<DataRefreshHelper>();
+            builder.Services.AddTransient<UserRefreshService>();
             builder.Services.AddTransient<SurveyInviteGenerator>();
             builder.Services.AddTransient<ProviderRefreshService>();
 
@@ -98,7 +100,13 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
             builder.Services.AddHttpClient<IEmployerCommitmentApi, EmployerCommitmentApi>(http =>
             {
                 http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", commitmentApiConfig.ClientToken);
-            });
+            })
+            .AddTransientHttpErrorPolicy(policyBuilder => policyBuilder.WaitAndRetryAsync(new[]
+            {
+                TimeSpan.FromSeconds(1),
+                TimeSpan.FromSeconds(5),
+                TimeSpan.FromSeconds(10)
+            }));
 
             var accApiConfig = _configuration.GetSection("AccountApi").Get<AccountApiConfiguration>();
             builder.Services.AddSingleton<IAccountApiClient, AccountApiClient>(a =>

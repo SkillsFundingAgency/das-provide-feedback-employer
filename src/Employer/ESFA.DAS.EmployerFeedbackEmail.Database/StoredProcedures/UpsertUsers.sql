@@ -1,11 +1,11 @@
 ﻿CREATE PROCEDURE [dbo].[UpsertUsers]
-	@UserRef UNIQUEIDENTIFIER, @FirstName VARCHAR(100), @EmailAddress VARCHAR(150)
+	@UsersDt UserTemplate READONLY
 AS
 	MERGE [dbo].[Users] AS [Target]
-	USING (SELECT @UserRef AS UserRef) AS [Source]
+	USING @UsersDt AS [Source]
 	ON [Target].UserRef = [Source].UserRef
 	WHEN MATCHED THEN UPDATE 
-	SET [Target].FirstName = @FirstName,
-	[Target].EmailAddress = @EmailAddress
+	SET [Target].FirstName = [Source].FirstName,
+	[Target].EmailAddress = [Source].EmailAddress
 	WHEN NOT MATCHED THEN INSERT (UserRef, FirstName,EmailAddress)
-	VALUES(@UserRef, @FirstName,@EmailAddress);
+	VALUES([Source].UserRef, [Source].FirstName,[Source].EmailAddress);

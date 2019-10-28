@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using ESFA.DAS.ProvideFeedback.Data;
 using ESFA.DAS.ProvideFeedback.Domain.Entities.Messages;
 using ESFA.DAS.ProvideFeedback.Domain.Entities.Models;
 using SFA.DAS.Commitments.Api.Client.Interfaces;
@@ -16,24 +15,17 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Application
     {
         IEmployerCommitmentApi _commitmentApiClient;
         IAccountApiClient _accountApiClient;
-        IStoreEmployerEmailDetails _emailDetailsRepository;
 
         public EmployerFeedbackDataRetrievalService(
             IEmployerCommitmentApi commitmentApiClient,
-            IAccountApiClient accountApiClient,
-            IStoreEmployerEmailDetails storeEmployerEmailDetails)
+            IAccountApiClient accountApiClient)
         {
             _commitmentApiClient = commitmentApiClient;
-            _accountApiClient = accountApiClient;
-            _emailDetailsRepository = storeEmployerEmailDetails;
+            _accountApiClient = accountApiClient;;
         }
 
         public async Task<IEnumerable<EmployerFeedbackRefreshMessage>> GetRefreshData(long accountId)
         {
-            //TODO: Parallelise some calls
-
-            var messages = new List<EmployerFeedbackRefreshMessage>();
-
             var mappedUsersTask = GetAccountUsersForFeedback(accountId);
 
             var accCommitmentsTask = _commitmentApiClient.GetEmployerApprenticeships(accountId);
@@ -53,17 +45,12 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Application
 
             var mappedUsers = await mappedUsersTask;
 
-            foreach (var commitment in validCommitments)
-            {
-                foreach (var user in mappedUsers)
+            var messages = validCommitments
+                .SelectMany(c => mappedUsers.Select(mu => new EmployerFeedbackRefreshMessage
                 {
-                    messages.Add(new EmployerFeedbackRefreshMessage
-                    {
-                        ProviderId = commitment.ProviderId,
-                        User = user
-                    });
-                }
-            }
+                    ProviderId = c.ProviderId,
+                    User = mu
+                }));
 
             return messages;
         }

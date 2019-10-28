@@ -6,3 +6,7 @@
     [SentDate] DATETIME NOT NULL, 
     CONSTRAINT [FK_EmployerSurveyHistory_EmployerSurveyCodes] FOREIGN KEY ([UniqueSurveyCode]) REFERENCES [EmployerSurveyCodes]([UniqueSurveyCode])
 )
+
+GO
+
+CREATE INDEX [IX_EmployerSurveyHistory_UniqueSurveyCode] ON [dbo].[EmployerSurveyHistory] ([UniqueSurveyCode])

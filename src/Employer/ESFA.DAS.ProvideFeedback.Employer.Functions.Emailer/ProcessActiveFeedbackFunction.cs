@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using ESFA.DAS.ProvideFeedback.Domain.Entities.Messages;
 using ESFA.DAS.ProvideFeedback.Employer.Application;
@@ -11,32 +12,36 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
 {
     public class ProcessActiveFeedbackFunction
     {
-        private readonly DataRefreshHelper _helper;
+        private readonly UserRefreshService _userRefreshService;
 
-        public ProcessActiveFeedbackFunction(DataRefreshHelper helper)
+        public ProcessActiveFeedbackFunction(UserRefreshService userRefreshService)
         {
-            _helper = helper;
+            _userRefreshService = userRefreshService;
         }
 
         [FunctionName("ProcessActiveFeedbackFunction")]
         public async Task Run(
             [ServiceBusTrigger("%ProcessActiveFeedbackQueueName%", Connection = "ServiceBusConnection")]string myQueueItem,
             ILogger log,
-            [ServiceBus("%GenerateSurveyInviteMessageQueueName%", Connection = "ServiceBusConnection", EntityType = EntityType.Queue)]IAsyncCollector<GenerateSurveyCodeMessage> queue)
+            [ServiceBus("%GenerateSurveyInviteMessageQueueName%", Connection = "ServiceBusConnection", EntityType = EntityType.Queue)]ICollector<GenerateSurveyCodeMessage> queue)
         {
             log.LogInformation("Data refresh function started.");
-            EmployerFeedbackRefreshMessage message = JsonConvert.DeserializeObject<EmployerFeedbackRefreshMessage>(myQueueItem);
+            GroupedFeedbackRefreshMessage message = JsonConvert.DeserializeObject<GroupedFeedbackRefreshMessage>(myQueueItem);
 
             try
             {
-                await _helper.RefreshFeedbackData(message);
+                await _userRefreshService.UpdateAccountUsers(message);
 
-                await queue.AddAsync(new GenerateSurveyCodeMessage
-                {
-                    UserRef = message.User.UserRef,
-                    AccountId = message.User.AccountId,
-                    Ukprn = message.Provider.Ukprn
-                });
+                message
+                    .RefreshMessages
+                    .Select(rm => new GenerateSurveyCodeMessage
+                    {
+                        UserRef = rm.User.UserRef,
+                        AccountId = rm.User.AccountId,
+                        Ukprn = rm.ProviderId
+                    })
+                    .AsParallel()
+                    .ForAll(queue.Add);
             }
             catch(Exception ex)
             {

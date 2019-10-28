@@ -103,16 +103,14 @@ namespace ESFA.DAS.ProvideFeedback.Data
                 });
         }
 
-        public async Task UpsertIntoUsers(User user)
+        public async Task UpsertIntoUsers(IEnumerable<User> users)
         {
-            var parameters = new DynamicParameters();
-            parameters.Add("@UserRef", user.UserRef, DbType.Guid);
-            parameters.Add("@FirstName", user.FirstName, DbType.String);
-            parameters.Add("@EmailAddress", user.EmailAddress, DbType.String);
+            var userDt = UsersToDatatable(users);
+
             await _dbConnection.ExecuteAsync
             (
                 sql: "[dbo].[UpsertUsers]",
-                param: parameters,
+                param: new { UsersDt = userDt.AsTableValuedParameter("UserTemplate") },
                 commandType: CommandType.StoredProcedure
             );
         }
@@ -172,22 +170,6 @@ namespace ESFA.DAS.ProvideFeedback.Data
             await _dbConnection.QueryAsync("UPDATE Providers SET IsActive = 0");
         }
 
-        public async Task InsertProviders(IEnumerable<Provider> cutDownProviders)
-        {
-            var sql = $"INSERT INTO Providers VALUES (@Ukprn, @ProviderName)";
-
-            var affectedRows = await _dbConnection.ExecuteAsync(sql, cutDownProviders);
-        }
-
-        public async Task<IEnumerable<Provider>> GetProvidersByUkprn(IEnumerable<long> ukprns)
-        {
-            var sql = @"SELECT * FROM Providers
-                        WHERE IsActive = 1
-                        AND Ukprn in @ukprns";
-
-            return await _dbConnection.QueryAsync<Provider>(sql, new { ukprns });
-        }
-
         private DataTable ProvidersToDatatable(IEnumerable<Provider> providers)
         {
             var dt = new DataTable();
@@ -197,6 +179,21 @@ namespace ESFA.DAS.ProvideFeedback.Data
             foreach (var provider in providers)
             {
                 dt.Rows.Add(provider.Ukprn, provider.ProviderName);
+            }
+
+            return dt;
+        }
+
+        private DataTable UsersToDatatable(IEnumerable<User> users)
+        {
+            var dt = new DataTable();
+            dt.Columns.Add("UserRef", typeof(Guid));
+            dt.Columns.Add("FirstName", typeof(string));
+            dt.Columns.Add("EmailAddress", typeof(string));
+
+            foreach (var user in users)
+            {
+                dt.Rows.Add(user.UserRef, user.FirstName, user.EmailAddress);
             }
 
             return dt;

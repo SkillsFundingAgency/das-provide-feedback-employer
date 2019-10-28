@@ -61,7 +61,7 @@ namespace IntegrationTests
 
         private ProcessActiveFeedbackFunction _processActiveFeedbackFunction;
         private EmployerSurveyInviteGeneratorFunction _surveyInviteGeneratorFunction;
-        private DataRefreshHelper _helper;
+        private UserRefreshService _helper;
         private SurveyInviteGenerator _surveyInviteGenerator;
         private IOptions<EmailSettings> _options;
         private DbConnection _dbConnection;
@@ -106,10 +106,9 @@ namespace IntegrationTests
 
             _dataRetreivalService = new EmployerFeedbackDataRetrievalService(
                 _commitmentApiClientMock.Object, 
-                _accountApiClientMock.Object, 
-                _dbEmployerFeedbackRepository);
+                _accountApiClientMock.Object);
 
-            _helper = new DataRefreshHelper(new Mock<ILogger<DataRefreshHelper>>().Object, _dbEmployerFeedbackRepository);
+            _helper = new UserRefreshService(new Mock<ILogger<UserRefreshService>>().Object, _dbEmployerFeedbackRepository);
             _surveyInviteGenerator = new SurveyInviteGenerator(_options, _dbEmployerFeedbackRepository, Mock.Of<ILogger<SurveyInviteGenerator>>());
             var providerRefreshSevice = new ProviderRefreshService(_dbEmployerFeedbackRepository, _providerApiClientMock.Object);
 
@@ -408,16 +407,15 @@ namespace IntegrationTests
                 .Setup(mock => mock.Add(It.IsAny<string>()))
                 .Callback((string accountId) => accountsMessages.Add(accountId));
 
-            var processActiveFeedbackCollectorMock = new Mock<ICollector<EmployerFeedbackRefreshMessage>>();
+            var processActiveFeedbackCollectorMock = new Mock<ICollector<GroupedFeedbackRefreshMessage>>();
             processActiveFeedbackCollectorMock
-                .Setup(mock => mock.Add(It.IsAny<EmployerFeedbackRefreshMessage>()))
-                .Callback((EmployerFeedbackRefreshMessage message) => processActiveMessages.Add(JsonConvert.SerializeObject(message)));
+                .Setup(mock => mock.Add(It.IsAny<GroupedFeedbackRefreshMessage>()))
+                .Callback((GroupedFeedbackRefreshMessage message) => processActiveMessages.Add(JsonConvert.SerializeObject(message)));
 
-            var generateSurveyCodeMessageCollectorMock = new Mock<IAsyncCollector<GenerateSurveyCodeMessage>>();
+            var generateSurveyCodeMessageCollectorMock = new Mock<ICollector<GenerateSurveyCodeMessage>>();
             generateSurveyCodeMessageCollectorMock
-                .Setup(mock => mock.AddAsync(It.IsAny<GenerateSurveyCodeMessage>(), It.IsAny<CancellationToken>()))
-                .Callback((GenerateSurveyCodeMessage message, CancellationToken ct) => generateCodeMessages.Add(JsonConvert.SerializeObject(message)))
-                .Returns(Task.CompletedTask);
+                .Setup(mock => mock.Add(It.IsAny<GenerateSurveyCodeMessage>()))
+                .Callback((GenerateSurveyCodeMessage message) => generateCodeMessages.Add(JsonConvert.SerializeObject(message)));
 
             var initiateMessage = await _initiateFunction.Run(null, Mock.Of<ILogger>());
             var providersRefreshedMessage = await _providersRefreshFunction.Run(initiateMessage, Mock.Of<ILogger>());
