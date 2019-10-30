@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ESFA.DAS.ProvideFeedback.Data;
 using ESFA.DAS.ProvideFeedback.Domain.Entities.Messages;
 using ESFA.DAS.ProvideFeedback.Domain.Entities.Models;
 using SFA.DAS.Commitments.Api.Client.Interfaces;
@@ -15,13 +16,16 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Application
     {
         IEmployerCommitmentApi _commitmentApiClient;
         IAccountApiClient _accountApiClient;
+        IStoreEmployerEmailDetails _emailDetailsRepository;
 
         public EmployerFeedbackDataRetrievalService(
             IEmployerCommitmentApi commitmentApiClient,
-            IAccountApiClient accountApiClient)
+            IAccountApiClient accountApiClient,
+            IStoreEmployerEmailDetails emailDetailsRepository)
         {
             _commitmentApiClient = commitmentApiClient;
-            _accountApiClient = accountApiClient;;
+            _accountApiClient = accountApiClient;
+            _emailDetailsRepository = emailDetailsRepository;
         }
 
         public async Task<IEnumerable<EmployerFeedbackRefreshMessage>> GetRefreshData(long accountId)
@@ -36,10 +40,13 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Application
                 .GroupBy(acc => acc.ProviderId)
                 .Select(group => group.Key);
 
+            var providers = await _emailDetailsRepository.GetProvidersByUkprn(commitmentUkprns);
+
             var validCommitments = accCommitments
             .Where(app => app != null)
             .Where(app => app.HasHadDataLockSuccess == true)
             .Where(app => app.PaymentStatus == PaymentStatus.Active || app.PaymentStatus == PaymentStatus.Paused)
+            .Where(app => providers.Any(p => p.Ukprn == app.ProviderId))
             .GroupBy(app => new { app.EmployerAccountId, app.ProviderId })
             .Select(app => app.First());
 

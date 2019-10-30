@@ -20,5 +20,6 @@ namespace ESFA.DAS.ProvideFeedback.Data
         Task UpsertIntoProviders(IEnumerable<Provider> providers);
         Task<long> UpsertIntoFeedback(Guid userRef, long accountId, long ukprn);
         Task<EmployerSurveyInvite> GetEmployerSurveyInvite(long feedbackId);
+        Task<IEnumerable<Provider>> GetProvidersByUkprn(IEnumerable<long> commitmentUkprns);
     }
 }

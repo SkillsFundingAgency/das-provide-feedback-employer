@@ -5,7 +5,6 @@ using System.Data.Common;
 using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using Dapper;
 using ESFA.DAS.Feedback.Employer.Emailer;
@@ -106,7 +105,8 @@ namespace IntegrationTests
 
             _dataRetreivalService = new EmployerFeedbackDataRetrievalService(
                 _commitmentApiClientMock.Object, 
-                _accountApiClientMock.Object);
+                _accountApiClientMock.Object,
+                _dbEmployerFeedbackRepository);
 
             _helper = new UserRefreshService(new Mock<ILogger<UserRefreshService>>().Object, _dbEmployerFeedbackRepository);
             _surveyInviteGenerator = new SurveyInviteGenerator(_options, _dbEmployerFeedbackRepository, Mock.Of<ILogger<SurveyInviteGenerator>>());

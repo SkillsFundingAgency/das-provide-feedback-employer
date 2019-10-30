@@ -4,7 +4,7 @@ AS
 	DECLARE @FeedbackId BIGINT;
 
 	MERGE [dbo].[EmployerFeedback] AS [Target]
-	USING (SELECT(SELECT @UserRef) AS UserRef,(SELECT @Ukprn)AS Ukprn,(SELECT @AccountId)AS AccountId) AS [Source]
+	USING (SELECT @UserRef AS UserRef, @Ukprn AS Ukprn,@AccountId AS AccountId) AS [Source]
 	ON [Target].UserRef = [Source].UserRef AND [Target].Ukprn = [Source].Ukprn AND [Target].AccountId = [Source].AccountId
 	WHEN MATCHED THEN UPDATE 
 	SET [Target].IsActive = 1, @FeedbackId = [Target].FeedbackId

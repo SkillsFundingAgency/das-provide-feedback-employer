@@ -170,6 +170,15 @@ namespace ESFA.DAS.ProvideFeedback.Data
             await _dbConnection.QueryAsync("UPDATE Providers SET IsActive = 0");
         }
 
+        public async Task<IEnumerable<Provider>> GetProvidersByUkprn(IEnumerable<long> ukprns)
+        {
+            var sql = @"SELECT * FROM Providers
+                        WHERE IsActive = 1
+                        AND Ukprn in @ukprns";
+
+            return await _dbConnection.QueryAsync<Provider>(sql, new { ukprns });
+        }
+
         private DataTable ProvidersToDatatable(IEnumerable<Provider> providers)
         {
             var dt = new DataTable();
