@@ -5,14 +5,14 @@ using ESFA.DAS.EmployerProvideFeedback.Configuration.Routing;
 using ESFA.DAS.EmployerProvideFeedback.Infrastructure;
 using ESFA.DAS.EmployerProvideFeedback.ViewModels;
 using ESFA.DAS.ProvideFeedback.Data;
-using ESFA.DAS.ProvideFeedback.Domain.Entities;
+using ESFA.DAS.ProvideFeedback.Domain.Entities.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace ESFA.DAS.EmployerProvideFeedback.Controllers
 {
-    
+
     public class HomeController : Controller
     {
         private readonly IStoreEmployerEmailDetails _employerEmailDetailsRepository;
@@ -41,11 +41,11 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
 
             if (sessionSurvey == null)
             {
-                var employerEmailDetail = await _employerEmailDetailsRepository.GetEmailDetailsForUniqueCode(uniqueCode);
+                var employerEmailDetail = await _employerEmailDetailsRepository.GetEmployerInviteForUniqueCode(uniqueCode);
 
                 if (employerEmailDetail == null)
                 {
-                    _logger.LogWarning($"Attempt to use invaliid unique code: {uniqueCode}");
+                    _logger.LogWarning($"Attempt to use invalid unique code: {uniqueCode}");
                     //TODO: 
                     return NotFound();
                 }
@@ -75,7 +75,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
             return View();
         }
 
-        private SurveyModel MapToNewSurveyModel(EmployerEmailDetail employerEmailDetail)
+        private SurveyModel MapToNewSurveyModel(EmployerSurveyInvite employerEmailDetail)
         {
             return new SurveyModel
             {

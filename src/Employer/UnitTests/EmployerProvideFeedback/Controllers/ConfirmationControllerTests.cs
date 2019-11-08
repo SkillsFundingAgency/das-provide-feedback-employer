@@ -54,7 +54,7 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
             // Arrange
             var uniqueCode = Guid.NewGuid();
             var feedback = Fixture.Create<Feedback>();
-            _providerFeedbackRepoMock.Setup(mock => mock.GetProviderFeedbackAsync(It.IsAny<long>())).Returns(Task.FromResult(feedback));
+            _providerFeedbackRepoMock.Setup(mock => mock.GetProviderFeedbackAsync(It.IsAny<long>())).ReturnsAsync(feedback);
 
             // Act
             var result = await _controller.Index(uniqueCode) as ViewResult;
@@ -72,7 +72,7 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
         {
             // Arrange
             var uniqueCode = Guid.NewGuid();
-            _providerFeedbackRepoMock.Setup(mock => mock.GetProviderFeedbackAsync(It.IsAny<long>())).Returns(Task.FromResult(null as Feedback));
+            _providerFeedbackRepoMock.Setup(mock => mock.GetProviderFeedbackAsync(It.IsAny<long>())).ReturnsAsync(null as Feedback);
 
             // Act
             var result = await _controller.Index(uniqueCode) as ViewResult;

@@ -7,7 +7,7 @@ using ESFA.DAS.EmployerProvideFeedback.Controllers;
 using ESFA.DAS.EmployerProvideFeedback.Infrastructure;
 using ESFA.DAS.EmployerProvideFeedback.ViewModels;
 using ESFA.DAS.ProvideFeedback.Data;
-using ESFA.DAS.ProvideFeedback.Domain.Entities;
+using ESFA.DAS.ProvideFeedback.Domain.Entities.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -25,11 +25,11 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
         private readonly List<ProviderAttributeModel> _providerAttributes;
         private IFixture _fixture = new Fixture();
         private readonly IOptions<List<ProviderAttributeModel>> _providerAttributeOptions;
-        private readonly EmployerEmailDetail _employerEmailDetail;
+        private readonly EmployerSurveyInvite _employerEmailDetail;
 
         public HomeControllerTests()
         {
-            _employerEmailDetail = _fixture.Create<EmployerEmailDetail>();
+            _employerEmailDetail = _fixture.Create<EmployerSurveyInvite>();
             _providerAttributes = GetProviderAttributes();
             _sessionServiceMock = new Mock<ISessionService>();
             _employerEmailDetailsRepoMock = new Mock<IStoreEmployerEmailDetails>();
@@ -40,7 +40,7 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
                 _sessionServiceMock.Object,
                 _loggerMock.Object,
                 _providerAttributeOptions);
-            _employerEmailDetailsRepoMock.Setup(mock => mock.GetEmailDetailsForUniqueCode(It.IsAny<Guid>())).Returns(Task.FromResult(_employerEmailDetail));
+            _employerEmailDetailsRepoMock.Setup(mock => mock.GetEmployerInviteForUniqueCode(It.IsAny<Guid>())).Returns(Task.FromResult(_employerEmailDetail));
         }
 
         [Fact]
@@ -48,7 +48,7 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
         {
             // Arrange
             var uniqueCode = Guid.NewGuid();
-            _employerEmailDetailsRepoMock.Setup(mock => mock.GetEmailDetailsForUniqueCode(uniqueCode)).ReturnsAsync(null as EmployerEmailDetail);
+            _employerEmailDetailsRepoMock.Setup(mock => mock.GetEmployerInviteForUniqueCode(uniqueCode)).ReturnsAsync(null as EmployerSurveyInvite);
 
             // Act
             var result = await _controller.Index(uniqueCode);

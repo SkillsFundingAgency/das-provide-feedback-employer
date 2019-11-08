@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27703.2042
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29009.5
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ESFA.DAS.EmployerProvideFeedback", "ESFA.DAS.EmployerProvideFeedback\ESFA.DAS.EmployerProvideFeedback.csproj", "{A733BCBF-822B-4BC0-9E74-C819FBFE2E08}"
 EndProject
@@ -23,7 +23,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ESFA.DAS.ProvideFeedback.Em
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ESFA.DAS.ProvideFeedback.Employer.ApplicationServices", "ESFA.DAS.ProvideFeedback.Employer.ApplicationServices\ESFA.DAS.ProvideFeedback.Employer.ApplicationServices.csproj", "{BC93130B-6FF0-4F24-98BC-D0881D95B0F3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ESFA.DAS.ProvideFeedback.Employer.Functions.Framework", "ESFA.DAS.ProvideFeedback.Employer.Functions.Framework\ESFA.DAS.ProvideFeedback.Employer.Functions.Framework.csproj", "{55BFDC4A-E0D6-4226-8B93-0F1A1EA96159}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IntegrationTests", "IntegrationTests\IntegrationTests.csproj", "{95466EB8-F285-4086-8488-B2589B3A7D39}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ESFA.DAS.ProvideFeedback.Employer.Application", "ESFA.DAS.ProvideFeedback.Employer.Application\ESFA.DAS.ProvideFeedback.Employer.Application.csproj", "{1F079DC1-415D-49A7-A93D-EA8ADBBAEB58}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -73,10 +75,14 @@ Global
 		{BC93130B-6FF0-4F24-98BC-D0881D95B0F3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BC93130B-6FF0-4F24-98BC-D0881D95B0F3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BC93130B-6FF0-4F24-98BC-D0881D95B0F3}.Release|Any CPU.Build.0 = Release|Any CPU
-		{55BFDC4A-E0D6-4226-8B93-0F1A1EA96159}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{55BFDC4A-E0D6-4226-8B93-0F1A1EA96159}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{55BFDC4A-E0D6-4226-8B93-0F1A1EA96159}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{55BFDC4A-E0D6-4226-8B93-0F1A1EA96159}.Release|Any CPU.Build.0 = Release|Any CPU
+		{95466EB8-F285-4086-8488-B2589B3A7D39}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{95466EB8-F285-4086-8488-B2589B3A7D39}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{95466EB8-F285-4086-8488-B2589B3A7D39}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{95466EB8-F285-4086-8488-B2589B3A7D39}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1F079DC1-415D-49A7-A93D-EA8ADBBAEB58}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1F079DC1-415D-49A7-A93D-EA8ADBBAEB58}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1F079DC1-415D-49A7-A93D-EA8ADBBAEB58}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1F079DC1-415D-49A7-A93D-EA8ADBBAEB58}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

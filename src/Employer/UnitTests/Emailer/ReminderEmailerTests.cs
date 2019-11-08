@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using ESFA.DAS.Feedback.Employer.Emailer;
 using ESFA.DAS.Feedback.Employer.Emailer.Configuration;
 using ESFA.DAS.ProvideFeedback.Data;
-using ESFA.DAS.ProvideFeedback.Domain.Entities;
+using ESFA.DAS.ProvideFeedback.Domain.Entities.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
@@ -12,7 +12,7 @@ using SFA.DAS.Notifications.Api.Client;
 using SFA.DAS.Notifications.Api.Types;
 using Xunit;
 
-namespace Esfa.Das.Feedback.Employer.UnitTests.Emailer
+namespace ESFA.DAS.Feedback.Employer.UnitTests.Emailer
 {
     public class ReminderEmailerTests
     {
@@ -26,12 +26,12 @@ namespace Esfa.Das.Feedback.Employer.UnitTests.Emailer
         {
             _options = Options.Create(new EmailSettings { FeedbackSiteBaseUrl = "https://test-site.com/", BatchSize = 10 });
 
-            var emailDetails = new List<EmployerEmailDetail>
+            var emailDetails = new List<EmployerSurveyInvite>
                 {
-                    new EmployerEmailDetail { UserRef = new Guid("7f11a6b0-a25b-45a5-bdfc-4424dfba85e8"), EmailAddress = "test@test.com" }
+                    new EmployerSurveyInvite { UserRef = new Guid("7f11a6b0-a25b-45a5-bdfc-4424dfba85e8"), EmailAddress = "test@test.com" }
                 };
 
-            _mockStore.Setup(x => x.GetEmailDetailsToBeSentReminder(It.IsAny<int>())).ReturnsAsync(emailDetails);
+            _mockStore.Setup(x => x.GetEmployerInvitesToBeSentReminder(It.IsAny<int>())).ReturnsAsync(emailDetails);
 
             _emailer = new EmployerSurveyReminderEmailer(_mockStore.Object, _mockEmailService.Object, _options, _mockLogger.Object);
         }
@@ -57,7 +57,7 @@ namespace Esfa.Das.Feedback.Employer.UnitTests.Emailer
         {
             await _emailer.SendEmailsAsync();
 
-            _mockStore.Verify(x => x.SetEmailReminderAsSent(It.IsAny<Guid>()), Times.Once);
+            _mockStore.Verify(x => x.InsertSurveyInviteHistory(It.IsAny<IEnumerable<Guid>>(), It.IsAny<int>()), Times.Once);
         }
 
         [Fact]
@@ -75,7 +75,7 @@ namespace Esfa.Das.Feedback.Employer.UnitTests.Emailer
             _mockStore.Reset();
             await _emailer.SendEmailsAsync();
 
-            _mockStore.Verify(x => x.SetEmailDetailsAsSent(It.IsAny<Guid>()), Times.Never);
+            _mockStore.Verify(x => x.InsertSurveyInviteHistory(It.IsAny<IEnumerable<Guid>>(), It.IsAny<int>()), Times.Never);
         }
     }
 }

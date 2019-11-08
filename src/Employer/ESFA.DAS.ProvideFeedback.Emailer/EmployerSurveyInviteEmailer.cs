@@ -3,7 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using ESFA.DAS.Feedback.Employer.Emailer.Configuration;
 using ESFA.DAS.ProvideFeedback.Data;
-using ESFA.DAS.ProvideFeedback.Domain.Entities;
+using ESFA.DAS.ProvideFeedback.Domain.Entities.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using SFA.DAS.Notifications.Api.Client;
@@ -25,19 +25,18 @@ namespace ESFA.DAS.Feedback.Employer.Emailer
 
         public async Task SendEmailsAsync()
         {
-            var emailsToSend = await _emailDetailsStore.GetEmailDetailsToBeSentInvite();
+            var emailsToSend = await _emailDetailsStore.GetEmployerUsersToBeSentInvite();
 
-            // Group by user
             var emailsGroupByUser = GroupEmailsToSendByUser(emailsToSend);
 
             await SendGroupedEmails(emailsGroupByUser);
         }
 
-        protected override async Task HandleSendAsync(IGrouping<Guid, EmployerEmailDetail> userGroup)
+        protected override async Task HandleSendAsync(IGrouping<Guid, EmployerSurveyInvite> userGroup)
         {
-            var userRef = userGroup.First().UserRef;
+            var uniqueSurveyCodes = userGroup.Select(x => x.UniqueSurveyCode);
             await SendFeedbackEmail(userGroup, EmailTemplates.MultipleLinkTemplateId);
-            await _emailDetailsStore.SetEmailDetailsAsSent(userRef);
+            await _emailDetailsStore.InsertSurveyInviteHistory(uniqueSurveyCodes, 1);
         }
     }
 }

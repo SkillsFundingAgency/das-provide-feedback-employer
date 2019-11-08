@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="NLog" Version="4.5.10" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ESFA.DAS.EmployerFeedbackEmail.Data\ESFA.DAS.ProvideFeedback.Data.csproj" />
+    <ProjectReference Include="..\ESFA.DAS.ProvideFeedback.Emailer\ESFA.DAS.ProvideFeedback.Emailer.csproj" />
+  </ItemGroup>
+
+</Project>

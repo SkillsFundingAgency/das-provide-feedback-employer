@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Routing;
+using Microsoft.Extensions.Logging;
 using Moq;
 using Xunit;
 
@@ -16,10 +17,12 @@ namespace UnitTests.EmployerProvideFeedback.Infrastructure
     public class EnsureSessionExistsAttributeTests
     {
         private readonly Mock<ISessionService> _sessionServiceMock;
+        private readonly Mock<ILogger<EnsureSessionExists>> _loggerMock;
         private readonly Mock<Controller> _controllerMock;
 
         public EnsureSessionExistsAttributeTests()
         {
+            _loggerMock = new Mock<ILogger<EnsureSessionExists>>();
             _sessionServiceMock = new Mock<ISessionService>();
             _controllerMock = new Mock<Controller>();
             _controllerMock.Setup(mock => mock.RedirectToRoute(It.IsAny<string>())).Returns(new RedirectToRouteResult(RouteNames.Landing_Get, null));
@@ -42,7 +45,7 @@ namespace UnitTests.EmployerProvideFeedback.Infrastructure
                _controllerMock.Object);
             context.ActionArguments.Add("uniqueCode", Guid.NewGuid());
 
-            var ensureSession = new EnsureSessionExists(_sessionServiceMock.Object);
+            var ensureSession = new EnsureSessionExists(_sessionServiceMock.Object, _loggerMock.Object);
 
             // Act
             ensureSession.OnActionExecuting(context);

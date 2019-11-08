@@ -8,9 +8,9 @@
 
   <ItemGroup>
     <PackageReference Include="AutoFixture" Version="4.6.0" />
-    <PackageReference Include="FluentAssertions" Version="5.5.3" />
+    <PackageReference Include="CompareNETObjects" Version="4.58.0" />
+    <PackageReference Include="FluentAssertions" Version="5.7.0" />
     <PackageReference Include="Microsoft.AspNetCore.App" Version="2.2.0" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.9.0" />
     <PackageReference Include="Moq" Version="4.10.1" />
     <PackageReference Include="MSTest.TestAdapter" Version="1.4.0" />
     <PackageReference Include="MSTest.TestFramework" Version="1.4.0" />
@@ -26,6 +26,7 @@
     <ProjectReference Include="..\ESFA.DAS.EmployerProvideFeedback\ESFA.DAS.EmployerProvideFeedback.csproj" />
     <ProjectReference Include="..\ESFA.DAS.FeedbackDataAccess\ESFA.DAS.ProvideFeedback.FeedbackDataAccess.csproj" />
     <ProjectReference Include="..\ESFA.DAS.ProvideFeedback.Emailer\ESFA.DAS.ProvideFeedback.Emailer.csproj" />
+    <ProjectReference Include="..\ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer\ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer.csproj" />
   </ItemGroup>
 
 </Project>

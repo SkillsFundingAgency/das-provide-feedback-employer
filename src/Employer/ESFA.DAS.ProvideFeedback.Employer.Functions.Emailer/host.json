@@ -8,13 +8,21 @@
     "healthCheckThreshold": 6,
     "counterThreshold": 0.80
   },
-  "functionTimeout": "00:10:00",
+  "functionTimeout": "00:05:00",
   "logging": {
     "fileLoggingMode": "debugOnly",
     "applicationInsights": {
       "samplingSettings": {
         "isEnabled": true,
         "maxTelemetryItemsPerSecond": 5
+      }
+    }
+  },
+  "extensions": {
+    "serviceBus": {
+      "messageHandlerOptions": {
+        "maxAutoRenewDuration": "00:05:00",
+        "maxConcurrentCalls": 4
       }
     }
   }

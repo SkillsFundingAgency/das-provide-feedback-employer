@@ -1,14 +1,15 @@
-﻿using System.Data;
+﻿using System;
+using System.Data;
 using System.Data.SqlClient;
 using System.IO;
 using System.Net.Http.Headers;
 using ESFA.DAS.Feedback.Employer.Emailer;
 using ESFA.DAS.Feedback.Employer.Emailer.Configuration;
 using ESFA.DAS.ProvideFeedback.Data;
+using ESFA.DAS.ProvideFeedback.Employer.Application;
+using ESFA.DAS.ProvideFeedback.Employer.Application.Configuration;
 using ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer;
-using ESFA.DAS.ProvideFeedback.Employer.Functions.Framework.DependencyInjection.Config;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Hosting;
+using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -17,35 +18,36 @@ using NLog.Common;
 using NLog.Config;
 using NLog.Extensions.Logging;
 using NLog.Targets;
+using Polly;
+using SFA.DAS.Commitments.Api.Client;
+using SFA.DAS.Commitments.Api.Client.Configuration;
+using SFA.DAS.Commitments.Api.Client.Interfaces;
+using SFA.DAS.EAS.Account.Api.Client;
 using SFA.DAS.NLog.Targets.Redis.DotNetCore;
 using SFA.DAS.Notifications.Api.Client;
 using SFA.DAS.Notifications.Api.Client.Configuration;
+using SFA.DAS.Providers.Api.Client;
 using LogLevel = NLog.LogLevel;
 
-[assembly: WebJobsStartup(typeof(Startup))]
+[assembly: FunctionsStartup(typeof(Startup))]
 namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
 {
-    internal class Startup : IWebJobsStartup
+    internal class Startup : FunctionsStartup
     {
-        private readonly IConfigurationRoot _configuration;
-        public Startup()
+        private IConfigurationRoot _configuration;
+        public override void Configure(IFunctionsHostBuilder builder)
         {
             _configuration = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("local.settings.json", optional: true, reloadOnChange: true)
                 .AddEnvironmentVariables()
                 .Build();
-        }
 
-        public void Configure(IWebJobsBuilder builder) =>
-            builder.AddDependencyInjection(ConfigureServices);
+            builder.Services.AddTransient<IDbConnection>(c => new SqlConnection(_configuration.GetConnectionStringOrSetting("EmployerEmailStoreConnection")));
 
-        private void ConfigureServices(IServiceCollection services)
-        {
-            services.AddSingleton<IDbConnection>(c => new SqlConnection(_configuration.GetConnectionStringOrSetting("EmployerEmailStoreConnection")));
-
-            services.AddLogging((options) =>
+            builder.Services.AddLogging((options) =>
             {
+
                 options.AddConfiguration(_configuration.GetSection("Logging"));
                 options.SetMinimumLevel(Microsoft.Extensions.Logging.LogLevel.Trace);
                 options.AddNLog(new NLogProviderOptions
@@ -53,24 +55,24 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
                     CaptureMessageTemplates = true,
                     CaptureMessageProperties = true
                 });
+
                 options.AddConsole();
-                options.AddDebug();
 
                 ConfigureNLog();
             });
 
-            services.AddSingleton(typeof(ILogger<>), typeof(Logger<>));
+            builder.Services.AddSingleton(typeof(ILogger<>), typeof(Logger<>));
 
-            services.Configure<EmailSettings>(_configuration.GetSection("EmailSettings"));
+            builder.Services.Configure<EmailSettings>(_configuration.GetSection("EmailSettings"));
 
             var notificationApiConfig = _configuration.GetSection("NotificationApi").Get<NotificationApiConfig>();
 
-            services.AddHttpClient<INotificationsApi, NotificationsApi>(c =>
+            builder.Services.AddHttpClient<INotificationsApi, NotificationsApi>(c =>
             {
                 c.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", notificationApiConfig.ClientToken);
             });
 
-            services.AddSingleton<INotificationsApiClientConfiguration, NotificationsApiClientConfiguration>(a =>
+            builder.Services.AddSingleton<INotificationsApiClientConfiguration, NotificationsApiClientConfiguration>(a =>
                 new NotificationsApiClientConfiguration
                 {
                     ApiBaseUrl = notificationApiConfig.BaseUrl,
@@ -78,9 +80,38 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
                 }
             );
 
-            services.AddSingleton<EmployerSurveyInviteEmailer>();
-            services.AddSingleton<EmployerSurveyReminderEmailer>();
-            services.AddSingleton<IStoreEmployerEmailDetails, EmployerEmailDetailRepository>();
+            builder.Services.AddSingleton<EmployerSurveyInviteEmailer>();
+            builder.Services.AddSingleton<EmployerSurveyReminderEmailer>();
+            builder.Services.AddTransient<IStoreEmployerEmailDetails, EmployerFeedbackRepository>();
+            builder.Services.AddTransient<EmployerFeedbackDataRetrievalService>();
+            builder.Services.AddTransient<UserRefreshService>();
+            builder.Services.AddTransient<SurveyInviteGenerator>();
+            builder.Services.AddTransient<ProviderRefreshService>();
+
+            var providerApiConfig = _configuration.GetSection("ProviderApi").Get<ProviderApiConfig>();
+            builder.Services.AddSingleton<IProviderApiClient, ProviderApiClient>(a =>
+                 new ProviderApiClient(providerApiConfig.BaseUrl)
+            );
+
+            var commitmentApiConfig = _configuration.GetSection("CommitmentApi").Get<CommitmentsApiClientConfig>();
+
+            builder.Services.AddSingleton<ICommitmentsApiClientConfiguration>(commitmentApiConfig);
+
+            builder.Services.AddHttpClient<IEmployerCommitmentApi, EmployerCommitmentApi>(http =>
+            {
+                http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", commitmentApiConfig.ClientToken);
+            })
+            .AddTransientHttpErrorPolicy(policyBuilder => policyBuilder.WaitAndRetryAsync(new[]
+            {
+                TimeSpan.FromSeconds(1),
+                TimeSpan.FromSeconds(5),
+                TimeSpan.FromSeconds(10)
+            }));
+
+            var accApiConfig = _configuration.GetSection("AccountApi").Get<AccountApiConfiguration>();
+            builder.Services.AddSingleton<IAccountApiClient, AccountApiClient>(a =>
+                 new AccountApiClient(accApiConfig)
+            );
         }
 
         private void ConfigureNLog()
