@@ -43,12 +43,12 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Application
             var providers = await _emailDetailsRepository.GetProvidersByUkprn(commitmentUkprns);
 
             var validCommitments = accCommitments
-            .Where(app => app != null)
-            .Where(app => app.HasHadDataLockSuccess == true)
-            .Where(app => app.PaymentStatus == PaymentStatus.Active || app.PaymentStatus == PaymentStatus.Paused)
-            .Where(app => providers.Any(p => p.Ukprn == app.ProviderId))
-            .GroupBy(app => new { app.EmployerAccountId, app.ProviderId })
-            .Select(app => app.First());
+                .Where(app => app != null)
+                .Where(app => app.HasHadDataLockSuccess)
+                .Where(app => app.PaymentStatus == PaymentStatus.Active || app.PaymentStatus == PaymentStatus.Paused)
+                .Where(app => providers.Any(p => p.Ukprn == app.ProviderId))
+                .GroupBy(app => new { app.EmployerAccountId, app.ProviderId })
+                .Select(app => app.First());
 
             var mappedUsers = await mappedUsersTask;
 
