@@ -16,6 +16,7 @@ using ESFA.DAS.ProvideFeedback.Employer.Application;
 using ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer;
 using FluentAssertions;
 using Microsoft.Azure.WebJobs;
+using Microsoft.Build.Framework;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -31,6 +32,8 @@ using SFA.DAS.EAS.Account.Api.Types;
 using SFA.DAS.Notifications.Api.Client;
 using SFA.DAS.Notifications.Api.Types;
 using SFA.DAS.Providers.Api.Client;
+using ILogger = Microsoft.Extensions.Logging.ILogger;
+using Provider = ESFA.DAS.ProvideFeedback.Domain.Entities.Models.Provider;
 
 namespace IntegrationTests
 {
@@ -42,11 +45,12 @@ namespace IntegrationTests
         private Mock<IEmployerCommitmentApi> _commitmentApiClientMock;
         private Mock<IAccountApiClient> _accountApiClientMock;
         private Mock<INotificationsApi> _notificationsApiClientMock;
+        private Mock<IStoreEmployerEmailDetails> _emailDetailsRepository;
 
         private ProviderSummary[] _providerApiClientReturn;
         private List<Apprenticeship> _commitmentApiClientReturn;
         private ICollection<TeamMemberViewModel> _accountApiClientReturn;
-
+        private IEnumerable<Provider> _providers;
         private Mock<ILogger<EmployerSurveyEmailer>> _surveyLoggerMock;
 
         private IStoreEmployerEmailDetails _dbEmployerFeedbackRepository;
@@ -99,14 +103,15 @@ namespace IntegrationTests
             _accountApiClientMock = new Mock<IAccountApiClient>();
             _notificationsApiClientMock = new Mock<INotificationsApi>();
             _surveyLoggerMock = new Mock<ILogger<EmployerSurveyEmailer>>();
-
+            _emailDetailsRepository = new Mock<IStoreEmployerEmailDetails>();
             _dbConnection = new SqlConnection(_configuration.GetConnectionString("EmployerEmailStoreConnection"));
             _dbEmployerFeedbackRepository = new EmployerFeedbackRepository(_dbConnection);
 
             _dataRetreivalService = new EmployerFeedbackDataRetrievalService(
                 _commitmentApiClientMock.Object,
                 _accountApiClientMock.Object,
-                _dbEmployerFeedbackRepository);
+                _emailDetailsRepository.Object);
+                //_dbEmployerFeedbackRepository);
 
             _helper = new UserRefreshService(new Mock<ILogger<UserRefreshService>>().Object, _dbEmployerFeedbackRepository);
             _surveyInviteGenerator = new SurveyInviteGenerator(_options, _dbEmployerFeedbackRepository, Mock.Of<ILogger<SurveyInviteGenerator>>());
@@ -372,8 +377,7 @@ namespace IntegrationTests
             //        UserRef = _user2Guid.ToString(), CanReceiveNotifications = true
             //    }
             //};
-            _accountApiClientReturn = GetTeamMemberViewsModel(1000);
-            _commitmentApiClientReturn = GetApprenticeships(1000);
+           
         }
 
         private List<Apprenticeship> GetApprenticeships(int count)
@@ -387,7 +391,7 @@ namespace IntegrationTests
                     PaymentStatus = PaymentStatus.Active,
                     ULN = i.ToString(),
                     EmployerAccountId = 1,
-                    ProviderId = 1,
+                    ProviderId = i,
                     ProviderName = "Test Academy"
                 };
                 apprenticeships.Add(apprenticeship);
@@ -397,8 +401,7 @@ namespace IntegrationTests
 
         private List<TeamMemberViewModel> GetTeamMemberViewsModel(int count)
         {
-            
-            List<TeamMemberViewModel> memberViewModels = new List<TeamMemberViewModel>();
+           List<TeamMemberViewModel> memberViewModels = new List<TeamMemberViewModel>();
             for (int i = 0; i < count; i++)
             {
                Guid userRef = Guid.NewGuid();
@@ -414,6 +417,21 @@ namespace IntegrationTests
             return memberViewModels;
         }
 
+        private IEnumerable<Provider> GetProviders(int count)
+        {
+            List<Provider> providers = new List<Provider>();
+            for (int i = 0; i < count; i++)
+            {
+                Provider provider = new Provider
+                {
+                    ProviderName = "Test Provider" +i,
+                    Ukprn = i
+                };
+                providers.Add(provider);
+            }
+            return providers;
+        }
+
         private async Task CleanupData()
         {
             await _dbConnection.ExecuteAsync($@" 
@@ -426,6 +444,15 @@ namespace IntegrationTests
 
         private void SetupApiMocks(int changeableUkprn)
         {
+            var rtnlist = new List<long>();
+
+            for (long i = 0; i < 1000; i++)
+            {
+                rtnlist.Add(i);
+            }
+            _accountApiClientReturn = GetTeamMemberViewsModel(1000);
+            _commitmentApiClientReturn = GetApprenticeships(1000);
+            _providers = GetProviders(1000);
             SetUpApiReturn(changeableUkprn);
 
             _accountApiClientMock.Setup(x => x.GetAccountUsers(It.IsAny<long>())).ReturnsAsync(_accountApiClientReturn);
@@ -433,6 +460,7 @@ namespace IntegrationTests
             _commitmentApiClientMock.Setup(x => x.GetEmployerApprenticeships(It.IsAny<long>()))
                 .ReturnsAsync(_commitmentApiClientReturn);
             _commitmentApiClientMock.Setup(x => x.GetAllEmployerAccountIds()).ReturnsAsync(new long[] { 1 });
+            _emailDetailsRepository.Setup(x => x.GetProvidersByUkprn(rtnlist)).ReturnsAsync(_providers);
         }
 
         private async Task RunThroughRefreshFunctions()
