@@ -32,10 +32,11 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
                 if (success)
                 {
                     var refreshMessages = await _dataRetrievalService.GetRefreshData(accountId);
+                    var groupedByUser = refreshMessages.GroupBy((rm) => rm.User.UserRef);
 
-                    if (refreshMessages.Any())
+                    foreach (var userGroup in groupedByUser)
                     {
-                        queue.Add(new GroupedFeedbackRefreshMessage { RefreshMessages = refreshMessages });
+                        queue.Add(new GroupedFeedbackRefreshMessage { RefreshMessages = userGroup.ToList() });
                     }
                 }
                 else
@@ -43,7 +44,7 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
                     log.LogWarning($"AccoundId: {accountIdMessage} is not a valid accountId");
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 log.LogError(ex, $"Account refresh function failed for accountId: {accountIdMessage}");
                 throw;

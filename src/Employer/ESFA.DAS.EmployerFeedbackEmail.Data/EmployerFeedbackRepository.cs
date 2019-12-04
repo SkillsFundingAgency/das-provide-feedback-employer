@@ -103,9 +103,9 @@ namespace ESFA.DAS.ProvideFeedback.Data
                 });
         }
 
-        public async Task UpsertIntoUsers(IEnumerable<User> users)
+        public async Task UpsertIntoUsers(User user)
         {
-            var userDt = UsersToDatatable(users);
+            var userDt = UsersToDatatable(user);
 
             await _dbConnection.ExecuteAsync
             (
@@ -193,18 +193,13 @@ namespace ESFA.DAS.ProvideFeedback.Data
             return dt;
         }
 
-        private DataTable UsersToDatatable(IEnumerable<User> users)
+        private DataTable UsersToDatatable(User user)
         {
             var dt = new DataTable();
             dt.Columns.Add("UserRef", typeof(Guid));
             dt.Columns.Add("FirstName", typeof(string));
             dt.Columns.Add("EmailAddress", typeof(string));
-
-            foreach (var user in users)
-            {
-                dt.Rows.Add(user.UserRef, user.FirstName, user.EmailAddress);
-            }
-
+            dt.Rows.Add(user.UserRef, user.FirstName, user.EmailAddress);
             return dt;
         }
     }
