@@ -16,7 +16,6 @@ using ESFA.DAS.ProvideFeedback.Employer.Application;
 using ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer;
 using FluentAssertions;
 using Microsoft.Azure.WebJobs;
-using Microsoft.Build.Framework;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -32,8 +31,6 @@ using SFA.DAS.EAS.Account.Api.Types;
 using SFA.DAS.Notifications.Api.Client;
 using SFA.DAS.Notifications.Api.Types;
 using SFA.DAS.Providers.Api.Client;
-using ILogger = Microsoft.Extensions.Logging.ILogger;
-using Provider = ESFA.DAS.ProvideFeedback.Domain.Entities.Models.Provider;
 
 namespace IntegrationTests
 {
@@ -45,12 +42,11 @@ namespace IntegrationTests
         private Mock<IEmployerCommitmentApi> _commitmentApiClientMock;
         private Mock<IAccountApiClient> _accountApiClientMock;
         private Mock<INotificationsApi> _notificationsApiClientMock;
-        private Mock<IStoreEmployerEmailDetails> _emailDetailsRepository;
 
         private ProviderSummary[] _providerApiClientReturn;
         private List<Apprenticeship> _commitmentApiClientReturn;
         private ICollection<TeamMemberViewModel> _accountApiClientReturn;
-        private IEnumerable<Provider> _providers;
+
         private Mock<ILogger<EmployerSurveyEmailer>> _surveyLoggerMock;
 
         private IStoreEmployerEmailDetails _dbEmployerFeedbackRepository;
@@ -89,7 +85,7 @@ namespace IntegrationTests
                 InviteCycleDays = 90,
                 ReminderDays = 14
             });
-            
+
             _user1Guid = Guid.Parse("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa");
             _user2Guid = Guid.Parse("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb");
             _user3Guid = Guid.Parse("cccccccc-cccc-cccc-cccc-cccccccccccc");
@@ -103,15 +99,14 @@ namespace IntegrationTests
             _accountApiClientMock = new Mock<IAccountApiClient>();
             _notificationsApiClientMock = new Mock<INotificationsApi>();
             _surveyLoggerMock = new Mock<ILogger<EmployerSurveyEmailer>>();
-            _emailDetailsRepository = new Mock<IStoreEmployerEmailDetails>();
+
             _dbConnection = new SqlConnection(_configuration.GetConnectionString("EmployerEmailStoreConnection"));
             _dbEmployerFeedbackRepository = new EmployerFeedbackRepository(_dbConnection);
 
             _dataRetreivalService = new EmployerFeedbackDataRetrievalService(
-                _commitmentApiClientMock.Object, 
+                _commitmentApiClientMock.Object,
                 _accountApiClientMock.Object,
-                _emailDetailsRepository.Object);
-                //_dbEmployerFeedbackRepository);
+                _dbEmployerFeedbackRepository);
 
             _helper = new UserRefreshService(new Mock<ILogger<UserRefreshService>>().Object, _dbEmployerFeedbackRepository);
             _surveyInviteGenerator = new SurveyInviteGenerator(_options, _dbEmployerFeedbackRepository, Mock.Of<ILogger<SurveyInviteGenerator>>());
@@ -156,7 +151,7 @@ namespace IntegrationTests
                 new EmployerSurveyInvite {UserRef = _user2Guid, EmailAddress = "TheBestThereEverWas@90sReference.com", FirstName = "Flash", AccountId = 1, Ukprn = 1, ProviderName = "Test Academy"},
                 new EmployerSurveyInvite {UserRef = _user2Guid, EmailAddress = "TheBestThereEverWas@90sReference.com", FirstName = "Flash", AccountId = 1, Ukprn = 2, ProviderName = "Worst School"},
             };
-            
+
             // Act
             await RunThroughRefreshFunctions();
 
@@ -174,8 +169,8 @@ namespace IntegrationTests
             _notificationsApiClientMock = new Mock<INotificationsApi>();
             _employerSurveyInviteEmailer = new EmployerSurveyInviteEmailer(
                 _dbEmployerFeedbackRepository,
-                _notificationsApiClientMock.Object, 
-                _options, 
+                _notificationsApiClientMock.Object,
+                _options,
                 _surveyLoggerMock.Object);
 
             //Act
@@ -193,7 +188,7 @@ namespace IntegrationTests
                 UPDATE EmployerSurveyHistory
                 SET SentDate = @newSentDate
                 WHERE UniqueSurveyCode IN (SELECT UniqueSurveyCode FROM EmployerSurveyCodes WHERE FeedbackId IN (SELECT FeedbackId FROM EmployerFeedback WHERE UserRef in @userRefs))",
-                new {newSentDate = DateTime.UtcNow.AddDays(-15), userRefs = new[] {_user1Guid, _user2Guid}});
+                new { newSentDate = DateTime.UtcNow.AddDays(-15), userRefs = new[] { _user1Guid, _user2Guid } });
             _notificationsApiClientMock = new Mock<INotificationsApi>();
             _employerSurveyReminderEmailer = new EmployerSurveyReminderEmailer(_dbEmployerFeedbackRepository,
                 _notificationsApiClientMock.Object, _options, _surveyLoggerMock.Object);
@@ -235,7 +230,7 @@ namespace IntegrationTests
                 UPDATE EmployerSurveyHistory
                 SET SentDate = @newSentDate
                 WHERE EmailType = 1 AND UniqueSurveyCode IN (SELECT UniqueSurveyCode FROM EmployerSurveyCodes WHERE FeedbackId IN (SELECT FeedbackId FROM EmployerFeedback WHERE UserRef in @userRefs))",
-                new {newSentDate = DateTime.Now - TimeSpan.FromDays(91), userRefs = new[] {_user1Guid, _user2Guid}});
+                new { newSentDate = DateTime.Now - TimeSpan.FromDays(91), userRefs = new[] { _user1Guid, _user2Guid } });
             _notificationsApiClientMock = new Mock<INotificationsApi>();
             _employerSurveyInviteEmailer = new EmployerSurveyInviteEmailer(_dbEmployerFeedbackRepository,
                 _notificationsApiClientMock.Object, _options, _surveyLoggerMock.Object);
@@ -345,70 +340,10 @@ namespace IntegrationTests
                 new ProviderSummary {Ukprn = changeableUkprn, ProviderName = "Worst School"},
             };
 
-<<<<<<< HEAD
-            //_commitmentApiClientReturn = new List<Apprenticeship>
-            //{
-            //    new Apprenticeship
-            //    {
-            //        HasHadDataLockSuccess = true, PaymentStatus = PaymentStatus.Active, ULN = "1",
-            //        EmployerAccountId = 1, ProviderId = 1, ProviderName = "Test Academy"
-            //    },
-            //    new Apprenticeship
-            //    {
-            //        HasHadDataLockSuccess = true, PaymentStatus = PaymentStatus.Active, ULN = "2",
-            //        EmployerAccountId = 1, ProviderId = 1, ProviderName = "Test Academy"
-            //    },
-            //    new Apprenticeship
-            //    {
-            //        HasHadDataLockSuccess = true, PaymentStatus = PaymentStatus.Active, ULN = "3",
-            //        EmployerAccountId = 1, ProviderId = changeableUkprn, ProviderName = "Worst School"
-            //    }
-            //};
-
-            //_accountApiClientReturn = new List<TeamMemberViewModel>
-            //{
-            //    new TeamMemberViewModel
-            //    {
-            //        Email = "Test@test.com", Name = "Master Chef", UserRef = _user1Guid.ToString(),
-            //        CanReceiveNotifications = true
-            //    },
-            //    new TeamMemberViewModel
-            //    {
-            //        Email = "TheBestThereEverWas@90sReference.com", Name = "Flash Ketchup",
-            //        UserRef = _user2Guid.ToString(), CanReceiveNotifications = true
-            //    }
-            //};
-           
-        }
-
-        private List<Apprenticeship> GetApprenticeships(int count)
-        {
-            List<Apprenticeship> apprenticeships = new List<Apprenticeship>();
-            for (int i = 0; i < count; i++)
-=======
             _commitmentApiClientReturn = new List<Apprenticeship>
->>>>>>> parent of 4904810... Adding more messages to test.
             {
                 new Apprenticeship
                 {
-<<<<<<< HEAD
-                    HasHadDataLockSuccess = true,
-                    PaymentStatus = PaymentStatus.Active,
-                    ULN = i.ToString(),
-                    EmployerAccountId = 1,
-                    ProviderId = i,
-                    ProviderName = "Test Academy"
-                };
-                apprenticeships.Add(apprenticeship);
-            }
-            return apprenticeships;
-        }
-
-        private List<TeamMemberViewModel> GetTeamMemberViewsModel(int count)
-        {
-           List<TeamMemberViewModel> memberViewModels = new List<TeamMemberViewModel>();
-            for (int i = 0; i < count; i++)
-=======
                     HasHadDataLockSuccess = true, PaymentStatus = PaymentStatus.Active, ULN = "1",
                     EmployerAccountId = 1, ProviderId = 1, ProviderName = "Test Academy"
                 },
@@ -425,7 +360,6 @@ namespace IntegrationTests
             };
 
             _accountApiClientReturn = new List<TeamMemberViewModel>
->>>>>>> parent of 4904810... Adding more messages to test.
             {
                 new TeamMemberViewModel
                 {
@@ -440,21 +374,6 @@ namespace IntegrationTests
             };
         }
 
-        private IEnumerable<Provider> GetProviders(int count)
-        {
-            List<Provider> providers = new List<Provider>();
-            for (int i = 0; i < count; i++)
-            {
-                Provider provider = new Provider
-                {
-                    ProviderName = "Test Provider" +i,
-                    Ukprn = i
-                };
-                providers.Add(provider);
-            }
-            return providers;
-        }
-
         private async Task CleanupData()
         {
             await _dbConnection.ExecuteAsync($@" 
@@ -462,20 +381,11 @@ namespace IntegrationTests
                 DELETE FROM EmployerSurveyCodes
                 DELETE FROM EmployerFeedback;
                 DELETE FROM Users
-                DELETE FROM Providers");                                    
+                DELETE FROM Providers");
         }
 
         private void SetupApiMocks(int changeableUkprn)
         {
-            var rtnlist = new List<long>();
-
-            for (long i = 0; i < 1000; i++)
-            {
-                rtnlist.Add(i);
-            }
-            _accountApiClientReturn = GetTeamMemberViewsModel(1000);
-            _commitmentApiClientReturn = GetApprenticeships(1000);
-            _providers = GetProviders(1000);
             SetUpApiReturn(changeableUkprn);
 
             _accountApiClientMock.Setup(x => x.GetAccountUsers(It.IsAny<long>())).ReturnsAsync(_accountApiClientReturn);
@@ -483,7 +393,6 @@ namespace IntegrationTests
             _commitmentApiClientMock.Setup(x => x.GetEmployerApprenticeships(It.IsAny<long>()))
                 .ReturnsAsync(_commitmentApiClientReturn);
             _commitmentApiClientMock.Setup(x => x.GetAllEmployerAccountIds()).ReturnsAsync(new long[] { 1 });
-            _emailDetailsRepository.Setup(x => x.GetProvidersByUkprn(rtnlist)).ReturnsAsync(_providers);
         }
 
         private async Task RunThroughRefreshFunctions()
@@ -515,7 +424,7 @@ namespace IntegrationTests
             foreach (var accountId in accountsMessages)
             {
                 await _accountDataRetrieveFunction.Run(accountId, processActiveFeedbackCollectorMock.Object, Mock.Of<ILogger>());
-                
+
                 foreach (var refreshMessage in processActiveMessages)
                 {
                     generateCodeMessages.Clear();
