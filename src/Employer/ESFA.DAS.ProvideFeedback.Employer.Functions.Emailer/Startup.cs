@@ -121,7 +121,7 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
             var env = _configuration.GetConnectionStringOrSetting("ASPNETCORE_ENVIRONMENT");
             var config = new LoggingConfiguration();
 
-            if (string.IsNullOrEmpty(env))
+            if (string.IsNullOrEmpty(env) || env.Equals("development", StringComparison.OrdinalIgnoreCase))
             {
                 AddLocalTarget(config, localLogPath, appName);
             }
