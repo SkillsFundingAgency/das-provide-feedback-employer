@@ -37,8 +37,10 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Application
 
         private async Task<bool> IsNewSurveyCodeRequired(long feedbackId)
         {
+            var minimumLastReminderDate = DateTime.UtcNow.AddDays(-_emailSettingsConfig.InviteCycleDays);
             var feedbackLastSent = await _employerEmailDetailRepository.GetFeedbackInviteSentDateAsync(feedbackId);
-            return feedbackLastSent.UniqueSurveyCode == null || feedbackLastSent.InviteSentDate == null || feedbackLastSent.InviteSentDate < DateTime.UtcNow.AddDays(-_emailSettingsConfig.InviteCycleDays);
+            return feedbackLastSent.UniqueSurveyCode == null || 
+                (feedbackLastSent.InviteSentDate != null && feedbackLastSent.InviteSentDate < minimumLastReminderDate);
         }
     }
 }

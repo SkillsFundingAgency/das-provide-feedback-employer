@@ -52,7 +52,7 @@ namespace UnitTests.Application.SurveyInviteGeneratorTests
             _emailDetailsRepoMock.Verify(m => m.UpsertIntoFeedback(_message.UserRef, _message.AccountId, _message.Ukprn), Times.Once);
         }
 
-        [Theory, MemberData(nameof(CreateTestData))]        
+        [Theory, MemberData(nameof(CreateTestData))]
         public async Task ThenCreateNewSurveyCode(Guid? uniqueSurveyCode, DateTime? inviteSentDate)
         {
             // Arrange
@@ -79,13 +79,12 @@ namespace UnitTests.Application.SurveyInviteGeneratorTests
             get
             {
                 yield return new object[] { null, null };
-                yield return new object[] { Guid.NewGuid(), null };
                 yield return new object[] { Guid.NewGuid(), DateTime.Now.AddDays(InviteCycleDays * -1) };
             }
         }
 
-        [Fact]
-        public async Task ThenDontCreateNewSurveyCode()
+        [Theory, MemberData(nameof(SkipCreationTestData))]
+        public async Task ThenDontCreateNewSurveyCode(DateTime? inviteSentDate)
         {
             // Arrange
             var feedbackInvite = new FeedbackInvite 
@@ -104,6 +103,14 @@ namespace UnitTests.Application.SurveyInviteGeneratorTests
 
             // Assert
             _emailDetailsRepoMock.Verify(mock => mock.InsertNewSurveyForFeedback(It.IsAny<long>()), Times.Never);
-        }        
+        }
+        public static IEnumerable<object[]> SkipCreationTestData 
+        {
+            get
+            {
+                yield return new object[] { null };
+                yield return new object[] { DateTime.Now.AddDays(InviteCycleDays - 1) };
+            }
+        }
     }
 }
