@@ -105,14 +105,17 @@ namespace ESFA.DAS.ProvideFeedback.Data
 
         public async Task UpsertIntoUsers(User user)
         {
-            var userDt = UsersToDatatable(user);
+            var parameters = new DynamicParameters();
+            parameters.Add("@UserRef", user.UserRef, DbType.Guid);
+            parameters.Add("@EmailAddress", user.EmailAddress, DbType.String);
+            parameters.Add("@FirstName", user.FirstName, DbType.String);            
 
             await _dbConnection.ExecuteAsync
             (
                 sql: "[dbo].[UpsertUsers]",
-                param: new { UsersDt = userDt.AsTableValuedParameter("UserTemplate") },
+                param: parameters,
                 commandType: CommandType.StoredProcedure
-            );
+            );         
         }
 
         public async Task UpsertIntoProviders(IEnumerable<Provider> providers)
@@ -192,15 +195,6 @@ namespace ESFA.DAS.ProvideFeedback.Data
 
             return dt;
         }
-
-        private DataTable UsersToDatatable(User user)
-        {
-            var dt = new DataTable();
-            dt.Columns.Add("UserRef", typeof(Guid));
-            dt.Columns.Add("FirstName", typeof(string));
-            dt.Columns.Add("EmailAddress", typeof(string));
-            dt.Rows.Add(user.UserRef, user.FirstName, user.EmailAddress);
-            return dt;
-        }
+        
     }
 }
