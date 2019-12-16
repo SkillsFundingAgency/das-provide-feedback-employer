@@ -89,5 +89,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Post Deployment\TranslateCurrentDataIntoNew.sql" />
+    <None Include="Post Deployment\DropUserTemplateTableType.sql" />
   </ItemGroup>
 </Project>
