@@ -83,12 +83,13 @@
     <Build Include="StoredProcedures\GetSurveyInvitesToSend.sql" />
     <Build Include="StoredProcedures\GetSurveyRemindersToSend.sql" />
     <Build Include="Types\ProviderTemplate.sql" />
+    <PostDeploy Include="Post Deployment\PostDeployment.sql" />
+    <None Include="Post Deployment\DropUserTemplateTableType.sql" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Tables\EmployerSurveyCodes.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Post Deployment\TranslateCurrentDataIntoNew.sql" />
-    <None Include="Post Deployment\DropUserTemplateTableType.sql" />
   </ItemGroup>
 </Project>
