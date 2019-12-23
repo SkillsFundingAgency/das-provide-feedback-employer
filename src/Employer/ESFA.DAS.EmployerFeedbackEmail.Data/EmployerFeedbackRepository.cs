@@ -20,6 +20,17 @@ namespace ESFA.DAS.ProvideFeedback.Data
             _dbConnection = dbConnection;
         }
 
+        public Task<FeedbackInvite> GetFeedbackInviteSentDateAsync(long feedbackId)
+        {
+            var parameters = new DynamicParameters();
+            parameters.Add("@FeedbackId", feedbackId, DbType.Int64);
+            return _dbConnection.QuerySingleAsync<FeedbackInvite>(
+                commandType: CommandType.StoredProcedure,
+                sql: "[dbo].[GetFeedbackInviteSentDate]",
+                param: parameters,
+                commandTimeout: _commandTimeoutSeconds);
+        }
+
         public async Task<EmployerSurveyInvite> GetEmployerInviteForUniqueCode(Guid uniqueCode)
         {
             return await _dbConnection.QueryFirstOrDefaultAsync<EmployerSurveyInvite>(
