@@ -19,7 +19,7 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
 
         [FunctionName("EmployerSurveyInviteGenerator")]
         public async Task Run(
-            [ServiceBusTrigger("generate-survey-invite", Connection = "ServiceBusConnection")]string feedbackForCodeGeneration,
+            [ServiceBusTrigger("%GenerateSurveyInviteMessageQueueName%", Connection = "ServiceBusConnection")]string feedbackForCodeGeneration,
             ILogger log)
         {
             log.LogInformation($"Employer Survey Invite generator executed at: {DateTime.Now}");

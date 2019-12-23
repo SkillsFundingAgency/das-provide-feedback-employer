@@ -84,6 +84,7 @@
     <Build Include="StoredProcedures\GetSurveyRemindersToSend.sql" />
     <Build Include="Types\ProviderTemplate.sql" />
     <Build Include="Types\UserTemplate.sql" />
+    <Build Include="StoredProcedures\GetFeedbackInviteSentDate.sql" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Tables\EmployerSurveyCodes.sql" />
