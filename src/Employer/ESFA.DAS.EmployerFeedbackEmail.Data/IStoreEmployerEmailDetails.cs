@@ -15,7 +15,7 @@ namespace ESFA.DAS.ProvideFeedback.Data
         Task<IEnumerable<EmployerSurveyInvite>> GetEmployerInvitesToBeSentReminder(int minDaysSinceSent);
         Task InsertSurveyInviteHistory(IEnumerable<Guid> uniqueSurveyCodes, int inviteType);
         Task InsertNewSurveyForFeedback(long feedbackId);
-        Task UpsertIntoUsers(IEnumerable<User> user);
+        Task UpsertIntoUsers(User user);
         Task ResetFeedback();
         Task UpsertIntoProviders(IEnumerable<Provider> providers);
         Task<long> UpsertIntoFeedback(Guid userRef, long accountId, long ukprn);

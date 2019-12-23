@@ -85,7 +85,7 @@ namespace IntegrationTests
                 InviteCycleDays = 90,
                 ReminderDays = 14
             });
-            
+
             _user1Guid = Guid.Parse("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa");
             _user2Guid = Guid.Parse("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb");
             _user3Guid = Guid.Parse("cccccccc-cccc-cccc-cccc-cccccccccccc");
@@ -104,7 +104,7 @@ namespace IntegrationTests
             _dbEmployerFeedbackRepository = new EmployerFeedbackRepository(_dbConnection);
 
             _dataRetreivalService = new EmployerFeedbackDataRetrievalService(
-                _commitmentApiClientMock.Object, 
+                _commitmentApiClientMock.Object,
                 _accountApiClientMock.Object,
                 _dbEmployerFeedbackRepository);
 
@@ -151,7 +151,7 @@ namespace IntegrationTests
                 new EmployerSurveyInvite {UserRef = _user2Guid, EmailAddress = "TheBestThereEverWas@90sReference.com", FirstName = "Flash", AccountId = 1, Ukprn = 1, ProviderName = "Test Academy"},
                 new EmployerSurveyInvite {UserRef = _user2Guid, EmailAddress = "TheBestThereEverWas@90sReference.com", FirstName = "Flash", AccountId = 1, Ukprn = 2, ProviderName = "Worst School"},
             };
-            
+
             // Act
             await RunThroughRefreshFunctions();
 
@@ -169,8 +169,8 @@ namespace IntegrationTests
             _notificationsApiClientMock = new Mock<INotificationsApi>();
             _employerSurveyInviteEmailer = new EmployerSurveyInviteEmailer(
                 _dbEmployerFeedbackRepository,
-                _notificationsApiClientMock.Object, 
-                _options, 
+                _notificationsApiClientMock.Object,
+                _options,
                 _surveyLoggerMock.Object);
 
             //Act
@@ -188,7 +188,7 @@ namespace IntegrationTests
                 UPDATE EmployerSurveyHistory
                 SET SentDate = @newSentDate
                 WHERE UniqueSurveyCode IN (SELECT UniqueSurveyCode FROM EmployerSurveyCodes WHERE FeedbackId IN (SELECT FeedbackId FROM EmployerFeedback WHERE UserRef in @userRefs))",
-                new {newSentDate = DateTime.UtcNow.AddDays(-15), userRefs = new[] {_user1Guid, _user2Guid}});
+                new { newSentDate = DateTime.UtcNow.AddDays(-15), userRefs = new[] { _user1Guid, _user2Guid } });
             _notificationsApiClientMock = new Mock<INotificationsApi>();
             _employerSurveyReminderEmailer = new EmployerSurveyReminderEmailer(_dbEmployerFeedbackRepository,
                 _notificationsApiClientMock.Object, _options, _surveyLoggerMock.Object);
@@ -230,7 +230,7 @@ namespace IntegrationTests
                 UPDATE EmployerSurveyHistory
                 SET SentDate = @newSentDate
                 WHERE EmailType = 1 AND UniqueSurveyCode IN (SELECT UniqueSurveyCode FROM EmployerSurveyCodes WHERE FeedbackId IN (SELECT FeedbackId FROM EmployerFeedback WHERE UserRef in @userRefs))",
-                new {newSentDate = DateTime.Now - TimeSpan.FromDays(91), userRefs = new[] {_user1Guid, _user2Guid}});
+                new { newSentDate = DateTime.Now - TimeSpan.FromDays(91), userRefs = new[] { _user1Guid, _user2Guid } });
             _notificationsApiClientMock = new Mock<INotificationsApi>();
             _employerSurveyInviteEmailer = new EmployerSurveyInviteEmailer(_dbEmployerFeedbackRepository,
                 _notificationsApiClientMock.Object, _options, _surveyLoggerMock.Object);
@@ -381,7 +381,7 @@ namespace IntegrationTests
                 DELETE FROM EmployerSurveyCodes
                 DELETE FROM EmployerFeedback;
                 DELETE FROM Users
-                DELETE FROM Providers");                                    
+                DELETE FROM Providers");
         }
 
         private void SetupApiMocks(int changeableUkprn)
@@ -424,7 +424,7 @@ namespace IntegrationTests
             foreach (var accountId in accountsMessages)
             {
                 await _accountDataRetrieveFunction.Run(accountId, processActiveFeedbackCollectorMock.Object, Mock.Of<ILogger>());
-                
+
                 foreach (var refreshMessage in processActiveMessages)
                 {
                     generateCodeMessages.Clear();
