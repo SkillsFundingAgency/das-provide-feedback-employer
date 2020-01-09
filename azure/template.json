@@ -27,7 +27,7 @@
             }
         },
         "loggingRedisConnectionString": {
-            "type": "string",
+            "type": "securestring",
             "defaultValue": ""
         },
         "apprenticeshipApiBaseUrl": {
