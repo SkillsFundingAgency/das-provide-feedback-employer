@@ -1,17 +1,11 @@
 {
-    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "appServiceName": {
+        "serviceName": {
             "type": "string"
         },
-        "apiAppServiceName": {
-            "type": "string"
-        },
-        "sharedAppServicePlanName": {
-            "type": "string"
-        },
-        "sharedAppServicePlanResourceGroup": {
+        "resourceEnvironmentName": {
             "type": "string"
         },
         "authentication": {
@@ -45,22 +39,7 @@
         "customHostname": {
             "type": "string"
         },
-        "certificateName": {
-            "type": "string"
-        },
         "cosmosDbName": {
-            "type": "string"
-        },
-        "functionAppName": {
-            "type": "string"
-        },
-        "functionAppServicePlanName": {
-            "type": "string"
-        },
-        "aseHostingEnvironmentName": {
-            "type": "string"
-        },
-        "aseResourceGroup": {
             "type": "string"
         },
         "notificationApiCredentials": {
@@ -121,12 +100,6 @@
                 "FeedbackCollection": ""
             }
         },
-        "storageAccountName": {
-            "type": "string"
-        },
-        "serviceBusNamespaceName": {
-            "type": "string"
-        },
         "dbConnectionString": {
             "type": "secureString"
         },
@@ -156,6 +129,12 @@
         "slidingExpirationMinutes": {
             "type": "int"
         },
+        "uiCustomHostname": {
+            "type": "string"
+        },
+        "uiCertificateName": {
+            "type": "string"
+        },
         "apiCustomHostname": {
             "type": "string",
             "defaultValue": ""
@@ -171,9 +150,42 @@
         },
         "appServiceAllowedIPs": {
             "type": "array"
+        },
+        "aspSize": {
+            "type": "string",
+            "defaultValue": "1"
+        },
+        "aspInstances": {
+            "type": "int",
+            "defaultValue": 1
+        },
+        "aspSku": {
+            "type": "string",
+            "defaultValue": "Basic"
+        },
+        "sharedFrontEndAppServicePlan": {
+            "type": "string"
+        },
+        "sharedFrontEndAppServicePlanResourceGroupName": {
+            "type": "string"
+        },
+        "sharedBackEndAppServicePlan": {
+            "type": "string"
+        },
+        "sharedBackEndAppServicePlanResourceGroupName": {
+            "type": "string"
         }
     },
     "variables": {
+        "deploymentUrlBase": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/",
+        "resourceNamePrefix": "[toLower(concat('das-', parameters('resourceEnvironmentName'),'-', parameters('serviceName')))]",
+        "storageAccountName": "[toLower(concat('das', parameters('resourceEnvironmentName'), parameters('serviceName'), 'str'))]",
+        "serviceBusNamespaceName": "[concat(variables('resourceNamePrefix'), '-ns')]",
+        "apiAppServiceName": "[concat(variables('resourceNamePrefix'), '-as')]",
+        "uiAppServiceName": "[concat(variables('resourceNamePrefix'), '-as')]",
+        "functionAppServiceName": "[concat(variables('resourceNamePrefix'), 'wkr-fa')]",
+        "functionAppServicePlanName": "[concat(variables('resourceNamePrefix'), 'wkr-asp')]",
+        "cosmosDbName": "[concat(variables('resourceNamePrefix'), '-cdb')]",
         "queues": {
             "RetrieveProvidersQueueName": "retrieve-providers",
             "AccountRefreshQueueName": "refresh-account",
@@ -185,60 +197,87 @@
     "resources": [
         {
             "apiVersion": "2017-05-10",
-            "name": "StorageAccount",
+            "name": "storage-account",
             "type": "Microsoft.Resources/deployments",
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/storage-account-arm.json",
+                    "uri": "[concat(variables('deploymentUrlBase'), 'storage-account-arm.json')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
                     "storageAccountName": {
-                        "value": "[parameters('storageAccountName')]"
+                        "value": "[variables('storageAccountName')]"
                     }
                 }
             }
         },
         {
             "apiVersion": "2017-05-10",
-            "name": "UIAppInsights",
+            "name": "ui-app-service-certificate",
+            "type": "Microsoft.Resources/deployments",
+            "resourceGroup": "[parameters('sharedFrontEndAppServicePlanResourceGroupName')]",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('deploymentUrlBase'),'app-service-certificate.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "keyVaultCertificateName": {
+                        "value": "[parameters('uiCertificateName')]"
+                    },
+                    "keyVaultName": {
+                        "value": "[parameters('keyVaultName')]"
+                    },
+                    "keyVaultResourceGroup": {
+                        "value": "[parameters('keyVaultResourceGroup')]"
+                    },
+                    "serverFarmId": {
+                        "value": "[resourceId(parameters('sharedFrontEndAppServicePlanResourceGroupName'), 'Microsoft.Web/serverfarms', parameters('sharedFrontEndAppServicePlan'))]"
+                    }
+                }
+            }
+        },
+        {
+            "apiVersion": "2017-05-10",
+            "name": "ui-app-insights",
             "type": "Microsoft.Resources/deployments",
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/application-insights.json",
+                    "uri": "[concat(variables('deploymentUrlBase'), 'application-insights.json')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
                     "appInsightsName": {
-                        "value": "[parameters('appServiceName')]"
+                        "value": "[variables('uiAppServiceName')]"
                     },
                     "attachedService": {
-                        "value": "[parameters('appServiceName')]"
+                        "value": "[variables('uiAppServiceName')]"
                     }
                 }
             }
         },
         {
             "apiVersion": "2017-05-10",
-            "name": "UIAppService",
+            "name": "ui-app-service",
             "type": "Microsoft.Resources/deployments",
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/app-service.json",
+                    "uri": "[concat(variables('deploymentUrlBase'), 'app-service.json')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
                     "appServiceName": {
-                        "value": "[parameters('appServiceName')]"
+                        "value": "[variables('uiAppServiceName')]"
                     },
                     "appServicePlanName": {
-                        "value": "[parameters('sharedAppServicePlanName')]"
+                        "value": "[parameters('sharedFrontEndAppServicePlan')]"
                     },
                     "appServicePlanResourceGroup": {
-                        "value": "[parameters('sharedAppServicePlanResourceGroup')]"
+                        "value": "[parameters('sharedFrontEndAppServicePlanResourceGroupName')]"
                     },
                     "appServiceAppSettings": {
                         "value": [
@@ -284,7 +323,7 @@
                             },
                             {
                                 "name": "ApplicationInsights:InstrumentationKey",
-                                "value": "[reference('UIAppInsights').outputs.InstrumentationKey.value]"
+                                "value": "[reference('ui-app-insights').outputs.InstrumentationKey.value]"
                             },
                             {
                                 "name": "CosmosConnectionSettings:EndpointUrl",
@@ -292,7 +331,7 @@
                             },
                             {
                                 "name": "CosmosConnectionSettings:AuthorizationKey",
-                                "value": "[reference('CosmosDB').outputs.PrimaryMasterKey.value]"
+                                "value": "[reference('cosmos-db').outputs.PrimaryMasterKey.value]"
                             },
                             {
                                 "name": "ASPNETCORE_ENVIRONMENT",
@@ -320,26 +359,30 @@
                         ]
                     },
                     "customHostName": {
-                        "value": "[parameters('customHostname')]"
+                        "value": "[parameters('uiCustomHostname')]"
                     },
                     "certificateThumbprint": {
-                        "value": "[reference(resourceId(parameters('sharedAppServicePlanResourceGroup'), 'Microsoft.Web/certificates', parameters('certificateName')), '2016-03-01').Thumbprint]"
+                        "value": "[if(greater(length(parameters('uiCustomHostname')), 0), reference('ui-app-service-certificate', '2018-11-01').outputs.certificateThumbprint.value, '')]"
+                    },
+                    "ipSecurityRestrictions": {
+                        "value": "[parameters('appServiceAllowedIPs')]"
                     }
                 }
             },
             "dependsOn": [
-                "UIAppInsights"
+                "ui-app-insights",
+                "ui-app-service-certificate"
             ]
         },
         {
             "apiVersion": "2017-05-10",
             "name": "api-app-service-certificate",
             "type": "Microsoft.Resources/deployments",
-            "resourceGroup": "[parameters('sharedAppServicePlanResourceGroup')]",
+            "resourceGroup": "[parameters('sharedFrontEndAppServicePlanResourceGroupName')]",
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/app-service-certificate.json",
+                    "uri": "[concat(variables('deploymentUrlBase'),'app-service-certificate.json')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
@@ -353,60 +396,60 @@
                         "value": "[parameters('keyVaultResourceGroup')]"
                     },
                     "serverFarmId": {
-                        "value": "[resourceId(parameters('sharedAppServicePlanResourceGroup'), 'Microsoft.Web/serverfarms', parameters('sharedAppServicePlanName'))]"
+                        "value": "[resourceId(parameters('sharedBackEndAppServicePlanResourceGroupName'), 'Microsoft.Web/serverfarms', parameters('sharedBackEndAppServicePlan'))]"
                     }
                 }
             }
         },
         {
             "apiVersion": "2017-05-10",
-            "name": "ApiAppInsights",
+            "name": "api-app-insights",
             "type": "Microsoft.Resources/deployments",
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/application-insights.json",
+                    "uri": "[concat(variables('deploymentUrlBase'), 'application-insights.json')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
                     "appInsightsName": {
-                        "value": "[parameters('apiAppServiceName')]"
+                        "value": "[variables('apiAppServiceName')]"
                     },
                     "attachedService": {
-                        "value": "[parameters('apiAppServiceName')]"
+                        "value": "[variables('apiAppServiceName')]"
                     }
                 }
             }
         },
         {
             "apiVersion": "2017-05-10",
-            "name": "ApiAppService",
+            "name": "api-app-service",
             "type": "Microsoft.Resources/deployments",
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/app-service.json",
+                    "uri": "[concat(variables('deploymentUrlBase'), 'app-service.json')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
                     "appServiceName": {
-                        "value": "[parameters('apiAppServiceName')]"
+                        "value": "[variables('apiAppServiceName')]"
                     },
                     "appServicePlanName": {
-                        "value": "[parameters('sharedAppServicePlanName')]"
+                        "value": "[parameters('sharedBackEndAppServicePlan')]"
                     },
                     "appServicePlanResourceGroup": {
-                        "value": "[parameters('sharedAppServicePlanResourceGroup')]"
+                        "value": "[parameters('sharedBackEndAppServicePlanResourceGroupName')]"
                     },
                     "appServiceAppSettings": {
                         "value": [
                             {
                                 "name": "Azure:CosmosEndpoint",
-                                "value": "[concat('https://', parameters('cosmosDbName'), '.documents.azure.com:443/')]"
+                                "value": "[concat('https://', variables('cosmosDbName'), '.documents.azure.com:443/')]"
                             },
                             {
                                 "name": "Azure:CosmosKey",
-                                "value": "[reference('CosmosDB').outputs.PrimaryMasterKey.value]"
+                                "value": "[reference('cosmos-db').outputs.PrimaryMasterKey.value]"
                             },
                             {
                                 "name": "Azure:DatabaseName",
@@ -430,7 +473,7 @@
                             },
                             {
                                 "name": "ApplicationInsights:InstrumentationKey",
-                                "value": "[reference('ApiAppInsights').outputs.InstrumentationKey.value]"
+                                "value": "[reference('api-app-insights').outputs.InstrumentationKey.value]"
                             },
                             {
                                 "name": "ASPNETCORE_ENVIRONMENT",
@@ -451,7 +494,7 @@
                         "value": "[parameters('apiCustomHostname')]"
                     },
                     "certificateThumbprint": {
-                        "value": "[if(greater(length(parameters('apiCustomHostname')), 0), reference('api-app-service-certificate').outputs.certificateThumbprint.value, '')]"
+                        "value": "[if(greater(length(parameters('apiCustomHostname')), 0), reference('api-app-service-certificate', '2018-11-01').outputs.certificateThumbprint.value, '')]"
                     },
                     "ipSecurityRestrictions": {
                         "value": "[parameters('appServiceAllowedIPs')]"
@@ -459,76 +502,73 @@
                 }
             },
             "dependsOn": [
-                "ApiAppInsights",
-                "CosmosDB",
+                "api-app-insights",
+                "cosmos-db",
                 "api-app-service-certificate"
             ]
         },
         {
             "apiVersion": "2017-05-10",
-            "name": "FunctionAppServicePlan",
+            "name": "function-app-service-plan",
             "type": "Microsoft.Resources/deployments",
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/app-service-plan.json",
+                    "uri": "[concat(variables('deploymentUrlBase'),'app-service-plan.json')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
                     "appServicePlanName": {
-                        "value": "[parameters('functionAppServicePlanName')]"
-                    },
-                    "aseHostingEnvironmentName": {
-                        "value": "[parameters('aseHostingEnvironmentName')]"
-                    },
-                    "aseResourceGroup": {
-                        "value": "[parameters('aseResourceGroup')]"
+                        "value": "[variables('functionAppServicePlanName')]"
                     },
                     "aspSize": {
-                        "value": "1"
+                        "value": "[parameters('aspSize')]"
                     },
                     "aspInstances": {
-                        "value": 1
+                        "value": "[parameters('aspInstances')]"
+                    },
+                    "nonASETier": {
+                        "value": "[parameters('aspSku')]"
                     }
                 }
             }
         },
         {
             "apiVersion": "2017-05-10",
-            "name": "FunctionAppApplicationInsights",
+            "name": "function-app-insights",
             "type": "Microsoft.Resources/deployments",
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/application-insights.json",
+                    "uri": "[concat(variables('deploymentUrlBase'), 'application-insights.json')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
                     "appInsightsName": {
-                        "value": "[parameters('functionAppName')]"
+                        "value": "[variables('functionAppServiceName')]"
                     },
                     "attachedService": {
-                        "value": "[parameters('functionAppName')]"
+                        "value": "[variables('functionAppServiceName')]"
                     }
                 }
             }
         },
         {
             "apiVersion": "2017-05-10",
-            "name": "FunctionApp",
+            "name": "function-app-service",
             "type": "Microsoft.Resources/deployments",
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/function-app.json",
+                    "uri": "[concat(variables('deploymentUrlBase'), 'function-app.json')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
                     "functionAppName": {
-                        "value": "[parameters('functionAppName')]"
+                        "value": "[variables('functionAppServiceName')]"
                     },
                     "appServicePlanName": {
-                        "value": "[parameters('functionappServicePlanName')]"
+                        "value": "[variables('functionAppServicePlanName')]"
                     },
                     "appServicePlanResourceGroup": {
                         "value": "[resourceGroup().name]"
@@ -537,11 +577,11 @@
                         "value": [
                             {
                                 "name": "AzureWebJobsDashboard",
-                                "value": "[reference('StorageAccount').outputs.storageConnectionString.value]"
+                                "value": "[reference('storage-account').outputs.storageConnectionString.value]"
                             },
                             {
                                 "name": "AzureWebJobsStorage",
-                                "value": "[reference('StorageAccount').outputs.storageConnectionString.value]"
+                                "value": "[reference('storage-account').outputs.storageConnectionString.value]"
                             },
                             {
                                 "name": "ASPNETCORE_ENVIRONMENT",
@@ -549,7 +589,7 @@
                             },
                             {
                                 "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
-                                "value": "[reference('FunctionAppApplicationInsights').outputs.InstrumentationKey.value]"
+                                "value": "[reference('function-app-insights').outputs.InstrumentationKey.value]"
                             },
                             {
                                 "name": "NotificationApi:BaseUrl",
@@ -661,7 +701,7 @@
                             },
                             {
                                 "name": "ServiceBusConnection",
-                                "value": "[reference('ServiceBus').outputs.ServiceBusEndpoint.value]"
+                                "value": "[reference('service-bus').outputs.ServiceBusEndpoint.value]"
                             }
                         ]
                     },
@@ -674,22 +714,22 @@
                 }
             },
             "dependsOn": [
-                "FunctionAppServicePlan"
+                "function-app-service-plan"
             ]
         },
         {
             "apiVersion": "2017-05-10",
-            "name": "ServiceBus",
+            "name": "service-bus",
             "type": "Microsoft.Resources/deployments",
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/service-bus.json",
+                    "uri": "[concat(variables('deploymentUrlBase'), 'service-bus.json')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
                     "serviceBusNamespaceName": {
-                        "value": "[parameters('serviceBusNamespaceName')]"
+                        "value": "[variables('serviceBusNamespaceName')]"
                     },
                     "serviceBusQueues": {
                         "value": [
@@ -705,17 +745,17 @@
         },
         {
             "apiVersion": "2017-05-10",
-            "name": "CosmosDB",
+            "name": "cosmos-db",
             "type": "Microsoft.Resources/deployments",
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/cosmos-db.json",
+                    "uri": "[concat(variables('deploymentUrlBase'), 'cosmos-db.json')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
                     "cosmosDbName": {
-                        "value": "[parameters('cosmosDbName')]"
+                        "value": "[variables('cosmosDbName')]"
                     },
                     "cosmosDbType": {
                         "value": "GlobalDocumentDB"
@@ -730,5 +770,18 @@
             }
         }
     ],
-    "outputs": {}
+    "outputs": {
+        "UIAppServiceName": {
+            "type": "string",
+            "value": "[variables('uiAppServiceName')]"
+        },
+        "ApiAppServiceName": {
+            "type": "string",
+            "value": "[variables('apiAppServiceName')]"
+        },
+        "FunctionAppServiceName": {
+            "type": "string",
+            "value": "[variables('functionAppServiceName')]"
+        }
+    }
 }
