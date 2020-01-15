@@ -36,12 +36,6 @@
         "aspNetCoreEnvironment": {
             "type": "string"
         },
-        "customHostname": {
-            "type": "string"
-        },
-        "cosmosDbName": {
-            "type": "string"
-        },
         "notificationApiCredentials": {
             "type": "secureObject",
             "defaultValue": {
@@ -327,7 +321,7 @@
                             },
                             {
                                 "name": "CosmosConnectionSettings:EndpointUrl",
-                                "value": "[concat('https://', parameters('cosmosDbName'), '.documents.azure.com:443/')]"
+                                "value": "[concat('https://', variables('cosmosDbName'), '.documents.azure.com:443/')]"
                             },
                             {
                                 "name": "CosmosConnectionSettings:AuthorizationKey",
@@ -633,7 +627,7 @@
                             },
                             {
                                 "name": "EmailSettings:FeedbackSiteBaseUrl",
-                                "value": "[concat('https://', parameters('customHostname'), '/')]"
+                                "value": "[concat('https://', parameters('uiCustomHostname'), '/')]"
                             },
                             {
                                 "name": "EmailSettings:BatchSize",
