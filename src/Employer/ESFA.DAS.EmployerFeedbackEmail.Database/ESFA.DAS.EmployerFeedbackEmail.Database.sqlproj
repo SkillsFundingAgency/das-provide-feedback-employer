@@ -84,8 +84,8 @@
     <Build Include="StoredProcedures\GetSurveyRemindersToSend.sql" />
     <Build Include="Types\ProviderTemplate.sql" />
     <PostDeploy Include="Post Deployment\PostDeployment.sql" />
-    <None Include="Post Deployment\DropUserTemplateTableType.sql" />    
-    <Build Include="StoredProcedures\GetFeedbackInviteSentDate.sql" />
+    <None Include="Post Deployment\DropUserTemplateTableType.sql" />
+    <Build Include="StoredProcedures\GetLatestFeedbackInviteSentDate.sql" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Tables\EmployerSurveyCodes.sql" />

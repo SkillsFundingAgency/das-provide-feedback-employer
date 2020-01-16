@@ -20,13 +20,13 @@ namespace ESFA.DAS.ProvideFeedback.Data
             _dbConnection = dbConnection;
         }
 
-        public Task<FeedbackInvite> GetFeedbackInviteSentDateAsync(long feedbackId)
+        public Task<FeedbackInvite> GetLatestFeedbackInviteSentDateAsync(long feedbackId)
         {
             var parameters = new DynamicParameters();
             parameters.Add("@FeedbackId", feedbackId, DbType.Int64);
             return _dbConnection.QuerySingleAsync<FeedbackInvite>(
                 commandType: CommandType.StoredProcedure,
-                sql: "[dbo].[GetFeedbackInviteSentDate]",
+                sql: "[dbo].[GetLatestFeedbackInviteSentDate]",
                 param: parameters,
                 commandTimeout: _commandTimeoutSeconds);
         }

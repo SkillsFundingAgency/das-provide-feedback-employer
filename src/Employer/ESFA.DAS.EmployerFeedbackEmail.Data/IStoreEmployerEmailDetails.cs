@@ -21,6 +21,6 @@ namespace ESFA.DAS.ProvideFeedback.Data
         Task<long> UpsertIntoFeedback(Guid userRef, long accountId, long ukprn);
         Task<EmployerSurveyInvite> GetEmployerSurveyInvite(long feedbackId);
         Task<IEnumerable<Provider>> GetProvidersByUkprn(IEnumerable<long> commitmentUkprns);
-        Task<FeedbackInvite> GetFeedbackInviteSentDateAsync(long feedbackId);
+        Task<FeedbackInvite> GetLatestFeedbackInviteSentDateAsync(long feedbackId);
     }
 }

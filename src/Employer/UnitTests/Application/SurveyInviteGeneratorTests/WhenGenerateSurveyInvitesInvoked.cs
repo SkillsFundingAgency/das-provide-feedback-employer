@@ -42,7 +42,7 @@ namespace UnitTests.Application.SurveyInviteGeneratorTests
         {
             // Arrange            
             _emailDetailsRepoMock
-                .Setup(m => m.GetFeedbackInviteSentDateAsync(FeedBackId))
+                .Setup(m => m.GetLatestFeedbackInviteSentDateAsync(FeedBackId))
                 .ReturnsAsync(new FeedbackInvite());
 
             // Act
@@ -64,7 +64,7 @@ namespace UnitTests.Application.SurveyInviteGeneratorTests
             };
 
             _emailDetailsRepoMock
-                .Setup(m => m.GetFeedbackInviteSentDateAsync(FeedBackId))
+                .Setup(m => m.GetLatestFeedbackInviteSentDateAsync(FeedBackId))
                 .ReturnsAsync(feedbackInvite);
 
             // Act
@@ -95,7 +95,7 @@ namespace UnitTests.Application.SurveyInviteGeneratorTests
             };
 
             _emailDetailsRepoMock
-                .Setup(m => m.GetFeedbackInviteSentDateAsync(FeedBackId))
+                .Setup(m => m.GetLatestFeedbackInviteSentDateAsync(FeedBackId))
                 .ReturnsAsync(feedbackInvite);
 
             // Act
