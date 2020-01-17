@@ -31,6 +31,8 @@ using SFA.DAS.EAS.Account.Api.Types;
 using SFA.DAS.Notifications.Api.Client;
 using SFA.DAS.Notifications.Api.Types;
 using SFA.DAS.Providers.Api.Client;
+using IAccountApiClient = ESFA.DAS.EmployerAccounts.Api.Client.IAccountApiClient;
+using TeamMemberViewModel = ESFA.DAS.EmployerAccounts.Api.Client.TeamMemberViewModel;
 
 namespace IntegrationTests
 {

@@ -28,6 +28,11 @@ using SFA.DAS.Notifications.Api.Client;
 using SFA.DAS.Notifications.Api.Client.Configuration;
 using SFA.DAS.Providers.Api.Client;
 using LogLevel = NLog.LogLevel;
+using IAccountApiClient = ESFA.DAS.EmployerAccounts.Api.Client.IAccountApiClient;
+using AccountApiClient = ESFA.DAS.EmployerAccounts.Api.Client.AccountApiClient;
+using IAccountApiConfiguration = ESFA.DAS.EmployerAccounts.Api.Client.IAccountApiConfiguration;
+using AccountApiConfiguration = ESFA.DAS.EmployerAccounts.Api.Client.AccountApiConfiguration;
+using ESFA.DAS.EmployerAccounts.Api.Client;
 
 [assembly: FunctionsStartup(typeof(Startup))]
 namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
@@ -109,9 +114,9 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
             }));
 
             var accApiConfig = _configuration.GetSection("AccountApi").Get<AccountApiConfiguration>();
-            builder.Services.AddSingleton<IAccountApiClient, AccountApiClient>(a =>
-                 new AccountApiClient(accApiConfig)
-            );
+            builder.Services.AddSingleton<IAccountApiConfiguration>(accApiConfig);
+            builder.Services.AddSingleton<IAccountApiClient, AccountApiClient>();
+            builder.Services.AddHttpClient<SecureHttpClient>();
         }
 
         private void ConfigureNLog()

@@ -9,6 +9,8 @@ using SFA.DAS.Commitments.Api.Client.Interfaces;
 using SFA.DAS.Commitments.Api.Types.Apprenticeship.Types;
 using SFA.DAS.EAS.Account.Api.Client;
 using SFA.DAS.EAS.Account.Api.Types;
+using IAccountApiClient = ESFA.DAS.EmployerAccounts.Api.Client.IAccountApiClient;
+using TeamMemberViewModel = ESFA.DAS.EmployerAccounts.Api.Client.TeamMemberViewModel;
 
 namespace ESFA.DAS.ProvideFeedback.Employer.Application
 {
