@@ -3,6 +3,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.IO;
 using System.Net.Http.Headers;
+using ESFA.DAS.EmployerAccounts.Api.Client;
 using ESFA.DAS.Feedback.Employer.Emailer;
 using ESFA.DAS.Feedback.Employer.Emailer.Configuration;
 using ESFA.DAS.ProvideFeedback.Data;
@@ -22,17 +23,11 @@ using Polly;
 using SFA.DAS.Commitments.Api.Client;
 using SFA.DAS.Commitments.Api.Client.Configuration;
 using SFA.DAS.Commitments.Api.Client.Interfaces;
-using SFA.DAS.EAS.Account.Api.Client;
 using SFA.DAS.NLog.Targets.Redis.DotNetCore;
 using SFA.DAS.Notifications.Api.Client;
 using SFA.DAS.Notifications.Api.Client.Configuration;
 using SFA.DAS.Providers.Api.Client;
 using LogLevel = NLog.LogLevel;
-using IAccountApiClient = ESFA.DAS.EmployerAccounts.Api.Client.IAccountApiClient;
-using AccountApiClient = ESFA.DAS.EmployerAccounts.Api.Client.AccountApiClient;
-using IAccountApiConfiguration = ESFA.DAS.EmployerAccounts.Api.Client.IAccountApiConfiguration;
-using AccountApiConfiguration = ESFA.DAS.EmployerAccounts.Api.Client.AccountApiConfiguration;
-using ESFA.DAS.EmployerAccounts.Api.Client;
 
 [assembly: FunctionsStartup(typeof(Startup))]
 namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer

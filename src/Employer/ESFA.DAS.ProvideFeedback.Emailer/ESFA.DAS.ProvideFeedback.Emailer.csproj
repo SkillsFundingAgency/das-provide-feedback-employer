@@ -12,13 +12,12 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.Azure.ServiceBus" Version="3.4.0" />
+    <PackageReference Include="Microsoft.Azure.ServiceBus" Version="4.1.1" />
     <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.Http" Version="2.1.1" />
-    <PackageReference Include="SFA.DAS.Account.Api.Client" Version="1.5.1" />
-    <PackageReference Include="SFA.DAS.Account.Api.Types" Version="1.5.1" />
+    <PackageReference Include="SFA.DAS.Account.Api.Types" Version="1.6.2515" />
     <PackageReference Include="SFA.DAS.Commitments.Api.Client" Version="4.1.355" />
     <PackageReference Include="SFA.DAS.Commitments.Api.Types" Version="4.1.355" />
     <PackageReference Include="SFA.DAS.Notifications.Api.Client" Version="2.2.37" />

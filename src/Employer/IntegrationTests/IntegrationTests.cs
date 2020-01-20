@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
+using ESFA.DAS.EmployerAccounts.Api.Client;
 using ESFA.DAS.Feedback.Employer.Emailer;
 using ESFA.DAS.Feedback.Employer.Emailer.Configuration;
 using ESFA.DAS.ProvideFeedback.Data;
@@ -26,13 +27,10 @@ using SFA.DAS.Apprenticeships.Api.Types.Providers;
 using SFA.DAS.Commitments.Api.Client.Interfaces;
 using SFA.DAS.Commitments.Api.Types.Apprenticeship;
 using SFA.DAS.Commitments.Api.Types.Apprenticeship.Types;
-using SFA.DAS.EAS.Account.Api.Client;
 using SFA.DAS.EAS.Account.Api.Types;
 using SFA.DAS.Notifications.Api.Client;
 using SFA.DAS.Notifications.Api.Types;
 using SFA.DAS.Providers.Api.Client;
-using IAccountApiClient = ESFA.DAS.EmployerAccounts.Api.Client.IAccountApiClient;
-using TeamMemberViewModel = ESFA.DAS.EmployerAccounts.Api.Client.TeamMemberViewModel;
 
 namespace IntegrationTests
 {
