@@ -25,7 +25,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ESFA.DAS.ProvideFeedback.Em
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IntegrationTests", "IntegrationTests\IntegrationTests.csproj", "{95466EB8-F285-4086-8488-B2589B3A7D39}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ESFA.DAS.ProvideFeedback.Employer.Application", "ESFA.DAS.ProvideFeedback.Employer.Application\ESFA.DAS.ProvideFeedback.Employer.Application.csproj", "{1F079DC1-415D-49A7-A93D-EA8ADBBAEB58}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ESFA.DAS.ProvideFeedback.Employer.Application", "ESFA.DAS.ProvideFeedback.Employer.Application\ESFA.DAS.ProvideFeedback.Employer.Application.csproj", "{1F079DC1-415D-49A7-A93D-EA8ADBBAEB58}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ESFA.DAS.EmployerAccounts.Api.Client", "ESFA.DAS.EmployerAccounts.Api.Client\ESFA.DAS.EmployerAccounts.Api.Client.csproj", "{63D1AEBF-B447-431B-BF8F-E0445E3B086A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -83,6 +85,10 @@ Global
 		{1F079DC1-415D-49A7-A93D-EA8ADBBAEB58}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1F079DC1-415D-49A7-A93D-EA8ADBBAEB58}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1F079DC1-415D-49A7-A93D-EA8ADBBAEB58}.Release|Any CPU.Build.0 = Release|Any CPU
+		{63D1AEBF-B447-431B-BF8F-E0445E3B086A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{63D1AEBF-B447-431B-BF8F-E0445E3B086A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{63D1AEBF-B447-431B-BF8F-E0445E3B086A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{63D1AEBF-B447-431B-BF8F-E0445E3B086A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
