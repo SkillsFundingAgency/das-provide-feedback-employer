@@ -79,7 +79,7 @@ namespace UnitTests.Application.SurveyInviteGeneratorTests
             get
             {
                 yield return new object[] { null, null };
-                yield return new object[] { Guid.NewGuid(), DateTime.Now.AddDays(InviteCycleDays * -1) };
+                yield return new object[] { Guid.NewGuid(), DateTime.Now.AddDays(InviteCycleDays * -1).ToUniversalTime() };
             }
         }
 
