@@ -163,7 +163,8 @@ namespace ESFA.DAS.ProvideFeedback.Data
             await _dbConnection.ExecuteAsync
             (
                 sql: "[dbo].[ResetFeedback]",
-                commandType: CommandType.StoredProcedure
+                commandType: CommandType.StoredProcedure,
+                commandTimeout: _commandTimeoutSeconds
             );
         }
 
