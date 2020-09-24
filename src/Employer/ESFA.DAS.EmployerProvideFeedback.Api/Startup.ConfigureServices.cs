@@ -57,10 +57,7 @@
                             $"https://login.microsoftonline.com/{azureActiveDirectoryConfiguration.Value.Tenant}";
                         auth.TokenValidationParameters = new TokenValidationParameters
                         {
-                            ValidAudiences = new List<string>
-                            {
-                                azureActiveDirectoryConfiguration.Value.Identifier
-                            }
+                            ValidAudiences = azureActiveDirectoryConfiguration.Value.Identifier.Split(',')
                         };
                     });
         }
