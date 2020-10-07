@@ -157,21 +157,39 @@
             "type": "string",
             "defaultValue": "Basic"
         },
-        "sharedFrontEndAppServicePlan": {
+        "sharedFrontEndAppServicePlanName": {
             "type": "string"
         },
-        "sharedFrontEndAppServicePlanResourceGroupName": {
+        "sharedBackEndAppServicePlanName": {
             "type": "string"
         },
-        "sharedBackEndAppServicePlan": {
+        "sharedFrontEndSubnetResourceId": {
             "type": "string"
         },
-        "sharedBackEndAppServicePlanResourceGroupName": {
+        "sharedBackEndSubnetResourceId": {
+            "type": "string"
+        },
+        "sharedAppServicePlanResourceGroup": {
             "type": "string"
         },
         "functionsExtensionVersion": {
             "type": "string",
             "defaultValue": "~2.0"
+        },
+        "sharedEnvResourceGroup": {
+            "type": "string"
+        },
+        "sharedEnvVirtualNetworkName": {
+            "type": "string"
+        },
+        "subnetObject": {
+            "type": "object"
+        },
+        "subnetServiceEndpointList": {
+            "type": "array"
+        },
+        "subnetDelegations": {
+            "type": "array"
         }
     },
     "variables": {
@@ -214,7 +232,7 @@
             "apiVersion": "2017-05-10",
             "name": "ui-app-service-certificate",
             "type": "Microsoft.Resources/deployments",
-            "resourceGroup": "[parameters('sharedFrontEndAppServicePlanResourceGroupName')]",
+            "resourceGroup": "[parameters('sharedAppServicePlanResourceGroup')]",
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
@@ -230,9 +248,6 @@
                     },
                     "keyVaultResourceGroup": {
                         "value": "[parameters('keyVaultResourceGroup')]"
-                    },
-                    "serverFarmId": {
-                        "value": "[resourceId(parameters('sharedFrontEndAppServicePlanResourceGroupName'), 'Microsoft.Web/serverfarms', parameters('sharedFrontEndAppServicePlan'))]"
                     }
                 }
             }
@@ -272,10 +287,13 @@
                         "value": "[variables('uiAppServiceName')]"
                     },
                     "appServicePlanName": {
-                        "value": "[parameters('sharedFrontEndAppServicePlan')]"
+                        "value": "[parameters('sharedFrontEndAppServicePlanName')]"
                     },
                     "appServicePlanResourceGroup": {
-                        "value": "[parameters('sharedFrontEndAppServicePlanResourceGroupName')]"
+                        "value": "[parameters('sharedAppServicePlanResourceGroup')]"
+                    },
+                    "subnetResourceId": {
+                        "value": "[parameters('sharedFrontEndSubnetResourceId')]"
                     },
                     "appServiceAppSettings": {
                         "value": [
@@ -376,7 +394,7 @@
             "apiVersion": "2017-05-10",
             "name": "api-app-service-certificate",
             "type": "Microsoft.Resources/deployments",
-            "resourceGroup": "[parameters('sharedFrontEndAppServicePlanResourceGroupName')]",
+            "resourceGroup": "[parameters('sharedAppServicePlanResourceGroup')]",
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
@@ -392,9 +410,6 @@
                     },
                     "keyVaultResourceGroup": {
                         "value": "[parameters('keyVaultResourceGroup')]"
-                    },
-                    "serverFarmId": {
-                        "value": "[resourceId(parameters('sharedBackEndAppServicePlanResourceGroupName'), 'Microsoft.Web/serverfarms', parameters('sharedBackEndAppServicePlan'))]"
                     }
                 }
             }
@@ -434,10 +449,13 @@
                         "value": "[variables('apiAppServiceName')]"
                     },
                     "appServicePlanName": {
-                        "value": "[parameters('sharedBackEndAppServicePlan')]"
+                        "value": "[parameters('sharedBackEndAppServicePlanName')]"
                     },
                     "appServicePlanResourceGroup": {
-                        "value": "[parameters('sharedBackEndAppServicePlanResourceGroupName')]"
+                        "value": "[parameters('sharedAppServicePlanResourceGroup')]"
+                    },
+                    "subnetResourceId": {
+                        "value": "[parameters('sharedBackEndSubnetResourceId')]"
                     },
                     "appServiceAppSettings": {
                         "value": [
@@ -507,6 +525,36 @@
         },
         {
             "apiVersion": "2017-05-10",
+            "name": "function-subnet",
+            "resourceGroup": "[parameters('sharedEnvResourceGroup')]",
+            "type": "Microsoft.Resources/deployments",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('deploymentUrlBase'),'subnet.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "virtualNetworkName": {
+                        "value": "[parameters('sharedEnvVirtualNetworkName')]"
+                    },
+                    "subnetName": {
+                        "value": "[parameters('subnetObject').name]"
+                    },
+                    "subnetAddressPrefix": {
+                        "value": "[parameters('subnetObject').addressSpace]"
+                    },
+                    "serviceEndpointList": {
+                        "value": "[parameters('subnetServiceEndpointList')]"
+                    },
+                    "delegations": {
+                        "value": "[parameters('subnetDelegations')]"
+                    }
+                }
+            }
+        },
+        {
+            "apiVersion": "2017-05-10",
             "name": "function-app-service-plan",
             "type": "Microsoft.Resources/deployments",
             "properties": {
@@ -570,6 +618,9 @@
                     },
                     "appServicePlanResourceGroup": {
                         "value": "[resourceGroup().name]"
+                    },
+                    "subnetResourceId": {
+                        "value": "[reference('function-subnet').outputs.SubnetResourceId.value]"
                     },
                     "functionAppAppSettings": {
                         "value": [
