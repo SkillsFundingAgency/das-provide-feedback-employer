@@ -125,7 +125,8 @@ namespace ESFA.DAS.ProvideFeedback.Data
             (
                 sql: "[dbo].[UpsertUsers]",
                 param: parameters,
-                commandType: CommandType.StoredProcedure
+                commandType: CommandType.StoredProcedure,
+                commandTimeout: _commandTimeoutSeconds
             );         
         }
 
