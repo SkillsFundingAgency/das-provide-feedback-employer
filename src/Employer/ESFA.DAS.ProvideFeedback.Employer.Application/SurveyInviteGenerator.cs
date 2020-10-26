@@ -12,12 +12,12 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Application
     {
         private readonly EmailSettings _emailSettingsConfig;
         private readonly IStoreEmployerEmailDetails _employerEmailDetailRepository;
-        private readonly ILogger _logger;
+        private readonly ILogger<SurveyInviteGenerator> _logger;
 
         public SurveyInviteGenerator(
             IOptions<EmailSettings> options,
             IStoreEmployerEmailDetails employerEmailDetailRepository,
-            ILogger logger)
+            ILogger<SurveyInviteGenerator> logger)
         {
             _emailSettingsConfig = options.Value;
             _employerEmailDetailRepository = employerEmailDetailRepository;
@@ -26,6 +26,7 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Application
 
         public async Task GenerateSurveyInvites(GenerateSurveyCodeMessage message)
         {
+            
             var feedbackId = await _employerEmailDetailRepository.UpsertIntoFeedback(message.UserRef, message.AccountId, message.Ukprn);
             _logger.LogInformation("Done upserting feedback");
 
