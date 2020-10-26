@@ -16,7 +16,7 @@ WITH subquery AS(
 		JOIN (SELECT FeedbackId ,EmailAddress, FirstName, ProviderName, AccountId, Ukprn, UserRef, IsActive FROM [dbo].[vw_FeedbackToSend]) AS FB on fb.FeedbackId = esc.FeedbackId
         LEFT JOIN (SELECT h.UniqueSurveyCode, h.SentDate FROM EmployerSurveyHistory h WHERE h.EmailType = 1) as inviteHistory on inviteHistory.UniqueSurveyCode = esc.UniqueSurveyCode
         LEFT JOIN (SELECT h.UniqueSurveyCode, h.SentDate FROM EmployerSurveyHistory h WHERE h.EmailType = 2) as reminderHistory on reminderHistory.UniqueSurveyCode = esc.UniqueSurveyCode
-		WHERE Fb.IsActive = 1 AND reminderHistory.SentDate IS NULL
+		WHERE Fb.IsActive = 1 AND reminderHistory.SentDate IS NULL AND esc.BurnDate is NULL
     )
 
 SELECT v1.* 
