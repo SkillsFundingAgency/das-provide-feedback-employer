@@ -12,12 +12,12 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Application
     {
         private readonly EmailSettings _emailSettingsConfig;
         private readonly IStoreEmployerEmailDetails _employerEmailDetailRepository;
-        private readonly ILogger<SurveyInviteGenerator> _logger;
+        private readonly ILogger _logger;
 
         public SurveyInviteGenerator(
             IOptions<EmailSettings> options,
             IStoreEmployerEmailDetails employerEmailDetailRepository,
-            ILogger<SurveyInviteGenerator> logger)
+            ILogger logger)
         {
             _emailSettingsConfig = options.Value;
             _employerEmailDetailRepository = employerEmailDetailRepository;
