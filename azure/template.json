@@ -279,7 +279,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[concat(variables('deploymentUrlBase'), 'app-service.json')]",
+                    "uri": "[concat(variables('deploymentUrlBase'), 'app-service-v2.json')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
@@ -296,83 +296,87 @@
                         "value": "[parameters('sharedFrontEndSubnetResourceId')]"
                     },
                     "appServiceAppSettings": {
-                        "value": [
-                            {
-                                "name": "Authentication:Authority",
-                                "value": "[parameters('authentication').Authority]"
-                            },
-                            {
-                                "name": "Authentication:MetaDataAddress",
-                                "value": "[parameters('authentication').MetaDataAddress]"
-                            },
-                            {
-                                "name": "Authentication:ClientId",
-                                "value": "[parameters('authentication').ClientId]"
-                            },
-                            {
-                                "name": "Authentication:ClientSecret",
-                                "value": "[parameters('authentication').ClientSecret]"
-                            },
-                            {
-                                "name": "ExternalLinks:FindApprenticeshipTrainingSiteUrl",
-                                "value": "[parameters('externalLinks').FindApprenticeshipTrainingSiteUrl]"
-                            },
-                            {
-                                "name": "ExternalLinks:ManageApprenticeshipSiteUrl",
-                                "value": "[parameters('externalLinks').ManageApprenticeshipSiteUrl]"
-                            },
-                            {
-                                "name": "ExternalLinks:EmployerIdamsSiteUrl",
-                                "value": "[parameters('externalLinks').EmployerIdamsSiteUrl]"
-                            },
-                            {
-                                "name": "ExternalLinks:FeedbackSurveyUrl",
-                                "value": "[parameters('externalLinks').FeedbackSurveyUrl]"
-                            },
-                            {
-                                "name": "ApprenticeshipApiBaseUrl",
-                                "value": "[parameters('apprenticeshipApiBaseUrl')]"
-                            },
-                            {
-                                "name": "GoogleAnalytics:TrackingId",
-                                "value": "[parameters('gaTrackingId')]"
-                            },
-                            {
-                                "name": "ApplicationInsights:InstrumentationKey",
-                                "value": "[reference('ui-app-insights').outputs.InstrumentationKey.value]"
-                            },
-                            {
-                                "name": "CosmosConnectionSettings:EndpointUrl",
-                                "value": "[concat('https://', variables('cosmosDbName'), '.documents.azure.com:443/')]"
-                            },
-                            {
-                                "name": "CosmosConnectionSettings:AuthorizationKey",
-                                "value": "[reference('cosmos-db').outputs.PrimaryMasterKey.value]"
-                            },
-                            {
-                                "name": "ASPNETCORE_ENVIRONMENT",
-                                "value": "[parameters('aspNetCoreEnvironment')]"
-                            }
-                        ]
+                        "value": {
+                            "array": [
+                                {
+                                    "name": "Authentication:Authority",
+                                    "value": "[parameters('authentication').Authority]"
+                                },
+                                {
+                                    "name": "Authentication:MetaDataAddress",
+                                    "value": "[parameters('authentication').MetaDataAddress]"
+                                },
+                                {
+                                    "name": "Authentication:ClientId",
+                                    "value": "[parameters('authentication').ClientId]"
+                                },
+                                {
+                                    "name": "Authentication:ClientSecret",
+                                    "value": "[parameters('authentication').ClientSecret]"
+                                },
+                                {
+                                    "name": "ExternalLinks:FindApprenticeshipTrainingSiteUrl",
+                                    "value": "[parameters('externalLinks').FindApprenticeshipTrainingSiteUrl]"
+                                },
+                                {
+                                    "name": "ExternalLinks:ManageApprenticeshipSiteUrl",
+                                    "value": "[parameters('externalLinks').ManageApprenticeshipSiteUrl]"
+                                },
+                                {
+                                    "name": "ExternalLinks:EmployerIdamsSiteUrl",
+                                    "value": "[parameters('externalLinks').EmployerIdamsSiteUrl]"
+                                },
+                                {
+                                    "name": "ExternalLinks:FeedbackSurveyUrl",
+                                    "value": "[parameters('externalLinks').FeedbackSurveyUrl]"
+                                },
+                                {
+                                    "name": "ApprenticeshipApiBaseUrl",
+                                    "value": "[parameters('apprenticeshipApiBaseUrl')]"
+                                },
+                                {
+                                    "name": "GoogleAnalytics:TrackingId",
+                                    "value": "[parameters('gaTrackingId')]"
+                                },
+                                {
+                                    "name": "ApplicationInsights:InstrumentationKey",
+                                    "value": "[reference('ui-app-insights').outputs.InstrumentationKey.value]"
+                                },
+                                {
+                                    "name": "CosmosConnectionSettings:EndpointUrl",
+                                    "value": "[concat('https://', variables('cosmosDbName'), '.documents.azure.com:443/')]"
+                                },
+                                {
+                                    "name": "CosmosConnectionSettings:AuthorizationKey",
+                                    "value": "[reference('cosmos-db').outputs.PrimaryMasterKey.value]"
+                                },
+                                {
+                                    "name": "ASPNETCORE_ENVIRONMENT",
+                                    "value": "[parameters('aspNetCoreEnvironment')]"
+                                }
+                            ]
+                        }
                     },
                     "appServiceConnectionStrings": {
-                        "value": [
-                            {
-                                "name": "Redis",
-                                "connectionString": "[parameters('loggingRedisConnectionString')]",
-                                "type": "Custom"
-                            },
-                            {
-                                "name": "RedisApplication",
-                                "connectionString": "[parameters('appRedisConnectionString')]",
-                                "type": "Custom"
-                            },
-                            {
-                                "name": "EmployerEmailStoreConnection",
-                                "connectionString": "[parameters('dbConnectionString')]",
-                                "type": "Custom"
-                            }
-                        ]
+                        "value": {
+                            "array": [
+                                {
+                                    "name": "Redis",
+                                    "connectionString": "[parameters('loggingRedisConnectionString')]",
+                                    "type": "Custom"
+                                },
+                                {
+                                    "name": "RedisApplication",
+                                    "connectionString": "[parameters('appRedisConnectionString')]",
+                                    "type": "Custom"
+                                },
+                                {
+                                    "name": "EmployerEmailStoreConnection",
+                                    "connectionString": "[parameters('dbConnectionString')]",
+                                    "type": "Custom"
+                                }
+                            ]
+                        }
                     },
                     "customHostName": {
                         "value": "[parameters('uiCustomHostname')]"
