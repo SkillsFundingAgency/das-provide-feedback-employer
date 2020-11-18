@@ -279,7 +279,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[concat(variables('deploymentUrlBase'), 'app-service.json')]",
+                    "uri": "[concat(variables('deploymentUrlBase'), 'app-service-v2.json')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
@@ -296,83 +296,87 @@
                         "value": "[parameters('sharedFrontEndSubnetResourceId')]"
                     },
                     "appServiceAppSettings": {
-                        "value": [
-                            {
-                                "name": "Authentication:Authority",
-                                "value": "[parameters('authentication').Authority]"
-                            },
-                            {
-                                "name": "Authentication:MetaDataAddress",
-                                "value": "[parameters('authentication').MetaDataAddress]"
-                            },
-                            {
-                                "name": "Authentication:ClientId",
-                                "value": "[parameters('authentication').ClientId]"
-                            },
-                            {
-                                "name": "Authentication:ClientSecret",
-                                "value": "[parameters('authentication').ClientSecret]"
-                            },
-                            {
-                                "name": "ExternalLinks:FindApprenticeshipTrainingSiteUrl",
-                                "value": "[parameters('externalLinks').FindApprenticeshipTrainingSiteUrl]"
-                            },
-                            {
-                                "name": "ExternalLinks:ManageApprenticeshipSiteUrl",
-                                "value": "[parameters('externalLinks').ManageApprenticeshipSiteUrl]"
-                            },
-                            {
-                                "name": "ExternalLinks:EmployerIdamsSiteUrl",
-                                "value": "[parameters('externalLinks').EmployerIdamsSiteUrl]"
-                            },
-                            {
-                                "name": "ExternalLinks:FeedbackSurveyUrl",
-                                "value": "[parameters('externalLinks').FeedbackSurveyUrl]"
-                            },
-                            {
-                                "name": "ApprenticeshipApiBaseUrl",
-                                "value": "[parameters('apprenticeshipApiBaseUrl')]"
-                            },
-                            {
-                                "name": "GoogleAnalytics:TrackingId",
-                                "value": "[parameters('gaTrackingId')]"
-                            },
-                            {
-                                "name": "ApplicationInsights:InstrumentationKey",
-                                "value": "[reference('ui-app-insights').outputs.InstrumentationKey.value]"
-                            },
-                            {
-                                "name": "CosmosConnectionSettings:EndpointUrl",
-                                "value": "[concat('https://', variables('cosmosDbName'), '.documents.azure.com:443/')]"
-                            },
-                            {
-                                "name": "CosmosConnectionSettings:AuthorizationKey",
-                                "value": "[reference('cosmos-db').outputs.PrimaryMasterKey.value]"
-                            },
-                            {
-                                "name": "ASPNETCORE_ENVIRONMENT",
-                                "value": "[parameters('aspNetCoreEnvironment')]"
-                            }
-                        ]
+                        "value": {
+                            "array": [
+                                {
+                                    "name": "Authentication:Authority",
+                                    "value": "[parameters('authentication').Authority]"
+                                },
+                                {
+                                    "name": "Authentication:MetaDataAddress",
+                                    "value": "[parameters('authentication').MetaDataAddress]"
+                                },
+                                {
+                                    "name": "Authentication:ClientId",
+                                    "value": "[parameters('authentication').ClientId]"
+                                },
+                                {
+                                    "name": "Authentication:ClientSecret",
+                                    "value": "[parameters('authentication').ClientSecret]"
+                                },
+                                {
+                                    "name": "ExternalLinks:FindApprenticeshipTrainingSiteUrl",
+                                    "value": "[parameters('externalLinks').FindApprenticeshipTrainingSiteUrl]"
+                                },
+                                {
+                                    "name": "ExternalLinks:ManageApprenticeshipSiteUrl",
+                                    "value": "[parameters('externalLinks').ManageApprenticeshipSiteUrl]"
+                                },
+                                {
+                                    "name": "ExternalLinks:EmployerIdamsSiteUrl",
+                                    "value": "[parameters('externalLinks').EmployerIdamsSiteUrl]"
+                                },
+                                {
+                                    "name": "ExternalLinks:FeedbackSurveyUrl",
+                                    "value": "[parameters('externalLinks').FeedbackSurveyUrl]"
+                                },
+                                {
+                                    "name": "ApprenticeshipApiBaseUrl",
+                                    "value": "[parameters('apprenticeshipApiBaseUrl')]"
+                                },
+                                {
+                                    "name": "GoogleAnalytics:TrackingId",
+                                    "value": "[parameters('gaTrackingId')]"
+                                },
+                                {
+                                    "name": "ApplicationInsights:InstrumentationKey",
+                                    "value": "[reference('ui-app-insights').outputs.InstrumentationKey.value]"
+                                },
+                                {
+                                    "name": "CosmosConnectionSettings:EndpointUrl",
+                                    "value": "[concat('https://', variables('cosmosDbName'), '.documents.azure.com:443/')]"
+                                },
+                                {
+                                    "name": "CosmosConnectionSettings:AuthorizationKey",
+                                    "value": "[reference('cosmos-db').outputs.PrimaryMasterKey.value]"
+                                },
+                                {
+                                    "name": "ASPNETCORE_ENVIRONMENT",
+                                    "value": "[parameters('aspNetCoreEnvironment')]"
+                                }
+                            ]
+                        }
                     },
                     "appServiceConnectionStrings": {
-                        "value": [
-                            {
-                                "name": "Redis",
-                                "connectionString": "[parameters('loggingRedisConnectionString')]",
-                                "type": "Custom"
-                            },
-                            {
-                                "name": "RedisApplication",
-                                "connectionString": "[parameters('appRedisConnectionString')]",
-                                "type": "Custom"
-                            },
-                            {
-                                "name": "EmployerEmailStoreConnection",
-                                "connectionString": "[parameters('dbConnectionString')]",
-                                "type": "Custom"
-                            }
-                        ]
+                        "value": {
+                            "array": [
+                                {
+                                    "name": "Redis",
+                                    "connectionString": "[parameters('loggingRedisConnectionString')]",
+                                    "type": "Custom"
+                                },
+                                {
+                                    "name": "RedisApplication",
+                                    "connectionString": "[parameters('appRedisConnectionString')]",
+                                    "type": "Custom"
+                                },
+                                {
+                                    "name": "EmployerEmailStoreConnection",
+                                    "connectionString": "[parameters('dbConnectionString')]",
+                                    "type": "Custom"
+                                }
+                            ]
+                        }
                     },
                     "customHostName": {
                         "value": "[parameters('uiCustomHostname')]"
@@ -441,7 +445,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[concat(variables('deploymentUrlBase'), 'app-service.json')]",
+                    "uri": "[concat(variables('deploymentUrlBase'), 'app-service-v2.json')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
@@ -458,53 +462,57 @@
                         "value": "[parameters('sharedBackEndSubnetResourceId')]"
                     },
                     "appServiceAppSettings": {
-                        "value": [
-                            {
-                                "name": "Azure:CosmosEndpoint",
-                                "value": "[concat('https://', variables('cosmosDbName'), '.documents.azure.com:443/')]"
-                            },
-                            {
-                                "name": "Azure:CosmosKey",
-                                "value": "[reference('cosmos-db').outputs.PrimaryMasterKey.value]"
-                            },
-                            {
-                                "name": "Azure:DatabaseName",
-                                "value": "[parameters('feedbackApiData').DatabaseName]"
-                            },
-                            {
-                                "name": "Azure:EmployerFeedbackCollection",
-                                "value": "[parameters('feedbackApiData').FeedbackCollection]"
-                            },
-                            {
-                                "name": "Azure:TokenCollection",
-                                "value": "[parameters('feedbackApiData').TokenCollection]"
-                            },
-                            {
-                                "name": "AzureAd:Tenant",
-                                "value": "[parameters('feedbackApiAuth').Tenant]"
-                            },
-                            {
-                                "name": "AzureAd:Identifier",
-                                "value": "[parameters('feedbackApiAuth').Identifier]"
-                            },
-                            {
-                                "name": "ApplicationInsights:InstrumentationKey",
-                                "value": "[reference('api-app-insights').outputs.InstrumentationKey.value]"
-                            },
-                            {
-                                "name": "ASPNETCORE_ENVIRONMENT",
-                                "value": "[parameters('aspNetCoreEnvironment')]"
-                            }
-                        ]
+                        "value": {
+                            "array": [
+                                {
+                                    "name": "Azure:CosmosEndpoint",
+                                    "value": "[concat('https://', variables('cosmosDbName'), '.documents.azure.com:443/')]"
+                                },
+                                {
+                                    "name": "Azure:CosmosKey",
+                                    "value": "[reference('cosmos-db').outputs.PrimaryMasterKey.value]"
+                                },
+                                {
+                                    "name": "Azure:DatabaseName",
+                                    "value": "[parameters('feedbackApiData').DatabaseName]"
+                                },
+                                {
+                                    "name": "Azure:EmployerFeedbackCollection",
+                                    "value": "[parameters('feedbackApiData').FeedbackCollection]"
+                                },
+                                {
+                                    "name": "Azure:TokenCollection",
+                                    "value": "[parameters('feedbackApiData').TokenCollection]"
+                                },
+                                {
+                                    "name": "AzureAd:Tenant",
+                                    "value": "[parameters('feedbackApiAuth').Tenant]"
+                                },
+                                {
+                                    "name": "AzureAd:Identifier",
+                                    "value": "[parameters('feedbackApiAuth').Identifier]"
+                                },
+                                {
+                                    "name": "ApplicationInsights:InstrumentationKey",
+                                    "value": "[reference('api-app-insights').outputs.InstrumentationKey.value]"
+                                },
+                                {
+                                    "name": "ASPNETCORE_ENVIRONMENT",
+                                    "value": "[parameters('aspNetCoreEnvironment')]"
+                                }
+                            ]
+                        }
                     },
                     "appServiceConnectionStrings": {
-                        "value": [
-                            {
-                                "name": "Redis",
-                                "connectionString": "[parameters('loggingRedisConnectionString')]",
-                                "type": "Custom"
-                            }
-                        ]
+                        "value": {
+                            "array": [
+                                {
+                                    "name": "Redis",
+                                    "connectionString": "[parameters('loggingRedisConnectionString')]",
+                                    "type": "Custom"
+                                }
+                            ]
+                        }
                     },
                     "customHostName": {
                         "value": "[parameters('apiCustomHostname')]"
@@ -606,7 +614,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[concat(variables('deploymentUrlBase'), 'function-app.json')]",
+                    "uri": "[concat(variables('deploymentUrlBase'), 'function-app-v2.json')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
@@ -623,136 +631,138 @@
                         "value": "[reference('function-subnet').outputs.SubnetResourceId.value]"
                     },
                     "functionAppAppSettings": {
-                        "value": [
-                            {
-                                "name": "AzureWebJobsDashboard",
-                                "value": "[reference('storage-account').outputs.storageConnectionString.value]"
-                            },
-                            {
-                                "name": "AzureWebJobsStorage",
-                                "value": "[reference('storage-account').outputs.storageConnectionString.value]"
-                            },
-                            {
-                                "name": "ASPNETCORE_ENVIRONMENT",
-                                "value": "[parameters('aspNetCoreEnvironment')]"
-                            },
-                            {
-                                "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
-                                "value": "[reference('function-app-insights').outputs.InstrumentationKey.value]"
-                            },
-                            {
-                                "name": "NotificationApi:BaseUrl",
-                                "value": "[parameters('notificationApiCredentials').BaseUrl]"
-                            },
-                            {
-                                "name": "NotificationApi:ClientToken",
-                                "value": "[parameters('notificationApiCredentials').ClientToken]"
-                            },
-                            {
-                                "name": "AccountApi:ApiBaseUrl",
-                                "value": "[parameters('accountApiBaseUrl')]"
-                            },
-                            {
-                                "name": "AccountApi:ClientId",
-                                "value": "[parameters('accountApiClientId')]"
-                            },
-                            {
-                                "name": "AccountApi:ClientSecret",
-                                "value": "[parameters('accountApiClientSecret')]"
-                            },
-                            {
-                                "name": "AccountApi:IdentifierUri",
-                                "value": "[parameters('accountApiIdentifierUri')]"
-                            },
-                            {
-                                "name": "AccountApi:Tenant",
-                                "value": "[parameters('accountApiTenant')]"
-                            },
-                            {
-                                "name": "ProviderApi:BaseUrl",
-                                "value": "[parameters('providerApiBaseUrl')]"
-                            },
-                            {
-                                "name": "CommitmentApi:BaseUrl",
-                                "value": "[parameters('commitmentApiBaseUrl')]"
-                            },
-                            {
-                                "name": "CommitmentApi:ClientToken",
-                                "value": "[parameters('commitmentApiClientToken')]"
-                            },
-                            {
-                                "name": "EmailSettings:FeedbackSiteBaseUrl",
-                                "value": "[concat('https://', parameters('uiCustomHostname'), '/')]"
-                            },
-                            {
-                                "name": "EmailSettings:BatchSize",
-                                "value": "[parameters('emailBatchSize')]"
-                            },
-                            {
-                                "name": "SlidingExpirationMinutes",
-                                "value": "[parameters('slidingExpirationMinutes')]"
-                            },
-                            {
-                                "name": "EmailSettings:ReminderDays",
-                                "value": "[parameters('reminderDays')]"
-                            },
-                            {
-                                "name": "EmailSettings:InviteCycleDays",
-                                "value": "[parameters('inviteCycleDays')]"
-                            },
-                            {
-                                "name": "FUNCTIONS_EXTENSION_VERSION",
-                                "value": "[parameters('functionsExtensionVersion')]"
-                            },
-                            {
-                                "name": "Redis",
-                                "value": "[parameters('loggingRedisConnectionString')]"
-                            },
-                            {
-                                "name": "EmployerEmailStoreConnection",
-                                "value": "[parameters('dbConnectionString')]"
-                            },
-                            {
-                                "name": "InviteEmailerSchedule",
-                                "value": "[parameters('inviteEmailerSchedule')]"
-                            },
-                            {
-                                "name": "ReminderEmailerSchedule",
-                                "value": "[parameters('reminderEmailerSchedule')]"
-                            },
-                            {
-                                "name": "DataRefreshSchedule",
-                                "value": "[parameters('dataRefreshSchedule')]"
-                            },
-                            {
-                                "name": "AppName",
-                                "value": "[parameters('emailerAppName')]"
-                            },
-                            {
-                                "name": "RetrieveFeedbackAccountsQueueName",
-                                "value": "[variables('queues').RetrieveFeedbackAccountsQueueName]"
-                            },
-                            {
-                                "name": "RetrieveProvidersQueueName",
-                                "value": "[variables('queues').RetrieveProvidersQueueName]"
-                            },
-                            {
-                                "name": "AccountRefreshQueueName",
-                                "value": "[variables('queues').AccountRefreshQueueName]"
-                            },
-                            {
-                                "name": "ProcessActiveFeedbackQueueName",
-                                "value": "[variables('queues').ProcessActiveFeedbackQueueName]"
-                            },
-                            {
-                                "name": "GenerateSurveyInviteMessageQueueName",
-                                "value": "[variables('queues').GenerateSurveyInviteMessageQueueName]"
-                            },
-                            {
-                                "name": "ServiceBusConnection",
-                                "value": "[reference('service-bus').outputs.ServiceBusEndpoint.value]"
-                            }
-                        ]
+                        "value": {
+                            "array": [
+                                {
+                                    "name": "AzureWebJobsDashboard",
+                                    "value": "[reference('storage-account').outputs.storageConnectionString.value]"
+                                },
+                                {
+                                    "name": "AzureWebJobsStorage",
+                                    "value": "[reference('storage-account').outputs.storageConnectionString.value]"
+                                },
+                                {
+                                    "name": "ASPNETCORE_ENVIRONMENT",
+                                    "value": "[parameters('aspNetCoreEnvironment')]"
+                                },
+                                {
+                                    "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
+                                    "value": "[reference('function-app-insights').outputs.InstrumentationKey.value]"
+                                },
+                                {
+                                    "name": "NotificationApi:BaseUrl",
+                                    "value": "[parameters('notificationApiCredentials').BaseUrl]"
+                                },
+                                {
+                                    "name": "NotificationApi:ClientToken",
+                                    "value": "[parameters('notificationApiCredentials').ClientToken]"
+                                },
+                                {
+                                    "name": "AccountApi:ApiBaseUrl",
+                                    "value": "[parameters('accountApiBaseUrl')]"
+                                },
+                                {
+                                    "name": "AccountApi:ClientId",
+                                    "value": "[parameters('accountApiClientId')]"
+                                },
+                                {
+                                    "name": "AccountApi:ClientSecret",
+                                    "value": "[parameters('accountApiClientSecret')]"
+                                },
+                                {
+                                    "name": "AccountApi:IdentifierUri",
+                                    "value": "[parameters('accountApiIdentifierUri')]"
+                                },
+                                {
+                                    "name": "AccountApi:Tenant",
+                                    "value": "[parameters('accountApiTenant')]"
+                                },
+                                {
+                                    "name": "ProviderApi:BaseUrl",
+                                    "value": "[parameters('providerApiBaseUrl')]"
+                                },
+                                {
+                                    "name": "CommitmentApi:BaseUrl",
+                                    "value": "[parameters('commitmentApiBaseUrl')]"
+                                },
+                                {
+                                    "name": "CommitmentApi:ClientToken",
+                                    "value": "[parameters('commitmentApiClientToken')]"
+                                },
+                                {
+                                    "name": "EmailSettings:FeedbackSiteBaseUrl",
+                                    "value": "[concat('https://', parameters('uiCustomHostname'), '/')]"
+                                },
+                                {
+                                    "name": "EmailSettings:BatchSize",
+                                    "value": "[parameters('emailBatchSize')]"
+                                },
+                                {
+                                    "name": "SlidingExpirationMinutes",
+                                    "value": "[parameters('slidingExpirationMinutes')]"
+                                },
+                                {
+                                    "name": "EmailSettings:ReminderDays",
+                                    "value": "[parameters('reminderDays')]"
+                                },
+                                {
+                                    "name": "EmailSettings:InviteCycleDays",
+                                    "value": "[parameters('inviteCycleDays')]"
+                                },
+                                {
+                                    "name": "FUNCTIONS_EXTENSION_VERSION",
+                                    "value": "[parameters('functionsExtensionVersion')]"
+                                },
+                                {
+                                    "name": "Redis",
+                                    "value": "[parameters('loggingRedisConnectionString')]"
+                                },
+                                {
+                                    "name": "EmployerEmailStoreConnection",
+                                    "value": "[parameters('dbConnectionString')]"
+                                },
+                                {
+                                    "name": "InviteEmailerSchedule",
+                                    "value": "[parameters('inviteEmailerSchedule')]"
+                                },
+                                {
+                                    "name": "ReminderEmailerSchedule",
+                                    "value": "[parameters('reminderEmailerSchedule')]"
+                                },
+                                {
+                                    "name": "DataRefreshSchedule",
+                                    "value": "[parameters('dataRefreshSchedule')]"
+                                },
+                                {
+                                    "name": "AppName",
+                                    "value": "[parameters('emailerAppName')]"
+                                },
+                                {
+                                    "name": "RetrieveFeedbackAccountsQueueName",
+                                    "value": "[variables('queues').RetrieveFeedbackAccountsQueueName]"
+                                },
+                                {
+                                    "name": "RetrieveProvidersQueueName",
+                                    "value": "[variables('queues').RetrieveProvidersQueueName]"
+                                },
+                                {
+                                    "name": "AccountRefreshQueueName",
+                                    "value": "[variables('queues').AccountRefreshQueueName]"
+                                },
+                                {
+                                    "name": "ProcessActiveFeedbackQueueName",
+                                    "value": "[variables('queues').ProcessActiveFeedbackQueueName]"
+                                },
+                                {
+                                    "name": "GenerateSurveyInviteMessageQueueName",
+                                    "value": "[variables('queues').GenerateSurveyInviteMessageQueueName]"
+                                },
+                                {
+                                    "name": "ServiceBusConnection",
+                                    "value": "[reference('service-bus').outputs.ServiceBusEndpoint.value]"
+                                }
+                            ]
+                        }
                     },
                     "customHostName": {
                         "value": ""
