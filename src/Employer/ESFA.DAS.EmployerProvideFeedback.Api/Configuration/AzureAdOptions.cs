@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace ESFA.DAS.EmployerProvideFeedback.Api.Configuration
+﻿namespace ESFA.DAS.EmployerProvideFeedback.Api.Configuration
 {
     public class AzureAdOptions
     {

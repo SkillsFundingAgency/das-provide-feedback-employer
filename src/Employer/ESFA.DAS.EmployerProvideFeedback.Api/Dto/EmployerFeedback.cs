@@ -3,9 +3,6 @@
     using System;
     using System.Collections.Generic;
     using System.Runtime.Serialization;
-
-    using ESFA.DAS.EmployerProvideFeedback.Api.Configuration.Mappers;
-    using ESFA.DAS.EmployerProvideFeedback.Api.Models;
     using ESFA.DAS.EmployerProvideFeedback.Api.Repository;
 
     using Newtonsoft.Json;

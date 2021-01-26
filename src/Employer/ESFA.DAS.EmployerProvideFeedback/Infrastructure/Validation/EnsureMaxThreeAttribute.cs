@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using ESFA.DAS.EmployerProvideFeedback.ViewModels;
-using ESFA.DAS.FeedbackDataAccess.Models;
 
 namespace ESFA.DAS.EmployerProvideFeedback.Infrastructure.Validation
 {

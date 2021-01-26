@@ -2,10 +2,6 @@ namespace UnitTests.Api
 {
     using System;
     using System.Collections.Generic;
-
-    using ESFA.DAS.EmployerProvideFeedback.Api.Models;
-    using ESFA.DAS.FeedbackDataAccess.Models;
-
     using EmployerFeedbackDto = ESFA.DAS.EmployerProvideFeedback.Api.Dto.EmployerFeedback;
     using ProviderAttributeDto = ESFA.DAS.EmployerProvideFeedback.Api.Dto.ProviderAttribute;
 

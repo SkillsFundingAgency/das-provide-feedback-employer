@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ESFA.DAS.EmployerAccounts.Api.Client
+﻿namespace ESFA.DAS.EmployerAccounts.Api.Client
 {
     public class AccountApiConfiguration : IAccountApiConfiguration
     {

@@ -2,10 +2,6 @@
 {
     using System;
     using System.Collections.Generic;
-
-    using ESFA.DAS.EmployerProvideFeedback.Api.Configuration.Mappers;
-    using ESFA.DAS.EmployerProvideFeedback.Api.Dto;
-
     using Newtonsoft.Json;
 
     /// <summary>
