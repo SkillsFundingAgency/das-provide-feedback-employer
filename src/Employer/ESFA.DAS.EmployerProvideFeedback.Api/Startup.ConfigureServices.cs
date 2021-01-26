@@ -1,18 +1,10 @@
 ﻿namespace ESFA.DAS.EmployerProvideFeedback.Api
 {
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Text;
-    using System.Threading.Tasks;
-
     using AutoMapper;
 
-    using ESFA.DAS.EmployerProvideFeedback.Api.Configuration;
-    using ESFA.DAS.EmployerProvideFeedback.Api.Repository;
-
-    using Microsoft.AspNetCore.Authentication;
+    using Configuration;
+    using Repository;
     using Microsoft.AspNetCore.Authentication.JwtBearer;
-    using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Options;
     using Microsoft.IdentityModel.Tokens;
@@ -26,8 +18,6 @@
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddAutoMapper();
-
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
             services.AddSingleton<IEmployerFeedbackRepository>(
                 (svc) =>
