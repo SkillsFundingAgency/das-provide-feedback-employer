@@ -27,23 +27,7 @@ namespace ESFA.DAS.EmployerProvideFeedback
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-
-            if (!env.IsDevelopment())
-            {
-                // Remove to test pre-prod issue
-                // app.UseNoCacheHttpHeaders(); // Affectively forces the browser to always request dynamic pages
-            }
-
-            //Enable sessions
             app.UseSession();
-            //app.UseCookiePolicy();
-
-            app.UseMvc(routes =>
-            {
-                routes.MapRoute(
-                    name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
-            });
         }
     }
 }
