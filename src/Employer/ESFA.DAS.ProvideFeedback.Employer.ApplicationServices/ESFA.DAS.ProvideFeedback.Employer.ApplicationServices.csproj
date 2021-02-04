@@ -1,11 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="SFA.DAS.Providers.Api.Client" Version="0.11.203" />
+    <PackageReference Include="SFA.DAS.Providers.Api.Client" Version="0.11.233" />
   </ItemGroup>
 
 </Project>

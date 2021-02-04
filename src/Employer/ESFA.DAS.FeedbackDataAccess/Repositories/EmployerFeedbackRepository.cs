@@ -2,7 +2,6 @@
 using ESFA.DAS.FeedbackDataAccess.Models;
 using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
-using Microsoft.Extensions.Options;
 
 namespace ESFA.DAS.FeedbackDataAccess.Repositories
 {

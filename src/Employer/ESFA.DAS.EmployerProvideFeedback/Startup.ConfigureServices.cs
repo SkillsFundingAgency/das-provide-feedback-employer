@@ -66,7 +66,7 @@ namespace ESFA.DAS.EmployerProvideFeedback
                 options.IdleTimeout = TimeSpan.FromMinutes(60);
             });
 
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddMvc(options => options.EnableEndpointRouting = false);
         }
     }
 }

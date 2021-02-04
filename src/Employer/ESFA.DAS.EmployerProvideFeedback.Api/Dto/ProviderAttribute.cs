@@ -2,9 +2,6 @@
 {
     using System;
     using System.Runtime.Serialization;
-
-    using ESFA.DAS.EmployerProvideFeedback.Api.Models;
-
     using Newtonsoft.Json;
 
     [Serializable]
