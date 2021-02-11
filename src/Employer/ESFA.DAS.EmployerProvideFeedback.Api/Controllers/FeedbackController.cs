@@ -9,8 +9,6 @@
 
     using ESFA.DAS.EmployerProvideFeedback.Api.Models;
     using ESFA.DAS.EmployerProvideFeedback.Api.Repository;
-
-    using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Azure.Documents.SystemFunctions;
     using Microsoft.Extensions.Logging;
@@ -20,7 +18,6 @@
     [Produces("application/json")]
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "GetFeedback")]
     public class FeedbackController : Controller
     {
         private readonly IEmployerFeedbackRepository feedback;

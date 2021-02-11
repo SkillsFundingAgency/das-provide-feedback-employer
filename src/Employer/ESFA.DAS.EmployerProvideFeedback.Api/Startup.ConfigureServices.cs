@@ -19,6 +19,8 @@
         {
             services.AddAutoMapper();
 
+            services.AddControllers();
+
             services.AddSingleton<IEmployerFeedbackRepository>(
                 (svc) =>
                 {
