@@ -6,10 +6,6 @@
 
         public ProviderRating FeedbackRating { get; set; }
 
-        public FeedbackViewModel Feedback { get; set; }
-
-        public string FatProviderDetailViewUrl { get; set; }
-
-        public string FatProviderSearch { get; internal set; }
+        public string FatUrl { get; internal set; }
     }
 }

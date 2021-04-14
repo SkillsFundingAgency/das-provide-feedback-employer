@@ -26,7 +26,6 @@ using SFA.DAS.Commitments.Api.Client.Interfaces;
 using SFA.DAS.NLog.Targets.Redis.DotNetCore;
 using SFA.DAS.Notifications.Api.Client;
 using SFA.DAS.Notifications.Api.Client.Configuration;
-using SFA.DAS.Providers.Api.Client;
 using LogLevel = NLog.LogLevel;
 
 [assembly: FunctionsStartup(typeof(Startup))]
@@ -87,11 +86,6 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
             builder.Services.AddTransient<UserRefreshService>();
             builder.Services.AddTransient<SurveyInviteGenerator>();
             builder.Services.AddTransient<ProviderRefreshService>();
-
-            var providerApiConfig = _configuration.GetSection("ProviderApi").Get<ProviderApiConfig>();
-            builder.Services.AddSingleton<IProviderApiClient, ProviderApiClient>(a =>
-                 new ProviderApiClient(providerApiConfig.BaseUrl)
-            );
 
             var commitmentApiConfig = _configuration.GetSection("CommitmentApi").Get<CommitmentsApiClientConfig>();
 

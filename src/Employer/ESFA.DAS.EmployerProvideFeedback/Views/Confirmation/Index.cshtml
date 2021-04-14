@@ -15,59 +15,6 @@
         <p>Thanks for your feedback. It'll help @Model.ProviderName to continuously improve its apprenticeship training.</p>
         <p>You rated @Model.ProviderName as <span class="bold-small">@Model.FeedbackRating.GetDisplayName()</span>. Your feedback will be published in the near future.</p>
 
-        @if (Model.Feedback != null && Model.Feedback.TotalFeedbackCount > 0)
-        {
-            <div id="feedback-heading" class="graph-heading-group">
-                <h2 class="heading-medium">What employers are saying about @Model.ProviderName</h2>
-                <p class="meta">Based on @Model.Feedback.TotalFeedbackCount reviews from employers that work with this training provider.</p>
-            </div>
-
-            <h3 class="heading-small">Overall rating from October 2018 to now</h3>
-            <ul class="graph-list">
-                <li class="level-1">
-                    <span class="label">Excellent</span>
-                    <span class="chart">
-                        <span class="graph">
-                            <span class="bar" style="width: @Model.Feedback.ExcellentFeedbackPercentage%"></span>
-                        </span>
-                    </span>
-                    <span class="figure">@Model.Feedback.ExcellentFeedbackCount <span class="visually-hidden">out of @Model.Feedback.TotalFeedbackCount </span>reviews</span>
-                </li>
-                <li class="level-2">
-                    <span class="label">Good</span>
-                    <span class="chart">
-                        <span class="graph">
-                            <span class="bar" style="width: @Model.Feedback.GoodFeedbackPercentage%"></span>
-                        </span>
-                    </span>
-                    <span class="figure">@Model.Feedback.GoodFeedbackCount <span class="visually-hidden">out of @Model.Feedback.TotalFeedbackCount </span>reviews</span>
-                </li>
-                <li class="level-3">
-                    <span class="label">Poor</span>
-                    <span class="chart">
-                        <span class="graph">
-                            <span class="bar" style="width: @Model.Feedback.PoorFeedbackPercentage%"></span>
-                        </span>
-                    </span>
-                    <span class="figure">@Model.Feedback.PoorFeedbackCount <span class="visually-hidden">out of @Model.Feedback.TotalFeedbackCount </span>reviews</span>
-                </li>
-                <li class="level-4">
-                    <span class="label">Very poor</span>
-                    <span class="chart">
-                        <span class="graph">
-                            <span class="bar" style="width: @Model.Feedback.VeryPoorFeedbackPercentage%"></span>
-                        </span>
-                    </span>
-                    <span class="figure">@Model.Feedback.VeryPoorFeedbackCount <span class="visually-hidden">out of @Model.Feedback.TotalFeedbackCount </span>reviews</span>
-                </li>
-            </ul>
-
-            <p>You can <a href="@Model.FatProviderDetailViewUrl">see detailed feedback for @Model.ProviderName</a> or <a href="@Model.FatProviderSearch">find other training providers</a>.</p>
-        }
-        else
-        {
-            <p>You can <a href="@Model.FatProviderDetailViewUrl">get more information about @Model.ProviderName</a> or <a href="@Model.FatProviderSearch">find other training providers</a>.</p>
-        }
 
         @if (Model.FeedbackRating == ProviderRating.VeryPoor)
         {
@@ -83,5 +30,6 @@
                 </div>
             </details>
         }
+        <a class="govuk-button" href="@Model.FatUrl">Find apprenticeship training</a>
     </div>
 </div>

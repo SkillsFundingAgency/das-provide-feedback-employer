@@ -9,14 +9,11 @@ using ESFA.DAS.EmployerProvideFeedback.ViewModels;
 using ESFA.DAS.FeedbackDataAccess;
 using ESFA.DAS.FeedbackDataAccess.IoC;
 using ESFA.DAS.ProvideFeedback.Data;
-using ESFA.DAS.ProvideFeedback.Employer.ApplicationServices;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using SFA.DAS.Providers.Api.Client;
 
 namespace ESFA.DAS.EmployerProvideFeedback
 {
@@ -43,8 +40,6 @@ namespace ESFA.DAS.EmployerProvideFeedback
             services.Configure<CosmosConnectionSettings>(Configuration.GetSection("CosmosConnectionSettings"));
             services.AddTransient<IDbConnection>(c => new SqlConnection(Configuration.GetConnectionString("EmployerEmailStoreConnection")));
             services.AddTransient<ISessionService, SessionService>();
-            services.AddTransient<IGetProviderFeedback, ProviderFeedbackRepository>();
-            services.AddTransient<IProviderApiClient>(sp => new ProviderApiClient(Configuration.GetValue<string>("ApprenticeshipApiBaseUrl")));
             services.AddTransient<ReviewAnswersOrchestrator>();
             services.AddProvideFeedbackCosmos(Configuration);
 
