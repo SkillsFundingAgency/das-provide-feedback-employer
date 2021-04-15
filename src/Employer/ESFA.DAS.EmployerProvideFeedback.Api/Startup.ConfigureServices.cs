@@ -1,4 +1,6 @@
-﻿namespace ESFA.DAS.EmployerProvideFeedback.Api
+﻿using Microsoft.AspNetCore.Mvc.Authorization;
+
+namespace ESFA.DAS.EmployerProvideFeedback.Api
 {
     using AutoMapper;
 
@@ -36,7 +38,7 @@
 
             services.Configure<AzureOptions>(this.Configuration.GetSection("Azure"));
             services.Configure<AzureAdOptions>(Configuration.GetSection("AzureAd"));
-            services.AddMvc();
+            services.AddMvc(options=>options.Filters.Add(new AuthorizeFilter()));
             services.AddSwaggerDocument();
             services.AddHealthChecks();
 
