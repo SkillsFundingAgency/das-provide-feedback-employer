@@ -9,11 +9,14 @@ using ESFA.DAS.Feedback.Employer.Emailer.Configuration;
 using ESFA.DAS.ProvideFeedback.Data;
 using ESFA.DAS.ProvideFeedback.Employer.Application;
 using ESFA.DAS.ProvideFeedback.Employer.Application.Configuration;
+using ESFA.DAS.ProvideFeedback.Employer.ApplicationServices;
+using ESFA.DAS.ProvideFeedback.Employer.ApplicationServices.Configuration;
 using ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using NLog;
 using NLog.Common;
 using NLog.Config;
@@ -106,6 +109,11 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
             builder.Services.AddSingleton<IAccountApiConfiguration>(accApiConfig);
             builder.Services.AddSingleton<IAccountApiClient, AccountApiClient>();
             builder.Services.AddHttpClient<SecureHttpClient>();
+
+            builder.Services.Configure<RoatpApiConfiguration>(_configuration.GetSection("RoatpApi"));
+            builder.Services.AddSingleton(cfg => cfg.GetService<IOptions<RoatpApiConfiguration>>().Value);
+            builder.Services.AddTransient<IAzureClientCredentialHelper, AzureClientCredentialHelper>();
+            builder.Services.AddHttpClient<IRoatpService, RoatpService>();
         }
 
         private void ConfigureNLog()
