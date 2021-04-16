@@ -18,18 +18,20 @@
 
         @if (Model.FeedbackRating == ProviderRating.VeryPoor)
         {
-            <details>
-                <summary><span class="summary">Have concerns about @Model.ProviderName?</span></summary>
+            <div class="form-group">
+                <details>
+                    <summary><span class="summary">Have concerns about @Model.ProviderName?</span></summary>
 
-                <div class="panel panel-border-narrow">
-                    <p>If you have concerns about @Model.ProviderName, tell your line manager or Human Resources team - your organisation might be able to solve your problem informally.</p>
+                    <div class="panel panel-border-narrow">
+                        <p>If you have concerns about @Model.ProviderName, tell your line manager or Human Resources team - your organisation might be able to solve your problem informally.</p>
 
-                    <p>If you can't resolve it informally, you can <a href="@externalLinks.Value.ComplaintToProviderSiteUrl">make a formal complaint</a> to your training provider.</p>
+                        <p>If you can't resolve it informally, you can <a href="@externalLinks.Value.ComplaintToProviderSiteUrl">make a formal complaint</a> to your training provider.</p>
 
-                    <p>If you've done this and you're not satisfied with the result, you can <a href="@externalLinks.Value.ComplaintSiteUrl">ask ESFA to investigate how the provider handled your case.</a> ESFA can't review the result of your complaint - it can only investigate whether it was reached in a fair way.</p>
-                </div>
-            </details>
+                        <p>If you've done this and you're not satisfied with the result, you can <a href="@externalLinks.Value.ComplaintSiteUrl">ask ESFA to investigate how the provider handled your case.</a> ESFA can't review the result of your complaint - it can only investigate whether it was reached in a fair way.</p>
+                    </div>
+                </details>
+            </div>
         }
-        <a class="govuk-button" href="@Model.FatUrl">Find apprenticeship training</a>
+        <p><a class="govuk-button" href="@Model.FatUrl">Find apprenticeship training</a></p>
     </div>
 </div>
