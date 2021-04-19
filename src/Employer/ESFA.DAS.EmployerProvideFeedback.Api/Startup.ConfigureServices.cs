@@ -38,7 +38,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Api
 
             services.Configure<AzureOptions>(this.Configuration.GetSection("Azure"));
             services.Configure<AzureAdOptions>(Configuration.GetSection("AzureAd"));
-            services.AddMvc(options=>options.Filters.Add(new AuthorizeFilter()));
+            services.AddMvc(options=>options.Filters.Add(new AuthorizeFilter("GetFeedback")));
             services.AddSwaggerDocument();
             services.AddHealthChecks();
 
