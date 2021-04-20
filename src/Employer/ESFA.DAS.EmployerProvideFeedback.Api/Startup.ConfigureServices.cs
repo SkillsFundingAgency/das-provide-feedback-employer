@@ -1,20 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.AspNetCore.Authorization;
+﻿using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Extensions.Configuration;
+using SFA.DAS.Api.Common.AppStart;
+using SFA.DAS.Api.Common.Configuration;
+using SFA.DAS.Api.Common.Infrastructure;
+using AutoMapper;
+using ESFA.DAS.EmployerProvideFeedback.Api.Configuration;
+using ESFA.DAS.EmployerProvideFeedback.Api.Repository;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace ESFA.DAS.EmployerProvideFeedback.Api
 {
-    using AutoMapper;
-
-    using Configuration;
-    using Repository;
-    using Microsoft.AspNetCore.Authentication.JwtBearer;
-    using Microsoft.Extensions.DependencyInjection;
-    using Microsoft.Extensions.Options;
-    using Microsoft.IdentityModel.Tokens;
-
+    
     /// <summary>
     /// The ConfigureServices method
     /// This method gets called by the runtime. Use this method to add services to the container.
@@ -29,32 +26,18 @@ namespace ESFA.DAS.EmployerProvideFeedback.Api
         }
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddAutoMapper();
-
-            services.AddControllers();
-
+            
             var azureAdConfiguration = _configuration
                 .GetSection("AzureAd")
-                .Get<AzureAdOptions>();
-            
-            services.AddAuthentication(auth => { auth.DefaultScheme = JwtBearerDefaults.AuthenticationScheme; })
-                .AddJwtBearer(auth =>
-                {
-                    auth.Authority = $"https://login.microsoftonline.com/{azureAdConfiguration.Tenant}";
-                    auth.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        ValidAudiences = azureAdConfiguration.Identifier.Split(',')
-                    };
-                });
-            services.AddAuthorization(options =>
+                .Get<AzureActiveDirectoryConfiguration>();
+
+            var policies = new Dictionary<string, string>
             {
-                options.AddPolicy("GetFeedback", (Action<AuthorizationPolicyBuilder>) (policy =>
-                {
-                    policy.RequireAuthenticatedUser();
-                    policy.RequireRole("GetFeedback");
-                }));
-            });
-            
+                {PolicyNames.Default, "Default"},
+                {"GetFeedback", "GetFeedback"}
+            };
+
+            services.AddAuthentication(azureAdConfiguration, policies);
             
             var cosmosOptions = _configuration
                 .GetSection("Azure")
@@ -68,6 +51,10 @@ namespace ESFA.DAS.EmployerProvideFeedback.Api
             services.Configure<AzureOptions>(_configuration.GetSection("Azure"));
             services.Configure<AzureAdOptions>(_configuration.GetSection("AzureAd"));
             services.AddMvc(options=>options.Filters.Add(new AuthorizeFilter("GetFeedback")));
+            
+            services.AddAutoMapper();
+            services.AddControllers();
+            
             services.AddSwaggerDocument();
             services.AddHealthChecks();
 
