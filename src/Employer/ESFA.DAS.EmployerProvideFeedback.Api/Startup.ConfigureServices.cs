@@ -1,4 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc.Authorization;
+﻿using System;
+using System.Collections.Generic;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.Authorization;
+using Microsoft.Extensions.Configuration;
 
 namespace ESFA.DAS.EmployerProvideFeedback.Api
 {
@@ -17,12 +21,40 @@ namespace ESFA.DAS.EmployerProvideFeedback.Api
     /// </summary>
     public partial class Startup
     {
+        private readonly IConfiguration _configuration;
+
+        public Startup (IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddAutoMapper();
 
             services.AddControllers();
 
+            var azureAdConfiguration = _configuration
+                .GetSection("AzureAd")
+                .Get<AzureAdOptions>();
+            
+            services.AddAuthentication(auth => { auth.DefaultScheme = JwtBearerDefaults.AuthenticationScheme; })
+                .AddJwtBearer(auth =>
+                {
+                    auth.Authority = $"https://login.microsoftonline.com/{azureAdConfiguration.Tenant}";
+                    auth.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidAudiences = azureAdConfiguration.Identifier.Split(',')
+                    };
+                });
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("GetFeedback", (Action<AuthorizationPolicyBuilder>) (policy =>
+                {
+                    policy.RequireAuthenticatedUser();
+                    policy.RequireRole("GetFeedback");
+                }));
+            });
+            
             services.AddSingleton<IEmployerFeedbackRepository>(
                 (svc) =>
                 {
@@ -42,18 +74,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Api
             services.AddSwaggerDocument();
             services.AddHealthChecks();
 
-            var serviceProvider = services.BuildServiceProvider();
-            var azureActiveDirectoryConfiguration = serviceProvider.GetService<IOptions<AzureAdOptions>>();
-
-            services.AddAuthentication(auth => { auth.DefaultScheme = JwtBearerDefaults.AuthenticationScheme; })
-                .AddJwtBearer(auth =>
-                {
-                    auth.Authority = $"https://login.microsoftonline.com/{azureActiveDirectoryConfiguration.Value.Tenant}";
-                    auth.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        ValidAudiences = azureActiveDirectoryConfiguration.Value.Identifier.Split(',')
-                    };
-                });
+            
         }
     }
 }
