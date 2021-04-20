@@ -55,21 +55,18 @@ namespace ESFA.DAS.EmployerProvideFeedback.Api
                 }));
             });
             
+            
+            var cosmosOptions = _configuration
+                .GetSection("Azure")
+                .Get<AzureOptions>();
+            
             services.AddSingleton<IEmployerFeedbackRepository>(
-                (svc) =>
-                {
-                    string endpoint = this.Configuration["Azure:CosmosEndpoint"];
-                    string authKey = this.Configuration["Azure:CosmosKey"];
-                    string database = this.Configuration["Azure:DatabaseName"];
-                    string collection = this.Configuration["Azure:EmployerFeedbackCollection"];
+                (svc) => CosmosEmployerFeedbackRepository.Instance.ConnectTo(cosmosOptions.CosmosEndpoint)
+                    .WithAuthKeyOrResourceToken(cosmosOptions.CosmosKey)
+                    .UsingDatabase(cosmosOptions.DatabaseName).UsingCollection(cosmosOptions.EmployerFeedbackCollection));
 
-                    return CosmosEmployerFeedbackRepository.Instance.ConnectTo(endpoint)
-                        .WithAuthKeyOrResourceToken(authKey)
-                        .UsingDatabase(database).UsingCollection(collection);
-                });
-
-            services.Configure<AzureOptions>(this.Configuration.GetSection("Azure"));
-            services.Configure<AzureAdOptions>(Configuration.GetSection("AzureAd"));
+            services.Configure<AzureOptions>(_configuration.GetSection("Azure"));
+            services.Configure<AzureAdOptions>(_configuration.GetSection("AzureAd"));
             services.AddMvc(options=>options.Filters.Add(new AuthorizeFilter("GetFeedback")));
             services.AddSwaggerDocument();
             services.AddHealthChecks();
