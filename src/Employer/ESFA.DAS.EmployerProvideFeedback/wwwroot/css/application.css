@@ -158,6 +158,8 @@
 
 @media(min-width: 641px) {
     .check-your-answers {
+        display: table;
+        width: 100%;
     }
 }
 
