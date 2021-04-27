@@ -8,80 +8,30 @@
 <div class="grid-row">
     <div class="column-two-thirds">
         <div class="govuk-box-highlight">
-            <h1 class="heading-xlarge">
+            <h1 class="font-xlarge bold">
                 Feedback complete
             </h1>
         </div>
         <p>Thanks for your feedback. It'll help @Model.ProviderName to continuously improve its apprenticeship training.</p>
         <p>You rated @Model.ProviderName as <span class="bold-small">@Model.FeedbackRating.GetDisplayName()</span>. Your feedback will be published in the near future.</p>
 
-        @if (Model.Feedback != null && Model.Feedback.TotalFeedbackCount > 0)
-        {
-            <div id="feedback-heading" class="graph-heading-group">
-                <h2 class="heading-medium">What employers are saying about @Model.ProviderName</h2>
-                <p class="meta">Based on @Model.Feedback.TotalFeedbackCount reviews from employers that work with this training provider.</p>
-            </div>
-
-            <h3 class="heading-small">Overall rating from October 2018 to now</h3>
-            <ul class="graph-list">
-                <li class="level-1">
-                    <span class="label">Excellent</span>
-                    <span class="chart">
-                        <span class="graph">
-                            <span class="bar" style="width: @Model.Feedback.ExcellentFeedbackPercentage%"></span>
-                        </span>
-                    </span>
-                    <span class="figure">@Model.Feedback.ExcellentFeedbackCount <span class="visually-hidden">out of @Model.Feedback.TotalFeedbackCount </span>reviews</span>
-                </li>
-                <li class="level-2">
-                    <span class="label">Good</span>
-                    <span class="chart">
-                        <span class="graph">
-                            <span class="bar" style="width: @Model.Feedback.GoodFeedbackPercentage%"></span>
-                        </span>
-                    </span>
-                    <span class="figure">@Model.Feedback.GoodFeedbackCount <span class="visually-hidden">out of @Model.Feedback.TotalFeedbackCount </span>reviews</span>
-                </li>
-                <li class="level-3">
-                    <span class="label">Poor</span>
-                    <span class="chart">
-                        <span class="graph">
-                            <span class="bar" style="width: @Model.Feedback.PoorFeedbackPercentage%"></span>
-                        </span>
-                    </span>
-                    <span class="figure">@Model.Feedback.PoorFeedbackCount <span class="visually-hidden">out of @Model.Feedback.TotalFeedbackCount </span>reviews</span>
-                </li>
-                <li class="level-4">
-                    <span class="label">Very poor</span>
-                    <span class="chart">
-                        <span class="graph">
-                            <span class="bar" style="width: @Model.Feedback.VeryPoorFeedbackPercentage%"></span>
-                        </span>
-                    </span>
-                    <span class="figure">@Model.Feedback.VeryPoorFeedbackCount <span class="visually-hidden">out of @Model.Feedback.TotalFeedbackCount </span>reviews</span>
-                </li>
-            </ul>
-
-            <p>You can <a href="@Model.FatProviderDetailViewUrl">see detailed feedback for @Model.ProviderName</a> or <a href="@Model.FatProviderSearch">find other training providers</a>.</p>
-        }
-        else
-        {
-            <p>You can <a href="@Model.FatProviderDetailViewUrl">get more information about @Model.ProviderName</a> or <a href="@Model.FatProviderSearch">find other training providers</a>.</p>
-        }
 
         @if (Model.FeedbackRating == ProviderRating.VeryPoor)
         {
-            <details>
-                <summary><span class="summary">Have concerns about @Model.ProviderName?</span></summary>
+            <div class="form-group">
+                <details>
+                    <summary><span class="summary">Have concerns about @Model.ProviderName?</span></summary>
 
-                <div class="panel panel-border-narrow">
-                    <p>If you have concerns about @Model.ProviderName, tell your line manager or Human Resources team - your organisation might be able to solve your problem informally.</p>
+                    <div class="panel panel-border-narrow">
+                        <p>If you have concerns about @Model.ProviderName, tell your line manager or Human Resources team - your organisation might be able to solve your problem informally.</p>
 
-                    <p>If you can't resolve it informally, you can <a href="@externalLinks.Value.ComplaintToProviderSiteUrl">make a formal complaint</a> to your training provider.</p>
+                        <p>If you can't resolve it informally, you can <a href="@externalLinks.Value.ComplaintToProviderSiteUrl">make a formal complaint</a> to your training provider.</p>
 
-                    <p>If you've done this and you're not satisfied with the result, you can <a href="@externalLinks.Value.ComplaintSiteUrl">ask ESFA to investigate how the provider handled your case.</a> ESFA can't review the result of your complaint - it can only investigate whether it was reached in a fair way.</p>
-                </div>
-            </details>
+                        <p>If you've done this and you're not satisfied with the result, you can <a href="@externalLinks.Value.ComplaintSiteUrl">ask ESFA to investigate how the provider handled your case.</a> ESFA can't review the result of your complaint - it can only investigate whether it was reached in a fair way.</p>
+                    </div>
+                </details>
+            </div>
         }
+        <p><a class="button" href="@Model.FatUrl">Find apprenticeship training</a></p>
     </div>
 </div>

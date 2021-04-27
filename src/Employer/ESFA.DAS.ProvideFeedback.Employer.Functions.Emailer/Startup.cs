@@ -9,11 +9,14 @@ using ESFA.DAS.Feedback.Employer.Emailer.Configuration;
 using ESFA.DAS.ProvideFeedback.Data;
 using ESFA.DAS.ProvideFeedback.Employer.Application;
 using ESFA.DAS.ProvideFeedback.Employer.Application.Configuration;
+using ESFA.DAS.ProvideFeedback.Employer.ApplicationServices;
+using ESFA.DAS.ProvideFeedback.Employer.ApplicationServices.Configuration;
 using ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using NLog;
 using NLog.Common;
 using NLog.Config;
@@ -26,7 +29,6 @@ using SFA.DAS.Commitments.Api.Client.Interfaces;
 using SFA.DAS.NLog.Targets.Redis.DotNetCore;
 using SFA.DAS.Notifications.Api.Client;
 using SFA.DAS.Notifications.Api.Client.Configuration;
-using SFA.DAS.Providers.Api.Client;
 using LogLevel = NLog.LogLevel;
 
 [assembly: FunctionsStartup(typeof(Startup))]
@@ -88,11 +90,6 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
             builder.Services.AddTransient<SurveyInviteGenerator>();
             builder.Services.AddTransient<ProviderRefreshService>();
 
-            var providerApiConfig = _configuration.GetSection("ProviderApi").Get<ProviderApiConfig>();
-            builder.Services.AddSingleton<IProviderApiClient, ProviderApiClient>(a =>
-                 new ProviderApiClient(providerApiConfig.BaseUrl)
-            );
-
             var commitmentApiConfig = _configuration.GetSection("CommitmentApi").Get<CommitmentsApiClientConfig>();
 
             builder.Services.AddSingleton<ICommitmentsApiClientConfiguration>(commitmentApiConfig);
@@ -112,6 +109,11 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
             builder.Services.AddSingleton<IAccountApiConfiguration>(accApiConfig);
             builder.Services.AddSingleton<IAccountApiClient, AccountApiClient>();
             builder.Services.AddHttpClient<SecureHttpClient>();
+
+            builder.Services.Configure<RoatpApiConfiguration>(_configuration.GetSection("RoatpApi"));
+            builder.Services.AddSingleton(cfg => cfg.GetService<IOptions<RoatpApiConfiguration>>().Value);
+            builder.Services.AddTransient<IAzureClientCredentialHelper, AzureClientCredentialHelper>();
+            builder.Services.AddHttpClient<IRoatpService, RoatpService>();
         }
 
         private void ConfigureNLog()

@@ -52,6 +52,12 @@
         "commitmentApiClientToken": {
             "type": "secureString"
         },
+        "roatpApiBaseUrl": {
+            "type": "string"
+        },
+        "roatpApiIdentifier": {
+            "type": "string"
+        },
         "accountApiBaseUrl": {
             "type": "string"
         },
@@ -656,6 +662,14 @@
                                 {
                                     "name": "NotificationApi:ClientToken",
                                     "value": "[parameters('notificationApiCredentials').ClientToken]"
+                                },
+                                {
+                                    "name": "RoatpApi:Url",
+                                    "value": "[parameters('roatpApiBaseUrl')]"
+                                },
+                                {
+                                    "name": "RoatpApi:Identifier",
+                                    "value": "[parameters('roatpApiIdentifier')]"
                                 },
                                 {
                                     "name": "AccountApi:ApiBaseUrl",

@@ -11,9 +11,11 @@ using ESFA.DAS.EmployerAccounts.Api.Client;
 using ESFA.DAS.Feedback.Employer.Emailer;
 using ESFA.DAS.Feedback.Employer.Emailer.Configuration;
 using ESFA.DAS.ProvideFeedback.Data;
+using ESFA.DAS.ProvideFeedback.Domain.Entities.ApiTypes;
 using ESFA.DAS.ProvideFeedback.Domain.Entities.Messages;
 using ESFA.DAS.ProvideFeedback.Domain.Entities.Models;
 using ESFA.DAS.ProvideFeedback.Employer.Application;
+using ESFA.DAS.ProvideFeedback.Employer.ApplicationServices;
 using ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer;
 using FluentAssertions;
 using Microsoft.Azure.WebJobs;
@@ -23,14 +25,12 @@ using Microsoft.Extensions.Options;
 using Moq;
 using Newtonsoft.Json;
 using NUnit.Framework;
-using SFA.DAS.Apprenticeships.Api.Types.Providers;
 using SFA.DAS.Commitments.Api.Client.Interfaces;
 using SFA.DAS.Commitments.Api.Types.Apprenticeship;
 using SFA.DAS.Commitments.Api.Types.Apprenticeship.Types;
 using SFA.DAS.EAS.Account.Api.Types;
 using SFA.DAS.Notifications.Api.Client;
 using SFA.DAS.Notifications.Api.Types;
-using SFA.DAS.Providers.Api.Client;
 
 namespace IntegrationTests
 {
@@ -38,12 +38,10 @@ namespace IntegrationTests
     public class IntegrationTest_NeedsToBeRanAsOne
     {
         private IConfigurationRoot _configuration;
-        private Mock<IProviderApiClient> _providerApiClientMock;
         private Mock<IEmployerCommitmentApi> _commitmentApiClientMock;
         private Mock<IAccountApiClient> _accountApiClientMock;
         private Mock<INotificationsApi> _notificationsApiClientMock;
 
-        private ProviderSummary[] _providerApiClientReturn;
         private List<Apprenticeship> _commitmentApiClientReturn;
         private ICollection<TeamMemberViewModel> _accountApiClientReturn;
 
@@ -68,6 +66,8 @@ namespace IntegrationTests
         private Guid _user1Guid;
         private Guid _user2Guid;
         private Guid _user3Guid;
+        private Mock<IRoatpService> _roatpService;
+        private ProviderRegistration[] _providerApiClientReturn;
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
@@ -94,11 +94,11 @@ namespace IntegrationTests
         [SetUp]
         public void SetUp()
         {
-            _providerApiClientMock = new Mock<IProviderApiClient>();
             _commitmentApiClientMock = new Mock<IEmployerCommitmentApi>();
             _accountApiClientMock = new Mock<IAccountApiClient>();
             _notificationsApiClientMock = new Mock<INotificationsApi>();
             _surveyLoggerMock = new Mock<ILogger<EmployerSurveyEmailer>>();
+            _roatpService = new Mock<IRoatpService>();
 
             _dbConnection = new SqlConnection(_configuration.GetConnectionString("EmployerEmailStoreConnection"));
             _dbEmployerFeedbackRepository = new EmployerFeedbackRepository(_dbConnection);
@@ -110,7 +110,7 @@ namespace IntegrationTests
 
             _helper = new UserRefreshService(new Mock<ILogger<UserRefreshService>>().Object, _dbEmployerFeedbackRepository);
             _surveyInviteGenerator = new SurveyInviteGenerator(_options, _dbEmployerFeedbackRepository, Mock.Of<ILogger<SurveyInviteGenerator>>());
-            var providerRefreshSevice = new ProviderRefreshService(_dbEmployerFeedbackRepository, _providerApiClientMock.Object);
+            var providerRefreshSevice = new ProviderRefreshService(_dbEmployerFeedbackRepository, _roatpService.Object);
 
             SetupApiMocks(2);
 
@@ -336,8 +336,8 @@ namespace IntegrationTests
         {
             _providerApiClientReturn = new[]
             {
-                new ProviderSummary {Ukprn = 1, ProviderName = "Test Academy"},
-                new ProviderSummary {Ukprn = changeableUkprn, ProviderName = "Worst School"},
+                new ProviderRegistration {Ukprn = 1, LegalName = "Test Academy"},
+                new ProviderRegistration {Ukprn = changeableUkprn, LegalName = "Worst School"},
             };
 
             _commitmentApiClientReturn = new List<Apprenticeship>
@@ -389,7 +389,7 @@ namespace IntegrationTests
             SetUpApiReturn(changeableUkprn);
 
             _accountApiClientMock.Setup(x => x.GetAccountUsers(It.IsAny<long>())).ReturnsAsync(_accountApiClientReturn);
-            _providerApiClientMock.Setup(x => x.FindAllAsync()).ReturnsAsync(_providerApiClientReturn);
+            _roatpService.Setup(x => x.GetAll()).ReturnsAsync(_providerApiClientReturn);
             _commitmentApiClientMock.Setup(x => x.GetEmployerApprenticeships(It.IsAny<long>()))
                 .ReturnsAsync(_commitmentApiClientReturn);
             _commitmentApiClientMock.Setup(x => x.GetAllEmployerAccountIds()).ReturnsAsync(new long[] { 1 });

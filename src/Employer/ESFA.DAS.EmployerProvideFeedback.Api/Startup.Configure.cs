@@ -29,6 +29,8 @@ namespace ESFA.DAS.EmployerProvideFeedback.Api
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseAuthentication();
+            
             app.UseRouting();
             app.UseEndpoints(endpoints =>
             {
@@ -42,7 +44,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Api
             app.UseOpenApi();
             app.UseSwaggerUi3();
 
-            app.UseAuthentication();
+            
             app.UseHealthChecks("/health");
         }
     }

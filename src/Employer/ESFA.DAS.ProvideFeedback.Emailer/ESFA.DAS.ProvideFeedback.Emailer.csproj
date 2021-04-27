@@ -21,7 +21,6 @@
     <PackageReference Include="SFA.DAS.Commitments.Api.Client" Version="5.4.0" />
     <PackageReference Include="SFA.DAS.Commitments.Api.Types" Version="5.4.0" />
     <PackageReference Include="SFA.DAS.Notifications.Api.Client" Version="2.2.210" />
-    <PackageReference Include="SFA.DAS.Providers.Api.Client" Version="0.11.233" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ESFA.DAS.EmployerFeedbackEmail.Data\ESFA.DAS.ProvideFeedback.Data.csproj" />
