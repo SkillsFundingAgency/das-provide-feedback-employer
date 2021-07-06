@@ -30,9 +30,6 @@
             "type": "securestring",
             "defaultValue": ""
         },
-        "apprenticeshipApiBaseUrl": {
-            "type": "string"
-        },
         "aspNetCoreEnvironment": {
             "type": "string"
         },
@@ -335,10 +332,6 @@
                                 {
                                     "name": "ExternalLinks:FeedbackSurveyUrl",
                                     "value": "[parameters('externalLinks').FeedbackSurveyUrl]"
-                                },
-                                {
-                                    "name": "ApprenticeshipApiBaseUrl",
-                                    "value": "[parameters('apprenticeshipApiBaseUrl')]"
                                 },
                                 {
                                     "name": "GoogleAnalytics:TrackingId",
