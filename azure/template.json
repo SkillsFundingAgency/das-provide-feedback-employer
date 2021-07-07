@@ -40,9 +40,6 @@
                 "ClientToken": ""
             }
         },
-        "providerApiBaseUrl": {
-            "type": "string"
-        },
         "commitmentApiBaseUrl": {
             "type": "string"
         },
@@ -683,10 +680,6 @@
                                 {
                                     "name": "AccountApi:Tenant",
                                     "value": "[parameters('accountApiTenant')]"
-                                },
-                                {
-                                    "name": "ProviderApi:BaseUrl",
-                                    "value": "[parameters('providerApiBaseUrl')]"
                                 },
                                 {
                                     "name": "CommitmentApi:BaseUrl",
