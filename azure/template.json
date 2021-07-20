@@ -55,12 +55,6 @@
         "accountApiBaseUrl": {
             "type": "string"
         },
-        "accountApiClientId": {
-            "type": "string"
-        },
-        "accountApiClientSecret": {
-            "type": "secureString"
-        },
         "accountApiIdentifierUri": {
             "type": "string"
         },
@@ -305,14 +299,6 @@
                                 {
                                     "name": "Authentication:MetaDataAddress",
                                     "value": "[parameters('authentication').MetaDataAddress]"
-                                },
-                                {
-                                    "name": "Authentication:ClientId",
-                                    "value": "[parameters('authentication').ClientId]"
-                                },
-                                {
-                                    "name": "Authentication:ClientSecret",
-                                    "value": "[parameters('authentication').ClientSecret]"
                                 },
                                 {
                                     "name": "ExternalLinks:FindApprenticeshipTrainingSiteUrl",
@@ -664,14 +650,6 @@
                                 {
                                     "name": "AccountApi:ApiBaseUrl",
                                     "value": "[parameters('accountApiBaseUrl')]"
-                                },
-                                {
-                                    "name": "AccountApi:ClientId",
-                                    "value": "[parameters('accountApiClientId')]"
-                                },
-                                {
-                                    "name": "AccountApi:ClientSecret",
-                                    "value": "[parameters('accountApiClientSecret')]"
                                 },
                                 {
                                     "name": "AccountApi:IdentifierUri",
