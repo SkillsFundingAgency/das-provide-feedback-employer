@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using ESFA.DAS.EmployerAccounts.Api.Client;
 using ESFA.DAS.ProvideFeedback.Data;
 using ESFA.DAS.ProvideFeedback.Domain.Entities.Messages;
 using ESFA.DAS.ProvideFeedback.Domain.Entities.Models;
+using ESFA.DAS.ProvideFeedback.Employer.ApplicationServices;
 using SFA.DAS.Commitments.Api.Client.Interfaces;
 using SFA.DAS.Commitments.Api.Types.Apprenticeship.Types;
 using SFA.DAS.EAS.Account.Api.Types;
@@ -15,16 +15,16 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Application
     public class EmployerFeedbackDataRetrievalService
     {
         IEmployerCommitmentApi _commitmentApiClient;
-        IAccountApiClient _accountApiClient;
+        IAccountService _accountService;
         IStoreEmployerEmailDetails _emailDetailsRepository;
 
         public EmployerFeedbackDataRetrievalService(
             IEmployerCommitmentApi commitmentApiClient,
-            IAccountApiClient accountApiClient,
+            IAccountService accountService,
             IStoreEmployerEmailDetails emailDetailsRepository)
         {
             _commitmentApiClient = commitmentApiClient;
-            _accountApiClient = accountApiClient;
+            _accountService = accountService;
             _emailDetailsRepository = emailDetailsRepository;
         }
 
@@ -64,7 +64,7 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Application
 
         private async Task<IEnumerable<User>> GetAccountUsersForFeedback(long accountId)
         {
-            var users = await _accountApiClient.GetAccountUsers(accountId);
+            var users = await _accountService.GetAccountUsers(accountId);
             return users
                 .Where(au => au.CanReceiveNotifications)
                 .Select(au => MapTeamMemberToUser(au, accountId));

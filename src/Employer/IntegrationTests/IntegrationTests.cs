@@ -1,13 +1,4 @@
-﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Data.Common;
-using System.Data.SqlClient;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using Dapper;
-using ESFA.DAS.EmployerAccounts.Api.Client;
+﻿using Dapper;
 using ESFA.DAS.Feedback.Employer.Emailer;
 using ESFA.DAS.Feedback.Employer.Emailer.Configuration;
 using ESFA.DAS.ProvideFeedback.Data;
@@ -31,6 +22,14 @@ using SFA.DAS.Commitments.Api.Types.Apprenticeship.Types;
 using SFA.DAS.EAS.Account.Api.Types;
 using SFA.DAS.Notifications.Api.Client;
 using SFA.DAS.Notifications.Api.Types;
+using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Data.Common;
+using System.Data.SqlClient;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace IntegrationTests
 {
@@ -39,7 +38,7 @@ namespace IntegrationTests
     {
         private IConfigurationRoot _configuration;
         private Mock<IEmployerCommitmentApi> _commitmentApiClientMock;
-        private Mock<IAccountApiClient> _accountApiClientMock;
+        private Mock<IAccountService> _accountServiceMock;
         private Mock<INotificationsApi> _notificationsApiClientMock;
 
         private List<Apprenticeship> _commitmentApiClientReturn;
@@ -95,7 +94,7 @@ namespace IntegrationTests
         public void SetUp()
         {
             _commitmentApiClientMock = new Mock<IEmployerCommitmentApi>();
-            _accountApiClientMock = new Mock<IAccountApiClient>();
+            _accountServiceMock = new Mock<IAccountService>();
             _notificationsApiClientMock = new Mock<INotificationsApi>();
             _surveyLoggerMock = new Mock<ILogger<EmployerSurveyEmailer>>();
             _roatpService = new Mock<IRoatpService>();
@@ -105,7 +104,7 @@ namespace IntegrationTests
 
             _dataRetreivalService = new EmployerFeedbackDataRetrievalService(
                 _commitmentApiClientMock.Object,
-                _accountApiClientMock.Object,
+                _accountServiceMock.Object,
                 _dbEmployerFeedbackRepository);
 
             _helper = new UserRefreshService(new Mock<ILogger<UserRefreshService>>().Object, _dbEmployerFeedbackRepository);
@@ -295,7 +294,7 @@ namespace IntegrationTests
                     UserRef = _user3Guid.ToString(), CanReceiveNotifications = true
                 }
             };
-            _accountApiClientMock.Setup(x => x.GetAccountUsers(It.IsAny<long>())).ReturnsAsync(_accountApiClientReturn);
+            _accountServiceMock.Setup(x => x.GetAccountUsers(It.IsAny<long>())).ReturnsAsync(_accountApiClientReturn);
 
             var expectedInvites = new List<EmployerSurveyInvite>
             {
@@ -388,7 +387,7 @@ namespace IntegrationTests
         {
             SetUpApiReturn(changeableUkprn);
 
-            _accountApiClientMock.Setup(x => x.GetAccountUsers(It.IsAny<long>())).ReturnsAsync(_accountApiClientReturn);
+            _accountServiceMock.Setup(x => x.GetAccountUsers(It.IsAny<long>())).ReturnsAsync(_accountApiClientReturn);
             _roatpService.Setup(x => x.GetAll()).ReturnsAsync(_providerApiClientReturn);
             _commitmentApiClientMock.Setup(x => x.GetEmployerApprenticeships(It.IsAny<long>()))
                 .ReturnsAsync(_commitmentApiClientReturn);
