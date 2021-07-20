@@ -58,9 +58,6 @@
         "accountApiIdentifierUri": {
             "type": "string"
         },
-        "accountApiTenant": {
-            "type": "string"
-        },
         "emailBatchSize": {
             "type": "int",
             "defaultValue": 25
@@ -654,10 +651,6 @@
                                 {
                                     "name": "AccountApi:IdentifierUri",
                                     "value": "[parameters('accountApiIdentifierUri')]"
-                                },
-                                {
-                                    "name": "AccountApi:Tenant",
-                                    "value": "[parameters('accountApiTenant')]"
                                 },
                                 {
                                     "name": "CommitmentApi:BaseUrl",
