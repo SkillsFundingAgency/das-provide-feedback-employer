@@ -27,7 +27,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IntegrationTests", "Integra
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ESFA.DAS.ProvideFeedback.Employer.Application", "ESFA.DAS.ProvideFeedback.Employer.Application\ESFA.DAS.ProvideFeedback.Employer.Application.csproj", "{1F079DC1-415D-49A7-A93D-EA8ADBBAEB58}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ESFA.DAS.EmployerAccounts.Api.Client", "ESFA.DAS.EmployerAccounts.Api.Client\ESFA.DAS.EmployerAccounts.Api.Client.csproj", "{63D1AEBF-B447-431B-BF8F-E0445E3B086A}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Testing", "Testing", "{275671E9-3EF8-4FAC-9800-873E07C50B74}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -85,13 +85,13 @@ Global
 		{1F079DC1-415D-49A7-A93D-EA8ADBBAEB58}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1F079DC1-415D-49A7-A93D-EA8ADBBAEB58}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1F079DC1-415D-49A7-A93D-EA8ADBBAEB58}.Release|Any CPU.Build.0 = Release|Any CPU
-		{63D1AEBF-B447-431B-BF8F-E0445E3B086A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{63D1AEBF-B447-431B-BF8F-E0445E3B086A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{63D1AEBF-B447-431B-BF8F-E0445E3B086A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{63D1AEBF-B447-431B-BF8F-E0445E3B086A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{8A1869F6-E8FA-44E5-8DB4-DE4C77C2F37F} = {275671E9-3EF8-4FAC-9800-873E07C50B74}
+		{95466EB8-F285-4086-8488-B2589B3A7D39} = {275671E9-3EF8-4FAC-9800-873E07C50B74}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E9FF7E0F-2806-439A-A514-B3D3A483FC79}

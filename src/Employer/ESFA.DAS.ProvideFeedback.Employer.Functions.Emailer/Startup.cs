@@ -1,10 +1,4 @@
-﻿using System;
-using System.Data;
-using System.Data.SqlClient;
-using System.IO;
-using System.Net.Http.Headers;
-using ESFA.DAS.EmployerAccounts.Api.Client;
-using ESFA.DAS.Feedback.Employer.Emailer;
+﻿using ESFA.DAS.Feedback.Employer.Emailer;
 using ESFA.DAS.Feedback.Employer.Emailer.Configuration;
 using ESFA.DAS.ProvideFeedback.Data;
 using ESFA.DAS.ProvideFeedback.Employer.Application;
@@ -29,6 +23,11 @@ using SFA.DAS.Commitments.Api.Client.Interfaces;
 using SFA.DAS.NLog.Targets.Redis.DotNetCore;
 using SFA.DAS.Notifications.Api.Client;
 using SFA.DAS.Notifications.Api.Client.Configuration;
+using System;
+using System.Data;
+using System.Data.SqlClient;
+using System.IO;
+using System.Net.Http.Headers;
 using LogLevel = NLog.LogLevel;
 
 [assembly: FunctionsStartup(typeof(Startup))]
@@ -107,7 +106,7 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
 
             var accApiConfig = _configuration.GetSection("AccountApi").Get<AccountApiConfiguration>();
             builder.Services.AddSingleton<IAccountApiConfiguration>(accApiConfig);
-            builder.Services.AddSingleton<IAccountApiClient, AccountApiClient>();
+            builder.Services.AddSingleton<IAccountService, AccountService>();
             builder.Services.AddHttpClient<SecureHttpClient>();
 
             builder.Services.Configure<RoatpApiConfiguration>(_configuration.GetSection("RoatpApi"));

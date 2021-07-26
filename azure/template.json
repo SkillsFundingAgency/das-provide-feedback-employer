@@ -55,16 +55,7 @@
         "accountApiBaseUrl": {
             "type": "string"
         },
-        "accountApiClientId": {
-            "type": "string"
-        },
-        "accountApiClientSecret": {
-            "type": "secureString"
-        },
         "accountApiIdentifierUri": {
-            "type": "string"
-        },
-        "accountApiTenant": {
             "type": "string"
         },
         "emailBatchSize": {
@@ -305,14 +296,6 @@
                                 {
                                     "name": "Authentication:MetaDataAddress",
                                     "value": "[parameters('authentication').MetaDataAddress]"
-                                },
-                                {
-                                    "name": "Authentication:ClientId",
-                                    "value": "[parameters('authentication').ClientId]"
-                                },
-                                {
-                                    "name": "Authentication:ClientSecret",
-                                    "value": "[parameters('authentication').ClientSecret]"
                                 },
                                 {
                                     "name": "ExternalLinks:FindApprenticeshipTrainingSiteUrl",
@@ -666,20 +649,8 @@
                                     "value": "[parameters('accountApiBaseUrl')]"
                                 },
                                 {
-                                    "name": "AccountApi:ClientId",
-                                    "value": "[parameters('accountApiClientId')]"
-                                },
-                                {
-                                    "name": "AccountApi:ClientSecret",
-                                    "value": "[parameters('accountApiClientSecret')]"
-                                },
-                                {
                                     "name": "AccountApi:IdentifierUri",
                                     "value": "[parameters('accountApiIdentifierUri')]"
-                                },
-                                {
-                                    "name": "AccountApi:Tenant",
-                                    "value": "[parameters('accountApiTenant')]"
                                 },
                                 {
                                     "name": "CommitmentApi:BaseUrl",
