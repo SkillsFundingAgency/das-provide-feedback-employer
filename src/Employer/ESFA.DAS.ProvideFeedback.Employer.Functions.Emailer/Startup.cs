@@ -113,6 +113,11 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
             builder.Services.AddSingleton(cfg => cfg.GetService<IOptions<RoatpApiConfiguration>>().Value);
             builder.Services.AddTransient<IAzureClientCredentialHelper, AzureClientCredentialHelper>();
             builder.Services.AddHttpClient<IRoatpService, RoatpService>();
+
+            var commitmentV2ApiConfig = _configuration.GetSection("CommitmentV2Api").Get<CommitmentApiConfiguration>();
+            builder.Services.AddSingleton<ICommitmentApiConfiguration>(commitmentV2ApiConfig);
+            builder.Services.AddSingleton<ICommitmentService, CommitmentService>();
+            builder.Services.AddHttpClient<SecureHttpClient>();
         }
 
         private void ConfigureNLog()

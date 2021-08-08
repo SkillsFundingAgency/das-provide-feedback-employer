@@ -30,6 +30,7 @@ using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using SFA.DAS.CommitmentsV2.Api.Types.Responses;
 
 namespace IntegrationTests
 {
@@ -38,6 +39,8 @@ namespace IntegrationTests
     {
         private IConfigurationRoot _configuration;
         private Mock<IEmployerCommitmentApi> _commitmentApiClientMock;
+        private Mock<ICommitmentService> _commitmentServiceMock;
+
         private Mock<IAccountService> _accountServiceMock;
         private Mock<INotificationsApi> _notificationsApiClientMock;
 
@@ -93,6 +96,7 @@ namespace IntegrationTests
         [SetUp]
         public void SetUp()
         {
+            _commitmentServiceMock = new Mock<ICommitmentService>();
             _commitmentApiClientMock = new Mock<IEmployerCommitmentApi>();
             _accountServiceMock = new Mock<IAccountService>();
             _notificationsApiClientMock = new Mock<INotificationsApi>();
@@ -115,7 +119,7 @@ namespace IntegrationTests
 
             _initiateFunction = new InitiateDataRefreshFunction(_dbEmployerFeedbackRepository);
             _providersRefreshFunction = new ProviderRefreshFunction(providerRefreshSevice);
-            _accountRetrieveFunction = new EmployerDataRetrieveFeedbackAccountsFunction(_commitmentApiClientMock.Object);
+            _accountRetrieveFunction = new EmployerDataRetrieveFeedbackAccountsFunction(_commitmentServiceMock.Object);
             _accountDataRetrieveFunction = new AccountRefreshFunction(_dataRetreivalService);
             _processActiveFeedbackFunction = new ProcessActiveFeedbackFunction(_helper);
             _surveyInviteGeneratorFunction = new EmployerSurveyInviteGeneratorFunction(_surveyInviteGenerator);
@@ -389,9 +393,14 @@ namespace IntegrationTests
 
             _accountServiceMock.Setup(x => x.GetAccountUsers(It.IsAny<long>())).ReturnsAsync(_accountApiClientReturn);
             _roatpService.Setup(x => x.GetAll()).ReturnsAsync(_providerApiClientReturn);
-            _commitmentApiClientMock.Setup(x => x.GetEmployerApprenticeships(It.IsAny<long>()))
+            _commitmentApiClientMock
+                .Setup(x => x.GetEmployerApprenticeships(It.IsAny<long>()))
                 .ReturnsAsync(_commitmentApiClientReturn);
-            _commitmentApiClientMock.Setup(x => x.GetAllEmployerAccountIds()).ReturnsAsync(new long[] { 1 });
+
+            _commitmentServiceMock
+                .Setup(x => x.GetAllCohortAccountIds())
+                .ReturnsAsync(new GetAllCohortAccountIdsResponse(new List<long> {1}));
+
         }
 
         private async Task RunThroughRefreshFunctions()
