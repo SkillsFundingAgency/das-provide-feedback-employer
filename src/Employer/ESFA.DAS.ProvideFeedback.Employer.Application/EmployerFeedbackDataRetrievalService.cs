@@ -41,7 +41,7 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Application
             var validCommitments = accCommitments
                 .Apprenticeships
                 .Where(app => providers.Any(p => p.Ukprn == app.ProviderId))
-            .GroupBy(app => new { app.AccountLegalEntityId, app.ProviderId })
+            .GroupBy(app => new { app.ProviderId })
             .Select(app => app.First());
 
             var mappedUsers = await mappedUsersTask;
