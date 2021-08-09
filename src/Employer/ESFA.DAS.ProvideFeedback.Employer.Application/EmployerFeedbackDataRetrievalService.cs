@@ -6,24 +6,22 @@ using ESFA.DAS.ProvideFeedback.Data;
 using ESFA.DAS.ProvideFeedback.Domain.Entities.Messages;
 using ESFA.DAS.ProvideFeedback.Domain.Entities.Models;
 using ESFA.DAS.ProvideFeedback.Employer.ApplicationServices;
-using SFA.DAS.Commitments.Api.Client.Interfaces;
-using SFA.DAS.Commitments.Api.Types.Apprenticeship.Types;
 using SFA.DAS.EAS.Account.Api.Types;
 
 namespace ESFA.DAS.ProvideFeedback.Employer.Application
 {
     public class EmployerFeedbackDataRetrievalService
     {
-        IEmployerCommitmentApi _commitmentApiClient;
+        ICommitmentService _commitmentService;
         IAccountService _accountService;
         IStoreEmployerEmailDetails _emailDetailsRepository;
 
         public EmployerFeedbackDataRetrievalService(
-            IEmployerCommitmentApi commitmentApiClient,
+            ICommitmentService commitmentService,
             IAccountService accountService,
             IStoreEmployerEmailDetails emailDetailsRepository)
         {
-            _commitmentApiClient = commitmentApiClient;
+            _commitmentService = commitmentService;
             _accountService = accountService;
             _emailDetailsRepository = emailDetailsRepository;
         }
@@ -32,22 +30,18 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Application
         {
             var mappedUsersTask = GetAccountUsersForFeedback(accountId);
 
-            var accCommitmentsTask = _commitmentApiClient.GetEmployerApprenticeships(accountId);
+            var accCommitments = await _commitmentService.GetApprenticeships(accountId).ConfigureAwait(false);
 
-            var accCommitments = await accCommitmentsTask;
-
-            var commitmentUkprns = accCommitments
+            var commitmentUkprns = accCommitments.Apprenticeships
                 .GroupBy(acc => acc.ProviderId)
                 .Select(group => group.Key);
 
             var providers = await _emailDetailsRepository.GetProvidersByUkprn(commitmentUkprns);
 
             var validCommitments = accCommitments
-            .Where(app => app != null)
-            .Where(app => app.HasHadDataLockSuccess == true)
-            .Where(app => app.PaymentStatus == PaymentStatus.Active || app.PaymentStatus == PaymentStatus.Paused)
-            .Where(app => providers.Any(p => p.Ukprn == app.ProviderId))
-            .GroupBy(app => new { app.EmployerAccountId, app.ProviderId })
+                .Apprenticeships
+                .Where(app => providers.Any(p => p.Ukprn == app.ProviderId))
+            .GroupBy(app => new { app.AccountLegalEntityId, app.ProviderId })
             .Select(app => app.First());
 
             var mappedUsers = await mappedUsersTask;

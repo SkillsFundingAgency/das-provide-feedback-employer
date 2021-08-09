@@ -2,7 +2,6 @@
 using ESFA.DAS.Feedback.Employer.Emailer.Configuration;
 using ESFA.DAS.ProvideFeedback.Data;
 using ESFA.DAS.ProvideFeedback.Employer.Application;
-using ESFA.DAS.ProvideFeedback.Employer.Application.Configuration;
 using ESFA.DAS.ProvideFeedback.Employer.ApplicationServices;
 using ESFA.DAS.ProvideFeedback.Employer.ApplicationServices.Configuration;
 using ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer;
@@ -17,9 +16,6 @@ using NLog.Config;
 using NLog.Extensions.Logging;
 using NLog.Targets;
 using Polly;
-using SFA.DAS.Commitments.Api.Client;
-using SFA.DAS.Commitments.Api.Client.Configuration;
-using SFA.DAS.Commitments.Api.Client.Interfaces;
 using SFA.DAS.NLog.Targets.Redis.DotNetCore;
 using SFA.DAS.Notifications.Api.Client;
 using SFA.DAS.Notifications.Api.Client.Configuration;
@@ -88,22 +84,7 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
             builder.Services.AddTransient<UserRefreshService>();
             builder.Services.AddTransient<SurveyInviteGenerator>();
             builder.Services.AddTransient<ProviderRefreshService>();
-
-            var commitmentApiConfig = _configuration.GetSection("CommitmentApi").Get<CommitmentsApiClientConfig>();
-
-            builder.Services.AddSingleton<ICommitmentsApiClientConfiguration>(commitmentApiConfig);
-
-            builder.Services.AddHttpClient<IEmployerCommitmentApi, EmployerCommitmentApi>(http =>
-            {
-                http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", commitmentApiConfig.ClientToken);
-            })
-            .AddTransientHttpErrorPolicy(policyBuilder => policyBuilder.WaitAndRetryAsync(new[]
-            {
-                TimeSpan.FromSeconds(1),
-                TimeSpan.FromSeconds(5),
-                TimeSpan.FromSeconds(10)
-            }));
-
+            
             var accApiConfig = _configuration.GetSection("AccountApi").Get<AccountApiConfiguration>();
             builder.Services.AddSingleton<IAccountApiConfiguration>(accApiConfig);
             builder.Services.AddSingleton<IAccountService, AccountService>();

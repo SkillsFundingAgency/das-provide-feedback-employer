@@ -5,7 +5,6 @@ using ESFA.DAS.ProvideFeedback.Employer.ApplicationServices;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.ServiceBus;
 using Microsoft.Extensions.Logging;
-using SFA.DAS.Commitments.Api.Client.Interfaces;
 
 namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
 {
