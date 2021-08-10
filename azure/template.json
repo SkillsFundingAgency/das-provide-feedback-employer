@@ -37,6 +37,12 @@
         "commitmentApiClientToken": {
             "type": "secureString"
         },
+        "commitmentV2ApiBaseUrl": {
+            "type": "string"
+        },
+        "commitmentV2ApiIdentifierUri": {
+            "type": "string"
+        },
         "roatpApiBaseUrl": {
             "type": "string"
         },
@@ -642,6 +648,14 @@
                                 {
                                     "name": "CommitmentApi:ClientToken",
                                     "value": "[parameters('commitmentApiClientToken')]"
+                                },
+                                {
+                                    "name": "CommitmentV2Api:BaseUrl",
+                                    "value": "[parameters('commitmentV2ApiBaseUrl')]"
+                                },
+                                {
+                                    "name": "CommitmentV2Api:IdentifierUri",
+                                    "value": "[parameters('commitmentV2ApiIdentifierUri')]"
                                 },
                                 {
                                     "name": "EmailSettings:FeedbackSiteBaseUrl",
