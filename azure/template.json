@@ -8,15 +8,6 @@
         "resourceEnvironmentName": {
             "type": "string"
         },
-        "authentication": {
-            "type": "secureObject",
-            "defaultValue": {
-                "Authority": "",
-                "MetaDataAddress": "",
-                "ClientId": "",
-                "ClientSecret": ""
-            }
-        },
         "externalLinks": {
             "type": "object",
             "defaultValue": {
@@ -295,14 +286,6 @@
                     "appServiceAppSettings": {
                         "value": {
                             "array": [
-                                {
-                                    "name": "Authentication:Authority",
-                                    "value": "[parameters('authentication').Authority]"
-                                },
-                                {
-                                    "name": "Authentication:MetaDataAddress",
-                                    "value": "[parameters('authentication').MetaDataAddress]"
-                                },
                                 {
                                     "name": "ExternalLinks:FindApprenticeshipTrainingSiteUrl",
                                     "value": "[parameters('externalLinks').FindApprenticeshipTrainingSiteUrl]"

@@ -13,10 +13,13 @@ namespace ESFA.DAS.ProvideFeedback.Employer.ApplicationServices
         private readonly IHostingEnvironment _hostingEnvironment;
         private readonly IAccountApiConfiguration _configuration;
 
-        public SecureHttpClient(HttpClient httpClient, IAccountApiConfiguration configuration)
+        public SecureHttpClient(HttpClient httpClient, IAzureClientCredentialHelper azureClientCredentialHelper, IHostingEnvironment hostingEnvironment, IAccountApiConfiguration configuration)
         {
-            _configuration = configuration;
             _httpClient = httpClient;
+            _azureClientCredentialHelper = azureClientCredentialHelper;
+            _hostingEnvironment = hostingEnvironment;
+            _configuration = configuration;
+            
         }
 
         protected SecureHttpClient()
