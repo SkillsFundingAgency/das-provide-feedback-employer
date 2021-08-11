@@ -667,7 +667,7 @@
                                     "value": "[parameters('commitmentApiClientToken')]"
                                 },
                                 {
-                                    "name": "CommitmentV2Api:BaseUrl",
+                                    "name": "CommitmentV2:ApiBaseUrl",
                                     "value": "[parameters('commitmentV2ApiBaseUrl')]"
                                 },
                                 {
