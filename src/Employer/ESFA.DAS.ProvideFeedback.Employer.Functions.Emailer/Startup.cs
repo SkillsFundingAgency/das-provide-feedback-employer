@@ -98,7 +98,6 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
             var commitmentV2ApiConfig = _configuration.GetSection("CommitmentV2Api").Get<CommitmentApiConfiguration>();
             builder.Services.AddSingleton<ICommitmentApiConfiguration>(commitmentV2ApiConfig);
             builder.Services.AddSingleton<ICommitmentService, CommitmentService>();
-            builder.Services.AddHttpClient<SecureHttpClient>();
         }
 
         private void ConfigureNLog()

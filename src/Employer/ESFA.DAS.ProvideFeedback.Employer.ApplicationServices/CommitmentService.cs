@@ -28,7 +28,7 @@ namespace ESFA.DAS.ProvideFeedback.Employer.ApplicationServices
         {
             var baseUrl = GetBaseUrl(_configuration.ApiBaseUrl);
             var url = $"{baseUrl}api/cohorts/accountIds";
-            var json = await _httpClient.GetAsync(url);
+            var json = await _httpClient.GetAsync(url, _configuration.IdentifierUri);
 
             return JsonConvert.DeserializeObject<GetAllCohortAccountIdsResponse>(json);
         }
@@ -38,7 +38,7 @@ namespace ESFA.DAS.ProvideFeedback.Employer.ApplicationServices
             var baseUrl = GetBaseUrl(_configuration.ApiBaseUrl);
 
             var url = $"{baseUrl}api/apprenticeships/?accountId={accountId}&pageNumber=0&pageItemCount{int.MaxValue}";
-            var json = await _httpClient.GetAsync(url);
+            var json = await _httpClient.GetAsync(url, _configuration.IdentifierUri);
 
             return JsonConvert.DeserializeObject<GetApprenticeshipsResponse>(json);
         }
