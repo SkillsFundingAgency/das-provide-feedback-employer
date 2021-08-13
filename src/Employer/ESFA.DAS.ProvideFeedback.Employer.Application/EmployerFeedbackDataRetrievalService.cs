@@ -6,6 +6,7 @@ using ESFA.DAS.ProvideFeedback.Data;
 using ESFA.DAS.ProvideFeedback.Domain.Entities.Messages;
 using ESFA.DAS.ProvideFeedback.Domain.Entities.Models;
 using ESFA.DAS.ProvideFeedback.Employer.ApplicationServices;
+using SFA.DAS.CommitmentsV2.Types;
 using SFA.DAS.EAS.Account.Api.Types;
 
 namespace ESFA.DAS.ProvideFeedback.Employer.Application
@@ -38,8 +39,8 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Application
 
             var providers = await _emailDetailsRepository.GetProvidersByUkprn(commitmentUkprns);
 
-            var validCommitments = accCommitments
-                .Apprenticeships
+            var validCommitments = accCommitments.Apprenticeships
+                .Where(app => app.PaymentStatus == PaymentStatus.Active || app.PaymentStatus == PaymentStatus.Paused)
                 .Where(app => providers.Any(p => p.Ukprn == app.ProviderId))
             .GroupBy(app => new { app.ProviderId })
             .Select(app => app.First());
