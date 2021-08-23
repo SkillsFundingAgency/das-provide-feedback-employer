@@ -21,7 +21,7 @@ namespace ESFA.DAS.ProvideFeedback.Employer.ApplicationServices
         {
             var baseUrl = GetBaseUrl(_configuration.ApiBaseUrl);
             var url = $"{baseUrl}api/accounts/internal/{accountId}/users";
-            var json = await _httpClient.GetAsync(url);
+            var json = await _httpClient.GetAsync(url, _configuration.IdentifierUri);
 
             return JsonConvert.DeserializeObject<ICollection<TeamMemberViewModel>>(json);
         }

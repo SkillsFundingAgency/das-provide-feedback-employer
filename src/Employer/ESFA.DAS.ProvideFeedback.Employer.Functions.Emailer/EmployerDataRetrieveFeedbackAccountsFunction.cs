@@ -1,20 +1,20 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using ESFA.DAS.ProvideFeedback.Employer.ApplicationServices;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.ServiceBus;
 using Microsoft.Extensions.Logging;
-using SFA.DAS.Commitments.Api.Client.Interfaces;
 
 namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
 {
     public class EmployerDataRetrieveFeedbackAccountsFunction
     {
-        private readonly IEmployerCommitmentApi _commitmentApiClient;
+        private readonly ICommitmentService _commitmentService;
 
-        public EmployerDataRetrieveFeedbackAccountsFunction(IEmployerCommitmentApi commitmentApiClient)
+        public EmployerDataRetrieveFeedbackAccountsFunction(ICommitmentService commitmentService)
         {
-            _commitmentApiClient = commitmentApiClient;
+            _commitmentService = commitmentService;
         }
 
         [FunctionName("EmployerDataRetrieveFeedbackAccountsFunction")]
@@ -27,16 +27,17 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
 
             try
             {
-                var employerAccountIds = await _commitmentApiClient.GetAllEmployerAccountIds();
+                var allCohortAccountIdsResponse = await _commitmentService.GetAllCohortAccountIds();
 
                 log.LogInformation("Finished getting the Employer Accounts from APIs");
 
-                employerAccountIds
+                allCohortAccountIdsResponse
+                    .AccountIds
                     .Select(id => id.ToString())
                     .AsParallel()
                     .ForAll(queue.Add);
 
-                log.LogInformation($"Placed {employerAccountIds.Count()} messages in the queue");
+                log.LogInformation($"Placed { allCohortAccountIdsResponse.AccountIds.Count()} messages in the queue");
             }
             catch(Exception ex)
             {

@@ -16,9 +16,6 @@ using Microsoft.Extensions.Options;
 using Moq;
 using Newtonsoft.Json;
 using NUnit.Framework;
-using SFA.DAS.Commitments.Api.Client.Interfaces;
-using SFA.DAS.Commitments.Api.Types.Apprenticeship;
-using SFA.DAS.Commitments.Api.Types.Apprenticeship.Types;
 using SFA.DAS.EAS.Account.Api.Types;
 using SFA.DAS.Notifications.Api.Client;
 using SFA.DAS.Notifications.Api.Types;
@@ -30,6 +27,8 @@ using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using SFA.DAS.CommitmentsV2.Api.Types.Responses;
+using SFA.DAS.CommitmentsV2.Types;
 
 namespace IntegrationTests
 {
@@ -37,11 +36,12 @@ namespace IntegrationTests
     public class IntegrationTest_NeedsToBeRanAsOne
     {
         private IConfigurationRoot _configuration;
-        private Mock<IEmployerCommitmentApi> _commitmentApiClientMock;
+        private Mock<ICommitmentService> _commitmentServiceMock;
+
         private Mock<IAccountService> _accountServiceMock;
         private Mock<INotificationsApi> _notificationsApiClientMock;
 
-        private List<Apprenticeship> _commitmentApiClientReturn;
+        private GetApprenticeshipsResponse _commitmentGetApprenticeshipsReturn;
         private ICollection<TeamMemberViewModel> _accountApiClientReturn;
 
         private Mock<ILogger<EmployerSurveyEmailer>> _surveyLoggerMock;
@@ -93,7 +93,7 @@ namespace IntegrationTests
         [SetUp]
         public void SetUp()
         {
-            _commitmentApiClientMock = new Mock<IEmployerCommitmentApi>();
+            _commitmentServiceMock = new Mock<ICommitmentService>();
             _accountServiceMock = new Mock<IAccountService>();
             _notificationsApiClientMock = new Mock<INotificationsApi>();
             _surveyLoggerMock = new Mock<ILogger<EmployerSurveyEmailer>>();
@@ -103,7 +103,7 @@ namespace IntegrationTests
             _dbEmployerFeedbackRepository = new EmployerFeedbackRepository(_dbConnection);
 
             _dataRetreivalService = new EmployerFeedbackDataRetrievalService(
-                _commitmentApiClientMock.Object,
+                _commitmentServiceMock.Object,
                 _accountServiceMock.Object,
                 _dbEmployerFeedbackRepository);
 
@@ -115,7 +115,7 @@ namespace IntegrationTests
 
             _initiateFunction = new InitiateDataRefreshFunction(_dbEmployerFeedbackRepository);
             _providersRefreshFunction = new ProviderRefreshFunction(providerRefreshSevice);
-            _accountRetrieveFunction = new EmployerDataRetrieveFeedbackAccountsFunction(_commitmentApiClientMock.Object);
+            _accountRetrieveFunction = new EmployerDataRetrieveFeedbackAccountsFunction(_commitmentServiceMock.Object);
             _accountDataRetrieveFunction = new AccountRefreshFunction(_dataRetreivalService);
             _processActiveFeedbackFunction = new ProcessActiveFeedbackFunction(_helper);
             _surveyInviteGeneratorFunction = new EmployerSurveyInviteGeneratorFunction(_surveyInviteGenerator);
@@ -339,24 +339,38 @@ namespace IntegrationTests
                 new ProviderRegistration {Ukprn = changeableUkprn, LegalName = "Worst School"},
             };
 
-            _commitmentApiClientReturn = new List<Apprenticeship>
+            _commitmentGetApprenticeshipsReturn = new GetApprenticeshipsResponse
             {
-                new Apprenticeship
+                TotalApprenticeships = 3,
+                Apprenticeships = new List<GetApprenticeshipsResponse.ApprenticeshipDetailsResponse>
                 {
-                    HasHadDataLockSuccess = true, PaymentStatus = PaymentStatus.Active, ULN = "1",
-                    EmployerAccountId = 1, ProviderId = 1, ProviderName = "Test Academy"
-                },
-                new Apprenticeship
-                {
-                    HasHadDataLockSuccess = true, PaymentStatus = PaymentStatus.Active, ULN = "2",
-                    EmployerAccountId = 1, ProviderId = 1, ProviderName = "Test Academy"
-                },
-                new Apprenticeship
-                {
-                    HasHadDataLockSuccess = true, PaymentStatus = PaymentStatus.Active, ULN = "3",
-                    EmployerAccountId = 1, ProviderId = changeableUkprn, ProviderName = "Worst School"
+                    new GetApprenticeshipsResponse.ApprenticeshipDetailsResponse
+                    {
+                        PaymentStatus = PaymentStatus.Active,
+                        Uln = "1",
+                        AccountLegalEntityId = 1,
+                        ProviderId = 1,
+                        ProviderName = "Test Academy"
+                    },
+                    new GetApprenticeshipsResponse.ApprenticeshipDetailsResponse
+                    {
+                        PaymentStatus = PaymentStatus.Active,
+                        Uln = "2",
+                        AccountLegalEntityId = 1,
+                        ProviderId = 1,
+                        ProviderName = "Test Academy"
+                    },
+                    new GetApprenticeshipsResponse.ApprenticeshipDetailsResponse
+                    {
+                        PaymentStatus = PaymentStatus.Active,
+                        Uln = "3",
+                        AccountLegalEntityId = 1,
+                        ProviderId = changeableUkprn,
+                        ProviderName = "Worst School"
+                    }
                 }
             };
+
 
             _accountApiClientReturn = new List<TeamMemberViewModel>
             {
@@ -389,9 +403,15 @@ namespace IntegrationTests
 
             _accountServiceMock.Setup(x => x.GetAccountUsers(It.IsAny<long>())).ReturnsAsync(_accountApiClientReturn);
             _roatpService.Setup(x => x.GetAll()).ReturnsAsync(_providerApiClientReturn);
-            _commitmentApiClientMock.Setup(x => x.GetEmployerApprenticeships(It.IsAny<long>()))
-                .ReturnsAsync(_commitmentApiClientReturn);
-            _commitmentApiClientMock.Setup(x => x.GetAllEmployerAccountIds()).ReturnsAsync(new long[] { 1 });
+           
+            _commitmentServiceMock
+                .Setup(x => x.GetApprenticeships(It.IsAny<long>()))
+                .ReturnsAsync(_commitmentGetApprenticeshipsReturn);
+
+            _commitmentServiceMock
+                .Setup(x => x.GetAllCohortAccountIds())
+                .ReturnsAsync(new GetAllCohortAccountIdsResponse(new List<long> {1}));
+
         }
 
         private async Task RunThroughRefreshFunctions()

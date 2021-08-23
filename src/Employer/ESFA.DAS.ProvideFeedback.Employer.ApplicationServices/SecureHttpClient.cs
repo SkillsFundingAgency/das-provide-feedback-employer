@@ -1,4 +1,5 @@
-﻿using ESFA.DAS.ProvideFeedback.Employer.ApplicationServices.Configuration;
+﻿using System;
+using ESFA.DAS.ProvideFeedback.Employer.ApplicationServices.Configuration;
 using Microsoft.AspNetCore.Hosting;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -11,15 +12,12 @@ namespace ESFA.DAS.ProvideFeedback.Employer.ApplicationServices
         private readonly HttpClient _httpClient;
         private readonly IAzureClientCredentialHelper _azureClientCredentialHelper;
         private readonly IHostingEnvironment _hostingEnvironment;
-        private readonly IAccountApiConfiguration _configuration;
 
-        public SecureHttpClient(HttpClient httpClient, IAzureClientCredentialHelper azureClientCredentialHelper, IHostingEnvironment hostingEnvironment, IAccountApiConfiguration configuration)
+        public SecureHttpClient(HttpClient httpClient, IAzureClientCredentialHelper azureClientCredentialHelper, IHostingEnvironment hostingEnvironment)
         {
             _httpClient = httpClient;
             _azureClientCredentialHelper = azureClientCredentialHelper;
             _hostingEnvironment = hostingEnvironment;
-            _configuration = configuration;
-            
         }
 
         protected SecureHttpClient()
@@ -27,11 +25,11 @@ namespace ESFA.DAS.ProvideFeedback.Employer.ApplicationServices
             // So we can mock for testing
         }
 
-        public virtual async Task<string> GetAsync(string url)
+        public virtual async Task<string> GetAsync(string url, string apiTokenIdentifierUri)
         {
             if (!_hostingEnvironment.IsDevelopment())
             {
-                var accessToken = await _azureClientCredentialHelper.GetAccessTokenAsync(_configuration.IdentifierUri);
+                var accessToken = await _azureClientCredentialHelper.GetAccessTokenAsync(apiTokenIdentifierUri);
                 _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
             }
 
