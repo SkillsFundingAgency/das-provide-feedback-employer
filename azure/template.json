@@ -104,6 +104,9 @@
             "type": "string",
             "defaultValue": "das-provide-feedback-emailer"
         },
+        "cosmosDbPrimaryReadWriteKey": {
+            "type": "securestring"
+        },
         "cosmosDbIpRangeFilter": {
             "type": "string",
             "defaultValue": ""
@@ -316,7 +319,7 @@
                                 },
                                 {
                                     "name": "CosmosConnectionSettings:AuthorizationKey",
-                                    "value": "[reference('cosmos-db').outputs.PrimaryMasterKey.value]"
+                                    "value": "[parameters('cosmosDbPrimaryReadWriteKey')]"
                                 },
                                 {
                                     "name": "ASPNETCORE_ENVIRONMENT",
