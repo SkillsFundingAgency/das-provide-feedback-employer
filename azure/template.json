@@ -441,7 +441,7 @@
                                 },
                                 {
                                     "name": "Azure:CosmosKey",
-                                    "value": "[reference('cosmos-db').outputs.PrimaryMasterKey.value]"
+                                    "value": "[parameters('cosmosDbPrimaryReadWriteKey')]"
                                 },
                                 {
                                     "name": "Azure:DatabaseName",
