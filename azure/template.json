@@ -734,6 +734,10 @@
                                 {
                                     "name": "ServiceBusConnection",
                                     "value": "[reference('service-bus').outputs.ServiceBusEndpoint.value]"
+                                },
+                                {
+                                    "name": "WEBSITE_RUN_FROM_PACKAGE",
+                                    "value": "1"
                                 }
                             ]
                         }
