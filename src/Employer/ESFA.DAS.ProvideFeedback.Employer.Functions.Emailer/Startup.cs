@@ -24,6 +24,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.IO;
 using System.Net.Http.Headers;
+using ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer.Database;
 using LogLevel = NLog.LogLevel;
 
 [assembly: FunctionsStartup(typeof(Startup))]
@@ -40,7 +41,7 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
                 .AddEnvironmentVariables()
                 .Build();
 
-            builder.Services.AddTransient<IDbConnection>(c => new SqlConnection(_configuration.GetConnectionStringOrSetting("EmployerEmailStoreConnection")));
+            builder.Services.AddDatabaseRegistration(_configuration);
 
             builder.Services.AddLogging((options) =>
             {
