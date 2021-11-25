@@ -39,7 +39,7 @@ namespace ESFA.DAS.EmployerProvideFeedback
             services.AddTransient<EnsureSessionExists>();
             services.Configure<List<ProviderAttributeModel>>(Configuration.GetSection("ProviderAttributes"));
             services.Configure<CosmosConnectionSettings>(Configuration.GetSection("CosmosConnectionSettings"));
-            services.AddDatabaseRegistration(Configuration);
+            services.AddDatabaseRegistration(Configuration, _hostingEnvironment);
             services.AddTransient<ISessionService, SessionService>();
             services.AddTransient<ReviewAnswersOrchestrator>();
             services.AddProvideFeedbackCosmos(Configuration);
