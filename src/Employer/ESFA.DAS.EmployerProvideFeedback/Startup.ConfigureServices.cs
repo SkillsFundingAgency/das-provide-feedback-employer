@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using ESFA.DAS.EmployerProvideFeedback.Configuration;
+using ESFA.DAS.EmployerProvideFeedback.Database;
 using ESFA.DAS.EmployerProvideFeedback.Infrastructure;
 using ESFA.DAS.EmployerProvideFeedback.Orchestrators;
 using ESFA.DAS.EmployerProvideFeedback.ViewModels;
@@ -38,7 +39,7 @@ namespace ESFA.DAS.EmployerProvideFeedback
             services.AddTransient<EnsureSessionExists>();
             services.Configure<List<ProviderAttributeModel>>(Configuration.GetSection("ProviderAttributes"));
             services.Configure<CosmosConnectionSettings>(Configuration.GetSection("CosmosConnectionSettings"));
-            services.AddTransient<IDbConnection>(c => new SqlConnection(Configuration.GetConnectionString("EmployerEmailStoreConnection")));
+            services.AddDatabaseRegistration(Configuration, _hostingEnvironment);
             services.AddTransient<ISessionService, SessionService>();
             services.AddTransient<ReviewAnswersOrchestrator>();
             services.AddProvideFeedbackCosmos(Configuration);
