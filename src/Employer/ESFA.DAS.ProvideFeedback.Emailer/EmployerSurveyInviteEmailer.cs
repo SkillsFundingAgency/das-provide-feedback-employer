@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using ESFA.DAS.Feedback.Employer.Emailer.Configuration;
-using ESFA.DAS.ProvideFeedback.Data;
+using ESFA.DAS.ProvideFeedback.Data.Repositories;
 using ESFA.DAS.ProvideFeedback.Domain.Entities.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -12,10 +12,10 @@ namespace ESFA.DAS.Feedback.Employer.Emailer
 {
     public class EmployerSurveyInviteEmailer : EmployerSurveyEmailer
     {
-        private readonly IStoreEmployerEmailDetails _emailDetailsStore;
+        private readonly IEmployerFeedbackRepository _emailDetailsStore;
 
         public EmployerSurveyInviteEmailer(
-            IStoreEmployerEmailDetails emailDetailsStore, 
+            IEmployerFeedbackRepository emailDetailsStore, 
             INotificationsApi emailService, 
             IOptions<EmailSettings> settings, 
             ILogger<EmployerSurveyEmailer> logger) : base(emailService, logger, settings)

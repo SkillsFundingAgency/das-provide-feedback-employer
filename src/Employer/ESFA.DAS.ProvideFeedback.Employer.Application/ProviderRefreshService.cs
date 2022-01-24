@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
-using ESFA.DAS.ProvideFeedback.Data;
+using ESFA.DAS.ProvideFeedback.Data.Repositories;
 using ESFA.DAS.ProvideFeedback.Domain.Entities.Models;
 using ESFA.DAS.ProvideFeedback.Employer.ApplicationServices;
 
@@ -9,10 +9,10 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Application
 {
     public class ProviderRefreshService
     {
-        private readonly IStoreEmployerEmailDetails _dbRepository;
+        private readonly IEmployerFeedbackRepository _dbRepository;
         private readonly IRoatpService _roatpService;
 
-        public ProviderRefreshService(IStoreEmployerEmailDetails dbRepository, IRoatpService roatpService)
+        public ProviderRefreshService(IEmployerFeedbackRepository dbRepository, IRoatpService roatpService)
         {
             _dbRepository = dbRepository;
             _roatpService = roatpService;

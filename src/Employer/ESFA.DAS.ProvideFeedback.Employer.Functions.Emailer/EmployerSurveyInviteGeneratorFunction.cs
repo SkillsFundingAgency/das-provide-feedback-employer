@@ -22,7 +22,7 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
             [ServiceBusTrigger("%GenerateSurveyInviteMessageQueueName%", Connection = "ServiceBusConnection")]string feedbackForCodeGeneration,
             ILogger log)
         {
-            log.LogInformation($"Employer Survey Invite generator executed at: {DateTime.Now}");
+            log.LogInformation($"Employer Survey Invite generator executed at: {DateTime.UtcNow}");
             var message = JsonConvert.DeserializeObject<GenerateSurveyCodeMessage>(feedbackForCodeGeneration);
 
             try
@@ -35,7 +35,7 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
                 throw;
             }
 
-            log.LogInformation($"Employer Survey Invite generator completed at: {DateTime.Now}");
+            log.LogInformation($"Employer Survey Invite generator completed at: {DateTime.UtcNow}");
         }
     }
 }

@@ -1,5 +1,5 @@
 ﻿using ESFA.DAS.Feedback.Employer.Emailer.Configuration;
-using ESFA.DAS.ProvideFeedback.Data;
+using ESFA.DAS.ProvideFeedback.Data.Repositories;
 using ESFA.DAS.ProvideFeedback.Domain.Entities.Messages;
 using ESFA.DAS.ProvideFeedback.Domain.Entities.Models;
 using ESFA.DAS.ProvideFeedback.Employer.Application;
@@ -16,7 +16,7 @@ namespace UnitTests.Application.SurveyInviteGeneratorTests
     public class WhenGenerateSurveyInvitesInvoked
     {
         private readonly SurveyInviteGenerator _sut;
-        private readonly Mock<IStoreEmployerEmailDetails> _emailDetailsRepoMock;
+        private readonly Mock<IEmployerFeedbackRepository> _emailDetailsRepoMock;
         private readonly GenerateSurveyCodeMessage _message;
         private readonly EmailSettings _testConfig;
         private const int FeedBackId = 88;
@@ -29,7 +29,7 @@ namespace UnitTests.Application.SurveyInviteGeneratorTests
 
             _message = new GenerateSurveyCodeMessage { AccountId = 1, Ukprn = 88888888, UserRef = Guid.NewGuid() };
 
-            _emailDetailsRepoMock = new Mock<IStoreEmployerEmailDetails>();
+            _emailDetailsRepoMock = new Mock<IEmployerFeedbackRepository>();
             _emailDetailsRepoMock
                 .Setup(mock => mock.UpsertIntoFeedback(_message.UserRef, _message.AccountId, _message.Ukprn))
                 .ReturnsAsync(FeedBackId);
@@ -79,7 +79,7 @@ namespace UnitTests.Application.SurveyInviteGeneratorTests
             get
             {
                 yield return new object[] { null, null };
-                yield return new object[] { Guid.NewGuid(), DateTime.Now.AddDays(InviteCycleDays * -1).ToUniversalTime() };
+                yield return new object[] { Guid.NewGuid(), DateTime.UtcNow.AddDays(InviteCycleDays * -1).ToUniversalTime() };
             }
         }
 
@@ -91,7 +91,7 @@ namespace UnitTests.Application.SurveyInviteGeneratorTests
             { 
                 FeedbackId = FeedBackId, 
                 UniqueSurveyCode = Guid.NewGuid(), 
-                InviteSentDate = DateTime.Now.AddDays(InviteCycleDays - 1) 
+                InviteSentDate = DateTime.UtcNow.AddDays(InviteCycleDays - 1) 
             };
 
             _emailDetailsRepoMock
@@ -109,7 +109,7 @@ namespace UnitTests.Application.SurveyInviteGeneratorTests
             get
             {
                 yield return new object[] { null };
-                yield return new object[] { DateTime.Now.AddDays(InviteCycleDays - 1) };
+                yield return new object[] { DateTime.UtcNow.AddDays(InviteCycleDays - 1) };
             }
         }
     }

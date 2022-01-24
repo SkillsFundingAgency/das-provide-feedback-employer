@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using ESFA.DAS.EmployerProvideFeedback.Configuration.Routing;
 using ESFA.DAS.EmployerProvideFeedback.Infrastructure;
 using ESFA.DAS.EmployerProvideFeedback.ViewModels;
-using ESFA.DAS.ProvideFeedback.Data;
+using ESFA.DAS.ProvideFeedback.Data.Repositories;
 using ESFA.DAS.ProvideFeedback.Domain.Entities.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -15,21 +16,19 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
 
     public class HomeController : Controller
     {
-        private readonly IStoreEmployerEmailDetails _employerEmailDetailsRepository;
+        private readonly IEmployerFeedbackRepository _employerEmailDetailsRepository;
         private readonly ISessionService _sessionService;
         private readonly ILogger<HomeController> _logger;
-        private readonly List<ProviderAttributeModel> _providerAttributeList;
+        
 
         public HomeController(
-            IStoreEmployerEmailDetails employerEmailDetailsRepository,
+            IEmployerFeedbackRepository employerEmailDetailsRepository,
             ISessionService sessionService,
-            ILogger<HomeController> logger,
-            IOptions<List<ProviderAttributeModel>> providerAttributes)
+            ILogger<HomeController> logger)
         {
             _employerEmailDetailsRepository = employerEmailDetailsRepository;
             _sessionService = sessionService;
             _logger = logger;
-            _providerAttributeList = providerAttributes.Value;
         }
 
         [ServiceFilter(typeof(EnsureFeedbackNotSubmitted))]
@@ -49,8 +48,14 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
                     //TODO: 
                     return NotFound();
                 }
-
-                var newSurveyModel = MapToNewSurveyModel(employerEmailDetail);
+                var providerAttributes = await _employerEmailDetailsRepository.GetAllAttributes();
+                if (providerAttributes == null)
+                {
+                    _logger.LogError($"Unable to load Provider Attributes from the database.");
+                    return RedirectToAction("Error", "Error");
+                }
+                var providerAttributesModel = providerAttributes.Select(s => new ProviderAttributeModel { Name = s.AttributeName });
+                var newSurveyModel = MapToNewSurveyModel(employerEmailDetail, providerAttributesModel);
                 await _sessionService.Set(uniqueCode.ToString(), newSurveyModel);
                 ViewData.Add("ProviderName", employerEmailDetail.ProviderName);
             }
@@ -75,7 +80,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
             return View();
         }
 
-        private SurveyModel MapToNewSurveyModel(EmployerSurveyInvite employerEmailDetail)
+        private SurveyModel MapToNewSurveyModel(EmployerSurveyInvite employerEmailDetail, IEnumerable<ProviderAttributeModel> providerAttributes)
         {
             return new SurveyModel
             {
@@ -84,7 +89,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
                 UserRef = employerEmailDetail.UserRef,
                 Submitted = employerEmailDetail.CodeBurntDate != null,
                 ProviderName = employerEmailDetail.ProviderName,
-                Attributes = _providerAttributeList
+                Attributes = providerAttributes.ToList()
             };
         }
     }

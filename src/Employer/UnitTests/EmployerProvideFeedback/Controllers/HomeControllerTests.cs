@@ -6,7 +6,7 @@ using AutoFixture;
 using ESFA.DAS.EmployerProvideFeedback.Controllers;
 using ESFA.DAS.EmployerProvideFeedback.Infrastructure;
 using ESFA.DAS.EmployerProvideFeedback.ViewModels;
-using ESFA.DAS.ProvideFeedback.Data;
+using ESFA.DAS.ProvideFeedback.Data.Repositories;
 using ESFA.DAS.ProvideFeedback.Domain.Entities.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -20,7 +20,7 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
     {
         private readonly HomeController _controller;
         private readonly Mock<ISessionService> _sessionServiceMock;
-        private readonly Mock<IStoreEmployerEmailDetails> _employerEmailDetailsRepoMock;
+        private readonly Mock<IEmployerFeedbackRepository> _employerEmailDetailsRepoMock;
         private readonly Mock<ILogger<HomeController>> _loggerMock; 
         private readonly List<ProviderAttributeModel> _providerAttributes;
         private IFixture _fixture = new Fixture();
@@ -32,14 +32,13 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
             _employerEmailDetail = _fixture.Create<EmployerSurveyInvite>();
             _providerAttributes = GetProviderAttributes();
             _sessionServiceMock = new Mock<ISessionService>();
-            _employerEmailDetailsRepoMock = new Mock<IStoreEmployerEmailDetails>();
+            _employerEmailDetailsRepoMock = new Mock<IEmployerFeedbackRepository>();
             _loggerMock = new Mock<ILogger<HomeController>>();
             _providerAttributeOptions = Options.Create(_providerAttributes);
             _controller = new HomeController(
                 _employerEmailDetailsRepoMock.Object,
                 _sessionServiceMock.Object,
-                _loggerMock.Object,
-                _providerAttributeOptions);
+                _loggerMock.Object);
             _employerEmailDetailsRepoMock.Setup(mock => mock.GetEmployerInviteForUniqueCode(It.IsAny<Guid>())).Returns(Task.FromResult(_employerEmailDetail));
         }
 

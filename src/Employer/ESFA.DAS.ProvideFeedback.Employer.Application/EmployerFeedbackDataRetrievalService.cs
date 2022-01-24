@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using ESFA.DAS.ProvideFeedback.Data;
+using ESFA.DAS.ProvideFeedback.Data.Repositories;
 using ESFA.DAS.ProvideFeedback.Domain.Entities.Messages;
 using ESFA.DAS.ProvideFeedback.Domain.Entities.Models;
 using ESFA.DAS.ProvideFeedback.Employer.ApplicationServices;
@@ -15,12 +15,12 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Application
     {
         ICommitmentService _commitmentService;
         IAccountService _accountService;
-        IStoreEmployerEmailDetails _emailDetailsRepository;
+        IEmployerFeedbackRepository _emailDetailsRepository;
 
         public EmployerFeedbackDataRetrievalService(
             ICommitmentService commitmentService,
             IAccountService accountService,
-            IStoreEmployerEmailDetails emailDetailsRepository)
+            IEmployerFeedbackRepository emailDetailsRepository)
         {
             _commitmentService = commitmentService;
             _accountService = accountService;

@@ -23,6 +23,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ESFA.DAS.EmployerFeedbackEmail.Data\ESFA.DAS.ProvideFeedback.Data.csproj" />
+    <ProjectReference Include="..\ESFA.DAS.EmployerProvideFeedback.Api\ESFA.DAS.EmployerProvideFeedback.Api.csproj" />
     <ProjectReference Include="..\ESFA.DAS.ProvideFeedback.Emailer\ESFA.DAS.ProvideFeedback.Emailer.csproj" />
     <ProjectReference Include="..\ESFA.DAS.ProvideFeedback.Employer.Application\ESFA.DAS.ProvideFeedback.Employer.Application.csproj" />
   </ItemGroup>
@@ -31,7 +32,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="local.settings.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <CopyToPublishDirectory>Never</CopyToPublishDirectory>
     </None>
   </ItemGroup>

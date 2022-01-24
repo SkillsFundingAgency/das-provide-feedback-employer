@@ -1,7 +1,7 @@
 ﻿using Dapper;
 using ESFA.DAS.Feedback.Employer.Emailer;
 using ESFA.DAS.Feedback.Employer.Emailer.Configuration;
-using ESFA.DAS.ProvideFeedback.Data;
+using ESFA.DAS.ProvideFeedback.Data.Repositories;
 using ESFA.DAS.ProvideFeedback.Domain.Entities.ApiTypes;
 using ESFA.DAS.ProvideFeedback.Domain.Entities.Messages;
 using ESFA.DAS.ProvideFeedback.Domain.Entities.Models;
@@ -46,7 +46,7 @@ namespace IntegrationTests
 
         private Mock<ILogger<EmployerSurveyEmailer>> _surveyLoggerMock;
 
-        private IStoreEmployerEmailDetails _dbEmployerFeedbackRepository;
+        private IEmployerFeedbackRepository _dbEmployerFeedbackRepository;
         private EmployerFeedbackDataRetrievalService _dataRetreivalService;
         private EmployerSurveyInviteEmailer _employerSurveyInviteEmailer;
         private EmployerSurveyReminderEmailer _employerSurveyReminderEmailer;
@@ -229,7 +229,7 @@ namespace IntegrationTests
                 UPDATE EmployerSurveyHistory
                 SET SentDate = @newSentDate
                 WHERE EmailType = 1 AND UniqueSurveyCode IN (SELECT UniqueSurveyCode FROM EmployerSurveyCodes WHERE FeedbackId IN (SELECT FeedbackId FROM EmployerFeedback WHERE UserRef in @userRefs))",
-                new { newSentDate = DateTime.Now - TimeSpan.FromDays(91), userRefs = new[] { _user1Guid, _user2Guid } });
+                new { newSentDate = DateTime.UtcNow - TimeSpan.FromDays(91), userRefs = new[] { _user1Guid, _user2Guid } });
             _notificationsApiClientMock = new Mock<INotificationsApi>();
             _employerSurveyInviteEmailer = new EmployerSurveyInviteEmailer(_dbEmployerFeedbackRepository,
                 _notificationsApiClientMock.Object, _options, _surveyLoggerMock.Object);
@@ -268,7 +268,7 @@ namespace IntegrationTests
                 UPDATE EmployerSurveyHistory
                 SET SentDate = @newSentDate
                 WHERE EmailType = 1 AND UniqueSurveyCode IN (SELECT UniqueSurveyCode FROM EmployerSurveyCodes WHERE FeedbackId IN (SELECT FeedbackId FROM EmployerFeedback WHERE UserRef in @userRefs))",
-                new { newSentDate = DateTime.Now - TimeSpan.FromDays(91), userRefs = new[] { _user1Guid, _user2Guid } });
+                new { newSentDate = DateTime.UtcNow - TimeSpan.FromDays(91), userRefs = new[] { _user1Guid, _user2Guid } });
             _employerSurveyInviteEmailer = new EmployerSurveyInviteEmailer(_dbEmployerFeedbackRepository,
                 _notificationsApiClientMock.Object, _options, _surveyLoggerMock.Object);
 

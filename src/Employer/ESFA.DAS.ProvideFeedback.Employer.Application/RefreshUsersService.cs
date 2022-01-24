@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
-using ESFA.DAS.ProvideFeedback.Data;
+using ESFA.DAS.ProvideFeedback.Data.Repositories;
 using ESFA.DAS.ProvideFeedback.Domain.Entities.Messages;
 using Microsoft.Extensions.Logging;
 
@@ -9,11 +9,11 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Application
     public class UserRefreshService
     {
         private ILogger<UserRefreshService> _logger;
-        private IStoreEmployerEmailDetails _dbRepository;
+        private IEmployerFeedbackRepository _dbRepository;
 
         public UserRefreshService(
             ILogger<UserRefreshService> logger,
-            IStoreEmployerEmailDetails dbRepository)
+            IEmployerFeedbackRepository dbRepository)
         {
             _logger = logger;
             _dbRepository = dbRepository;

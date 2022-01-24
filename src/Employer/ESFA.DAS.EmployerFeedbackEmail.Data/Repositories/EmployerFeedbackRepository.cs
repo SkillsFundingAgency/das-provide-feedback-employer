@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 using Dapper;
 using ESFA.DAS.ProvideFeedback.Domain.Entities.Models;
 
-namespace ESFA.DAS.ProvideFeedback.Data
+namespace ESFA.DAS.ProvideFeedback.Data.Repositories
 {
-    public class EmployerFeedbackRepository : IStoreEmployerEmailDetails
+    public class EmployerFeedbackRepository : IEmployerFeedbackRepository
     {
         private int _commandTimeoutSeconds = 120;
         private readonly IDbConnection _dbConnection;
@@ -50,7 +50,7 @@ namespace ESFA.DAS.ProvideFeedback.Data
 
         public async Task<IEnumerable<EmployerSurveyInvite>> GetEmployerInvitesToBeSentReminder(int minDaysSinceInvite)
         {
-            var minSentDate = DateTime.Now.AddDays(-minDaysSinceInvite);
+            var minSentDate = DateTime.UtcNow.AddDays(-minDaysSinceInvite);
             var parameters = new DynamicParameters();
             parameters.Add("@MinSentDate", minSentDate, DbType.DateTime2);
             return await _dbConnection.QueryAsync<EmployerSurveyInvite>(
@@ -71,7 +71,7 @@ namespace ESFA.DAS.ProvideFeedback.Data
 
         public async Task SetCodeBurntDate(Guid uniqueCode)
         {
-            var now = DateTime.Now;
+            var now = DateTime.UtcNow;
             await _dbConnection.QueryAsync($@"
                                 UPDATE {EmployerSurveyCodes}
                                 SET BurnDate = @now
@@ -81,7 +81,7 @@ namespace ESFA.DAS.ProvideFeedback.Data
 
         public async Task InsertSurveyInviteHistory(IEnumerable<Guid> uniqueSurveyCodes, int inviteType)
         {
-            var now = DateTime.Now;
+            var now = DateTime.UtcNow;
             var toInsert = uniqueSurveyCodes.Select(uniqueSurveyCode =>
             {
                 return new
@@ -119,7 +119,7 @@ namespace ESFA.DAS.ProvideFeedback.Data
             var parameters = new DynamicParameters();
             parameters.Add("@UserRef", user.UserRef, DbType.Guid);
             parameters.Add("@EmailAddress", user.EmailAddress, DbType.String);
-            parameters.Add("@FirstName", user.FirstName, DbType.String);            
+            parameters.Add("@FirstName", user.FirstName, DbType.String);
 
             await _dbConnection.ExecuteAsync
             (
@@ -127,7 +127,7 @@ namespace ESFA.DAS.ProvideFeedback.Data
                 param: parameters,
                 commandType: CommandType.StoredProcedure,
                 commandTimeout: _commandTimeoutSeconds
-            );         
+            );
         }
 
         public async Task UpsertIntoProviders(IEnumerable<Provider> providers)
@@ -195,6 +195,68 @@ namespace ESFA.DAS.ProvideFeedback.Data
             return await _dbConnection.QueryAsync<Provider>(sql, new { ukprns });
         }
 
+        public async Task<IEnumerable<FeedbackQuestionAttribute>> GetAllAttributes()
+        {
+            return await _dbConnection.QueryAsync<FeedbackQuestionAttribute>("SELECT * FROM Attributes");
+        }
+
+        public async Task<long> GetFeedbackIdFromUniqueSurveyCode(Guid uniqueSurveyCode)
+        {
+            return await _dbConnection.QueryFirstOrDefaultAsync<long>("SELECT FeedbackId FROM EmployerSurveyCodes WHERE UniqueSurveyCode = @uniqueSurveyCode"
+                , new { uniqueSurveyCode = uniqueSurveyCode });
+        }
+
+        public async Task<Guid> CreateEmployerFeedbackResult(long feedbackId, string providerRating, DateTime dateTimeCompleted, IEnumerable<ProviderAttribute> providerAttributes)
+        {
+            var providerAttributesDt = ProviderAttributesToDataTable(providerAttributes);
+
+            if (_dbConnection.State != ConnectionState.Open)
+            {
+                _dbConnection.Open();
+            }
+            var transaction = _dbConnection.BeginTransaction();
+            try
+            {
+                var result = await _dbConnection.QueryFirstOrDefaultAsync<Guid>(
+
+                    sql: "[dbo].[CreateEmployerFeedbackResult]",
+                    param: new
+                    {
+                        FeedbackId = feedbackId,
+                        ProviderRating = providerRating,
+                        DateTimeCompleted = dateTimeCompleted,
+                        ProviderAttributesDt = providerAttributesDt.AsTableValuedParameter("ProviderAttributesTemplate")
+                    },
+                    commandType: CommandType.StoredProcedure,
+                    transaction: transaction
+                );
+
+                transaction.Commit();
+                return result;
+            }
+            catch
+            {
+                transaction.Rollback();
+                throw;
+            }
+            finally
+            {
+                _dbConnection.Close();
+            }
+        }
+
+        public async Task<EmployerFeedback> GetEmployerFeedbackRecord(Guid userRef, long accountId, long ukprn)
+        {
+            return await _dbConnection.
+                QueryFirstOrDefaultAsync<EmployerFeedback>(@"SELECT TOP 1 * FROM EmployerFeedback WHERE UserRef = @userRef AND Ukprn = @ukprn AND AccountId = @accountId",
+                new
+                {
+                    userRef,
+                    accountId,
+                    ukprn
+                });
+        }
+
         private DataTable ProvidersToDatatable(IEnumerable<Provider> providers)
         {
             var dt = new DataTable();
@@ -208,6 +270,20 @@ namespace ESFA.DAS.ProvideFeedback.Data
 
             return dt;
         }
-        
+
+        private DataTable ProviderAttributesToDataTable(IEnumerable<ProviderAttribute> providerAttributes)
+        {
+            var dt = new DataTable();
+            dt.Columns.Add("AttributeId", typeof(long));
+            dt.Columns.Add("AttributeValue", typeof(int));
+
+            foreach (var providerAttribute in providerAttributes)
+            {
+                dt.Rows.Add(providerAttribute.AttributeId, providerAttribute.AttributeValue);
+            }
+
+            return dt;
+        }
+
     }
 }
