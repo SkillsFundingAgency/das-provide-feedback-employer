@@ -759,7 +759,7 @@
                                 {
                                     "name": "Azure:EmployerFeedbackCollection",
                                     "value": "[parameters('feedbackApiData').FeedbackCollection]"
-                                },
+                                }
                             ]
                         }
                     },
