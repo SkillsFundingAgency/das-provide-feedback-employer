@@ -29,12 +29,13 @@ namespace ESFA.DAS.EmployerProvideFeedback.Orchestrators
 
         public async Task SubmitConfirmedEmployerFeedback(SurveyModel surveyModel, Guid uniqueCode)
         {
-            await SubmitConfirmedEmployerFeedbackCosmos(surveyModel, uniqueCode);
-            await SubmitConfirmedEmployerFeedbackSql(surveyModel, uniqueCode);
+            var now = DateTime.UtcNow;
+            await SubmitConfirmedEmployerFeedbackCosmos(surveyModel, uniqueCode, now);
+            await SubmitConfirmedEmployerFeedbackSql(surveyModel, uniqueCode, now);
         }
-        public async Task SubmitConfirmedEmployerFeedbackCosmos(SurveyModel surveyModel, Guid uniqueCode)
+        public async Task SubmitConfirmedEmployerFeedbackCosmos(SurveyModel surveyModel, Guid uniqueCode, DateTime now)
         {
-            var employerFeedback = ConvertToEmployerFeedback(surveyModel);
+            var employerFeedback = ConvertToEmployerFeedback(surveyModel, now);
             Document doc = null;
 
             try
@@ -48,14 +49,14 @@ namespace ESFA.DAS.EmployerProvideFeedback.Orchestrators
             }
         }
 
-        private EmployerFeedback ConvertToEmployerFeedback(SurveyModel survey)
+        private EmployerFeedback ConvertToEmployerFeedback(SurveyModel survey, DateTime now)
         {
             return new EmployerFeedback
             {
                 Id = Guid.NewGuid(),
                 UserRef = survey.UserRef,
                 AccountId = survey.AccountId,
-                DateTimeCompleted = DateTime.Now,
+                DateTimeCompleted = now,
                 Ukprn = survey.Ukprn,
                 ProviderAttributes = survey.Attributes.Select(ps =>
                 {
@@ -72,7 +73,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Orchestrators
 
         // SQL Orchestration
 
-        public async Task SubmitConfirmedEmployerFeedbackSql(SurveyModel surveyModel, Guid uniqueCode)
+        public async Task SubmitConfirmedEmployerFeedbackSql(SurveyModel surveyModel, Guid uniqueCode, DateTime now)
         {
             var providerAttributes = await ConvertSurveyToProviderAttributes(surveyModel);
             var feedbackId = await _employerEmailDetailRepository.GetFeedbackIdFromUniqueSurveyCode(uniqueCode);
@@ -88,7 +89,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Orchestrators
                     await _employerEmailDetailRepository.CreateEmployerFeedbackResult(
                     feedbackId,
                     surveyModel.Rating.Value.GetDisplayName(),
-                    DateTime.UtcNow,
+                    now,
                     providerAttributes);
                 await _employerEmailDetailRepository.SetCodeBurntDate(uniqueCode);
             }

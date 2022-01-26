@@ -257,6 +257,17 @@ namespace ESFA.DAS.ProvideFeedback.Data.Repositories
                 });
         }
 
+        public async Task<EmployerFeedbackResult> GetEmployerFeedbackResultRecord(long feedbackId, DateTime datetimeCompleted)
+        {
+            return await _dbConnection.
+                QueryFirstOrDefaultAsync<EmployerFeedbackResult>(@"SELECT TOP 1 * FROM EmployerFeedbackResult WHERE feedbackId = @feedbackId AND dateTimeCompleted = @dateTimeCompleted",
+                new
+                {
+                    feedbackId,
+                    datetimeCompleted
+                });
+        }
+
         private DataTable ProvidersToDatatable(IEnumerable<Provider> providers)
         {
             var dt = new DataTable();

@@ -32,23 +32,29 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
                 if (cosmosFeedback == null)
                 {
                     var message = $"Unable to add feedback record to SQL database, unable to deserialize {cosmosRecord}";
-                    log.LogError(message);
-                    throw new InvalidOperationException(message);
+                    log.LogWarning(message);
+                    return;
                 }
 
                 var feedbackRecord = await _employerFeedbackRepository.GetEmployerFeedbackRecord(cosmosFeedback.UserRef, cosmosFeedback.AccountId, cosmosFeedback.Ukprn);
-
                 if (feedbackRecord == null)
                 {
-                    // If no feedback record, we're not adding one in, we're skipping it as probably out of date.
-                    var message = $"Unable to find EmployerFeedback record for Cosmos Record Id:{cosmosFeedback.Id}, AccountId:{cosmosFeedback.AccountId}, Ukprn:{cosmosFeedback.AccountId}, UserRef:{cosmosFeedback.UserRef}";
-                    log.LogError(message);
-                    throw new InvalidOperationException(message);
+                    var message = $"Skipping message: Unable to find EmployerFeedback record for Cosmos Record Id:{cosmosFeedback.Id}, AccountId:{cosmosFeedback.AccountId}, Ukprn:{cosmosFeedback.AccountId}, UserRef:{cosmosFeedback.UserRef}";
+                    log.LogWarning(message);
+                    return;
+                }
+
+                var feedbackResult = await _employerFeedbackRepository.GetEmployerFeedbackResultRecord(feedbackRecord.FeedbackId, cosmosFeedback.DateTimeCompleted);
+                if(feedbackResult != null)
+                {
+                    log.LogWarning($"Feedback Result already recorded for FeedbackId:{feedbackResult.FeedbackId} and Date Completed:{cosmosFeedback.DateTimeCompleted}");
+                    return;
                 }
 
                 var providerAttributeAnswers = await ConvertCosmosFeedbackAnswersToProviderAttributes(cosmosFeedback.FeedbackAnswers);
                 if(!providerAttributeAnswers.Any())
                 {
+                    log.LogWarning($"Skipping Feedback. No valid Provider Attribute answers that match current questions.");
                     return;
                 }
 
