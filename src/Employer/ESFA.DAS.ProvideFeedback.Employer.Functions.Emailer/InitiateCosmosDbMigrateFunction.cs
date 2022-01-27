@@ -32,16 +32,21 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
             try
             {
                 var allItems = await _employerFeedbackRepository.GetAllItemsAsync();
-                allItems.Select(s => new CosmosEmployerFeedbackMessage
+                var chunks = allItems.Chunk(100);
+
+                foreach(var chunk in chunks)
                 {
-                    Id = s.Id,
-                    AccountId = s.AccountId,
-                    Ukprn = s.Ukprn,
-                    UserRef = s.UserRef,
-                    FeedbackAnswers = s.ProviderAttributes.Select(t => new FeedbackAnswer { Name = t.Name, Value = t.Value }),
-                    ProviderRating = s.ProviderRating,
-                    DateTimeCompleted = s.DateTimeCompleted
-                }).AsParallel().ForAll(queue.Add);
+                    chunk.Select(s => new CosmosEmployerFeedbackMessage
+                        {
+                            Id = s.Id,
+                            AccountId = s.AccountId,
+                            Ukprn = s.Ukprn,
+                            UserRef = s.UserRef,
+                            FeedbackAnswers = s.ProviderAttributes.Select(t => new FeedbackAnswer { Name = t.Name, Value = t.Value }),
+                            ProviderRating = s.ProviderRating,
+                            DateTimeCompleted = s.DateTimeCompleted
+                        }).AsParallel().ForAll(queue.Add);
+                }
             }
             catch (Exception ex)
             {
