@@ -217,16 +217,19 @@ namespace ESFA.DAS.ProvideFeedback.Data.Repositories
             var transaction = _dbConnection.BeginTransaction();
             try
             {
+                var parameterTemplate = new
+                {
+                    FeedbackId = feedbackId,
+                    ProviderRating = providerRating,
+                    ProviderAttributesDt = providerAttributesDt.AsTableValuedParameter("ProviderAttributesTemplate")
+                };
+                var parameters = new DynamicParameters(parameterTemplate);
+                parameters.Add("@DateTimeCompleted", dateTimeCompleted, DbType.DateTime2);
+                
                 var result = await _dbConnection.QueryFirstOrDefaultAsync<Guid>(
 
                     sql: "[dbo].[CreateEmployerFeedbackResult]",
-                    param: new
-                    {
-                        FeedbackId = feedbackId,
-                        ProviderRating = providerRating,
-                        DateTimeCompleted = dateTimeCompleted,
-                        ProviderAttributesDt = providerAttributesDt.AsTableValuedParameter("ProviderAttributesTemplate")
-                    },
+                    param: parameters,
                     commandType: CommandType.StoredProcedure,
                     transaction: transaction
                 );

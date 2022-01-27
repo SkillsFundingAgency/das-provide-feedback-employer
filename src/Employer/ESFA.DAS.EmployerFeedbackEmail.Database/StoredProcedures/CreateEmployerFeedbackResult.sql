@@ -1,7 +1,7 @@
 ﻿CREATE PROCEDURE [dbo].[CreateEmployerFeedbackResult]
 	@FeedbackId BIGINT, 
 	@ProviderRating VARCHAR(20),
-	@DateTimeCompleted DateTime,
+	@DateTimeCompleted DateTime2,
 	@ProviderAttributesDt ProviderAttributesTemplate READONLY
 AS
 	DECLARE @EmployerFeedbackResultId UNIQUEIDENTIFIER;
