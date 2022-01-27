@@ -54,7 +54,7 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
                 var providerAttributeAnswers = await ConvertCosmosFeedbackAnswersToProviderAttributes(cosmosFeedback.FeedbackAnswers);
                 if(!providerAttributeAnswers.Any())
                 {
-                    log.LogWarning($"Skipping Feedback. No valid Provider Attribute answers that match current questions. FeedbackId:{feedbackResult.FeedbackId}, AccountId:{cosmosFeedback.AccountId}, Ukprn:{cosmosFeedback.Ukprn}, UserRef:{cosmosFeedback.UserRef}");
+                    log.LogWarning($"Skipping Feedback. No valid Provider Attribute answers that match current questions. FeedbackId:{feedbackRecord.FeedbackId}, AccountId:{cosmosFeedback.AccountId}, Ukprn:{cosmosFeedback.Ukprn}, UserRef:{cosmosFeedback.UserRef}");
                     return;
                 }
 
