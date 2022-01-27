@@ -262,13 +262,15 @@ namespace ESFA.DAS.ProvideFeedback.Data.Repositories
 
         public async Task<EmployerFeedbackResult> GetEmployerFeedbackResultRecord(long feedbackId, DateTime datetimeCompleted)
         {
+            var parameterTemplate = new
+            {
+                feedbackId
+            };
+            var parameters = new DynamicParameters(parameterTemplate);
+            parameters.Add("@dateTimeCompleted", datetimeCompleted, DbType.DateTime2);
+            
             return await _dbConnection.
-                QueryFirstOrDefaultAsync<EmployerFeedbackResult>(@"SELECT TOP 1 * FROM EmployerFeedbackResult WHERE feedbackId = @feedbackId AND dateTimeCompleted = @dateTimeCompleted",
-                new
-                {
-                    feedbackId,
-                    datetimeCompleted
-                });
+                QueryFirstOrDefaultAsync<EmployerFeedbackResult>(@"SELECT TOP 1 * FROM EmployerFeedbackResult WHERE feedbackId = @feedbackId AND dateTimeCompleted = @dateTimeCompleted", parameters);
         }
 
         private DataTable ProvidersToDatatable(IEnumerable<Provider> providers)
