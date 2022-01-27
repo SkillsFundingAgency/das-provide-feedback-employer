@@ -39,7 +39,7 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
                 var feedbackRecord = await _employerFeedbackRepository.GetEmployerFeedbackRecord(cosmosFeedback.UserRef, cosmosFeedback.AccountId, cosmosFeedback.Ukprn);
                 if (feedbackRecord == null)
                 {
-                    var message = $"Skipping message: Unable to find EmployerFeedback record for Cosmos Record Id:{cosmosFeedback.Id}, AccountId:{cosmosFeedback.AccountId}, Ukprn:{cosmosFeedback.AccountId}, UserRef:{cosmosFeedback.UserRef}";
+                    var message = $"Skipping message: Unable to find EmployerFeedback record for Cosmos Record Id:{cosmosFeedback.Id}, AccountId:{cosmosFeedback.AccountId}, Ukprn:{cosmosFeedback.Ukprn}, UserRef:{cosmosFeedback.UserRef}";
                     log.LogWarning(message);
                     return;
                 }
@@ -54,7 +54,7 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
                 var providerAttributeAnswers = await ConvertCosmosFeedbackAnswersToProviderAttributes(cosmosFeedback.FeedbackAnswers);
                 if(!providerAttributeAnswers.Any())
                 {
-                    log.LogWarning($"Skipping Feedback. No valid Provider Attribute answers that match current questions.");
+                    log.LogWarning($"Skipping Feedback. No valid Provider Attribute answers that match current questions. FeedbackId:{feedbackResult.FeedbackId}, AccountId:{cosmosFeedback.AccountId}, Ukprn:{cosmosFeedback.Ukprn}, UserRef:{cosmosFeedback.UserRef}");
                     return;
                 }
 
