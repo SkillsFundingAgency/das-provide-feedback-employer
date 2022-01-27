@@ -36,12 +36,12 @@ namespace System.Linq
         {
             if (source == null)
             {
-                ThrowHelper.ThrowArgumentNullException(ExceptionArgument.source);
+                throw new ArgumentNullException("source");
             }
 
             if (size < 1)
             {
-                ThrowHelper.ThrowArgumentOutOfRangeException(ExceptionArgument.size);
+                throw new ArgumentOutOfRangeException("size");
             }
 
             return ChunkIterator(source, size);

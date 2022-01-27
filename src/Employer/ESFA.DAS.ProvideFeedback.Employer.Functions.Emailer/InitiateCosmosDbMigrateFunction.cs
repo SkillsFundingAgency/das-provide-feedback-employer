@@ -46,6 +46,7 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
                             ProviderRating = s.ProviderRating,
                             DateTimeCompleted = s.DateTimeCompleted
                         }).AsParallel().ForAll(queue.Add);
+
                 }
             }
             catch (Exception ex)
