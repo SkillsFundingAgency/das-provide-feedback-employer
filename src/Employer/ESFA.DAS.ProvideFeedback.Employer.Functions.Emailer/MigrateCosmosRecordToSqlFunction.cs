@@ -65,7 +65,7 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
 
                     var message = $"Creating EmployerFeedback record for Cosmos Record Id:{cosmosFeedback.Id}, AccountId:{cosmosFeedback.AccountId}, Ukprn:{cosmosFeedback.Ukprn}, UserRef:{cosmosFeedback.UserRef}";
                     feedbackId = await _employerFeedbackRepository.UpsertIntoFeedback(cosmosFeedback.UserRef, cosmosFeedback.AccountId, cosmosFeedback.Ukprn);
-                    log.LogInformation(message);
+                    log.LogWarning(message);
                 }
                 else
                 {
@@ -80,12 +80,6 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
                 }
 
                 var providerAttributeAnswers = await ConvertCosmosFeedbackAnswersToProviderAttributes(cosmosFeedback.FeedbackAnswers);
-                if (!providerAttributeAnswers.Any())
-                {
-                    log.LogWarning($"Skipping Feedback. No valid Provider Attribute answers that match current questions. FeedbackId:{feedbackId}, AccountId:{cosmosFeedback.AccountId}, Ukprn:{cosmosFeedback.Ukprn}, UserRef:{cosmosFeedback.UserRef}");
-                    return;
-                }
-
                 await _employerFeedbackRepository.CreateEmployerFeedbackResult(feedbackId, cosmosFeedback.ProviderRating, cosmosFeedback.DateTimeCompleted, providerAttributeAnswers);
             }
             catch (Exception ex)
