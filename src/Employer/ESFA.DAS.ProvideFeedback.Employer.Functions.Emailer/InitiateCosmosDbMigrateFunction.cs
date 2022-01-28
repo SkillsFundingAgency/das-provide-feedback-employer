@@ -1,6 +1,3 @@
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 using ESFA.DAS.EmployerProvideFeedback.Api.Dto;
 using ESFA.DAS.EmployerProvideFeedback.Api.Repository;
 using ESFA.DAS.ProvideFeedback.Domain.Entities.Messages;
@@ -9,6 +6,8 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Azure.WebJobs.ServiceBus;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Threading.Tasks;
 
 namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
 {
@@ -25,33 +24,23 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
         public async Task Run(
             [HttpTrigger(AuthorizationLevel.Function, "get","post", Route = null)] 
             HttpRequest req, ILogger log,
-            [ServiceBus("%MigrateCosmosRecordQueueName%", Connection = "ServiceBusConnection", EntityType = EntityType.Queue)] ICollector<CosmosEmployerFeedbackMessage> queue)
+            [ServiceBus("%MigrateCosmosBatchRecordsQueueName%", Connection = "ServiceBusConnection", EntityType = EntityType.Queue)] ICollector<CosmosBatchMessage> queue)
         {
             log.LogInformation("Starting Cosmos DB Migration"); 
 
             try
             {
-                var allItems = await _employerFeedbackRepository.GetAllItemsAsync();
-                var chunks = allItems.Chunk(100);
-
-                foreach(var chunk in chunks)
+                var count = _employerFeedbackRepository.GetCountOfCollection<EmployerFeedback>();
+                var batchCount = 100;
+                int batches = (count / batchCount) + 1;
+                for(int i = 0;i<batches;i++)
                 {
-                    chunk.Select(s => new CosmosEmployerFeedbackMessage
-                        {
-                            Id = s.Id,
-                            AccountId = s.AccountId,
-                            Ukprn = s.Ukprn,
-                            UserRef = s.UserRef,
-                            FeedbackAnswers = s.ProviderAttributes.Select(t => new FeedbackAnswer { Name = t.Name, Value = t.Value }),
-                            ProviderRating = s.ProviderRating,
-                            DateTimeCompleted = s.DateTimeCompleted
-                        }).AsParallel().ForAll(queue.Add);
-
+                    queue.Add(new CosmosBatchMessage { Take = batchCount, Skip = i*batchCount });
                 }
             }
             catch (Exception ex)
             {
-                log.LogError(ex, "Unable to get cosmos records to migrate.");
+                log.LogError(ex, "Unable to get cosmos batches to migrate.");
                 throw;
             }
         }

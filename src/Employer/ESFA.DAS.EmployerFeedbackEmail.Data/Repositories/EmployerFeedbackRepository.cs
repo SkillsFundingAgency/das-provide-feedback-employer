@@ -195,6 +195,18 @@ namespace ESFA.DAS.ProvideFeedback.Data.Repositories
             return await _dbConnection.QueryAsync<Provider>(sql, new { ukprns });
         }
 
+        public async Task<Provider> GetProviderByUkprn(long ukprn)
+        {
+            var sql = @"SELECT TOP 1 * FROM Providers WHERE Ukprn = @ukprn";
+            return await _dbConnection.QueryFirstOrDefaultAsync<Provider>(sql, new { ukprn });
+        }
+
+        public async Task<User> GetUserByUserRef(Guid userRef)
+        {
+            var sql = @"SELECT TOP 1 * FROM Users WHERE UserRef = @userRef";
+            return await _dbConnection.QueryFirstOrDefaultAsync<User>(sql, new { userRef });
+        }
+
         public async Task<IEnumerable<FeedbackQuestionAttribute>> GetAllAttributes()
         {
             return await _dbConnection.QueryAsync<FeedbackQuestionAttribute>("SELECT * FROM Attributes");

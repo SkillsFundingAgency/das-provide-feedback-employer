@@ -199,7 +199,8 @@
             "RetrieveFeedbackAccountsQueueName": "retrieve-employer-accounts",
             "ProcessActiveFeedbackQueueName": "process-active-feedback",
             "GenerateSurveyInviteMessageQueueName": "generate-survey-invite",
-			"MigrateCosmosRecordQueueName": "migrate-cosmos-records"
+			"MigrateCosmosRecordQueueName": "migrate-cosmos-records",
+			"MigrateCosmosBatchRecordsQueueName" : "migrate-cosmos-batches"
         }
     },
     "resources": [
@@ -736,6 +737,11 @@
                                     "name": "MigrateCosmosRecordQueueName",
                                     "value": "[variables('queues').MigrateCosmosRecordQueueName]"
                                 },
+								,
+								{
+                                    "name": "MigrateCosmosBatchRecordsQueueName",
+                                    "value": "[variables('queues').MigrateCosmosBatchRecordsQueueName]"
+                                },
                                 {
                                     "name": "ServiceBusConnection",
                                     "value": "[reference('service-bus').outputs.ServiceBusEndpoint.value]"
@@ -796,7 +802,8 @@
                             "[variables('queues').RetrieveFeedbackAccountsQueueName]",
                             "[variables('queues').ProcessActiveFeedbackQueueName]",
                             "[variables('queues').GenerateSurveyInviteMessageQueueName]",
-							"[variables('queues').MigrateCosmosRecordQueueName]"
+							"[variables('queues').MigrateCosmosRecordQueueName]",
+							"[variables('queues').MigrateCosmosBatchRecordsQueueName]"
                         ]
                     }
                 }

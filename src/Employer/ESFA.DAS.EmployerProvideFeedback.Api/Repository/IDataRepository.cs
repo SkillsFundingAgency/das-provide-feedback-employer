@@ -97,6 +97,11 @@ namespace ESFA.DAS.EmployerProvideFeedback.Api.Repository
         /// <returns>An updated object of type <see cref="T"/></returns>
         Task<T> UpsertItemAsync<T>(T document, RequestOptions requestOptions = null)
             where T : TypedDocument<T>;
+
+        Task<IEnumerable<T>> GetOrderedItemsAsync<T>(Expression<Func<T, bool>> predicate, Expression<Func<T, object>> order, int take, int skip)
+            where T : TypedDocument<T>;
+
+        int GetCountOfCollection<T>() where T : TypedDocument<T>;
     }
 
     /// <summary>
