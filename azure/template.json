@@ -737,7 +737,6 @@
                                     "name": "MigrateCosmosRecordQueueName",
                                     "value": "[variables('queues').MigrateCosmosRecordQueueName]"
                                 },
-								,
 								{
                                     "name": "MigrateCosmosBatchRecordsQueueName",
                                     "value": "[variables('queues').MigrateCosmosBatchRecordsQueueName]"
