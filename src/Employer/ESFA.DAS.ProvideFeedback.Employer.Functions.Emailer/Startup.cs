@@ -100,17 +100,6 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
             var commitmentV2ApiConfig = _configuration.GetSection("CommitmentV2Api").Get<CommitmentApiConfiguration>();
             builder.Services.AddSingleton<ICommitmentApiConfiguration>(commitmentV2ApiConfig);
             builder.Services.AddSingleton<ICommitmentService, CommitmentService>();
-
-            // Adding temporary configuration to talk to Cosmos DB for migration
-            var cosmosOptions = _configuration
-                .GetSection("Azure")
-                .Get<AzureOptions>();
-
-            builder.Services.AddSingleton<ESFA.DAS.EmployerProvideFeedback.Api.Repository.IEmployerFeedbackRepository>(
-                (svc) => CosmosEmployerFeedbackRepository.Instance.ConnectTo(cosmosOptions.CosmosEndpoint)
-                    .WithAuthKeyOrResourceToken(cosmosOptions.CosmosKey)
-                    .UsingDatabase(cosmosOptions.DatabaseName).
-                        UsingCollection(cosmosOptions.EmployerFeedbackCollection));
         }
 
         private void ConfigureNLog()

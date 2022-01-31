@@ -2,8 +2,6 @@
 using ESFA.DAS.EmployerProvideFeedback.Database;
 using ESFA.DAS.EmployerProvideFeedback.Infrastructure;
 using ESFA.DAS.EmployerProvideFeedback.Orchestrators;
-using ESFA.DAS.FeedbackDataAccess;
-using ESFA.DAS.FeedbackDataAccess.IoC;
 using ESFA.DAS.ProvideFeedback.Data.Repositories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -33,12 +31,10 @@ namespace ESFA.DAS.EmployerProvideFeedback
             services.AddTransient<IEmployerFeedbackRepository, EmployerFeedbackRepository>();
             services.AddTransient<EnsureFeedbackNotSubmitted>();
             services.AddTransient<EnsureSessionExists>();
-            services.Configure<CosmosConnectionSettings>(Configuration.GetSection("CosmosConnectionSettings"));
             services.AddDatabaseRegistration(Configuration, _hostingEnvironment);
             services.AddTransient<ISessionService, SessionService>();
             services.AddTransient<ReviewAnswersOrchestrator>();
-            services.AddProvideFeedbackCosmos(Configuration);
-            
+                        
             services.Configure<CookiePolicyOptions>(options =>
             {
                 // This lambda determines whether user consent for non-essential cookies is needed for a given request.
