@@ -734,7 +734,7 @@
                             "[variables('queues').AccountRefreshQueueName]",
                             "[variables('queues').RetrieveFeedbackAccountsQueueName]",
                             "[variables('queues').ProcessActiveFeedbackQueueName]",
-                            "[variables('queues').GenerateSurveyInviteMessageQueueName]",
+                            "[variables('queues').GenerateSurveyInviteMessageQueueName]"
                         ]
                     }
                 }
