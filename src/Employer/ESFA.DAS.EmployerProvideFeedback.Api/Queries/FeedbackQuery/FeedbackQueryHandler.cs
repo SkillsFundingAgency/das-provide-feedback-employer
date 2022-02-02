@@ -40,7 +40,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Api.Queries.FeedbackQuery
                     DateTimeCompleted = t.DateTimeCompleted,
                     ProviderRating = t.ProviderRating,
                     Ukprn = t.Ukprn,
-                    ProviderAttributes = new List<ProviderAttributeDto>(f)
+                    ProviderAttributes = new List<ProviderAttributeDto>(f.Where(s => s.Name != null))
                 });
 
             return groupedFeedback;
