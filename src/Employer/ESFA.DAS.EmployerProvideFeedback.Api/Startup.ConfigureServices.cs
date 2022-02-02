@@ -4,10 +4,9 @@ using Microsoft.Extensions.Configuration;
 using SFA.DAS.Api.Common.AppStart;
 using SFA.DAS.Api.Common.Configuration;
 using SFA.DAS.Api.Common.Infrastructure;
-using AutoMapper;
 using ESFA.DAS.EmployerProvideFeedback.Api.Configuration;
-using ESFA.DAS.EmployerProvideFeedback.Api.Repository;
 using Microsoft.Extensions.DependencyInjection;
+using MediatR;
 
 namespace ESFA.DAS.EmployerProvideFeedback.Api
 {
@@ -24,6 +23,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Api
         {
             _configuration = configuration;
         }
+
         public void ConfigureServices(IServiceCollection services)
         {
             
@@ -42,17 +42,12 @@ namespace ESFA.DAS.EmployerProvideFeedback.Api
             var cosmosOptions = _configuration
                 .GetSection("Azure")
                 .Get<AzureOptions>();
-            
-            services.AddSingleton<IEmployerFeedbackRepository>(
-                (svc) => CosmosEmployerFeedbackRepository.Instance.ConnectTo(cosmosOptions.CosmosEndpoint)
-                    .WithAuthKeyOrResourceToken(cosmosOptions.CosmosKey)
-                    .UsingDatabase(cosmosOptions.DatabaseName).UsingCollection(cosmosOptions.EmployerFeedbackCollection));
-
+           
             services.Configure<AzureOptions>(_configuration.GetSection("Azure"));
             services.Configure<AzureAdOptions>(_configuration.GetSection("AzureAd"));
             services.AddMvc(options=>options.Filters.Add(new AuthorizeFilter("GetFeedback")));
-            
-            services.AddAutoMapper();
+
+            services.AddMediatR(typeof(Startup));
             services.AddControllers();
             
             services.AddSwaggerDocument();

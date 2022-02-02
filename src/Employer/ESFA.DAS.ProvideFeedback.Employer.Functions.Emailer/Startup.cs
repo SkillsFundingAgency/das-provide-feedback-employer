@@ -1,6 +1,4 @@
-﻿using ESFA.DAS.EmployerProvideFeedback.Api.Configuration;
-using ESFA.DAS.EmployerProvideFeedback.Api.Repository;
-using ESFA.DAS.Feedback.Employer.Emailer;
+﻿using ESFA.DAS.Feedback.Employer.Emailer;
 using ESFA.DAS.Feedback.Employer.Emailer.Configuration;
 using ESFA.DAS.ProvideFeedback.Data.Repositories;
 using ESFA.DAS.ProvideFeedback.Employer.Application;
@@ -24,7 +22,6 @@ using SFA.DAS.Notifications.Api.Client.Configuration;
 using System;
 using System.IO;
 using System.Net.Http.Headers;
-using IEmployerFeedbackRepository = ESFA.DAS.ProvideFeedback.Data.Repositories.IEmployerFeedbackRepository;
 using LogLevel = NLog.LogLevel;
 
 [assembly: FunctionsStartup(typeof(Startup))]

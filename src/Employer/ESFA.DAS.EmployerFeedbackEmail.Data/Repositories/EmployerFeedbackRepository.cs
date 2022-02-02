@@ -272,6 +272,14 @@ namespace ESFA.DAS.ProvideFeedback.Data.Repositories
                 });
         }
 
+        public async Task<IEnumerable<EmployerFeedbackViewModel>> GetEmployerFeedback()
+        {
+            return await _dbConnection.QueryAsync<EmployerFeedbackViewModel>(
+                @"SELECT efr.Id, ef.Ukprn, efr.FeedbackId, efr.DateTimeCompleted, efr.ProviderRating, a.AttributeName, pa.AttributeValue
+                  FROM EmployerFeedback ef JOIN EmployerFeedbackResult efr on ef.FeedbackId = efr.FeedbackId  LEFT JOIN ProviderAttributes pa on efr.Id = pa.EmployerFeedbackResultId
+                  LEFT JOIN Attributes a on pa.AttributeId = a.AttributeId");
+        }
+
         public async Task<EmployerFeedbackResult> GetEmployerFeedbackResultRecord(long feedbackId, DateTime datetimeCompleted)
         {
             var parameterTemplate = new
