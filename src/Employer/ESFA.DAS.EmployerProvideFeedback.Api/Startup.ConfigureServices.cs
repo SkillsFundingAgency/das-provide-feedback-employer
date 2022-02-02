@@ -38,12 +38,6 @@ namespace ESFA.DAS.EmployerProvideFeedback.Api
             };
 
             services.AddAuthentication(azureAdConfiguration, policies);
-            
-            var cosmosOptions = _configuration
-                .GetSection("Azure")
-                .Get<AzureOptions>();
-           
-            services.Configure<AzureOptions>(_configuration.GetSection("Azure"));
             services.Configure<AzureAdOptions>(_configuration.GetSection("AzureAd"));
             services.AddMvc(options=>options.Filters.Add(new AuthorizeFilter("GetFeedback")));
 
