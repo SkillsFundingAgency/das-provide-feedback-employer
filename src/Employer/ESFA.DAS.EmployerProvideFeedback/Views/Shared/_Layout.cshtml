@@ -68,6 +68,8 @@ public string GetTitle()
     <div id="global-cookie-message">
         <p>GOV.UK uses cookies to make the site simpler. <a href="https://www.gov.uk/help/cookies">Find out more about cookies</a></p>
     </div>
+    <!--
+        Header should be coming from the shared nuget package
     <header role="banner" id="global-header" class="with-proposition">
         <div class="header-wrapper">
             <div class="header-global">
@@ -84,6 +86,13 @@ public string GetTitle()
             </div>
         </div>
     </header>
+    -->
+
+    @{ 
+        // @ToDo: Figure out shared header
+        //Html.Partial("_Header", Html.GetHeaderViewModel(useLegacyStyles: true))) 
+            }
+
     <div id="global-header-bar"></div>
     <div class="phase-banner phase-banner-beta">
         <div class="phase-banner-info">
