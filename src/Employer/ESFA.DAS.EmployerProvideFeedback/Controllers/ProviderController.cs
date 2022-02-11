@@ -30,7 +30,42 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            return View();
+            var employerId = string.Empty;
+
+            var model = new ProviderSearchViewModel()
+            {
+                SelectedProviderName = string.Empty,
+                ProviderNameFilter = new string[] { },
+
+                SelectedFeedbackStatus = string.Empty,
+                FeedbackStatusFilter = new string[] { },
+
+                SelectedDateSubmitted = string.Empty,
+                DateSubmittedFilter = new string[] { },
+            };
+
+            return View(model);
         }
+
+        [HttpPost]
+        public async Task<IActionResult> Index(ProviderSearchViewModel model)
+        {
+            return View(model);
+        }
+
+
+
+
+
+
+        /// API Endpoint(s) needed. Interface this out in a service.
+        /// 
+        /// GetTrainingProvidersForEmployer(employerId)
+        /// returns:
+        /// - paged list of training providers inc page size, number of pages, current page
+        /// - provider name filter list
+        /// - feedback status filter list
+        /// - date submitted filter list
+        
     }
 }

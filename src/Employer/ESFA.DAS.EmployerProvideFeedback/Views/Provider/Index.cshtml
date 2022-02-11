@@ -1,2 +1,25 @@
-﻿
-<p>hello from the provider page</p>
+﻿@model ProviderSearchViewModel
+
+<h1>Select a training provider</h1>
+
+
+<form asp-controller="Provider" method="post">
+
+    @Html.LabelFor(m => m.SelectedProviderName)
+    @Html.DropDownListFor(m => m.SelectedProviderName,
+                new SelectList(Model.ProviderNameFilter.Select(n => n)),
+                "All")
+
+    @Html.LabelFor(m => m.SelectedFeedbackStatus)
+    @Html.DropDownListFor(m => m.SelectedFeedbackStatus,
+                new SelectList(Model.ProviderNameFilter.Select(n => n)),
+                "All")
+
+    @Html.LabelFor(m => m.SelectedDateSubmitted)
+    @Html.DropDownListFor(m => m.SelectedDateSubmitted,
+                new SelectList(Model.DateSubmittedFilter.Select(n => n)),
+                "All")
+
+    <input type="submit" name="save" value="Apply filters" />
+
+</form>
