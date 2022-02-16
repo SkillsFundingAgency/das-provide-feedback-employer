@@ -16,6 +16,8 @@ using SFA.DAS.Configuration.AzureTableStorage;
 using ESFA.DAS.EmployerProvideFeedback.StartupExtensions;
 using SFA.DAS.EmployerUrlHelper.DependencyResolution;
 using SFA.DAS.Employer.Shared.UI;
+using Microsoft.AspNetCore.Mvc;
+using ESFA.DAS.EmployerProvideFeedback.Attributes.ModelBinders;
 
 namespace ESFA.DAS.EmployerProvideFeedback
 {
@@ -104,8 +106,12 @@ namespace ESFA.DAS.EmployerProvideFeedback
             services.AddSessionPersistance();
 
             services.AddMvc(options =>
-                options.EnableEndpointRouting = false)
-                .SetDefaultNavigationSection(NavigationSection.AccountsHome);
+            {
+                options.EnableEndpointRouting = false;
+                options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
+                options.ModelBinderProviders.Insert(0, new AutoDecodeModelBinderProvider());
+            })
+            .SetDefaultNavigationSection(NavigationSection.AccountsHome);
                 
                 
         }
