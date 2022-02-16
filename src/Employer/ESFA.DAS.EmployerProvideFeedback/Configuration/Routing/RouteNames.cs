@@ -19,7 +19,5 @@
         public const string Confirmation_Get = "Confirmation_Get";
 
         public const string FeedbackAlreadySubmitted = "Feedback_Submitted_Get";
-        public const string Cookies = "Cookies";
-        public const string Privacy = "Privacy";
     }
 }
