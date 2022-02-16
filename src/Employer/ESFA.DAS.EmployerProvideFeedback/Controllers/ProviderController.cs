@@ -1,19 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using ESFA.DAS.EmployerProvideFeedback.Configuration.Routing;
-using ESFA.DAS.EmployerProvideFeedback.Infrastructure;
-using ESFA.DAS.EmployerProvideFeedback.ViewModels;
-using ESFA.DAS.ProvideFeedback.Data.Repositories;
-using ESFA.DAS.ProvideFeedback.Domain.Entities.Models;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
+using System.Threading.Tasks;
 
 
 namespace ESFA.DAS.EmployerProvideFeedback.Controllers
 {
+    [Authorize]
     public class ProviderController : Controller
     {
         private readonly ILogger<ProviderController> _logger;
@@ -25,9 +18,10 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
             _logger = logger;
         }
 
-        //[ServiceFilter(typeof(EnsureFeedbackNotSubmitted))]
-        //[Route(RoutePrefixPaths.FeedbackRoutePath, Name = RouteNames.Landing_Get)]
+
+        // Use https://localhost:5030/MRLPWP/providers
         [HttpGet]
+        [Route("/{encodedAccountId}/providers")]
         public async Task<IActionResult> Index()
         {
             return View();

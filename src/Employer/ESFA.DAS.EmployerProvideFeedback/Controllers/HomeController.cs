@@ -7,13 +7,14 @@ using ESFA.DAS.EmployerProvideFeedback.Infrastructure;
 using ESFA.DAS.EmployerProvideFeedback.ViewModels;
 using ESFA.DAS.ProvideFeedback.Data.Repositories;
 using ESFA.DAS.ProvideFeedback.Domain.Entities.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace ESFA.DAS.EmployerProvideFeedback.Controllers
 {
-
+    [Authorize]
     public class HomeController : Controller
     {
         private readonly IEmployerFeedbackRepository _employerEmailDetailsRepository;

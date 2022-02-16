@@ -4,12 +4,14 @@ using ESFA.DAS.EmployerProvideFeedback.Configuration;
 using ESFA.DAS.EmployerProvideFeedback.Configuration.Routing;
 using ESFA.DAS.EmployerProvideFeedback.Infrastructure;
 using ESFA.DAS.EmployerProvideFeedback.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace ESFA.DAS.EmployerProvideFeedback.Controllers
 {
+    [Authorize]
     [Route(RoutePrefixPaths.FeedbackRoutePath)]
     [ServiceFilter(typeof(EnsureSessionExists))]
     public class ConfirmationController : Controller
