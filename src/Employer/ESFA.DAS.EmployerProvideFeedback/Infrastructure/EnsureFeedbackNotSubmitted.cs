@@ -1,5 +1,6 @@
 using System;
 using ESFA.DAS.EmployerProvideFeedback.Configuration.Routing;
+using ESFA.DAS.EmployerProvideFeedback.ViewModels;
 using ESFA.DAS.ProvideFeedback.Data.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
@@ -17,9 +18,9 @@ namespace ESFA.DAS.EmployerProvideFeedback.Infrastructure
 
         public override void OnActionExecuting(ActionExecutingContext context)
         {
-            var uniqueCode = (Guid)context.ActionArguments["uniqueCode"];
+            var request = (StartFeedbackRequest)context.ActionArguments["request"];
 
-            var isCodeBurnt = _employerEmailDetailRepository.IsCodeBurnt(uniqueCode).Result;
+            var isCodeBurnt = _employerEmailDetailRepository.IsCodeBurnt(request.UniqueCode).Result;
             if (isCodeBurnt)
             {
                 var controller = context.Controller as Controller;
