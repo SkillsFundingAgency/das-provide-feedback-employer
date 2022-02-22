@@ -4,15 +4,17 @@
     ViewBag.MetaDesc = "Provide feedback on training providers";
     ViewBag.HideNav = "true";
 }
-<div class="grid-row">
-    <div class="column-two-thirds">
-        <h1 class="heading-xlarge">
+<main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing">
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <h1 class="govuk-heading-xl">
             Give feedback on @ViewData["ProviderName"]
         </h1>
         <p class="lede">Give feedback to let other employers know how @ViewData["ProviderName"] is doing. It'll also help @ViewData["ProviderName"] improve its apprenticeship training.</p>
         <p>It's just 3 questions.</p>
         <p>We publish your feedback but we don’t publish it with your name or the name of your organisation.</p>
         <p>We would only disclose your name and the name of your organisation with your feedback if we were legally required to do so.</p>
-        <p><a class="button button-start" id="service-start" asp-route="@RouteNames.QuestionOne_Get">Start now</a></p>
+        <p><a role="button" class="govuk-button govuk-button--start govuk-!-margin-top-5" id="service-start" asp-route="@RouteNames.QuestionOne_Get">Start now</a></p>
     </div>
 </div>
+</main>

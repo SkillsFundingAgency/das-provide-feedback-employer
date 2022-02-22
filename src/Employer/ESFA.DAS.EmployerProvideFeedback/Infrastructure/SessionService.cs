@@ -15,10 +15,10 @@ namespace ESFA.DAS.EmployerProvideFeedback.Infrastructure
 
         public SessionService(
             IDistributedCache sessionCache,
-            IConfiguration configuration,
-            IHostingEnvironment environment)
+            ProvideFeedbackEmployerWeb configuration,
+            IWebHostEnvironment environment)
         {
-            _slidingExpirationMinutes = configuration.GetValue<int>("SlidingExpirationMinutes");
+            _slidingExpirationMinutes = configuration.SlidingExpirationMinutes;
             _sessionCache = sessionCache;
             _environment = environment.EnvironmentName;
         }

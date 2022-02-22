@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
+using SFA.DAS.Encoding;
 using Xunit;
 
 namespace UnitTests.EmployerProvideFeedback.Controllers
@@ -21,6 +22,7 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
         private readonly HomeController _controller;
         private readonly Mock<ISessionService> _sessionServiceMock;
         private readonly Mock<IEmployerFeedbackRepository> _employerEmailDetailsRepoMock;
+        private readonly Mock<IEncodingService> _encodingServiceMock;
         private readonly Mock<ILogger<HomeController>> _loggerMock; 
         private readonly List<ProviderAttributeModel> _providerAttributes;
         private IFixture _fixture = new Fixture();
@@ -33,11 +35,13 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
             _providerAttributes = GetProviderAttributes();
             _sessionServiceMock = new Mock<ISessionService>();
             _employerEmailDetailsRepoMock = new Mock<IEmployerFeedbackRepository>();
+            _encodingServiceMock = new Mock<IEncodingService>();
             _loggerMock = new Mock<ILogger<HomeController>>();
             _providerAttributeOptions = Options.Create(_providerAttributes);
             _controller = new HomeController(
                 _employerEmailDetailsRepoMock.Object,
                 _sessionServiceMock.Object,
+                _encodingServiceMock.Object,
                 _loggerMock.Object);
             _employerEmailDetailsRepoMock.Setup(mock => mock.GetEmployerInviteForUniqueCode(It.IsAny<Guid>())).Returns(Task.FromResult(_employerEmailDetail));
         }
