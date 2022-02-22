@@ -10,7 +10,6 @@ using ESFA.DAS.ProvideFeedback.Domain.Entities.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using SFA.DAS.Encoding;
 
 namespace ESFA.DAS.EmployerProvideFeedback.Controllers
@@ -76,37 +75,6 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
         [HttpGet]
         public async Task<IActionResult> Index(Guid uniqueCode)
         {
-            //var sessionSurvey = await _sessionService.Get<SurveyModel>(uniqueCode.ToString());
-
-            //if (sessionSurvey == null)
-            //{
-            //    var employerEmailDetail = await _employerEmailDetailsRepository.GetEmployerInviteForUniqueCode(uniqueCode);
-
-            //    if (employerEmailDetail == null)
-            //    {
-            //        _logger.LogWarning($"Attempt to use invalid unique code: {uniqueCode}");
-            //        return NotFound();
-            //    }
-            //    var providerAttributes = await _employerEmailDetailsRepository.GetAllAttributes();
-            //    if (providerAttributes == null)
-            //    {
-            //        _logger.LogError($"Unable to load Provider Attributes from the database.");
-            //        return RedirectToAction("Error", "Error");
-            //    }
-
-            //    var providerAttributesModel = providerAttributes.Select(s => new ProviderAttributeModel { Name = s.AttributeName });
-            //    var newSurveyModel = MapToNewSurveyModel(employerEmailDetail, providerAttributesModel);
-            //    await _sessionService.Set(uniqueCode.ToString(), newSurveyModel);
-            //    ViewData.Add("ProviderName", employerEmailDetail.ProviderName);
-            //}
-            //else
-            //{
-            //    ViewData.Add("ProviderName", sessionSurvey.ProviderName);
-            //}
-
-            //return View();
-
-            //This method becomes the below once the routing is sorted out.
             var sessionSurvey = await _sessionService.Get<SurveyModel>(uniqueCode.ToString());
             long accountId;
             if (sessionSurvey == null)
@@ -127,7 +95,6 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
             }
 
             var encodedAccountId = _encodingService.Encode(accountId, EncodingType.AccountId);
-            // Need to setup route or rework how this is executed.
             return RedirectToRoute(RouteNames.Landing_Get_New, new { encodedAccountId = encodedAccountId, uniqueCode = uniqueCode });
         }
 
