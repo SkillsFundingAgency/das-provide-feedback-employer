@@ -18,9 +18,9 @@ namespace ESFA.DAS.EmployerProvideFeedback.Infrastructure
 
         public override void OnActionExecuting(ActionExecutingContext context)
         {
-            var request = (StartFeedbackRequest)context.ActionArguments["request"];
+            var uniqueCode = (Guid)context.ActionArguments["uniqueCode"];
 
-            var isCodeBurnt = _employerEmailDetailRepository.IsCodeBurnt(request.UniqueCode).Result;
+            var isCodeBurnt = _employerEmailDetailRepository.IsCodeBurnt(uniqueCode).Result;
             if (isCodeBurnt)
             {
                 var controller = context.Controller as Controller;

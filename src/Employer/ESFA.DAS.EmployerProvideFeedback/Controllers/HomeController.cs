@@ -37,8 +37,6 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
         }
 
         [HttpGet]
-        //[Route("{encodedAccountId}/{uniqueCode:guid}")]
-        [ServiceFilter(typeof(EnsureFeedbackNotSubmitted))]
         [Route(RoutePrefixPaths.FeedbackLandingPageRoutePath, Name = RouteNames.Landing_Get_New)]
         public async Task<IActionResult> Index(StartFeedbackRequest request)
         {
