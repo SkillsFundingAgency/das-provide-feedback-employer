@@ -22,7 +22,7 @@ jobs:
     inputs:
       command: publish
       publishWebProjects: false #set to false as this setting (which defaults to true) will parse the entire repo for web projects
-      projects: src/Employer/ESFA.DAS.EmployerProvideFeedback.csproj
+      projects: src/Employer/${{ parameters.SolutionBaseName }}/${{ parameters.SolutionBaseName }}.csproj
       arguments: -o $(build.artifactstagingdirectory)/publish -c ${{ parameters.BuildConfiguration }} --no-build
       modifyOutputPath: true
       zipAfterPublish: true
