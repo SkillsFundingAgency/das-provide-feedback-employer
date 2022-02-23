@@ -6,7 +6,7 @@ trigger:
 
 variables:
 - name: SolutionBaseName
-  value: ESFA.DAS.ProvideFeedback #PLACEHOLDER
+  value: ESFA.DAS.EmployerProvideFeedback #PLACEHOLDER
 - name: BuildConfiguration
   value: release
 - name: BuildPlatform
