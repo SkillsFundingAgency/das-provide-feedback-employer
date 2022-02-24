@@ -74,7 +74,7 @@
                 "Identifier": ""
             }
         },
-        "dbConnectionString": {
+        "SqlConnectionString": {
             "type": "secureString"
         },
         "gaTrackingId": {
@@ -346,7 +346,7 @@
                                 },
                                 {
                                     "name": "EmployerEmailStoreConnection",
-                                    "connectionString": "[parameters('dbConnectionString')]",
+                                    "connectionString": "[parameters('SqlConnectionString')]",
                                     "type": "Custom"
                                 }
                             ]
@@ -467,7 +467,7 @@
                                 },
                                 {
                                     "name": "EmployerEmailStoreConnection",
-                                    "connectionString": "[parameters('dbConnectionString')]",
+                                    "connectionString": "[parameters('SqlConnectionString')]",
                                     "type": "Custom"
                                 }
                             ]
@@ -677,7 +677,7 @@
                                 },
                                 {
                                     "name": "EmployerEmailStoreConnection",
-                                    "value": "[parameters('dbConnectionString')]"
+                                    "value": "[parameters('SqlConnectionString')]"
                                 },
                                 {
                                     "name": "InviteEmailerSchedule",
