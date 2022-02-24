@@ -44,20 +44,20 @@ stages:
       SolutionBaseName: $(SolutionBaseName)
       BuildConfiguration: $(BuildConfiguration)
 
-- stage: Deploy_AT
-  dependsOn: Build
-  displayName: Deploy to AT
-  condition: and(succeeded(), eq(variables.Deploy, 'true'))
-  variables:
-  - group: DevTest Management Resources
-  - group: AT DevTest Shared Resources
-  - group: AT das-provide-feedback-employer
-  jobs:
-  - template: pipeline-templates/job/deploy.yml
-    parameters:
-      Environment: AT
-      SolutionBaseName: $(SolutionBaseName)
-      ServiceConnection: SFA-DAS-DevTest-ARM
+# - stage: Deploy_AT
+#   dependsOn: Build
+#   displayName: Deploy to AT
+#   condition: and(succeeded(), eq(variables.Deploy, 'true'))
+#   variables:
+#   - group: DevTest Management Resources
+#   - group: AT DevTest Shared Resources
+#   - group: AT das-provide-feedback-employer
+#   jobs:
+#   - template: pipeline-templates/job/deploy.yml
+#     parameters:
+#       Environment: AT
+#       SolutionBaseName: $(SolutionBaseName)
+#       ServiceConnection: SFA-DAS-DevTest-ARM
 
 # - stage: Deploy_TEST
 #   dependsOn: Build
