@@ -1,56 +1,59 @@
 ﻿@model SurveyModel
-@{
-    ViewBag.PageID = "page-overall-quality-question";
-    ViewBag.Title = "Provide Feedback";
-}
-<a asp-route="@RouteNames.QuestionTwo_Get" class="link-back">Back</a>
-<div class="grid-row">
-    <div class="column-two-thirds">
-        @if (!ViewData.ModelState.IsValid)
-        {
-            <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
-                <ul class="error-summary-list">
-                    <li><a href="#error">Please rate @Model.ProviderName</a></li>
-                </ul>
-            </div>
-        }
-        <h1 class="heading-xlarge">
-            Overall rating
-        </h1>
+@using ESFA.DAS.EmployerProvideFeedback.Extensions;
+@{ ViewBag.PageID = "page-overall-quality-question";
+                ViewBag.Title = "Provide Feedback"; }
+<a asp-route="@RouteNames.QuestionTwo_Get" class="govuk-back-link">Back</a>
+<main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" data-module="govuk-error-summary">
+                    <h2 class="govuk-error-summary__title" id="error-summary-title">
+                        There is a problem
+                    </h2>
+                    <div class="govuk-error-summary__body">
+                        <ul class="govuk-list govuk-error-summary__list">
+                            <li>
+                                <a href="#@ProviderRating.Excellent">Please rate @Model.ProviderName</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            }
         <form asp-route="@RouteNames.QuestionThree_Post">
-            <div class="form-group">
-                <fieldset class="@(!ViewData.ModelState.IsValid ? "form-group-error" : "")">
-                    <!-- dynamically add this class in fieldset in case of error-->
-                    <legend>
-                        <h2 class="heading-medium">How would you rate @(Model.ProviderName.EndsWith("'s") ? @Model.ProviderName : $"{@Model.ProviderName}'s") training and service overall?</h2>
-                    </legend>
+            <div class="govuk-form-group error-message-container" sfa-anyvalidationerror-class="govuk-form-group--error">
+                <h1 class="govuk-heading-l">Overall rating</h1>
+                <h2 class="govuk-heading-m">How would you rate @(Model.ProviderName.EndsWith("'s") ? @Model.ProviderName : $"{@Model.ProviderName}'s") training and service overall?</h2>
+                <fieldset name="doing-well" aria-describedby="doing-well-hint" class="govuk-fieldset checkbox-limit @(!ViewData.ModelState.IsValid ? "form-group-error" : "")">
                     <input type="hidden" asp-for="@Model.ProviderName" />
-                    @if (!ViewData.ModelState.IsValid)
-                    {
-                        <span class="error-message">
-                            <!-- dynamically add this span element here in case of error-->
-                            Please rate @Model.ProviderName
-                        </span>
-                    }
-                    <div class="multiple-choice">
-                        @Html.RadioButtonFor(m => m.Rating, ProviderRating.Excellent, new { id = ProviderRating.Excellent, name = ProviderRating.Excellent })
-                        <label for=@ProviderRating.Excellent>@ProviderRating.Excellent</label>
-                    </div>
-                    <div class="multiple-choice">
-                        @Html.RadioButtonFor(m => m.Rating, ProviderRating.Good, new { id = ProviderRating.Good, name = ProviderRating.Good })
-                        <label for=@ProviderRating.Good>@ProviderRating.Good</label>
-                    </div>
-                    <div class="multiple-choice">
-                        @Html.RadioButtonFor(m => m.Rating, ProviderRating.Poor, new { id = ProviderRating.Poor, name = ProviderRating.Poor })
-                        <label for=@ProviderRating.Poor>@ProviderRating.Poor</label>
-                    </div>
-                    <div class="multiple-choice">
-                        @Html.RadioButtonFor(m => m.Rating, ProviderRating.VeryPoor, new { id = ProviderRating.VeryPoor, name = ProviderRating.VeryPoor })
-                        <label for=@ProviderRating.VeryPoor>@ProviderRating.VeryPoor.GetDisplayName()</label>
+
+                    @Html.ValidationMessageFor(m => m.Rating, $"Please rate {@Model.ProviderName}", new { @class = "govuk-error-message" })
+
+                    <div class="govuk-radios" data-module="govuk-radios">
+                        <div class="govuk-radios__item">
+                            @Html.RadioButtonFor(m => m.Rating, ProviderRating.Excellent, new { @class = "govuk-radios__input", id = ProviderRating.Excellent, name = ProviderRating.Excellent })
+                            <label class="govuk-label govuk-radios__label" for=@ProviderRating.Excellent>@ProviderRating.Excellent</label>
+                        </div>
+                        <div class="govuk-radios__item">
+                            @Html.RadioButtonFor(m => m.Rating, ProviderRating.Good, new { @class = "govuk-radios__input", id = ProviderRating.Good, name = ProviderRating.Good })
+                            <label class="govuk-label govuk-radios__label" for=@ProviderRating.Good>@ProviderRating.Good</label>
+                        </div>
+                        <div class="govuk-radios__item">
+                            @Html.RadioButtonFor(m => m.Rating, ProviderRating.Poor, new { @class = "govuk-radios__input", id = ProviderRating.Poor, name = ProviderRating.Poor })
+                            <label class="govuk-label govuk-radios__label" for=@ProviderRating.Poor>@ProviderRating.Poor</label>
+                        </div>
+                        <div class="govuk-radios__item">
+                            @Html.RadioButtonFor(m => m.Rating, ProviderRating.VeryPoor, new { @class = "govuk-radios__input", id = ProviderRating.VeryPoor, name = ProviderRating.VeryPoor })
+                            <label class="govuk-label govuk-radios__label" for=@ProviderRating.VeryPoor>@ProviderRating.VeryPoor.GetDisplayName()</label>
+                        </div>
                     </div>
                 </fieldset>
             </div>
-            <button id="q3-continue" type="submit" class="button save-button">Continue</button>
+            <div class="govuk-button-group">
+                <button id="q3-continue" type="submit" class="govuk-button">Continue</button>
+            </div>
         </form>
+        </div>
     </div>
-</div>
+</main>

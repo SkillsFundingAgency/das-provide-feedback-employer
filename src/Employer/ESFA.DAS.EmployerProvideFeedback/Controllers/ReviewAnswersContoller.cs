@@ -6,6 +6,7 @@ using ESFA.DAS.EmployerProvideFeedback.Orchestrators;
 using ESFA.DAS.EmployerProvideFeedback.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 
 namespace ESFA.DAS.EmployerProvideFeedback.Controllers
 {
@@ -17,17 +18,24 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
     {
         private readonly ISessionService _sessionService;
         private readonly ReviewAnswersOrchestrator _orchestrator;
+        private readonly ExternalLinksConfiguration _externalLinks;
 
-        public ReviewAnswersController(ISessionService sessionService, ReviewAnswersOrchestrator orchestrator)
+        public ReviewAnswersController(
+            ISessionService sessionService
+            , ReviewAnswersOrchestrator orchestrator
+            , IOptions<ExternalLinksConfiguration> externalLinks
+            )
         {
             _sessionService = sessionService;
             _orchestrator = orchestrator;
+            _externalLinks = externalLinks.Value;
         }
 
         [HttpGet("review-answers", Name = RouteNames.ReviewAnswers_Get)]
         public async Task<IActionResult> Index(Guid uniqueCode)
         {
             var vm = await _sessionService.Get<SurveyModel>(uniqueCode.ToString());
+            vm.FatUrl = _externalLinks.FindApprenticeshipTrainingSiteUrl;
             return View(vm);
         }
 

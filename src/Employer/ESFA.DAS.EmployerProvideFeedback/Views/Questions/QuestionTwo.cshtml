@@ -17,10 +17,10 @@
             }
             <form asp-route="@RouteNames.QuestionTwo_Post">
                 <div class="govuk-form-group">
+                    <h1 class="govuk-heading-l">How could @Model.ProviderName improve?</h1>
+                    <h2 class="govuk-heading-m">Does @Model.ProviderName need to improve any of these?</h2>
+
                     <fieldset name="areas-to-improve" aria-describedby="areas-to-improve-hint" class="govuk-fieldset checkbox-limit @(!ViewData.ModelState.IsValid ? " form-group-error" : "" )">
-                        <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
-                            <h1 class="govuk-fieldset__heading">How could @Model.ProviderName improve?</h1>
-                        </legend>
                         <div id="areas-to-improve-hint" class="govuk-hint">
                             It's optional. You can choose up to 3.
                         </div>
@@ -29,12 +29,11 @@
                         <div class="govuk-checkboxes" data-module="govuk-checkboxes">
                             @for (var i = 0; i < Model.Attributes.Count; i++)
                             {
-                                <div class="govuk-checkboxes__item" style="display: @(Model.Attributes[i].Good ? " none" : "block" );">
-                                    <input asp-for="@Model.Attributes[i].Bad" id="col1-@i" type="checkbox" class="govuk-checkboxes__input">
-                                    <label for="col1-@i" class="govuk-label govuk-checkboxes__label">@Model.Attributes[i].Name</label>
-                                    <input asp-for="@Model.Attributes[i].Name" type="hidden" />
-                                </div>
-                            }
+                <div class="govuk-checkboxes__item" style="display: @(Model.Attributes[i].Good ? " none" : "block" );">
+                    <input asp-for="@Model.Attributes[i].Bad" id="col1-@i" type="checkbox" class="govuk-checkboxes__input">
+                    <label for="col1-@i" class="govuk-label govuk-checkboxes__label">@Model.Attributes[i].Name</label>
+                    <input asp-for="@Model.Attributes[i].Name" type="hidden" />
+                </div>}
                         </div>
                     </fieldset>
                 </div>
