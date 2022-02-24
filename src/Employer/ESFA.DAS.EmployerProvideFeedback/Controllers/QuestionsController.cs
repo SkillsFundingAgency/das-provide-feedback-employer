@@ -26,7 +26,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
         }
 
         [HttpGet("question-one", Name = RouteNames.QuestionOne_Get)]
-        public async Task<IActionResult> QuestionOne(Guid uniqueCode, string returnUrl = null)
+        public async Task<IActionResult> QuestionOne(string encodedAccountId, Guid uniqueCode, string returnUrl = null)
         {
             // TODO: Replace TempData by adding a flag to the ViewModel.
             TempData[ReturnUrlKey] = returnUrl;

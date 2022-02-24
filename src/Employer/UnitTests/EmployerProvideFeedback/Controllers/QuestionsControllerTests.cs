@@ -22,6 +22,7 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
         private IFixture _fixture;
         private List<ProviderAttributeModel> _providerAttributes;
         private Guid _uniqueCode = Guid.NewGuid();
+        private string _accountId = string.Empty;
 
         public QuestionsControllerTests()
         {
@@ -49,7 +50,7 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
             // Arrange
 
             // Act
-            var result = await _controller.QuestionOne(_uniqueCode) as ViewResult;
+            var result = await _controller.QuestionOne(_accountId, _uniqueCode) as ViewResult;
 
             // Assert
             Assert.IsAssignableFrom<SurveyModel>(result.Model);
@@ -68,7 +69,7 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
             _sessionServiceMock.Setup(mock => mock.Get<SurveyModel>(It.IsAny<string>())).Returns(Task.FromResult(surveyModel));
 
             // Act
-            var result = await _controller.QuestionOne(_uniqueCode) as ViewResult;
+            var result = await _controller.QuestionOne(_accountId, _uniqueCode) as ViewResult;
 
             // Assert
             Assert.IsAssignableFrom<SurveyModel>(result.Model);

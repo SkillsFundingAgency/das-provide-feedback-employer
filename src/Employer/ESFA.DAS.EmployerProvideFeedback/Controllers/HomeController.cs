@@ -36,7 +36,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
         }
 
         [HttpGet]
-        [Route(RoutePrefixPaths.FeedbackLandingPageRoutePath, Name = RouteNames.Landing_Get_New)]
+        [Route(RoutePrefixPaths.FeedbackRoutePath, Name = RouteNames.Landing_Get_New)]
         public async Task<IActionResult> Index(StartFeedbackRequest request)
         {
             var sessionSurvey = await _sessionService.Get<SurveyModel>(request.UniqueCode.ToString());
@@ -71,7 +71,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
         }
 
         [ServiceFilter(typeof(EnsureFeedbackNotSubmitted))]
-        [Route(RoutePrefixPaths.FeedbackRoutePath, Name = RouteNames.Landing_Get)]
+        [Route(RoutePrefixPaths.FeedbackFromEmailRoutePath, Name = RouteNames.Landing_Get)]
         [HttpGet]
         public async Task<IActionResult> Index(Guid uniqueCode)
         {
