@@ -27,6 +27,15 @@ jobs:
       modifyOutputPath: true
       zipAfterPublish: true
 
+  - task: VSBuild@1
+    displayName: Build DACPAC
+    inputs:
+      solution: src\Employer\ESFA.DAS.EmployerFeedbackEmail.Database\ESFA.DAS.EmployerFeedbackEmail.Database.sqlproj
+      vsVersion: 'latest'
+      platform: $(BuildPlatform)
+      configuration: $(BuildConfiguration)
+      msbuildArchitecture: 'x86'
+
   - task: CopyFiles@2
     displayName: Copy Files to $(build.artifactstagingdirectory)/publish
     inputs:
