@@ -212,7 +212,7 @@
     "resources": [
         {
             "apiVersion": "2017-05-10",
-            "name": "[concat('storage-account-', parameters('utcValue'))]",
+            "name": "[concat(variables('storageAccountName'), '-', parameters('utcValue'))]",
             "type": "Microsoft.Resources/deployments",
             "properties": {
                 "mode": "Incremental",
