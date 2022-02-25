@@ -77,9 +77,6 @@
         "sqlConnectionString": {
             "type": "secureString"
         },
-        "gaTrackingId": {
-            "type": "string"
-        },
         "appRedisConnectionString": {
             "type": "secureString"
         },
@@ -315,10 +312,6 @@
                                 {
                                     "name": "ExternalLinks:FeedbackSurveyUrl",
                                     "value": "[parameters('externalLinks').FeedbackSurveyUrl]"
-                                },
-                                {
-                                    "name": "GoogleAnalytics:TrackingId",
-                                    "value": "[parameters('gaTrackingId')]"
                                 },
                                 {
                                     "name": "ApplicationInsights:InstrumentationKey",
