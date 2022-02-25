@@ -109,10 +109,7 @@
         "apiCertificateName": {
             "type": "string"
         },
-        "keyVaultName": {
-            "type": "string"
-        },
-        "keyVaultResourceGroup": {
+        "sharedKeyVaultName": {
             "type": "string"
         },
         "appServiceAllowedIPs": {
@@ -243,10 +240,10 @@
                         "value": "[parameters('uiCertificateName')]"
                     },
                     "keyVaultName": {
-                        "value": "[parameters('keyVaultName')]"
+                        "value": "[parameters('sharedKeyVaultName')]"
                     },
                     "keyVaultResourceGroup": {
-                        "value": "[parameters('keyVaultResourceGroup')]"
+                        "value": "[parameters('sharedManagementResourceGroup')]"
                     }
                 }
             }
@@ -373,10 +370,10 @@
                         "value": "[parameters('apiCertificateName')]"
                     },
                     "keyVaultName": {
-                        "value": "[parameters('keyVaultName')]"
+                        "value": "[parameters('sharedKeyVaultName')]"
                     },
                     "keyVaultResourceGroup": {
-                        "value": "[parameters('keyVaultResourceGroup')]"
+                        "value": "[parameters('sharedManagementResourceGroup')]"
                     }
                 }
             }
