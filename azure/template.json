@@ -1,7 +1,10 @@
 {
-    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json",
     "contentVersion": "1.0.0.0",
     "parameters": {
+        "tags": {
+            "type": "object"
+        },
         "serviceName": {
             "type": "string"
         },
@@ -178,6 +181,9 @@
         "logAnalyticsWorkspaceName": {
             "type": "string"
         },
+        "resourceGroupLocation": {
+            "type": "string"
+        },
         "utcValue": {
             "type": "string",
             "defaultValue": "[utcNow()]"
@@ -211,9 +217,18 @@
     },
     "resources": [
         {
-            "apiVersion": "2017-05-10",
+            "apiVersion": "2021-04-01",
+            "name": "[variables('resourceGroupName')]",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "[parameters('resourceGroupLocation')]",
+            "tags": "[parameters('tags')]",
+            "properties": {}
+        },
+        {
+            "apiVersion": "2021-04-01",
             "name": "[concat(variables('storageAccountName'), '-', parameters('utcValue'))]",
             "type": "Microsoft.Resources/deployments",
+            "resourceGroup": "[parameters('sharedEnvResourceGroup')]",
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
@@ -389,6 +404,7 @@
             "apiVersion": "2021-04-01",
             "name": "[concat(variables('apiAppServiceName'), '-application-insights-', parameters('utcValue'))]",
             "type": "Microsoft.Resources/deployments",
+            "resourceGroup": "[variables('resourceGroupName')]",
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
@@ -409,6 +425,7 @@
             "apiVersion": "2021-04-01",
             "name": "[concat(variables('apiAppServiceName'), '-', parameters('utcValue'))]",
             "type": "Microsoft.Resources/deployments",
+            "resourceGroup": "[variables('resourceGroupName')]",
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
@@ -555,6 +572,7 @@
             "apiVersion": "2021-04-01",
             "name": "[concat(variables('functionAppName'), '-', parameters('utcValue'))]",
             "type": "Microsoft.Resources/deployments",
+            "resourceGroup": "[variables('resourceGroupName')]",
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
@@ -728,6 +746,7 @@
             "apiVersion": "2017-05-10",
             "name": "[concat(variables('serviceBusNamespaceName'),'-', parameters('utcValue'))]",
             "type": "Microsoft.Resources/deployments",
+            "resourceGroup": "[variables('resourceGroupName')]",
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
