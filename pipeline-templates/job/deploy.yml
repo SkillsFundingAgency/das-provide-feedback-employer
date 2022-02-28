@@ -46,7 +46,7 @@ jobs:
             ServerName: $(SharedSQLServerFQDN)
             SqlUsername: $(SharedSQLServerUsername)
             SqlPassword: $(SharedSQLServerPassword)
-            DacpacFile: $(Pipeline.Workspace)/DacpacArtifact/src/${{ parameters.SolutionBaseName }}/bin/Output/${{ parameters.SolutionBaseName }}.dacpac
+            DacpacFile: $(Pipeline.Workspace)/DacpacArtifact/src/Employer/${{ parameters.DACPACSolutionBaseName }}/bin/Output/${{ parameters.SolutionBaseName }}.dacpac
             DatabaseName: $(DatabaseName)
             OverrideBlockOnPossibleDataLoss: ${{ parameters.OverrideBlockOnPossibleDataLoss }}
             Environment: ${{ parameters.Environment }}
