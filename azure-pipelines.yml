@@ -9,6 +9,8 @@ variables:
   value: ESFA.DAS.EmployerProvideFeedback
 - name: BuildConfiguration
   value: release
+- name: DACPACSolutionBaseName
+- value: ESFA.DAS.EmployerFeedbackEmail.Database
 - name: BuildPlatform
   value: any cpu
 - group: RELEASE Management Resources
@@ -43,6 +45,10 @@ stages:
     parameters:
       SolutionBaseName: $(SolutionBaseName)
       BuildConfiguration: $(BuildConfiguration)
+  - template: azure-pipelines-templates/build/job/dacpac-template.yml@das-platform-building-blocks
+    parameters:
+      SolutionBaseName: $(DACPACSolutionBaseName)
+      SqlProjectPath: src/Employer/$(DACPACSolutionBaseName)/$(DACPACSolutionBaseName).sqlproj
 
 - stage: Deploy_AT
   dependsOn: Build

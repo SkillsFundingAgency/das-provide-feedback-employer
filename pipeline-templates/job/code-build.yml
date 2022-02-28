@@ -27,16 +27,6 @@ jobs:
       modifyOutputPath: true
       zipAfterPublish: true
 
-  - task: DotNetCoreCLI@2
-    displayName: Publish - dotnet publish dacpac
-    inputs:
-      command: publish
-      publishWebProjects: false
-      projects: src/Employer/**/*.sqlproj
-      arguments: -o $(build.artifactstagingdirectory)/publish -c ${{ parameters.BuildConfiguration }} --no-build
-      modifyOutputPath: true
-      zipAfterPublish: true
-
   - task: CopyFiles@2
     displayName: Copy Files to $(build.artifactstagingdirectory)/publish
     inputs:
