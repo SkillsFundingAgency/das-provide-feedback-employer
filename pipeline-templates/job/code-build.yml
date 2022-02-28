@@ -32,7 +32,7 @@ jobs:
     inputs:
       command: publish
       publishWebProjects: false
-      projects: src\Employer\ESFA.DAS.EmployerFeedbackEmail.Database\ESFA.DAS.EmployerFeedbackEmail.Database.sqlproj
+      projects: src/Employer/**/*.sqlproj
       arguments: -o $(build.artifactstagingdirectory)/publish -c ${{ parameters.BuildConfiguration }} --no-build
       modifyOutputPath: true
       zipAfterPublish: true
