@@ -1,6 +1,7 @@
 parameters:
   ServiceConnection:
   SolutionBaseName:
+  DACPACSolutionBaseName:
   Environment:
   OverrideBlockOnPossibleDataLoss: false
 
