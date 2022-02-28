@@ -544,7 +544,7 @@
         },
         {
             "apiVersion": "2021-04-01",
-            "name": "[concat(variables('appServicePlanName'), '-', parameters('utcValue'))]",
+            "name": "[toLower(concat('das-', parameters('resourceEnvironmentName'),'-', 'pfbewkr-asp',parameters('utcValue')))]",
             "type": "Microsoft.Resources/deployments",
             "resourceGroup": "[variables('resourceGroupName')]",
             "properties": {
