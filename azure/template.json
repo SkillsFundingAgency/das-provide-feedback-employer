@@ -906,7 +906,7 @@
             "type": "string",
             "value": "[variables('apiAppServiceName')]"
         },
-        "FunctionAppServiceName": {
+        "FunctionAppName": {
             "type": "string",
             "value": "[variables('functionAppName')]"
         },
