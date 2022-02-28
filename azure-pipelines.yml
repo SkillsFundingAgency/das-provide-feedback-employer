@@ -10,7 +10,7 @@ variables:
 - name: BuildConfiguration
   value: release
 - name: DACPACSolutionBaseName
-- value: ESFA.DAS.EmployerFeedbackEmail.Database
+  value: ESFA.DAS.EmployerFeedbackEmail.Database
 - name: BuildPlatform
   value: any cpu
 - group: RELEASE Management Resources
