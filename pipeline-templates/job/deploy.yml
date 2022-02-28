@@ -1,7 +1,6 @@
 parameters:
   ServiceConnection:
   SolutionBaseName:
-  DACPACSolutionBaseName:
   Environment:
   OverrideBlockOnPossibleDataLoss: false
 
@@ -47,7 +46,7 @@ jobs:
             ServerName: $(SharedSQLServerFQDN)
             SqlUsername: $(SharedSQLServerUsername)
             SqlPassword: $(SharedSQLServerPassword)
-            DacpacFile: $(Pipeline.Workspace)/DacpacArtifact/src/Employer/${{ parameters.DACPACSolutionBaseName }}/bin/Output/${{ parameters.DACPACSolutionBaseName }}.dacpac
+            DacpacFile: $(Pipeline.Workspace)/DacpacArtifact/src/Employer/ESFA.DAS.EmployerFeedbackEmail.Database/bin/Output/ESFA.DAS.EmployerFeedbackEmail.Database.dacpac
             DatabaseName: $(DatabaseName)
             OverrideBlockOnPossibleDataLoss: ${{ parameters.OverrideBlockOnPossibleDataLoss }}
             Environment: ${{ parameters.Environment }}
