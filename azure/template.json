@@ -217,10 +217,10 @@
         "serviceBusNamespaceName": "[concat(variables('resourceNamePrefix'), '-ns')]",
         "apiAppServiceName": "[concat(variables('resourceNamePrefix'), 'api-as')]",
         "uiAppServiceName": "[concat(variables('resourceNamePrefix'), 'ui-as')]",
-        "functionAppName": "[concat(variables('resourceNamePrefix'), '-fa')]",
+        "functionAppName": "[concat(variables('resourceNamePrefix'), 'wkr-fa')]",
+        "functionAppPlanName": "[concat(variables('resourceNamePrefix'), 'wkr-asp')]",
         "databaseName": "[concat(variables('resourceNamePrefix'), '-db')]",
         "resourceGroupName": "[concat(variables('resourceNamePrefix'), '-rg')]",
-        "appServicePlanName": "[concat(variables('resourceNamePrefix'),'-asp')]",
         "cosmosDbName": "[concat(variables('resourceNamePrefix'), '-cdb')]",
         "queues": {
             "RetrieveProvidersQueueName": "retrieve-providers",
@@ -568,7 +568,7 @@
         },
         {
             "apiVersion": "2021-04-01",
-            "name": "[concat(variables('appServicePlanName'), '-', parameters('utcValue'))]",
+            "name": "[concat(variables('functionAppPlanName'), '-', parameters('utcValue'))]",
             "type": "Microsoft.Resources/deployments",
             "resourceGroup": "[variables('resourceGroupName')]",
             "properties": {
@@ -579,7 +579,7 @@
                 },
                 "parameters": {
                     "appServicePlanName": {
-                        "value": "[variables('appServicePlanName')]"
+                        "value": "[variables('functionAppPlanName')]"
                     },
                     "aspSize": {
                         "value": "[parameters('appServicePlanSize')]"
@@ -627,7 +627,7 @@
                         "value": "[variables('functionAppName')]"
                     },
                     "appServicePlanName": {
-                        "value": "[variables('appServicePlanName')]"
+                        "value": "[variables('functionAppPlanName')]"
                     },
                     "appServicePlanResourceGroup": {
                         "value": "[variables('resourceGroupName')]"
