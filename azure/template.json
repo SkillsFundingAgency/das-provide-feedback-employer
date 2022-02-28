@@ -105,6 +105,10 @@
         "uiCustomHostname": {
             "type": "string"
         },
+        "cosmosDbIpRangeFilter": {
+            "type": "string",
+            "defaultValue": ""
+        },
         "keyVaultCertificateName": {
             "type": "string"
         },
@@ -201,6 +205,9 @@
                 "description": "Allowed IP's"
             },
             "defaultValue": []
+        },
+        "cosmosDbPrimaryReadWriteKey": {
+            "type": "securestring"
         }
     },
     "variables": {
@@ -214,6 +221,7 @@
         "databaseName": "[concat(variables('resourceNamePrefix'), '-db')]",
         "resourceGroupName": "[concat(variables('resourceNamePrefix'), '-rg')]",
         "appServicePlanName": "[concat(variables('resourceNamePrefix'),'-asp')]",
+        "cosmosDbName": "[concat(variables('resourceNamePrefix'), '-cdb')]",
         "queues": {
             "RetrieveProvidersQueueName": "retrieve-providers",
             "AccountRefreshQueueName": "refresh-account",
@@ -353,6 +361,14 @@
                                     "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
                                     "value": "[reference(concat(variables('uiAppServiceName'), '-application-insights-', parameters('utcValue'))).outputs.InstrumentationKey.value]"
                                 },
+                                                                {
+                                    "name": "CosmosConnectionSettings:EndpointUrl",
+                                    "value": "[concat('https://', variables('cosmosDbName'), '.documents.azure.com:443/')]"
+                                },
+                                {
+                                    "name": "CosmosConnectionSettings:AuthorizationKey",
+                                    "value": "[parameters('cosmosDbPrimaryReadWriteKey')]"
+                                },
                                 {
                                     "name": "ASPNETCORE_ENVIRONMENT",
                                     "value": "[parameters('aspNetCoreEnvironment')]"
@@ -478,6 +494,14 @@
                                     "value": "[reference(concat(variables('apiAppServiceName'), '-application-insights-', parameters('utcValue'))).outputs.InstrumentationKey.value]"
                                 },
                                 {
+                                    "name": "Azure:CosmosEndpoint",
+                                    "value": "[concat('https://', variables('cosmosDbName'), '.documents.azure.com:443/')]"
+                                },
+                                {
+                                    "name": "Azure:CosmosKey",
+                                    "value": "[parameters('cosmosDbPrimaryReadWriteKey')]"
+                                },
+                                {
                                     "name": "ASPNETCORE_ENVIRONMENT",
                                     "value": "[parameters('aspNetCoreEnvironment')]"
                                 }
@@ -544,7 +568,7 @@
         },
         {
             "apiVersion": "2021-04-01",
-            "name": "[toLower(concat('das-', parameters('resourceEnvironmentName'),'-', 'pfbewkr-asp',parameters('utcValue')))]",
+            "name": "[concat(variables('appServicePlanName'), '-', parameters('utcValue'))]",
             "type": "Microsoft.Resources/deployments",
             "resourceGroup": "[variables('resourceGroupName')]",
             "properties": {
@@ -781,6 +805,32 @@
                             "[variables('queues').ProcessActiveFeedbackQueueName]",
                             "[variables('queues').GenerateSurveyInviteMessageQueueName]"
                         ]
+                    }
+                }
+            }
+        },
+                {
+            "apiVersion": "2021-04-01",
+            "name": "[concat(variables('cosmosDbName'), '-', parameters('utcValue'))]",
+            "type": "Microsoft.Resources/deployments",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('deploymentUrlBase'), 'cosmos-db.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "cosmosDbName": {
+                        "value": "[variables('cosmosDbName')]"
+                    },
+                    "cosmosDbType": {
+                        "value": "GlobalDocumentDB"
+                    },
+                    "defaultConsistencyLevel": {
+                        "value": "Strong"
+                    },
+                    "ipRangeFilter": {
+                        "value": "[parameters('cosmosDbIpRangeFilter')]"
                     }
                 }
             }
