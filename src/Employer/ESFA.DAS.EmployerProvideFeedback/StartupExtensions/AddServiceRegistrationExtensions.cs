@@ -11,7 +11,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.StartupExtensions
         public static void AddServiceRegistrations(this IServiceCollection services)
         {
             services.AddTransient<IEmployerFeedbackRepository, EmployerFeedbackRepository>();
-            services.AddTransient<EnsureFeedbackNotSubmitted>();
+            services.AddTransient<EnsureFeedbackNotSubmittedRecently>();
             services.AddTransient<EnsureSessionExists>();
             services.AddTransient<ISessionService, SessionService>();
             services.AddTransient<ReviewAnswersOrchestrator>();

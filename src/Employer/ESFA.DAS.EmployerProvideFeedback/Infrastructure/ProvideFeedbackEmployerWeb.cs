@@ -8,5 +8,6 @@
         public string RedisConnectionString { get; set; }
         public string DataProtectionKeysDatabase { get; set; }
         public string EmployerFeedbackDatabaseConnectionString { get; set; }
+        public int FeedbackWaitPeriodDays { get; set; }
     }
 }

@@ -11,7 +11,7 @@ using Microsoft.Extensions.Options;
 namespace ESFA.DAS.EmployerProvideFeedback.Controllers
 {
     [Authorize]
-    [ServiceFilter(typeof(EnsureFeedbackNotSubmitted))]
+    [ServiceFilter(typeof(EnsureFeedbackNotSubmittedRecently))]
     [ServiceFilter(typeof(EnsureSessionExists))]
     [Route(RoutePrefixPaths.FeedbackRoutePath)]
     public class ReviewAnswersController : Controller

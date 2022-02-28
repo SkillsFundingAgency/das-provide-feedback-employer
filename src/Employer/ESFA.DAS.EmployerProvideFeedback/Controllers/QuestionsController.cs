@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 namespace ESFA.DAS.EmployerProvideFeedback.Controllers
 {
     [Authorize]
-    [ServiceFilter(typeof(EnsureFeedbackNotSubmitted))]
+    [ServiceFilter(typeof(EnsureFeedbackNotSubmittedRecently))]
     [ServiceFilter(typeof(EnsureSessionExists))]
     [Route(RoutePrefixPaths.FeedbackRoutePath)]
     public class QuestionsController : Controller

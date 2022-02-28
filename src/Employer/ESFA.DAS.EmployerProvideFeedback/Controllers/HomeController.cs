@@ -70,7 +70,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
             return View();
         }
 
-        [ServiceFilter(typeof(EnsureFeedbackNotSubmitted))]
+        [ServiceFilter(typeof(EnsureFeedbackNotSubmittedRecently))]
         [Route(RoutePrefixPaths.FeedbackFromEmailRoutePath, Name = RouteNames.Landing_Get)]
         [HttpGet]
         public async Task<IActionResult> Index(Guid uniqueCode)

@@ -79,6 +79,15 @@ namespace ESFA.DAS.ProvideFeedback.Data.Repositories
                                 new { now, uniqueCode });
         }
 
+        public async Task<DateTime?> GetCodeBurntDate(Guid uniqueCode)
+        {
+            return await _dbConnection.QueryFirstOrDefaultAsync<DateTime?>($@"
+                                       SELECT BurnDate 
+                                       FROM {EmployerSurveyCodes} 
+                                       WHERE UniqueSurveyCode = @{nameof(uniqueCode)}",
+                                       new { uniqueCode });
+        }
+
         public async Task InsertSurveyInviteHistory(IEnumerable<Guid> uniqueSurveyCodes, int inviteType)
         {
             var now = DateTime.UtcNow;

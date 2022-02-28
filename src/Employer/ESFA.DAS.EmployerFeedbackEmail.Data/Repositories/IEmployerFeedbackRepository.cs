@@ -10,6 +10,7 @@ namespace ESFA.DAS.ProvideFeedback.Data.Repositories
         Task<IEnumerable<EmployerSurveyInvite>> GetEmployerUsersToBeSentInvite();
         Task<EmployerSurveyInvite> GetEmployerInviteForUniqueCode(Guid guid);
         Task SetCodeBurntDate(Guid uniqueCode);
+        Task<DateTime?> GetCodeBurntDate(Guid uniqueCode);
         Task<bool> IsCodeBurnt(Guid emailCode);
         Task MarkProviderInactive();
         Task<IEnumerable<EmployerSurveyInvite>> GetEmployerInvitesToBeSentReminder(int minDaysSinceSent);
