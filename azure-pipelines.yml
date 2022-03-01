@@ -97,7 +97,7 @@ stages:
   variables:
   - group: PreProd Management Resources
   - group: PreProd Shared Resources
-  - group: TEST2 das-provide-feedback-employer
+  - group: PreProd das-provide-feedback-employer
   jobs:
   - template: pipeline-templates/job/deploy.yml
     parameters:
