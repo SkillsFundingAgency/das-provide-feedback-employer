@@ -65,6 +65,9 @@
             "type": "int",
             "defaultValue": 25
         },
+        "gaTrackingId": {
+            "type": "string"
+        },
         "reminderDays": {
             "type": "int",
             "defaultValue": 14
@@ -356,6 +359,10 @@
                                 {
                                     "name": "ExternalLinks:FeedbackSurveyUrl",
                                     "value": "[parameters('externalLinks').FeedbackSurveyUrl]"
+                                },
+                                {
+                                    "name": "GoogleAnalytics:TrackingId",
+                                    "value": "[parameters('gaTrackingId')]"
                                 },
                                 {
                                     "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
