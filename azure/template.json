@@ -1,7 +1,10 @@
 {
-    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json",
     "contentVersion": "1.0.0.0",
     "parameters": {
+        "tags": {
+            "type": "object"
+        },
         "serviceName": {
             "type": "string"
         },
@@ -34,6 +37,9 @@
         "commitmentApiBaseUrl": {
             "type": "string"
         },
+        "frontEndAccessRestrictions": {
+            "type": "array"
+        },
         "commitmentApiClientToken": {
             "type": "secureString"
         },
@@ -59,6 +65,9 @@
             "type": "int",
             "defaultValue": 25
         },
+        "GoogleAnalyticsTrackingId": {
+            "type": "string"
+        },
         "reminderDays": {
             "type": "int",
             "defaultValue": 14
@@ -74,19 +83,8 @@
                 "Identifier": ""
             }
         },
-        "feedbackApiData": {
-            "type": "object",
-            "defaultValue": {
-                "DatabaseName": "",
-                "TokenCollection": "",
-                "FeedbackCollection": ""
-            }
-        },
-        "dbConnectionString": {
+        "sqlConnectionString": {
             "type": "secureString"
-        },
-        "gaTrackingId": {
-            "type": "string"
         },
         "appRedisConnectionString": {
             "type": "secureString"
@@ -104,49 +102,36 @@
             "type": "string",
             "defaultValue": "das-provide-feedback-emailer"
         },
-        "cosmosDbPrimaryReadWriteKey": {
-            "type": "securestring"
-        },
-        "cosmosDbIpRangeFilter": {
-            "type": "string",
-            "defaultValue": ""
-        },
         "slidingExpirationMinutes": {
             "type": "int"
         },
         "uiCustomHostname": {
             "type": "string"
         },
-        "uiCertificateName": {
+        "cosmosDbIpRangeFilter": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "keyVaultCertificateName": {
             "type": "string"
         },
         "apiCustomHostname": {
             "type": "string",
             "defaultValue": ""
         },
-        "apiCertificateName": {
-            "type": "string"
-        },
-        "keyVaultName": {
-            "type": "string"
-        },
-        "keyVaultResourceGroup": {
+        "sharedKeyVaultName": {
             "type": "string"
         },
         "appServiceAllowedIPs": {
             "type": "array"
         },
-        "aspSize": {
+        "appServicePlanSize": {
             "type": "string",
             "defaultValue": "1"
         },
-        "aspInstances": {
+        "appServicePlanInstances": {
             "type": "int",
             "defaultValue": 1
-        },
-        "aspSku": {
-            "type": "string",
-            "defaultValue": "Basic"
         },
         "sharedFrontEndAppServicePlanName": {
             "type": "string"
@@ -167,6 +152,13 @@
             "type": "string",
             "defaultValue": "~3"
         },
+        "storageAccountAllowedIPs": {
+            "type": "array",
+            "metadata": {
+                "description": "Allowed IP's"
+            },
+            "defaultValue": []
+        },
         "sharedEnvResourceGroup": {
             "type": "string"
         },
@@ -182,12 +174,43 @@
         "subnetDelegations": {
             "type": "array"
         },
+        "sharedManagementResourceGroup": {
+            "type": "string"
+        },
         "sharedSQLServerName": {
+            "type": "string"
+        },
+        "elasticPoolName": {
+            "defaultValue": "",
+            "type": "string"
+        },
+        "databaseSkuName": {
+            "type": "string",
+            "defaultValue": "S0"
+        },
+        "databaseTier": {
+            "type": "string",
+            "defaultValue": "Standard"
+        },
+        "logAnalyticsWorkspaceName": {
+            "type": "string"
+        },
+        "resourceGroupLocation": {
             "type": "string"
         },
         "utcValue": {
             "type": "string",
             "defaultValue": "[utcNow()]"
+        },
+        "ipSecurityRestrictions": {
+            "type": "array",
+            "metadata": {
+                "description": "Allowed IP's"
+            },
+            "defaultValue": []
+        },
+        "cosmosDbPrimaryReadWriteKey": {
+            "type": "securestring"
         }
     },
     "variables": {
@@ -197,8 +220,10 @@
         "serviceBusNamespaceName": "[concat(variables('resourceNamePrefix'), '-ns')]",
         "apiAppServiceName": "[concat(variables('resourceNamePrefix'), 'api-as')]",
         "uiAppServiceName": "[concat(variables('resourceNamePrefix'), 'ui-as')]",
-        "functionAppServiceName": "[concat(variables('resourceNamePrefix'), 'wkr-fa')]",
-        "functionAppServicePlanName": "[concat(variables('resourceNamePrefix'), 'wkr-asp')]",
+        "functionAppName": "[concat(variables('resourceNamePrefix'), 'wkr-fa')]",
+        "functionAppPlanName": "[concat(variables('resourceNamePrefix'), 'wkr-asp')]",
+        "databaseName": "[concat(variables('resourceNamePrefix'), '-db')]",
+        "resourceGroupName": "[concat(variables('resourceNamePrefix'), '-rg')]",
         "cosmosDbName": "[concat(variables('resourceNamePrefix'), '-cdb')]",
         "queues": {
             "RetrieveProvidersQueueName": "retrieve-providers",
@@ -211,17 +236,35 @@
     "resources": [
         {
             "apiVersion": "2021-04-01",
+            "name": "[variables('resourceGroupName')]",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "[parameters('resourceGroupLocation')]",
+            "tags": "[parameters('tags')]",
+            "properties": {}
+        },
+ {
+            "apiVersion": "2021-04-01",
             "name": "[concat(variables('storageAccountName'), '-', parameters('utcValue'))]",
             "type": "Microsoft.Resources/deployments",
+            "resourceGroup": "[variables('resourceGroupName')]",
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[concat(variables('deploymentUrlBase'), 'storage-account-arm.json')]",
+                    "uri": "[concat(variables('deploymentUrlBase'),'storage-account-arm.json')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
                     "storageAccountName": {
                         "value": "[variables('storageAccountName')]"
+                    },
+                    "allowedIpAddressesList": {
+                        "value": "[parameters('storageAccountAllowedIPs')]"
+                    },
+                    "subnetResourceIdList": {
+                        "value": "[createArray(reference(concat(parameters('subnetObject').name, '-', parameters('utcValue'))).outputs.SubnetResourceId.value)]"
+                    },
+                    "storageKind": {
+                        "value": "StorageV2"
                     },
                     "allowSharedKeyAccess": {
                         "value": true
@@ -230,10 +273,10 @@
             }
         },
         {
-            "apiVersion": "2021-04-01",
-            "name": "pfbe-ui-app-service-certificate",
+            "apiVersion": "2020-06-01",
+            "name": "[concat(variables('uiAppServiceName'), '-app-service-certificate-', parameters('utcValue'))]",
             "type": "Microsoft.Resources/deployments",
-            "resourceGroup": "[parameters('sharedAppServicePlanResourceGroup')]",
+            "resourceGroup": "[parameters('sharedEnvResourceGroup')]",
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
@@ -242,21 +285,22 @@
                 },
                 "parameters": {
                     "keyVaultCertificateName": {
-                        "value": "[parameters('uiCertificateName')]"
+                        "value": "[parameters('keyVaultCertificateName')]"
                     },
                     "keyVaultName": {
-                        "value": "[parameters('keyVaultName')]"
+                        "value": "[parameters('sharedKeyVaultName')]"
                     },
                     "keyVaultResourceGroup": {
-                        "value": "[parameters('keyVaultResourceGroup')]"
+                        "value": "[parameters('sharedManagementResourceGroup')]"
                     }
                 }
             }
         },
         {
-            "apiVersion": "2021-04-01",
-            "name": "[concat(variables('uiAppServiceName'), '-app-insights-', parameters('utcValue'))]",
+            "apiVersion": "2020-06-01",
+            "name": "[concat(variables('uiAppServiceName'), '-application-insights-', parameters('utcValue'))]",
             "type": "Microsoft.Resources/deployments",
+            "resourceGroup": "[variables('resourceGroupName')]",
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
@@ -277,6 +321,7 @@
             "apiVersion": "2021-04-01",
             "name": "[concat(variables('uiAppServiceName'), '-', parameters('utcValue'))]",
             "type": "Microsoft.Resources/deployments",
+            "resourceGroup": "[variables('resourceGroupName')]",
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
@@ -291,7 +336,7 @@
                         "value": "[parameters('sharedFrontEndAppServicePlanName')]"
                     },
                     "appServicePlanResourceGroup": {
-                        "value": "[parameters('sharedAppServicePlanResourceGroup')]"
+                        "value": "[parameters('sharedEnvResourceGroup')]"
                     },
                     "subnetResourceId": {
                         "value": "[parameters('sharedFrontEndSubnetResourceId')]"
@@ -317,11 +362,11 @@
                                 },
                                 {
                                     "name": "GoogleAnalytics:TrackingId",
-                                    "value": "[parameters('gaTrackingId')]"
+                                    "value": "[parameters('GoogleAnalyticsTrackingId')]"
                                 },
                                 {
-                                    "name": "ApplicationInsights:InstrumentationKey",
-                                    "value": "[reference(concat(variables('uiAppServiceName'), '-app-insights-', parameters('utcValue'))).outputs.InstrumentationKey.value]"
+                                    "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
+                                    "value": "[reference(concat(variables('uiAppServiceName'), '-application-insights-', parameters('utcValue'))).outputs.InstrumentationKey.value]"
                                 },
                                 {
                                     "name": "CosmosConnectionSettings:EndpointUrl",
@@ -353,7 +398,7 @@
                                 },
                                 {
                                     "name": "EmployerEmailStoreConnection",
-                                    "connectionString": "[parameters('dbConnectionString')]",
+                                    "connectionString": "[parameters('SqlConnectionString')]",
                                     "type": "Custom"
                                 }
                             ]
@@ -363,19 +408,19 @@
                         "value": "[parameters('uiCustomHostname')]"
                     },
                     "certificateThumbprint": {
-                        "value": "[if(greater(length(parameters('uiCustomHostname')), 0), reference('pfbe-ui-app-service-certificate', '2018-11-01').outputs.certificateThumbprint.value, '')]"
+                        "value": "[reference(concat(variables('uiAppServiceName'), '-app-service-certificate-', parameters('utcValue'))).outputs.certificateThumbprint.value]"
                     },
                     "ipSecurityRestrictions": {
-                        "value": "[parameters('appServiceAllowedIPs')]"
+                        "value": "[parameters('frontEndAccessRestrictions')]"
                     }
                 }
             }
         },
         {
             "apiVersion": "2021-04-01",
-            "name": "pfbe-api-app-service-certificate",
+            "name": "[concat(variables('apiAppServiceName'), '-app-service-certificate-', parameters('utcValue'))]",
             "type": "Microsoft.Resources/deployments",
-            "resourceGroup": "[parameters('sharedAppServicePlanResourceGroup')]",
+            "resourceGroup": "[parameters('sharedEnvResourceGroup')]",
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
@@ -384,21 +429,22 @@
                 },
                 "parameters": {
                     "keyVaultCertificateName": {
-                        "value": "[parameters('apiCertificateName')]"
+                        "value": "[parameters('keyVaultCertificateName')]"
                     },
                     "keyVaultName": {
-                        "value": "[parameters('keyVaultName')]"
+                        "value": "[parameters('sharedKeyVaultName')]"
                     },
                     "keyVaultResourceGroup": {
-                        "value": "[parameters('keyVaultResourceGroup')]"
+                        "value": "[parameters('sharedManagementResourceGroup')]"
                     }
                 }
             }
         },
         {
             "apiVersion": "2021-04-01",
-            "name": "[concat(variables('apiAppServiceName'), '-app-insights-', parameters('utcValue'))]",
+            "name": "[concat(variables('apiAppServiceName'), '-application-insights-', parameters('utcValue'))]",
             "type": "Microsoft.Resources/deployments",
+            "resourceGroup": "[variables('resourceGroupName')]",
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
@@ -419,6 +465,7 @@
             "apiVersion": "2021-04-01",
             "name": "[concat(variables('apiAppServiceName'), '-', parameters('utcValue'))]",
             "type": "Microsoft.Resources/deployments",
+            "resourceGroup": "[variables('resourceGroupName')]",
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
@@ -442,26 +489,6 @@
                         "value": {
                             "array": [
                                 {
-                                    "name": "Azure:CosmosEndpoint",
-                                    "value": "[concat('https://', variables('cosmosDbName'), '.documents.azure.com:443/')]"
-                                },
-                                {
-                                    "name": "Azure:CosmosKey",
-                                    "value": "[parameters('cosmosDbPrimaryReadWriteKey')]"
-                                },
-                                {
-                                    "name": "Azure:DatabaseName",
-                                    "value": "[parameters('feedbackApiData').DatabaseName]"
-                                },
-                                {
-                                    "name": "Azure:EmployerFeedbackCollection",
-                                    "value": "[parameters('feedbackApiData').FeedbackCollection]"
-                                },
-                                {
-                                    "name": "Azure:TokenCollection",
-                                    "value": "[parameters('feedbackApiData').TokenCollection]"
-                                },
-                                {
                                     "name": "AzureAd:Tenant",
                                     "value": "[parameters('feedbackApiAuth').Tenant]"
                                 },
@@ -470,8 +497,16 @@
                                     "value": "[parameters('feedbackApiAuth').Identifier]"
                                 },
                                 {
-                                    "name": "ApplicationInsights:InstrumentationKey",
-                                    "value": "[reference(concat(variables('apiAppServiceName'), '-app-insights-', parameters('utcValue'))).outputs.InstrumentationKey.value]"
+                                    "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
+                                    "value": "[reference(concat(variables('apiAppServiceName'), '-application-insights-', parameters('utcValue'))).outputs.InstrumentationKey.value]"
+                                },
+                                {
+                                    "name": "Azure:CosmosEndpoint",
+                                    "value": "[concat('https://', variables('cosmosDbName'), '.documents.azure.com:443/')]"
+                                },
+                                {
+                                    "name": "Azure:CosmosKey",
+                                    "value": "[parameters('cosmosDbPrimaryReadWriteKey')]"
                                 },
                                 {
                                     "name": "ASPNETCORE_ENVIRONMENT",
@@ -484,8 +519,13 @@
                         "value": {
                             "array": [
                                 {
-                                    "name": "Redis",
+                                    "name": "LoggingRedisConnectionString",
                                     "connectionString": "[parameters('loggingRedisConnectionString')]",
+                                    "type": "Custom"
+                                },
+                                {
+                                    "name": "EmployerEmailStoreConnection",
+                                    "connectionString": "[parameters('SqlConnectionString')]",
                                     "type": "Custom"
                                 }
                             ]
@@ -495,7 +535,7 @@
                         "value": "[parameters('apiCustomHostname')]"
                     },
                     "certificateThumbprint": {
-                        "value": "[if(greater(length(parameters('apiCustomHostname')), 0), reference('pfbe-api-app-service-certificate', '2018-11-01').outputs.certificateThumbprint.value, '')]"
+                        "value": "[reference(concat(variables('apiAppServiceName'), '-app-service-certificate-', parameters('utcValue'))).outputs.certificateThumbprint.value]"
                     },
                     "ipSecurityRestrictions": {
                         "value": "[parameters('appServiceAllowedIPs')]"
@@ -535,8 +575,9 @@
         },
         {
             "apiVersion": "2021-04-01",
-            "name": "[concat(variables('functionAppServicePlanName'), '-', parameters('utcValue'))]",
+            "name": "[concat(variables('functionAppPlanName'), '-', parameters('utcValue'))]",
             "type": "Microsoft.Resources/deployments",
+            "resourceGroup": "[variables('resourceGroupName')]",
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
@@ -545,24 +586,22 @@
                 },
                 "parameters": {
                     "appServicePlanName": {
-                        "value": "[variables('functionAppServicePlanName')]"
+                        "value": "[variables('functionAppPlanName')]"
                     },
                     "aspSize": {
-                        "value": "[parameters('aspSize')]"
+                        "value": "[parameters('appServicePlanSize')]"
                     },
                     "aspInstances": {
-                        "value": "[parameters('aspInstances')]"
-                    },
-                    "nonASETier": {
-                        "value": "[parameters('aspSku')]"
+                        "value": "[parameters('appServicePlanInstances')]"
                     }
                 }
             }
         },
         {
             "apiVersion": "2021-04-01",
-            "name": "[concat(variables('functionAppServiceName'), '-app-insights-', parameters('utcValue'))]",
+            "name": "[concat(variables('functionAppName'), '-app-insights-', parameters('utcValue'))]",
             "type": "Microsoft.Resources/deployments",
+            "resourceGroup": "[variables('resourceGroupName')]",
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
@@ -571,18 +610,19 @@
                 },
                 "parameters": {
                     "appInsightsName": {
-                        "value": "[variables('functionAppServiceName')]"
+                        "value": "[variables('functionAppName')]"
                     },
                     "attachedService": {
-                        "value": "[variables('functionAppServiceName')]"
+                        "value": "[variables('functionAppName')]"
                     }
                 }
             }
         },
         {
             "apiVersion": "2021-04-01",
-            "name": "[concat(variables('functionAppServiceName'), '-', parameters('utcValue'))]",
+            "name": "[concat(variables('functionAppName'), '-', parameters('utcValue'))]",
             "type": "Microsoft.Resources/deployments",
+            "resourceGroup": "[variables('resourceGroupName')]",
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
@@ -591,16 +631,19 @@
                 },
                 "parameters": {
                     "functionAppName": {
-                        "value": "[variables('functionAppServiceName')]"
+                        "value": "[variables('functionAppName')]"
                     },
                     "appServicePlanName": {
-                        "value": "[variables('functionAppServicePlanName')]"
+                        "value": "[variables('functionAppPlanName')]"
                     },
                     "appServicePlanResourceGroup": {
-                        "value": "[resourceGroup().name]"
+                        "value": "[variables('resourceGroupName')]"
                     },
                     "subnetResourceId": {
                         "value": "[reference(concat(parameters('subnetObject').name, '-', parameters('utcValue'))).outputs.SubnetResourceId.value]"
+                    },
+                    "ipSecurityRestrictions": {
+                        "value": "[parameters('ipSecurityRestrictions')]"
                     },
                     "functionAppAppSettings": {
                         "value": {
@@ -619,7 +662,7 @@
                                 },
                                 {
                                     "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
-                                    "value": "[reference(concat(variables('functionAppServiceName'), '-app-insights-', parameters('utcValue'))).outputs.InstrumentationKey.value]"
+                                    "value": "[reference(concat(variables('functionAppName'), '-app-insights-', parameters('utcValue'))).outputs.InstrumentationKey.value]"
                                 },
                                 {
                                     "name": "NotificationApi:BaseUrl",
@@ -691,7 +734,7 @@
                                 },
                                 {
                                     "name": "EmployerEmailStoreConnection",
-                                    "value": "[parameters('dbConnectionString')]"
+                                    "value": "[parameters('SqlConnectionString')]"
                                 },
                                 {
                                     "name": "InviteEmailerSchedule",
@@ -747,15 +790,13 @@
                         "value": ""
                     }
                 }
-            },
-            "dependsOn": [
-                "[concat(variables('functionAppServicePlanName'), '-', parameters('utcValue'))]"
-            ]
+            }
         },
         {
-            "apiVersion": "2021-04-01",
-            "name": "[concat(variables('serviceBusNamespaceName'), '-', parameters('utcValue'))]",
+            "apiVersion": "2017-05-10",
+            "name": "[concat(variables('serviceBusNamespaceName'),'-', parameters('utcValue'))]",
             "type": "Microsoft.Resources/deployments",
+            "resourceGroup": "[variables('resourceGroupName')]",
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
@@ -782,6 +823,7 @@
             "apiVersion": "2021-04-01",
             "name": "[concat(variables('cosmosDbName'), '-', parameters('utcValue'))]",
             "type": "Microsoft.Resources/deployments",
+            "resourceGroup": "[variables('resourceGroupName')]",
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
@@ -800,6 +842,45 @@
                     },
                     "ipRangeFilter": {
                         "value": "[parameters('cosmosDbIpRangeFilter')]"
+                    }
+                }
+            }
+        },
+        {
+            "apiVersion": "2020-06-01",
+            "name": "[concat('sql-database-', parameters('utcValue'))]",
+            "type": "Microsoft.Resources/deployments",
+            "resourceGroup": "[parameters('sharedEnvResourceGroup')]",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('deploymentUrlBase'),'sql-database.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "databaseName": {
+                        "value": "[variables('databaseName')]"
+                    },
+                    "sqlServerName": {
+                        "value": "[parameters('sharedSQLServerName')]"
+                    },
+                    "elasticPoolName": {
+                        "value": "[parameters('elasticPoolName')]"
+                    },
+                    "databaseSkuName": {
+                        "value": "[parameters('databaseSkuName')]"
+                    },
+                    "databaseTier": {
+                        "value": "[parameters('databaseTier')]"
+                    },
+                    "logAnalyticsSubscriptionId": {
+                        "value": "[subscription().subscriptionId]"
+                    },
+                    "logAnalyticsResourceGroup": {
+                        "value": "[parameters('sharedManagementResourceGroup')]"
+                    },
+                    "logAnalyticsWorkspaceName": {
+                        "value": "[parameters('logAnalyticsWorkspaceName')]"
                     }
                 }
             }
@@ -835,9 +916,13 @@
             "type": "string",
             "value": "[variables('apiAppServiceName')]"
         },
-        "FunctionAppServiceName": {
+        "FunctionAppName": {
             "type": "string",
-            "value": "[variables('functionAppServiceName')]"
+            "value": "[variables('functionAppName')]"
+        },
+        "DatabaseName": {
+            "type": "string",
+            "value": "[variables('databaseName')]"
         }
     }
 }
