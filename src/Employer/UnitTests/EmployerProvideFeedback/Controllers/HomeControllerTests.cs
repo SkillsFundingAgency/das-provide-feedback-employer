@@ -65,15 +65,34 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
         public async void SessionSurvey_DoesNotExist_ShouldPopulateProviderName_OnViewData_FromEmployerEmailDetail()
         {
             // Arrange
-            var uniqueCode = Guid.NewGuid();
+            var request = new StartFeedbackRequest()
+            {
+                UniqueCode = Guid.NewGuid(),
+            };
 
             // Act
-            var result = await _controller.Index(uniqueCode) as ViewResult;
+            var result = await _controller.Index(request) as ViewResult;
 
             // Assert
             var viewData = _controller.ViewData;
             Assert.Single(viewData);
             Assert.Equal(_employerEmailDetail.ProviderName, viewData["ProviderName"]);
+        }
+
+        [Fact]
+        public async void SessionSurvey_DoesNotExist_ShouldCreateNewSurveyInSession()
+        {
+            // Arrange
+            var request = new StartFeedbackRequest()
+            {
+                UniqueCode = Guid.NewGuid(),
+            };
+
+            // Act
+            var result = await _controller.Index(request) as ViewResult;
+
+            // Assert
+            _sessionServiceMock.Verify(mock => mock.Set(request.UniqueCode.ToString(), It.IsAny<SurveyModel>()), Times.Once);
         }
 
         [Fact]
