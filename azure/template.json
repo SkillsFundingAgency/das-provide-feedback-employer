@@ -368,7 +368,7 @@
                                     "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
                                     "value": "[reference(concat(variables('uiAppServiceName'), '-application-insights-', parameters('utcValue'))).outputs.InstrumentationKey.value]"
                                 },
-                                                                {
+                                {
                                     "name": "CosmosConnectionSettings:EndpointUrl",
                                     "value": "[concat('https://', variables('cosmosDbName'), '.documents.azure.com:443/')]"
                                 },
@@ -819,7 +819,7 @@
                 }
             }
         },
-                {
+        {
             "apiVersion": "2021-04-01",
             "name": "[concat(variables('cosmosDbName'), '-', parameters('utcValue'))]",
             "type": "Microsoft.Resources/deployments",
