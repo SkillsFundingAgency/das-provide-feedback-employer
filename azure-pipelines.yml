@@ -123,7 +123,7 @@ stages:
   variables:
   - group: MO Management Resources
   - group: MO Shared Resources
-  - group: PROD das-provide-feedback-employer
+  - group: MO das-provide-feedback-employer
   jobs:
   - template: pipeline-templates/job/deploy.yml
     parameters:
