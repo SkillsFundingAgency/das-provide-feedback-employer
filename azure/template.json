@@ -632,6 +632,9 @@
                     "appServicePlanResourceGroup": {
                         "value": "[variables('resourceGroupName')]"
                     },
+                    "subnetResourceId": {
+                        "value": "[reference(concat(parameters('subnetObject').name, '-', parameters('utcValue'))).outputs.SubnetResourceId.value]"
+                    },
                     "ipSecurityRestrictions": {
                         "value": "[parameters('ipSecurityRestrictions')]"
                     },
