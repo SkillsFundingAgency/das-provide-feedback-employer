@@ -65,7 +65,7 @@
             "type": "int",
             "defaultValue": 25
         },
-        "gaTrackingId": {
+        "GoogleAnalyticsTrackingId": {
             "type": "string"
         },
         "reminderDays": {
@@ -362,7 +362,7 @@
                                 },
                                 {
                                     "name": "GoogleAnalytics:TrackingId",
-                                    "value": "[parameters('gaTrackingId')]"
+                                    "value": "[parameters('GoogleAnalyticsTrackingId')]"
                                 },
                                 {
                                     "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
