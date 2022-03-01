@@ -8,6 +8,7 @@ using ESFA.DAS.EmployerProvideFeedback.Infrastructure;
 using ESFA.DAS.EmployerProvideFeedback.ViewModels;
 using ESFA.DAS.ProvideFeedback.Data.Repositories;
 using ESFA.DAS.ProvideFeedback.Domain.Entities.Models;
+using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -76,7 +77,7 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
         }
 
         [Fact]
-        public async void SessionSurvey_DoesNotExist_ShouldCreateNewSurveyInSession()
+        public async void EmailEntryPoint_Should_Create_AccountId()
         {
             // Arrange
             var uniqueCode = Guid.NewGuid();
@@ -85,7 +86,7 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
             var result = await _controller.Index(uniqueCode) as ViewResult;
 
             // Assert
-            _sessionServiceMock.Verify(mock => mock.Set(uniqueCode.ToString(), It.IsAny<SurveyModel>()), Times.Once);
+            _employerEmailDetailsRepoMock.Verify(mock => mock.GetEmployerInviteForUniqueCode(uniqueCode), Times.Once);
         }
 
         [Fact]
