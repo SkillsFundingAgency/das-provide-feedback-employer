@@ -265,7 +265,7 @@
                         "value": "[createArray(reference(concat(parameters('subnetObject').name, '-', parameters('utcValue'))).outputs.SubnetResourceId.value)]"
                     },
                     "storageKind": {
-                        "value": "StorageV2"
+                        "value": "Storage"
                     },
                     "allowSharedKeyAccess": {
                         "value": true
