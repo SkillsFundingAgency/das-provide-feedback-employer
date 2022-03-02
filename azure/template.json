@@ -112,9 +112,6 @@
             "type": "string",
             "defaultValue": ""
         },
-        "keyVaultCertificateName": {
-            "type": "string"
-        },
         "apiCustomHostname": {
             "type": "string",
             "defaultValue": ""
@@ -151,13 +148,6 @@
         "functionsExtensionVersion": {
             "type": "string",
             "defaultValue": "~3"
-        },
-        "storageAccountAllowedIPs": {
-            "type": "array",
-            "metadata": {
-                "description": "Allowed IP's"
-            },
-            "defaultValue": []
         },
         "sharedEnvResourceGroup": {
             "type": "string"
@@ -198,9 +188,23 @@
         "resourceGroupLocation": {
             "type": "string"
         },
+        "uiCertificateName": {
+            "type": "string"
+        },
+        "apiCertificateName": {
+            "type": "string"
+        },
         "utcValue": {
             "type": "string",
             "defaultValue": "[utcNow()]"
+        },
+         "feedbackApiData": {
+            "type": "object",
+            "defaultValue": {
+                "DatabaseName": "",
+                "TokenCollection": "",
+                "FeedbackCollection": ""
+            }
         },
         "ipSecurityRestrictions": {
             "type": "array",
@@ -257,14 +261,11 @@
                     "storageAccountName": {
                         "value": "[variables('storageAccountName')]"
                     },
-                    "allowedIpAddressesList": {
-                        "value": "[parameters('storageAccountAllowedIPs')]"
-                    },
                     "subnetResourceIdList": {
                         "value": "[createArray(reference(concat(parameters('subnetObject').name, '-', parameters('utcValue'))).outputs.SubnetResourceId.value)]"
                     },
                     "storageKind": {
-                        "value": "StorageV2"
+                        "value": "Storage"
                     },
                     "allowSharedKeyAccess": {
                         "value": true
@@ -273,7 +274,7 @@
             }
         },
         {
-            "apiVersion": "2020-06-01",
+            "apiVersion": "2021-04-01",
             "name": "[concat(variables('uiAppServiceName'), '-app-service-certificate-', parameters('utcValue'))]",
             "type": "Microsoft.Resources/deployments",
             "resourceGroup": "[parameters('sharedEnvResourceGroup')]",
@@ -285,7 +286,7 @@
                 },
                 "parameters": {
                     "keyVaultCertificateName": {
-                        "value": "[parameters('keyVaultCertificateName')]"
+                        "value": "[parameters('uiCertificateName')]"
                     },
                     "keyVaultName": {
                         "value": "[parameters('sharedKeyVaultName')]"
@@ -297,7 +298,7 @@
             }
         },
         {
-            "apiVersion": "2020-06-01",
+            "apiVersion": "2021-04-01",
             "name": "[concat(variables('uiAppServiceName'), '-application-insights-', parameters('utcValue'))]",
             "type": "Microsoft.Resources/deployments",
             "resourceGroup": "[variables('resourceGroupName')]",
@@ -429,7 +430,7 @@
                 },
                 "parameters": {
                     "keyVaultCertificateName": {
-                        "value": "[parameters('keyVaultCertificateName')]"
+                        "value": "[parameters('apiCertificateName')]"
                     },
                     "keyVaultName": {
                         "value": "[parameters('sharedKeyVaultName')]"
@@ -509,6 +510,18 @@
                                     "value": "[parameters('cosmosDbPrimaryReadWriteKey')]"
                                 },
                                 {
+                                    "name": "Azure:EmployerFeedbackCollection",
+                                    "value": "[parameters('feedbackApiData').FeedbackCollection]"
+                                },
+                                {
+                                    "name": "Azure:TokenCollection",
+                                    "value": "[parameters('feedbackApiData').TokenCollection]"
+                                },
+                                {
+                                    "name": "Azure:DatabaseName",
+                                    "value": "[parameters('feedbackApiData').DatabaseName]"
+                                },
+                                {
                                     "name": "ASPNETCORE_ENVIRONMENT",
                                     "value": "[parameters('aspNetCoreEnvironment')]"
                                 }
@@ -519,7 +532,7 @@
                         "value": {
                             "array": [
                                 {
-                                    "name": "LoggingRedisConnectionString",
+                                    "name": "Redis",
                                     "connectionString": "[parameters('loggingRedisConnectionString')]",
                                     "type": "Custom"
                                 },
@@ -793,7 +806,7 @@
             }
         },
         {
-            "apiVersion": "2017-05-10",
+            "apiVersion": "2021-04-01",
             "name": "[concat(variables('serviceBusNamespaceName'),'-', parameters('utcValue'))]",
             "type": "Microsoft.Resources/deployments",
             "resourceGroup": "[variables('resourceGroupName')]",
@@ -847,7 +860,7 @@
             }
         },
         {
-            "apiVersion": "2020-06-01",
+            "apiVersion": "2021-04-01",
             "name": "[concat('sql-database-', parameters('utcValue'))]",
             "type": "Microsoft.Resources/deployments",
             "resourceGroup": "[parameters('sharedEnvResourceGroup')]",

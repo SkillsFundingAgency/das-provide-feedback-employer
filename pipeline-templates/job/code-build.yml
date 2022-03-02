@@ -14,6 +14,10 @@ jobs:
   - template: azure-pipelines-templates/build/step/gitversion.yml@das-platform-building-blocks
 
   - template: azure-pipelines-templates/build/step/app-build.yml@das-platform-building-blocks
+    parameters:
+      SonarCloudProjectKey: SkillsFundingAgency_das-provide-feedback-employer
+
+  - template: azure-pipelines-templates/build/step/app-build.yml@das-platform-building-blocks
 
   - template: azure-pipelines-templates/build/step/dependency-check.yml@das-platform-building-blocks
 

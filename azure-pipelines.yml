@@ -2,7 +2,7 @@ trigger:
   batch: true
   branches:
     include:
-      - "*"
+      - "master"
 
 variables:
 - name: SolutionBaseName
@@ -64,6 +64,7 @@ stages:
       Environment: AT
       SolutionBaseName: $(SolutionBaseName)
       ServiceConnection: SFA-DAS-DevTest-ARM
+      AppRoleAssignmentsServiceConnection: das-app-role-assignments-CDS
 
 - stage: Deploy_TEST
   dependsOn: Build
@@ -76,7 +77,9 @@ stages:
   - template: pipeline-templates/job/deploy.yml
     parameters:
       Environment: TEST
+      SolutionBaseName: $(SolutionBaseName)
       ServiceConnection: SFA-DAS-DevTest-ARM
+      AppRoleAssignmentsServiceConnection: das-app-role-assignments-CDS
 
 - stage: Deploy_TEST2
   dependsOn: Build
@@ -89,7 +92,9 @@ stages:
   - template: pipeline-templates/job/deploy.yml
     parameters:
       Environment: TEST2
+      SolutionBaseName: $(SolutionBaseName)
       ServiceConnection: SFA-DAS-DevTest-ARM
+      AppRoleAssignmentsServiceConnection: das-app-role-assignments-CDS
 
 - stage: Deploy_PP
   dependsOn: Build
@@ -102,7 +107,9 @@ stages:
   - template: pipeline-templates/job/deploy.yml
     parameters:
       Environment: PP
+      SolutionBaseName: $(SolutionBaseName)
       ServiceConnection: SFA-DIG-PreProd-ARM
+      AppRoleAssignmentsServiceConnection: das-app-role-assignments-FCS
 
 - stage: Deploy_PROD
   dependsOn: Build
@@ -115,7 +122,9 @@ stages:
   - template: pipeline-templates/job/deploy.yml
     parameters:
       Environment: PROD
+      SolutionBaseName: $(SolutionBaseName)
       ServiceConnection: SFA-DIG-Prod-ARM
+      AppRoleAssignmentsServiceConnection: das-app-role-assignments-FCS
 
 - stage: Deploy_MO
   dependsOn: Build
@@ -128,7 +137,9 @@ stages:
   - template: pipeline-templates/job/deploy.yml
     parameters:
       Environment: MO
+      SolutionBaseName: $(SolutionBaseName)
       ServiceConnection: SFA-ASM-ModelOffice-ARM
+      AppRoleAssignmentsServiceConnection: das-app-role-assignments-FCS
 
 - stage: Deploy_DEMO
   dependsOn: Build
@@ -141,4 +152,6 @@ stages:
   - template: pipeline-templates/job/deploy.yml
     parameters:
       Environment: DEMO
+      SolutionBaseName: $(SolutionBaseName)
       ServiceConnection: SFA-DAS-DevTest-ARM
+      AppRoleAssignmentsServiceConnection: das-app-role-assignments-CDS
