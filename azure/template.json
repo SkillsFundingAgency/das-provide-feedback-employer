@@ -261,12 +261,6 @@
                     "storageAccountName": {
                         "value": "[variables('storageAccountName')]"
                     },
-                    "subnetResourceIdList": {
-                        "value": "[createArray(reference(concat(parameters('subnetObject').name, '-', parameters('utcValue'))).outputs.SubnetResourceId.value)]"
-                    },
-                    "storageKind": {
-                        "value": "Storage"
-                    },
                     "allowSharedKeyAccess": {
                         "value": true
                     }
