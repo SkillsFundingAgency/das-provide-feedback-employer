@@ -206,15 +206,11 @@
                 "FeedbackCollection": ""
             }
         },
-        "ipSecurityRestrictions": {
-            "type": "array",
-            "metadata": {
-                "description": "Allowed IP's"
-            },
-            "defaultValue": []
-        },
         "cosmosDbPrimaryReadWriteKey": {
             "type": "securestring"
+        },
+        "workerAccessRestrictions": {
+            "type": "array"
         }
     },
     "variables": {
@@ -653,7 +649,7 @@
                         "value": "[reference(concat(parameters('subnetObject').name, '-', parameters('utcValue'))).outputs.SubnetResourceId.value]"
                     },
                     "ipSecurityRestrictions": {
-                        "value": "[parameters('ipSecurityRestrictions')]"
+                        "value": "[parameters('workerAccessRestrictions')]"
                     },
                     "functionAppAppSettings": {
                         "value": {
@@ -800,7 +796,10 @@
                         "value": ""
                     }
                 }
-            }
+            },
+            "dependsOn": [
+                "[concat(variables('functionAppPlanName'), '-', parameters('utcValue'))]"
+            ]
         },
         {
             "apiVersion": "2021-04-01",
