@@ -1,6 +1,6 @@
 using System;
 using ESFA.DAS.EmployerProvideFeedback.Configuration.Routing;
-using ESFA.DAS.ProvideFeedback.Data;
+using ESFA.DAS.ProvideFeedback.Data.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
@@ -8,9 +8,9 @@ namespace ESFA.DAS.EmployerProvideFeedback.Infrastructure
 {
     public class EnsureFeedbackNotSubmitted : ActionFilterAttribute
     {
-        private readonly IStoreEmployerEmailDetails _employerEmailDetailRepository;
+        private readonly IEmployerFeedbackRepository _employerEmailDetailRepository;
 
-        public EnsureFeedbackNotSubmitted(IStoreEmployerEmailDetails employerEmailDetailRepository)
+        public EnsureFeedbackNotSubmitted(IEmployerFeedbackRepository employerEmailDetailRepository)
         {
             _employerEmailDetailRepository = employerEmailDetailRepository;
         }

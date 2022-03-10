@@ -1,6 +1,6 @@
 using System;
 using System.Threading.Tasks;
-using ESFA.DAS.ProvideFeedback.Data;
+using ESFA.DAS.ProvideFeedback.Data.Repositories;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
 
@@ -8,10 +8,10 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
 {
     public class InitiateDataRefreshFunction
     {
-        private readonly IStoreEmployerEmailDetails _dbRepository;
+        private readonly IEmployerFeedbackRepository _dbRepository;
 
         public InitiateDataRefreshFunction(
-            IStoreEmployerEmailDetails dbRepository)
+            IEmployerFeedbackRepository dbRepository)
         {
             _dbRepository = dbRepository;
         }

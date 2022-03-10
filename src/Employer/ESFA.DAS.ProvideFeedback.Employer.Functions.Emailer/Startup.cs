@@ -1,10 +1,13 @@
-﻿using ESFA.DAS.Feedback.Employer.Emailer;
+﻿using ESFA.DAS.EmployerProvideFeedback.Api.Configuration;
+using ESFA.DAS.EmployerProvideFeedback.Api.Repository;
+using ESFA.DAS.Feedback.Employer.Emailer;
 using ESFA.DAS.Feedback.Employer.Emailer.Configuration;
-using ESFA.DAS.ProvideFeedback.Data;
+using ESFA.DAS.ProvideFeedback.Data.Repositories;
 using ESFA.DAS.ProvideFeedback.Employer.Application;
 using ESFA.DAS.ProvideFeedback.Employer.ApplicationServices;
 using ESFA.DAS.ProvideFeedback.Employer.ApplicationServices.Configuration;
 using ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer;
+using ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer.Database;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -15,16 +18,13 @@ using NLog.Common;
 using NLog.Config;
 using NLog.Extensions.Logging;
 using NLog.Targets;
-using Polly;
 using SFA.DAS.NLog.Targets.Redis.DotNetCore;
 using SFA.DAS.Notifications.Api.Client;
 using SFA.DAS.Notifications.Api.Client.Configuration;
 using System;
-using System.Data;
-using System.Data.SqlClient;
 using System.IO;
 using System.Net.Http.Headers;
-using ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer.Database;
+using IEmployerFeedbackRepository = ESFA.DAS.ProvideFeedback.Data.Repositories.IEmployerFeedbackRepository;
 using LogLevel = NLog.LogLevel;
 
 [assembly: FunctionsStartup(typeof(Startup))]
@@ -80,7 +80,8 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
 
             builder.Services.AddSingleton<EmployerSurveyInviteEmailer>();
             builder.Services.AddSingleton<EmployerSurveyReminderEmailer>();
-            builder.Services.AddTransient<IStoreEmployerEmailDetails, EmployerFeedbackRepository>();
+            builder.Services.AddTransient<IEmployerFeedbackRepository, EmployerFeedbackRepository>();
+
             builder.Services.AddTransient<EmployerFeedbackDataRetrievalService>();
             builder.Services.AddTransient<UserRefreshService>();
             builder.Services.AddTransient<SurveyInviteGenerator>();
@@ -99,6 +100,17 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
             var commitmentV2ApiConfig = _configuration.GetSection("CommitmentV2Api").Get<CommitmentApiConfiguration>();
             builder.Services.AddSingleton<ICommitmentApiConfiguration>(commitmentV2ApiConfig);
             builder.Services.AddSingleton<ICommitmentService, CommitmentService>();
+
+            // Adding temporary configuration to talk to Cosmos DB for migration
+            var cosmosOptions = _configuration
+                .GetSection("Azure")
+                .Get<AzureOptions>();
+
+            builder.Services.AddSingleton<ESFA.DAS.EmployerProvideFeedback.Api.Repository.IEmployerFeedbackRepository>(
+                (svc) => CosmosEmployerFeedbackRepository.Instance.ConnectTo(cosmosOptions.CosmosEndpoint)
+                    .WithAuthKeyOrResourceToken(cosmosOptions.CosmosKey)
+                    .UsingDatabase(cosmosOptions.DatabaseName).
+                        UsingCollection(cosmosOptions.EmployerFeedbackCollection));
         }
 
         private void ConfigureNLog()

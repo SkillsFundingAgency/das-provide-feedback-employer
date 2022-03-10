@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using ESFA.DAS.Feedback.Employer.Emailer.Configuration;
-using ESFA.DAS.ProvideFeedback.Data;
+using ESFA.DAS.ProvideFeedback.Data.Repositories;
 using ESFA.DAS.ProvideFeedback.Domain.Entities.Messages;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -11,12 +11,12 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Application
     public class SurveyInviteGenerator
     {
         private readonly EmailSettings _emailSettingsConfig;
-        private readonly IStoreEmployerEmailDetails _employerEmailDetailRepository;
+        private readonly IEmployerFeedbackRepository _employerEmailDetailRepository;
         private readonly ILogger<SurveyInviteGenerator> _logger;
 
         public SurveyInviteGenerator(
             IOptions<EmailSettings> options,
-            IStoreEmployerEmailDetails employerEmailDetailRepository,
+            IEmployerFeedbackRepository employerEmailDetailRepository,
             ILogger<SurveyInviteGenerator> logger)
         {
             _emailSettingsConfig = options.Value;

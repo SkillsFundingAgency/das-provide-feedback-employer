@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using ESFA.DAS.Feedback.Employer.Emailer;
 using ESFA.DAS.Feedback.Employer.Emailer.Configuration;
-using ESFA.DAS.ProvideFeedback.Data;
+using ESFA.DAS.ProvideFeedback.Data.Repositories;
 using ESFA.DAS.ProvideFeedback.Domain.Entities.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -16,7 +16,7 @@ namespace ESFA.DAS.Feedback.Employer.UnitTests.Emailer
 {
     public class ReminderEmailerTests
     {
-        private readonly Mock<IStoreEmployerEmailDetails> _mockStore = new Mock<IStoreEmployerEmailDetails>();
+        private readonly Mock<IEmployerFeedbackRepository> _mockStore = new Mock<IEmployerFeedbackRepository>();
         private readonly Mock<INotificationsApi> _mockEmailService = new Mock<INotificationsApi>();
         private readonly Mock<ILogger<EmployerSurveyEmailer>> _mockLogger = new Mock<ILogger<EmployerSurveyEmailer>>();
         private readonly IOptions<EmailSettings> _options;

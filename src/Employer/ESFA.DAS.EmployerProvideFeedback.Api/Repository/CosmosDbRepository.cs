@@ -219,6 +219,41 @@
             return (dynamic)response.Resource;
         }
 
+        public async Task<IEnumerable<T>> GetOrderedItemsAsync<T>(
+           Expression<Func<T, bool>> predicate,
+           Expression<Func<T, object>> order,
+           int take,
+           int skip)
+           where T : TypedDocument<T>
+        {
+            var feedOptions = new FeedOptions { EnableCrossPartitionQuery = true };
+            this.TrySetPartitionKey(ref feedOptions);
+
+            var results = new List<T>();
+
+            // TODO: Add type of doc into the DB when saved
+            // Add the 'Type' of the document as a query filter, so documents can be filtered by a specific type.
+            // Expression<Func<T, bool>> typeCheck = p => p.Type == typeof(T).Name;
+
+            var query = this.documentClient.CreateDocumentQuery<T>(this.DocumentCollectionUri, feedOptions)
+                .Where(predicate).OrderByDescending(order).Skip(skip).Take(take).AsDocumentQuery();
+
+            while (query.HasMoreResults)
+            {
+                var documents = await query.ExecuteNextAsync<T>();
+
+                results.AddRange(documents);
+            }
+
+            return results.AsEnumerable();
+        }
+
+        public int GetCountOfCollection<T>() where T : TypedDocument<T>
+        {
+            return this.documentClient.CreateDocumentQuery<int>(this.DocumentCollectionUri, $"SELECT value count(1) FROM c", new FeedOptions { MaxItemCount = 1 })
+                .AsEnumerable().First();
+        }
+
         #endregion
 
         #region Fluent API
@@ -422,16 +457,16 @@
                 new Uri(this.cosmosEndpoint),
                 this.authKeyOrResourceToken,
                 new ConnectionPolicy
-                    {
-                        RetryOptions =
+                {
+                    RetryOptions =
                             new RetryOptions
-                                {
-                                    MaxRetryAttemptsOnThrottledRequests = 3,
-                                    MaxRetryWaitTimeInSeconds = 15
-                                },
-                        ConnectionMode = ConnectionMode.Direct,
-                        ConnectionProtocol = Protocol.Tcp
-                    });
+                            {
+                                MaxRetryAttemptsOnThrottledRequests = 3,
+                                MaxRetryWaitTimeInSeconds = 15
+                            },
+                    ConnectionMode = ConnectionMode.Direct,
+                    ConnectionProtocol = Protocol.Tcp
+                });
 
             Debug.WriteLine($"Creating DocumentClient...");
         }

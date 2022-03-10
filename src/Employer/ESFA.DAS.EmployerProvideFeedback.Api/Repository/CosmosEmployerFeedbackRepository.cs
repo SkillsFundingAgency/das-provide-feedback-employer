@@ -4,5 +4,6 @@
 
     public class CosmosEmployerFeedbackRepository : TypedCosmosDbRepository<CosmosEmployerFeedbackRepository, EmployerFeedback>, IEmployerFeedbackRepository
     {
+        
     }
 }

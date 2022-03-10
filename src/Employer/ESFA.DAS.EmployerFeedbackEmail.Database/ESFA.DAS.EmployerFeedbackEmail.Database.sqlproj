@@ -86,11 +86,17 @@
     <PostDeploy Include="Post Deployment\PostDeployment.sql" />
     <None Include="Post Deployment\DropUserTemplateTableType.sql" />
     <Build Include="StoredProcedures\GetLatestFeedbackInviteSentDate.sql" />
+    <Build Include="Tables\EmployerFeedbackResult.sql" />
+    <Build Include="Tables\ProviderAttributes.sql" />
+    <Build Include="Tables\Attributes.sql" />
+    <Build Include="StoredProcedures\CreateEmployerFeedbackResult.sql" />
+    <Build Include="Types\ProviderAttributesTemplate.sql" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Tables\EmployerSurveyCodes.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Post Deployment\TranslateCurrentDataIntoNew.sql" />
+    <None Include="Post Deployment\LoadAttributes.sql" />
   </ItemGroup>
 </Project>

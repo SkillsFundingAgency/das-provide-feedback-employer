@@ -205,7 +205,9 @@
             "AccountRefreshQueueName": "refresh-account",
             "RetrieveFeedbackAccountsQueueName": "retrieve-employer-accounts",
             "ProcessActiveFeedbackQueueName": "process-active-feedback",
-            "GenerateSurveyInviteMessageQueueName": "generate-survey-invite"
+            "GenerateSurveyInviteMessageQueueName": "generate-survey-invite",
+			"MigrateCosmosRecordQueueName": "migrate-cosmos-records",
+			"MigrateCosmosBatchRecordsQueueName" : "migrate-cosmos-batches"
         }
     },
     "resources": [
@@ -729,6 +731,14 @@
                                     "name": "GenerateSurveyInviteMessageQueueName",
                                     "value": "[variables('queues').GenerateSurveyInviteMessageQueueName]"
                                 },
+								                                {
+                                    "name": "MigrateCosmosRecordQueueName",
+                                    "value": "[variables('queues').MigrateCosmosRecordQueueName]"
+                                },
+								{
+                                    "name": "MigrateCosmosBatchRecordsQueueName",
+                                    "value": "[variables('queues').MigrateCosmosBatchRecordsQueueName]"
+                                },
                                 {
                                     "name": "ServiceBusConnection",
                                     "value": "[reference(concat(variables('serviceBusNamespaceName'), '-', parameters('utcValue'))).outputs.ServiceBusEndpoint.value]"
@@ -736,6 +746,22 @@
                                 {
                                     "name": "WEBSITE_RUN_FROM_PACKAGE",
                                     "value": "1"
+                                },
+								{
+                                    "name": "Azure:CosmosEndpoint",
+                                    "value": "[concat('https://', variables('cosmosDbName'), '.documents.azure.com:443/')]"
+                                },
+                                {
+                                    "name": "Azure:CosmosKey",
+                                    "value": "[parameters('cosmosDbPrimaryReadWriteKey')]"
+                                },
+                                {
+                                    "name": "Azure:DatabaseName",
+                                    "value": "[parameters('feedbackApiData').DatabaseName]"
+                                },
+                                {
+                                    "name": "Azure:EmployerFeedbackCollection",
+                                    "value": "[parameters('feedbackApiData').FeedbackCollection]"
                                 }
                             ]
                         }
@@ -772,7 +798,9 @@
                             "[variables('queues').AccountRefreshQueueName]",
                             "[variables('queues').RetrieveFeedbackAccountsQueueName]",
                             "[variables('queues').ProcessActiveFeedbackQueueName]",
-                            "[variables('queues').GenerateSurveyInviteMessageQueueName]"
+                            "[variables('queues').GenerateSurveyInviteMessageQueueName]",
+							"[variables('queues').MigrateCosmosRecordQueueName]",
+							"[variables('queues').MigrateCosmosBatchRecordsQueueName]"
                         ]
                     }
                 }

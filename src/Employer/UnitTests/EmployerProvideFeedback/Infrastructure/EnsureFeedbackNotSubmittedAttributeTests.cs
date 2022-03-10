@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using ESFA.DAS.EmployerProvideFeedback.Configuration.Routing;
 using ESFA.DAS.EmployerProvideFeedback.Infrastructure;
-using ESFA.DAS.ProvideFeedback.Data;
+using ESFA.DAS.ProvideFeedback.Data.Repositories;
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -16,12 +16,12 @@ namespace UnitTests.EmployerProvideFeedback.Infrastructure
 {
     public class EnsureFeedbackNotSubmittedAttributeTests
     {
-        private readonly Mock<IStoreEmployerEmailDetails> _sessionServiceMock;
+        private readonly Mock<IEmployerFeedbackRepository> _sessionServiceMock;
         private readonly Mock<Controller> _controllerMock;
 
         public EnsureFeedbackNotSubmittedAttributeTests()
         {
-            _sessionServiceMock = new Mock<IStoreEmployerEmailDetails>();
+            _sessionServiceMock = new Mock<IEmployerFeedbackRepository>();
             _controllerMock = new Mock<Controller>();
             _controllerMock.Setup(mock => mock.RedirectToRoute(It.IsAny<string>())).Returns(new RedirectToRouteResult(RouteNames.FeedbackAlreadySubmitted, null));
             _sessionServiceMock.Setup(mock => mock.IsCodeBurnt(It.IsAny<Guid>())).ReturnsAsync(true);
