@@ -5,6 +5,7 @@ using ESFA.DAS.ProvideFeedback.Data.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using SFA.DAS.Encoding;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -18,6 +19,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
         private readonly ISessionService _sessionService;
         private readonly ITrainingProviderService _trainingProviderService;
         private readonly ILogger<ProviderController> _logger;
+        private readonly IEncodingService _encodingService;
 
         private const int DefaultPageIndex = 1;
         private const int DefaultPageSize = 2;
@@ -26,12 +28,14 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
             IEmployerFeedbackRepository employerEmailDetailsRepository
             , ISessionService sessionService
             , ITrainingProviderService trainingProviderService
+            , IEncodingService encodingService
             , ILogger<ProviderController> logger
             )
         {
             _employerEmailDetailsRepository = employerEmailDetailsRepository;
             _sessionService = sessionService;
             _trainingProviderService = trainingProviderService;
+            _encodingService = encodingService;
             _logger = logger;
         }
 
@@ -117,7 +121,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
 
             var newSurveyModel = new SurveyModel
             {
-                //AccountId = postedModel.AccountId,
+                AccountId = _encodingService.Decode(postedModel.EncodedAccountId, EncodingType.AccountId),
                 Ukprn = postedModel.ProviderId,
                 UserRef = new Guid(idClaim?.Value), 
                 Submitted = false, //employerEmailDetail.CodeBurntDate != null,

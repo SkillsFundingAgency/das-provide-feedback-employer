@@ -32,21 +32,5 @@ namespace ESFA.DAS.EmployerProvideFeedback.ViewModels
             public string FeedbackStatus { get; set; }
             public DateTime? DateSubmitted { get; set; }
         }
-
-
-        /*  // rework to use PaginatedList
-        public IEnumerable<EmployerTrainingProvider> ProviderPage { get; set; }
-
-        public int PageIndex { get; set; }
-        public int PageSize { get; set; }
-        public int TotalRecordCount { get; set; }
-        public int FilteredRecordCount { get; set; }
-        public int TotalPages => (FilteredRecordCount / PageSize) + ((FilteredRecordCount % PageSize) > 0 ? 1 : 0);
-        public bool HasPreviousPage { get; set; }
-        public bool HasNextPage { get; set; }
-
-        */
-
-        
     }
 }
