@@ -102,7 +102,7 @@ namespace ESFA.DAS.EmployerProvideFeedback
             services.AddMemoryCache();
             services.AddCache(_hostingEnvironment, config);
             services.AddDasDataProtection(config, _hostingEnvironment);
-            services.AddServiceRegistrations();
+            services.AddServiceRegistrations(Configuration);
             services.AddSessionPersistance();
 
             services.AddMvc(options =>

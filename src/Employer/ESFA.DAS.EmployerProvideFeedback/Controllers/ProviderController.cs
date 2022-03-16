@@ -1,35 +1,134 @@
-﻿using ESFA.DAS.EmployerProvideFeedback.ViewModels;
+﻿using ESFA.DAS.EmployerProvideFeedback.Infrastructure;
+using ESFA.DAS.EmployerProvideFeedback.Services;
+using ESFA.DAS.EmployerProvideFeedback.ViewModels;
+using ESFA.DAS.ProvideFeedback.Data.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Linq;
 using System.Threading.Tasks;
-
 
 namespace ESFA.DAS.EmployerProvideFeedback.Controllers
 {
     [Authorize]
     public class ProviderController : Controller
     {
+        private readonly IEmployerFeedbackRepository _employerEmailDetailsRepository;
+        private readonly ISessionService _sessionService;
+        private readonly ITrainingProviderService _trainingProviderService;
         private readonly ILogger<ProviderController> _logger;
 
+        private const int DefaultPageIndex = 1;
+        private const int DefaultPageSize = 2;
+
         public ProviderController(
-            ILogger<ProviderController> logger
+            IEmployerFeedbackRepository employerEmailDetailsRepository
+            , ISessionService sessionService
+            , ITrainingProviderService trainingProviderService
+            , ILogger<ProviderController> logger
             )
         {
+            _employerEmailDetailsRepository = employerEmailDetailsRepository;
+            _sessionService = sessionService;
+            _trainingProviderService = trainingProviderService;
             _logger = logger;
         }
 
-
-        // Use https://localhost:5030/MRLPWP/providers
-        // Account Id 40907
-        // Department of Education Levy Payer in TEST.
-        // Should be the CI Log in
         [HttpGet]
         [Route("/{encodedAccountId}/providers")]
-        public async Task<IActionResult> Index(GetProvidersForFeedbackRequest request)
+        public async Task<IActionResult> Index(GetProvidersForFeedbackRequest request, int pageIndex = DefaultPageIndex)
         {
-            var accountId = request.AccountId;
-            return View();
+            var model = await _trainingProviderService.GetTrainingProviderSearchViewModel(
+                request.EncodedAccountId, 
+                string.Empty,
+                string.Empty,
+                DefaultPageSize,
+                pageIndex);
+            model.ChangePageAction = nameof(Index);
+
+
+
+            var idClaim = HttpContext.User.FindFirst("http://das/employer/identity/claims/id");
+
+
+
+
+            if (model.TrainingProviders.TotalRecordCount == 0)
+            {
+                // Can this happen in prod?
+            }
+            else if (model.TrainingProviders.TotalRecordCount == 1)
+            {
+                // Go straight to Start
+            }
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [Route("/{encodedAccountId}/providers")]
+        public async Task<IActionResult> Filter(ProviderSearchViewModel postedModel)
+        {
+            var model = await _trainingProviderService.GetTrainingProviderSearchViewModel(
+                postedModel.EncodedAccountId,
+                postedModel.SelectedProviderName,
+                postedModel.SelectedFeedbackStatus,
+                DefaultPageSize,
+                DefaultPageIndex);  // applying filter resets the paging
+
+            return View("Index", model);
+        }
+
+        [HttpGet]
+        [Route("/{encodedAccountId}/providers/{providerId}")]
+        public async Task<IActionResult> ConfirmProvider(string encodedAccountId, long providerId)
+        {
+            var model = await _trainingProviderService.GetTrainingProviderConfirmationViewModel(encodedAccountId, providerId);
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [Route("/{encodedAccountId}/providers/{providerId}")]
+        public async Task<IActionResult> ProviderConfirmed(ProviderSearchConfirmationViewModel postedModel)
+        {            
+            if(!postedModel.Confirmed.HasValue)
+            {
+                ModelState.AddModelError("Confirmation", "Please choose an option");
+                return View("ConfirmProvider", postedModel);
+            }
+
+            if(!postedModel.Confirmed.Value)
+            {
+                return RedirectToAction("Index");
+            }
+
+            var providerAttributes = await _employerEmailDetailsRepository.GetAllAttributes();
+            if (providerAttributes == null)
+            {
+                _logger.LogError($"Unable to load Provider Attributes from the database.");
+                return RedirectToAction("Error", "Error");
+            }
+
+            var providerAttributesModel = providerAttributes.Select(s => new ProviderAttributeModel { Name = s.AttributeName }).ToList();
+
+            var idClaim = HttpContext.User.FindFirst("http://das/employer/identity/claims/id");
+
+            var newSurveyModel = new SurveyModel
+            {
+                //AccountId = postedModel.AccountId,
+                Ukprn = postedModel.ProviderId,
+                UserRef = new Guid(idClaim?.Value), 
+                Submitted = false, //employerEmailDetail.CodeBurntDate != null,
+                ProviderName = postedModel.ProviderName,
+                Attributes = providerAttributesModel
+            };
+
+            await _sessionService.Set(postedModel.EncodedAccountId, newSurveyModel);
+            ViewData.Add("ProviderName", newSurveyModel.ProviderName);
+
+            return View("../Home/Index", new StartFeedbackRequest() { EncodedAccountId = postedModel.EncodedAccountId });
         }
     }
 }

@@ -11,6 +11,7 @@ namespace ESFA.DAS.ProvideFeedback.Employer.ApplicationServices
     {
         Task<GetAllCohortAccountIdsResponse> GetAllCohortAccountIds();
         Task<GetApprenticeshipsResponse> GetApprenticeships(long accountId);
+        Task<GetProviderResponse> GetProvider(long providerId);
     }
 
     public class CommitmentService : ApplicationService, ICommitmentService
@@ -43,5 +44,14 @@ namespace ESFA.DAS.ProvideFeedback.Employer.ApplicationServices
             return JsonConvert.DeserializeObject<GetApprenticeshipsResponse>(json);
         }
 
+        public async Task<GetProviderResponse> GetProvider(long providerId)
+        {
+            var baseUrl = GetBaseUrl(_configuration.ApiBaseUrl);
+
+            var url = $"{baseUrl}api/providers/{providerId}";
+            var json = await _httpClient.GetAsync(url, _configuration.IdentifierUri);
+
+            return JsonConvert.DeserializeObject<GetProviderResponse>(json);
+        }
     }
 }

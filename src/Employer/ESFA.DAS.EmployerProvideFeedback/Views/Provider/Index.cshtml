@@ -1,25 +1,130 @@
 ﻿@model ProviderSearchViewModel
 
-<h1>Select a training provider</h1>
+@{ ViewBag.PageID = "page-service-start";
+    ViewBag.Title = "Provide Feedback";
+    ViewBag.MetaDesc = "Provide feedback on training providers";
+    ViewBag.HideNav = "true";
+    var accountId = ViewContext.RouteData.Values[RouteValueKeys.EncodedAccountId] as string;
+}
+
+<main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content" role="main">
+
+    <h1 class="govuk-heading-xl">Select a training provider</h1>
+
+    <form method="post">
+
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <div class="govuk-inset-text">
+                    You can give feedback once every three weeks for each training provider.
+                </div>
+            </div>
+        </div>
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-full">
+                <div class="das-pane govuk-!-margin-bottom-3">
+                    <div class="govuk-grid-row">
+                        <div class="govuk-grid-column-one-third">
+                            <div class="govuk-form-group">
+
+                                @Html.LabelFor(m => m.SelectedProviderName, new { @class = "govuk-label" })
+                                @Html.DropDownListFor(m => m.SelectedProviderName,
+                               new SelectList(Model.ProviderNameFilter.Select(n => n)),
+                               "All", new { @class = "govuk-select govuk-!-width-full" })
+                            </div>
+                        </div>
+
+                        <div class="govuk-grid-column-one-third">
+                            <div class="govuk-form-group">
+
+                                @Html.LabelFor(m => m.SelectedFeedbackStatus, new { @class = "govuk-label" })
+                                @Html.DropDownListFor(m => m.SelectedFeedbackStatus,
+                               new SelectList(Model.FeedbackStatusFilter.Select(n => n)),
+                               "All", new { @class = "govuk-select govuk-!-width-full" })
+                            </div>
+                        </div>
+                    </div>
+                    <button class="govuk-button govuk-!-margin-0" type="submit">Apply filters</button>
+                </div>
+            </div>
+        </div>
+    </form>
+    <div class="govuk-grid-row govuk-!-margin-bottom-2">
+        <div class="govuk-grid-column-two-thirds">
+            <p class="govuk-body">@Model.TrainingProviders.TotalRecordCount training provider record@{if (Model.TrainingProviders.TotalRecordCount != 1) { <text>s</text> }   }</p>
+
+        </div>
+
+    </div>
+    <br>
+    <table class="govuk-table das-table--responsive das-table--double-arrows das-table--condensed">
+        <thead class="govuk-table__head">
+            <tr class="govuk-table__row">
 
 
-<form asp-controller="Provider" method="post">
+                <th scope="col" class="govuk-table__header">
+                    <a class="das-table__sort" title="Sort the table by name" href="#">
+                        Training provider
+                    </a>
+                </th>
 
-    @Html.LabelFor(m => m.SelectedProviderName)
-    @Html.DropDownListFor(m => m.SelectedProviderName,
-                new SelectList(Model.ProviderNameFilter.Select(n => n)),
-                "All")
 
-    @Html.LabelFor(m => m.SelectedFeedbackStatus)
-    @Html.DropDownListFor(m => m.SelectedFeedbackStatus,
-                new SelectList(Model.ProviderNameFilter.Select(n => n)),
-                "All")
+                <th scope="col" class="govuk-table__header">
+                    <a class="das-table__sort" title="Sort the table by status" href="#">
+                        Feedback status
+                    </a>
+                </th>
+                <th scope="col" class="govuk-table__header govuk-table__header--numeric">
+                    <a class="das-table__sort" title="Sort the table by name" href="#">Date submitted</a>
+                </th>
 
-    @Html.LabelFor(m => m.SelectedDateSubmitted)
-    @Html.DropDownListFor(m => m.SelectedDateSubmitted,
-                new SelectList(Model.DateSubmittedFilter.Select(n => n)),
-                "All")
 
-    <input type="submit" name="save" value="Apply filters" />
+                <th id="dreapta" scope="col" class="govuk-table__header govuk-table__header--numeric">
+                    Action
+                </th>
+            </tr>
+        </thead>
+        <tbody class="govuk-table__body">
 
-</form>
+            @foreach (var provider in Model.TrainingProviders.Items)
+            {
+                <tr class="govuk-table__row">
+
+                    <td class="govuk-table__cell" data-label="Provider">
+                        @provider.ProviderName
+                    </td>
+
+                    <td class="govuk-table__cell" data-label="Status">
+                        @provider.FeedbackStatus
+                    </td>
+
+                    <td class="govuk-table__cell govuk-table__cell--numeric" data-label="Date submitted">
+                        @provider.DateSubmitted
+                    </td>
+
+                    <td class="govuk-table__cell govuk-table__cell--numeric" data-label="Action">
+                        <a class="govuk-link--no-visited-state" href="/@Model.EncodedAccountId/providers/@provider.ProviderId">select</a>
+                    </td>
+
+                </tr>
+            }
+
+        </tbody>
+
+    </table>
+
+    <nav role="navigation" aria-label="Pagination">
+
+        <div class="das-pagination-links">
+            @{await Html.RenderPartialAsync("_PaginationLinksPartial", new PaginationLinksViewModel
+                {
+                    PaginatedList = Model.TrainingProviders,
+                    ChangePageAction = Model.ChangePageAction,
+                    ChangePageController = "Provider",
+                    //Fragment = Model.Fragment
+                });}
+        </div>
+
+    </nav>
+
+</main>
