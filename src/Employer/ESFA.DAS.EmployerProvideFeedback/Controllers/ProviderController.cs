@@ -1,4 +1,5 @@
-﻿using ESFA.DAS.EmployerProvideFeedback.Infrastructure;
+﻿using ESFA.DAS.EmployerProvideFeedback.Configuration.Routing;
+using ESFA.DAS.EmployerProvideFeedback.Infrastructure;
 using ESFA.DAS.EmployerProvideFeedback.Services;
 using ESFA.DAS.EmployerProvideFeedback.ViewModels;
 using ESFA.DAS.ProvideFeedback.Data.Repositories;
@@ -129,10 +130,9 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
                 Attributes = providerAttributesModel
             };
 
-            await _sessionService.Set(postedModel.EncodedAccountId, newSurveyModel);
-            ViewData.Add("ProviderName", newSurveyModel.ProviderName);
+            await _sessionService.Set(idClaim.Value, newSurveyModel);
 
-            return View("../Home/Index", new StartFeedbackRequest() { EncodedAccountId = postedModel.EncodedAccountId });
+            return RedirectToAction("Index", "Home");
         }
     }
 }

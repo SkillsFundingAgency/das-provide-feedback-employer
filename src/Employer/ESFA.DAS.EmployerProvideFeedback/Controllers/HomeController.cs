@@ -39,28 +39,11 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
         [Route(RoutePrefixPaths.FeedbackRoutePath, Name = RouteNames.Landing_Get_New)]
         public async Task<IActionResult> Index(StartFeedbackRequest request)
         {
-            var sessionSurvey = await _sessionService.Get<SurveyModel>(request.UniqueCode.ToString());
-
+            var idClaim = HttpContext.User.FindFirst("http://das/employer/identity/claims/id");
+            var sessionSurvey = await _sessionService.Get<SurveyModel>(idClaim.Value);
             if (sessionSurvey == null)
             {
-                var employerEmailDetail = await _employerEmailDetailsRepository.GetEmployerInviteForUniqueCode(request.UniqueCode);
-
-                if (employerEmailDetail == null)
-                {
-                    _logger.LogWarning($"Attempt to use invalid unique code: {request.UniqueCode}");
-                    return NotFound();
-                }
-                var providerAttributes = await _employerEmailDetailsRepository.GetAllAttributes();
-                if (providerAttributes == null)
-                {
-                    _logger.LogError($"Unable to load Provider Attributes from the database.");
-                    return RedirectToAction("Error", "Error");
-                }
-
-                var providerAttributesModel = providerAttributes.Select(s => new ProviderAttributeModel { Name = s.AttributeName });
-                var newSurveyModel = MapToNewSurveyModel(employerEmailDetail, providerAttributesModel);
-                await _sessionService.Set(request.UniqueCode.ToString(), newSurveyModel);
-                ViewData.Add("ProviderName", employerEmailDetail.ProviderName);
+                return NotFound();
             }
             else
             {
@@ -75,7 +58,8 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
         [HttpGet]
         public async Task<IActionResult> Index(Guid uniqueCode)
         {
-            var sessionSurvey = await _sessionService.Get<SurveyModel>(uniqueCode.ToString());
+            var idClaim = HttpContext.User.FindFirst("http://das/employer/identity/claims/id");
+            var sessionSurvey = await _sessionService.Get<SurveyModel>(idClaim.Value);
             long accountId;
             if (sessionSurvey == null)
             {
@@ -87,6 +71,18 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
                     return NotFound();
                 }
 
+                var providerAttributes = await _employerEmailDetailsRepository.GetAllAttributes();
+                if (providerAttributes == null)
+                {
+                    _logger.LogError($"Unable to load Provider Attributes from the database.");
+                    return RedirectToAction("Error", "Error");
+                }
+
+                var providerAttributesModel = providerAttributes.Select(s => new ProviderAttributeModel { Name = s.AttributeName });
+                var newSurveyModel = MapToNewSurveyModel(employerEmailDetail, providerAttributesModel);
+                await _sessionService.Set(idClaim.Value, newSurveyModel);
+                ViewData.Add("ProviderName", employerEmailDetail.ProviderName);
+
                 accountId = employerEmailDetail.AccountId;
             }
             else
@@ -95,9 +91,10 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
             }
 
             var encodedAccountId = _encodingService.Encode(accountId, EncodingType.AccountId);
-            return RedirectToRoute(RouteNames.Landing_Get_New, new { encodedAccountId = encodedAccountId, uniqueCode = uniqueCode });
+            return RedirectToRoute(RouteNames.Landing_Get_New, new { encodedAccountId = encodedAccountId });
         }
 
+        
         private SurveyModel MapToNewSurveyModel(EmployerSurveyInvite employerEmailDetail, IEnumerable<ProviderAttributeModel> providerAttributes)
         {
             return new SurveyModel
