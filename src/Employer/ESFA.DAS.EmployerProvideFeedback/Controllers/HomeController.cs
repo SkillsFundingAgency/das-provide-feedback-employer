@@ -59,38 +59,27 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
         public async Task<IActionResult> Index(Guid uniqueCode)
         {
             var idClaim = HttpContext.User.FindFirst("http://das/employer/identity/claims/id");
-            var sessionSurvey = await _sessionService.Get<SurveyModel>(idClaim.Value);
-            long accountId;
-            if (sessionSurvey == null)
+
+            var employerEmailDetail = await _employerEmailDetailsRepository.GetEmployerInviteForUniqueCode(uniqueCode);
+
+            if (employerEmailDetail == null)
             {
-                var employerEmailDetail = await _employerEmailDetailsRepository.GetEmployerInviteForUniqueCode(uniqueCode);
-
-                if (employerEmailDetail == null)
-                {
-                    _logger.LogWarning($"Attempt to use invalid unique code: {uniqueCode}");
-                    return NotFound();
-                }
-
-                var providerAttributes = await _employerEmailDetailsRepository.GetAllAttributes();
-                if (providerAttributes == null)
-                {
-                    _logger.LogError($"Unable to load Provider Attributes from the database.");
-                    return RedirectToAction("Error", "Error");
-                }
-
-                var providerAttributesModel = providerAttributes.Select(s => new ProviderAttributeModel { Name = s.AttributeName });
-                var newSurveyModel = MapToNewSurveyModel(employerEmailDetail, providerAttributesModel);
-                await _sessionService.Set(idClaim.Value, newSurveyModel);
-                ViewData.Add("ProviderName", employerEmailDetail.ProviderName);
-
-                accountId = employerEmailDetail.AccountId;
-            }
-            else
-            {
-                accountId = sessionSurvey.AccountId;
+                _logger.LogWarning($"Attempt to use invalid unique code: {uniqueCode}");
+                return NotFound();
             }
 
-            var encodedAccountId = _encodingService.Encode(accountId, EncodingType.AccountId);
+            var providerAttributes = await _employerEmailDetailsRepository.GetAllAttributes();
+            if (providerAttributes == null)
+            {
+                _logger.LogError($"Unable to load Provider Attributes from the database.");
+                return RedirectToAction("Error", "Error");
+            }
+
+            var providerAttributesModel = providerAttributes.Select(s => new ProviderAttributeModel { Name = s.AttributeName });
+            var newSurveyModel = MapToNewSurveyModel(employerEmailDetail, providerAttributesModel);
+            await _sessionService.Set(idClaim.Value, newSurveyModel);
+
+            var encodedAccountId = _encodingService.Encode(employerEmailDetail.AccountId, EncodingType.AccountId);
             return RedirectToRoute(RouteNames.Landing_Get_New, new { encodedAccountId = encodedAccountId });
         }
 
