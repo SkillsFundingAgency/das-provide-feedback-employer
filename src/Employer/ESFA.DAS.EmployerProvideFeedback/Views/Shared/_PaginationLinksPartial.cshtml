@@ -4,57 +4,65 @@
 
 @if (Model != null)
 {
-    if (Model.PaginatedList.HasPreviousPage)
-    {
-        <a class="@(Model.Fragment + "-page") govuk-link govuk-!-margin-left-3"
-           aria-label="@("Previous " + Model.Fragment + " page")"
-           data-pageIndex="@(Model.PaginatedList.PageIndex-1)"
-           data-all-route-data="@JsonConvert.SerializeObject(Model.RouteValues)"
-           asp-action="@Model.ChangePageAction"
-           asp-controller="@Model.ChangePageController"
-           asp-all-route-data="@(new RouteValueDictionary(Model.RouteValues).ToStringDictionary())"
-           asp-route-pageIndex="@(Model.PaginatedList.PageIndex-1)"
-           asp-fragment="@Model.Fragment">&laquo; Previous</a>
-    }
+    <ul class="das-pagination">
 
-    if ((Model.PaginatedList.TotalPages) > 1)
-    {
-        for (int pageNumber = Model.PaginatedList.FirstVisiblePage; pageNumber <= (Model.PaginatedList.LastVisiblePage); pageNumber++)
+        @if (Model.PaginatedList.HasPreviousPage)
         {
-            if (pageNumber != Model.PaginatedList.PageIndex)
-            {
+            <li class="das-pagination__item">
                 <a class="@(Model.Fragment + "-page") govuk-link govuk-!-margin-left-3"
-                   aria-label="@("Go to " + Model.Fragment + " page " + @pageNumber)"
-                   data-pageIndex="@pageNumber"
+                   aria-label="@("Previous " + Model.Fragment + " page")"
+                   data-pageIndex="@(Model.PaginatedList.PageIndex-1)"
                    data-all-route-data="@JsonConvert.SerializeObject(Model.RouteValues)"
                    asp-action="@Model.ChangePageAction"
                    asp-controller="@Model.ChangePageController"
                    asp-all-route-data="@(new RouteValueDictionary(Model.RouteValues).ToStringDictionary())"
-                   asp-route-pageindex="@pageNumber"
-                   asp-fragment="@Model.Fragment">@pageNumber</a>
-            }
-            else
+                   asp-route-pageIndex="@(Model.PaginatedList.PageIndex-1)"
+                   asp-fragment="@Model.Fragment">Previous</a>
+            </li>
+        }
+
+        @if ((Model.PaginatedList.TotalPages) > 1)
+        {
+            for (int pageNumber = Model.PaginatedList.FirstVisiblePage; pageNumber <= (Model.PaginatedList.LastVisiblePage); pageNumber++)
             {
-                <span class="govuk-!-margin-left-3">@pageNumber</span>
+                if (pageNumber != Model.PaginatedList.PageIndex)
+                {
+                    <li class="das-pagination__item">
+
+                        <a class="@(Model.Fragment + "-page") govuk-link govuk-!-margin-left-3"
+                           aria-label="@("Go to " + Model.Fragment + " page " + @pageNumber)"
+                           data-pageIndex="@pageNumber"
+                           data-all-route-data="@JsonConvert.SerializeObject(Model.RouteValues)"
+                           asp-action="@Model.ChangePageAction"
+                           asp-controller="@Model.ChangePageController"
+                           asp-all-route-data="@(new RouteValueDictionary(Model.RouteValues).ToStringDictionary())"
+                           asp-route-pageindex="@pageNumber"
+                           asp-fragment="@Model.Fragment">@pageNumber</a>
+                    </li>
+                }
+                else
+                {
+                    <li class="das-pagination__item">
+                        <span class="govuk-!-margin-left-3">@pageNumber</span>
+                    </li>
+                }
             }
         }
-    }
 
-    if (Model.PaginatedList.HasNextPage)
-    {
-        <a class="@(Model.Fragment + "-page") govuk-link govuk-!-margin-left-3"
-           aria-label="@("Next " + Model.Fragment + " page")"
-           data-pageIndex="@(Model.PaginatedList.PageIndex+1)"
-           data-all-route-data="@JsonConvert.SerializeObject(Model.RouteValues)"
-           asp-action="@Model.ChangePageAction"
-           asp-controller="@Model.ChangePageController"
-           asp-all-route-data="@(new RouteValueDictionary(Model.RouteValues).ToStringDictionary())"
-           asp-route-pageIndex="@(Model.PaginatedList.PageIndex+1)"
-           asp-fragment="@Model.Fragment">Next &raquo;</a>
-    }
-}
-@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
+        @if (Model.PaginatedList.HasNextPage)
+        {
+            <li class="das-pagination__item">
+                <a class="@(Model.Fragment + "-page") govuk-link govuk-!-margin-left-3"
+                   aria-label="@("Next " + Model.Fragment + " page")"
+                   data-pageIndex="@(Model.PaginatedList.PageIndex + 1)"
+                   data-all-route-data="@JsonConvert.SerializeObject(Model.RouteValues)"
+                   asp-action="@Model.ChangePageAction"
+                   asp-controller="@Model.ChangePageController"
+                   asp-all-route-data="@(new RouteValueDictionary(Model.RouteValues).ToStringDictionary())"
+                   asp-route-pageIndex="@(Model.PaginatedList.PageIndex + 1)"
+                   asp-fragment="@Model.Fragment">Next</a>
+            </li>
+        }
+
+    </ul>
 }

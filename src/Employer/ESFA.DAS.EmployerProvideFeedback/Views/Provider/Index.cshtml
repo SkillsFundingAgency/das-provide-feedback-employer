@@ -99,11 +99,21 @@
                     </td>
 
                     <td class="govuk-table__cell govuk-table__cell--numeric" data-label="Date submitted">
-                        @provider.DateSubmitted
+                        @if (null == provider.DateSubmitted || !provider.DateSubmitted.HasValue)
+                        {
+                            <text>N/A</text>
+                        }
+                        else
+                        {
+                            @provider.DateSubmitted.Value.ToString("d MMM yyyy")
+                        }
                     </td>
 
                     <td class="govuk-table__cell govuk-table__cell--numeric" data-label="Action">
-                        <a class="govuk-link--no-visited-state" href="/@Model.EncodedAccountId/providers/@provider.ProviderId">select</a>
+                        @if (null == provider.DateSubmitted || !provider.DateSubmitted.HasValue)  // plus some date logic for 21 (configurable) days?
+                        {
+                            <a class="govuk-link--no-visited-state" href="/@Model.EncodedAccountId/providers/@provider.ProviderId">Select</a>
+                        }
                     </td>
 
                 </tr>
@@ -115,15 +125,15 @@
 
     <nav role="navigation" aria-label="Pagination">
 
-        <div class="das-pagination-links">
-            @{await Html.RenderPartialAsync("_PaginationLinksPartial", new PaginationLinksViewModel
-                {
-                    PaginatedList = Model.TrainingProviders,
-                    ChangePageAction = Model.ChangePageAction,
-                    ChangePageController = "Provider",
-                    //Fragment = Model.Fragment
-                });}
-        </div>
+        <div class="das-pagination__summary">Showing @Model.TrainingProviders.FirstVisibleItem to @Model.TrainingProviders.LastVisibleItem of @Model.TrainingProviders.TotalRecordCount training providers</div>
+
+        @{await Html.RenderPartialAsync("_PaginationLinksPartial", new PaginationLinksViewModel
+            {
+                PaginatedList = Model.TrainingProviders,
+                ChangePageAction = Model.ChangePageAction,
+                ChangePageController = "Provider",
+                //Fragment = Model.Fragment
+            });}
 
     </nav>
 

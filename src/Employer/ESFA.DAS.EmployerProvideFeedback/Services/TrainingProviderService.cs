@@ -1,5 +1,6 @@
 ﻿using ESFA.DAS.EmployerProvideFeedback.Paging;
 using ESFA.DAS.EmployerProvideFeedback.ViewModels;
+using ESFA.DAS.ProvideFeedback.Data.Repositories;
 using ESFA.DAS.ProvideFeedback.Employer.ApplicationServices;
 using SFA.DAS.Encoding;
 using System.Linq;
@@ -20,11 +21,13 @@ namespace ESFA.DAS.EmployerProvideFeedback.Services
     {
         private readonly ICommitmentService _commitmentService;
         private readonly IEncodingService _encodingService;
+        private readonly IEmployerFeedbackRepository _employerFeedbackRepository;
 
-        public TrainingProviderService(ICommitmentService commitmentService, IEncodingService encodingService)
+        public TrainingProviderService(ICommitmentService commitmentService, IEncodingService encodingService, IEmployerFeedbackRepository employerFeedbackRepository)
         {
             _commitmentService = commitmentService;
             _encodingService = encodingService;
+            _employerFeedbackRepository = employerFeedbackRepository;
         }
 
         public async Task<ProviderSearchViewModel> GetTrainingProviderSearchViewModel(
@@ -71,6 +74,25 @@ namespace ESFA.DAS.EmployerProvideFeedback.Services
 
             var pagedFilteredProviders = filteredProviders.OrderBy(p => p.ProviderName).Skip((page - 1) * pageSize).Take(pageSize).ToList();
             model.TrainingProviders = new PaginatedList<ProviderSearchViewModel.EmployerTrainingProvider>(pagedFilteredProviders, filteredProviders.Count(), page, pageSize);
+            model.TrainingProviders.PageSetSize = 6;
+
+            // Urgh.
+
+            var employerFeedback = await _employerFeedbackRepository.GetAllFeedbackWithSurveyCodeFromEmployer(model.AccountId);
+            foreach(var provider in pagedFilteredProviders)
+            {
+                var feedBackForProvider = employerFeedback.FirstOrDefault(fp => fp.Ukprn == provider.ProviderId);
+                if(null == feedBackForProvider)
+                {
+                    provider.FeedbackStatus = "Not yet submitted";
+                    provider.DateSubmitted = null;
+                }
+                else
+                {
+                    provider.FeedbackStatus = "Submitted";
+                    provider.DateSubmitted = feedBackForProvider.BurnDate;
+                }
+            }
 
             return model;
         }
