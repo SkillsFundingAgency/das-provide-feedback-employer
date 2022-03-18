@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Security.Claims;
 using ESFA.DAS.EmployerProvideFeedback.Configuration.Routing;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
@@ -19,11 +20,12 @@ namespace ESFA.DAS.EmployerProvideFeedback.Infrastructure
 
         public override void OnActionExecuting(ActionExecutingContext context)
         {
-            var uniqueCode = (Guid)context.ActionArguments["uniqueCode"];
+            var c = context.Controller as Controller;
+            var userId = c.User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-             if (!_sessionService.ExistsAsync(uniqueCode.ToString()).Result)
+             if (!_sessionService.ExistsAsync(userId).Result)
             {
-                _logger.LogWarning($"Session for code {uniqueCode} does not exist");
+                _logger.LogWarning($"Session for user id {userId} does not exist");
                 var controller = context.Controller as Controller;
                 context.Result = controller.RedirectToRoute(RouteNames.Landing_Get);
             }

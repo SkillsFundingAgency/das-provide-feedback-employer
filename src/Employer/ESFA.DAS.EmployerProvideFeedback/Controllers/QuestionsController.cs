@@ -30,7 +30,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
         {
             // TODO: Replace TempData by adding a flag to the ViewModel.
             TempData[ReturnUrlKey] = returnUrl;
-            var idClaim = HttpContext.User.FindFirst("http://das/employer/identity/claims/id");
+            var idClaim = HttpContext.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
             var cachedAnswers = await _sessionService.Get<SurveyModel>(idClaim.Value);
             
             // TODO: Redirect from all questions and review route to landing if no survey in the session.
@@ -46,7 +46,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
                 return View(surveyModel);
             }
 
-            var idClaim = HttpContext.User.FindFirst("http://das/employer/identity/claims/id");
+            var idClaim = HttpContext.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
             var sessionAnswer = await _sessionService.Get<SurveyModel>(idClaim.Value);
             SetStengths(sessionAnswer, surveyModel.Attributes.Where(x => x.Good));
 
@@ -77,7 +77,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
         public async Task<IActionResult> QuestionTwo(Guid uniqueCode, string returnUrl = null)
         {
             TempData[ReturnUrlKey] = returnUrl;
-            var idClaim = HttpContext.User.FindFirst("http://das/employer/identity/claims/id");
+            var idClaim = HttpContext.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
             var sessionAnswers = await _sessionService.Get<SurveyModel>(idClaim.Value);
             return View(sessionAnswers);
         }
@@ -90,7 +90,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
                 return View(surveyModel);
             }
 
-            var idClaim = HttpContext.User.FindFirst("http://das/employer/identity/claims/id");
+            var idClaim = HttpContext.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
             var sessionAnswer = await _sessionService.Get<SurveyModel>(idClaim.Value);
 
             SetWeaknesses(sessionAnswer, surveyModel.Attributes.Where(x => x.Bad));
@@ -104,7 +104,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
         public async Task<IActionResult> QuestionThree(Guid uniqueCode, string returnUrl = null)
         {
             TempData[ReturnUrlKey] = returnUrl;
-            var idClaim = HttpContext.User.FindFirst("http://das/employer/identity/claims/id");
+            var idClaim = HttpContext.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
             var sessionAnswer = await _sessionService.Get<SurveyModel>(idClaim.Value);
             return View(sessionAnswer);
         }
@@ -117,7 +117,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
                 return View(surveyModel);
             }
 
-            var idClaim = HttpContext.User.FindFirst("http://das/employer/identity/claims/id");
+            var idClaim = HttpContext.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
             var sessionAnswer = await _sessionService.Get<SurveyModel>(idClaim.Value);
             sessionAnswer.Rating = surveyModel.Rating;
             await _sessionService.Set(idClaim.Value, sessionAnswer);

@@ -39,7 +39,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
         [Route(RoutePrefixPaths.FeedbackRoutePath, Name = RouteNames.Landing_Get_New)]
         public async Task<IActionResult> Index(StartFeedbackRequest request)
         {
-            var idClaim = HttpContext.User.FindFirst("http://das/employer/identity/claims/id");
+            var idClaim = HttpContext.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);   //System.Security.Claims.ClaimTypes.NameIdentifier
             var sessionSurvey = await _sessionService.Get<SurveyModel>(idClaim.Value);
             if (sessionSurvey == null)
             {
@@ -58,7 +58,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
         [HttpGet]
         public async Task<IActionResult> Index(Guid uniqueCode)
         {
-            var idClaim = HttpContext.User.FindFirst("http://das/employer/identity/claims/id");
+            var idClaim = HttpContext.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);    //System.Security.Claims.ClaimTypes.NameIdentifier
 
             var employerEmailDetail = await _employerEmailDetailsRepository.GetEmployerInviteForUniqueCode(uniqueCode);
 

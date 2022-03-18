@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Security.Claims;
 using ESFA.DAS.EmployerProvideFeedback.Configuration.Routing;
 using ESFA.DAS.ProvideFeedback.Data.Repositories;
 using Microsoft.AspNetCore.Mvc;
@@ -11,34 +12,43 @@ namespace ESFA.DAS.EmployerProvideFeedback.Infrastructure
     {
         private readonly IEmployerFeedbackRepository _employerEmailDetailRepository;
         private readonly ProvideFeedbackEmployerWeb _config;
+        private readonly ISessionService _sessionService;
 
         public EnsureFeedbackNotSubmittedRecently(
             IEmployerFeedbackRepository employerEmailDetailRepository
+            , ISessionService sessionService
             , ProvideFeedbackEmployerWeb config
             )
         {
             _employerEmailDetailRepository = employerEmailDetailRepository;
             _config = config;
+            _sessionService = sessionService;
         }
 
         public override void OnActionExecuting(ActionExecutingContext context)
         {
-            var uniqueCode = (Guid)context.ActionArguments["uniqueCode"];
+            var c = context.Controller as Controller;
+            var userId = c.User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            var isCodeBurnt = _employerEmailDetailRepository.IsCodeBurnt(uniqueCode).Result;
-            if (isCodeBurnt)
+            if(context.ActionArguments.ContainsKey("uniqueCode"))
             {
-                var dateCodeBurnt = _employerEmailDetailRepository.GetCodeBurntDate(uniqueCode).GetAwaiter().GetResult();
-                if(null != dateCodeBurnt && dateCodeBurnt.HasValue)
+                var uniqueCode = (Guid)context.ActionArguments["uniqueCode"];
+
+                var isCodeBurnt = _employerEmailDetailRepository.IsCodeBurnt(uniqueCode).Result;
+                if (isCodeBurnt)
                 {
-                    var daysSinceFeedback = DateTime.Now - dateCodeBurnt.Value;
-                    if(daysSinceFeedback.TotalDays > _config.FeedbackWaitPeriodDays)
+                    var dateCodeBurnt = _employerEmailDetailRepository.GetCodeBurntDate(uniqueCode).GetAwaiter().GetResult();
+                    if (null != dateCodeBurnt && dateCodeBurnt.HasValue)
                     {
-                        return;
+                        var daysSinceFeedback = DateTime.Now - dateCodeBurnt.Value;
+                        if (daysSinceFeedback.TotalDays > _config.FeedbackWaitPeriodDays)
+                        {
+                            return;
+                        }
                     }
+                    var controller = context.Controller as Controller;
+                    context.Result = controller.RedirectToRoute(RouteNames.FeedbackAlreadySubmitted);
                 }
-                var controller = context.Controller as Controller;
-                context.Result = controller.RedirectToRoute(RouteNames.FeedbackAlreadySubmitted);
             }
         }
     }

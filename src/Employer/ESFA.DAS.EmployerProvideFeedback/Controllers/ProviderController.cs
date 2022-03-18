@@ -54,7 +54,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
 
 
 
-            var idClaim = HttpContext.User.FindFirst("http://das/employer/identity/claims/id");
+            var idClaim = HttpContext.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
 
 
 
@@ -118,7 +118,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
 
             var providerAttributesModel = providerAttributes.Select(s => new ProviderAttributeModel { Name = s.AttributeName }).ToList();
 
-            var idClaim = HttpContext.User.FindFirst("http://das/employer/identity/claims/id");
+            var idClaim = HttpContext.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
 
             var newSurveyModel = new SurveyModel
             {
