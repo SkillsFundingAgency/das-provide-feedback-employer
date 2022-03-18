@@ -52,12 +52,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
                 pageIndex);
             model.ChangePageAction = nameof(Index);
 
-
-
             var idClaim = HttpContext.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
-
-
-
 
             if (model.TrainingProviders.TotalRecordCount == 0)
             {
@@ -131,6 +126,9 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
             };
 
             await _sessionService.Set(idClaim.Value, newSurveyModel);
+
+            // Make sure the provider exists and is active.
+            await _trainingProviderService.UpsertTrainingProvider(newSurveyModel.Ukprn, newSurveyModel.ProviderName);
 
             return RedirectToAction("Index", "Home");
         }

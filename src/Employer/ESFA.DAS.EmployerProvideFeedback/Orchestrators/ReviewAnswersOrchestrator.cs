@@ -23,16 +23,26 @@ namespace ESFA.DAS.EmployerProvideFeedback.Orchestrators
 
         public async Task SubmitConfirmedEmployerFeedback(SurveyModel surveyModel, Guid uniqueCode)
         {
-            var providerAttributes = await ConvertSurveyToProviderAttributes(surveyModel);
-            var feedbackId = await _employerFeedbackRepository.GetFeedbackIdFromUniqueSurveyCode(uniqueCode);
+            var employerFeedback = await _employerFeedbackRepository.GetEmployerFeedbackRecord(surveyModel.UserRef, surveyModel.AccountId, surveyModel.Ukprn);
+            long feedbackId = 0;
+            if(null == employerFeedback)
+            {
+                feedbackId = await _employerFeedbackRepository.UpsertIntoFeedback(surveyModel.UserRef, surveyModel.AccountId, surveyModel.Ukprn);
+            }
+            else
+            {
+                feedbackId = employerFeedback.FeedbackId;
+            }
 
             if (feedbackId == default(long))
             {
-                throw new InvalidOperationException($"Unable to find feedback Id for Survey Invite {uniqueCode}");
+                throw new InvalidOperationException($"Unable to find or create feedback record");
             }
 
             try
             {
+                var providerAttributes = await ConvertSurveyToProviderAttributes(surveyModel);
+
                 var employerFeedbackResultId =
                     await _employerFeedbackRepository.CreateEmployerFeedbackResult(
                     feedbackId,

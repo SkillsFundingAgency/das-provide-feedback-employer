@@ -54,7 +54,7 @@ namespace UnitTests.EmployerProvideFeedback.Infrastructure
                _controllerMock.Object);
             context.ActionArguments.Add("uniqueCode", Guid.NewGuid());
 
-            var ensureSession = new EnsureFeedbackNotSubmittedRecently(sessionServiceMock.Object, config);
+            var ensureSession = new EnsureFeedbackNotSubmittedRecently(sessionServiceMock.Object, null, config);
 
             // Act
             ensureSession.OnActionExecuting(context);
@@ -101,7 +101,7 @@ namespace UnitTests.EmployerProvideFeedback.Infrastructure
                _controllerMock.Object);
             context.ActionArguments.Add("uniqueCode", Guid.NewGuid());
 
-            var ensureSession = new EnsureFeedbackNotSubmittedRecently(sessionServiceMock.Object, config);
+            var ensureSession = new EnsureFeedbackNotSubmittedRecently(sessionServiceMock.Object, null, config);
 
             // Act
             ensureSession.OnActionExecuting(context);

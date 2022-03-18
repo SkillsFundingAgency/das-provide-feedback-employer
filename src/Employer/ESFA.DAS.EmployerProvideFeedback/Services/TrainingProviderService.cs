@@ -1,6 +1,7 @@
 ﻿using ESFA.DAS.EmployerProvideFeedback.Paging;
 using ESFA.DAS.EmployerProvideFeedback.ViewModels;
 using ESFA.DAS.ProvideFeedback.Data.Repositories;
+using ESFA.DAS.ProvideFeedback.Domain.Entities.Models;
 using ESFA.DAS.ProvideFeedback.Employer.ApplicationServices;
 using SFA.DAS.Encoding;
 using System.Linq;
@@ -13,6 +14,8 @@ namespace ESFA.DAS.EmployerProvideFeedback.Services
         Task<ProviderSearchViewModel> GetTrainingProviderSearchViewModel(string encodedAccountId, string selectedProviderName, string selectedFeedbackStatus, int pageSize = 10, int pageIndex = 0);
 
         Task<ProviderSearchConfirmationViewModel> GetTrainingProviderConfirmationViewModel(string encodedAccountId, long providerId);
+
+        Task UpsertTrainingProvider(long providerId, string providerName);
     }
 
 
@@ -107,11 +110,15 @@ namespace ESFA.DAS.EmployerProvideFeedback.Services
             }
 
             var model = new ProviderSearchConfirmationViewModel();
-            //model.AccountId = _encodingService.Decode(encodedAccountId, EncodingType.AccountId);
             model.ProviderId = response.ProviderId;
             model.ProviderName = response.Name;
 
             return model;
+        }
+
+        public async Task UpsertTrainingProvider(long providerId, string providerName)
+        {
+            await _employerFeedbackRepository.UpsertIntoProviders(new Provider[] { new Provider() { Ukprn = providerId, ProviderName = providerName } });
         }
     }
 }

@@ -33,7 +33,8 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
         [HttpGet("feedback-confirmation", Name = RouteNames.Confirmation_Get)]
         public async Task<IActionResult> Index(Guid uniqueCode)
         {
-            var surveyModel = await _sessionService.Get<SurveyModel>(uniqueCode.ToString());
+            var idClaim = HttpContext.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
+            var surveyModel = await _sessionService.Get<SurveyModel>(idClaim.Value);
 
             var confirmationVm = new ConfirmationViewModel
             {
