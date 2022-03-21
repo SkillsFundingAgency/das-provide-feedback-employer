@@ -35,7 +35,8 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
         {
             var idClaim = HttpContext.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
             var surveyModel = await _sessionService.Get<SurveyModel>(idClaim.Value);
-            var hasMultipleProviders = (await _sessionService.Get<int>($"{idClaim.Value}_ProviderCount")) > 0;
+            var providerCount = await _sessionService.Get<int>($"{idClaim.Value}_ProviderCount");
+            var hasMultipleProviders = providerCount > 0;
 
             var confirmationVm = new ConfirmationViewModel
             {
