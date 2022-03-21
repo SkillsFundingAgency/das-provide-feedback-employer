@@ -8,7 +8,7 @@
     /// Feedback given by and Employer, omitting sensitive information such as Account Id and UserRef
     /// </summary>
     [Serializable]
-    public class PublicEmployerFeedback
+    public class EmployerFeedbackDto
     {
         [JsonProperty(PropertyName = "ukprn")]
         public long Ukprn { get; set; }
@@ -17,7 +17,7 @@
         public DateTime DateTimeCompleted { get; set; }
 
         [JsonProperty(PropertyName = "providerAttributes")]
-        public List<ProviderAttribute> ProviderAttributes { get; set; }
+        public List<ProviderAttributeDto> ProviderAttributes { get; set; }
 
         [JsonProperty(PropertyName = "providerRating")]
         public string ProviderRating { get; set; }

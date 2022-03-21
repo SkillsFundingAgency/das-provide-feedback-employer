@@ -2,24 +2,23 @@
 using ESFA.DAS.EmployerProvideFeedback.Database;
 using ESFA.DAS.EmployerProvideFeedback.Infrastructure;
 using ESFA.DAS.EmployerProvideFeedback.Orchestrators;
-using ESFA.DAS.FeedbackDataAccess;
-using ESFA.DAS.FeedbackDataAccess.IoC;
 using ESFA.DAS.ProvideFeedback.Data.Repositories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using System;
 
 namespace ESFA.DAS.EmployerProvideFeedback
 {
     public partial class Startup
     {
-        private readonly IHostingEnvironment _hostingEnvironment;
+        private readonly IWebHostEnvironment _hostingEnvironment;
         public IConfiguration Configuration { get; }
 
-        public Startup(IConfiguration configuration, IHostingEnvironment hostingEnvironment)
+        public Startup(IConfiguration configuration, IWebHostEnvironment hostingEnvironment)
         {
             Configuration = configuration;
             _hostingEnvironment = hostingEnvironment;
@@ -33,12 +32,10 @@ namespace ESFA.DAS.EmployerProvideFeedback
             services.AddTransient<IEmployerFeedbackRepository, EmployerFeedbackRepository>();
             services.AddTransient<EnsureFeedbackNotSubmitted>();
             services.AddTransient<EnsureSessionExists>();
-            services.Configure<CosmosConnectionSettings>(Configuration.GetSection("CosmosConnectionSettings"));
             services.AddDatabaseRegistration(Configuration, _hostingEnvironment);
             services.AddTransient<ISessionService, SessionService>();
             services.AddTransient<ReviewAnswersOrchestrator>();
-            services.AddProvideFeedbackCosmos(Configuration);
-            
+                        
             services.Configure<CookiePolicyOptions>(options =>
             {
                 // This lambda determines whether user consent for non-essential cookies is needed for a given request.

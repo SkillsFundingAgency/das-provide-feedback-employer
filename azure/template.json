@@ -74,14 +74,6 @@
                 "Identifier": ""
             }
         },
-        "feedbackApiData": {
-            "type": "object",
-            "defaultValue": {
-                "DatabaseName": "",
-                "TokenCollection": "",
-                "FeedbackCollection": ""
-            }
-        },
         "dbConnectionString": {
             "type": "secureString"
         },
@@ -103,13 +95,6 @@
         "emailerAppName": {
             "type": "string",
             "defaultValue": "das-provide-feedback-emailer"
-        },
-        "cosmosDbPrimaryReadWriteKey": {
-            "type": "securestring"
-        },
-        "cosmosDbIpRangeFilter": {
-            "type": "string",
-            "defaultValue": ""
         },
         "slidingExpirationMinutes": {
             "type": "int"
@@ -199,15 +184,12 @@
         "uiAppServiceName": "[concat(variables('resourceNamePrefix'), 'ui-as')]",
         "functionAppServiceName": "[concat(variables('resourceNamePrefix'), 'wkr-fa')]",
         "functionAppServicePlanName": "[concat(variables('resourceNamePrefix'), 'wkr-asp')]",
-        "cosmosDbName": "[concat(variables('resourceNamePrefix'), '-cdb')]",
         "queues": {
             "RetrieveProvidersQueueName": "retrieve-providers",
             "AccountRefreshQueueName": "refresh-account",
             "RetrieveFeedbackAccountsQueueName": "retrieve-employer-accounts",
             "ProcessActiveFeedbackQueueName": "process-active-feedback",
-            "GenerateSurveyInviteMessageQueueName": "generate-survey-invite",
-			"MigrateCosmosRecordQueueName": "migrate-cosmos-records",
-			"MigrateCosmosBatchRecordsQueueName" : "migrate-cosmos-batches"
+            "GenerateSurveyInviteMessageQueueName": "generate-survey-invite"
         }
     },
     "resources": [
@@ -326,14 +308,6 @@
                                     "value": "[reference(concat(variables('uiAppServiceName'), '-app-insights-', parameters('utcValue'))).outputs.InstrumentationKey.value]"
                                 },
                                 {
-                                    "name": "CosmosConnectionSettings:EndpointUrl",
-                                    "value": "[concat('https://', variables('cosmosDbName'), '.documents.azure.com:443/')]"
-                                },
-                                {
-                                    "name": "CosmosConnectionSettings:AuthorizationKey",
-                                    "value": "[parameters('cosmosDbPrimaryReadWriteKey')]"
-                                },
-                                {
                                     "name": "ASPNETCORE_ENVIRONMENT",
                                     "value": "[parameters('aspNetCoreEnvironment')]"
                                 }
@@ -444,26 +418,6 @@
                         "value": {
                             "array": [
                                 {
-                                    "name": "Azure:CosmosEndpoint",
-                                    "value": "[concat('https://', variables('cosmosDbName'), '.documents.azure.com:443/')]"
-                                },
-                                {
-                                    "name": "Azure:CosmosKey",
-                                    "value": "[parameters('cosmosDbPrimaryReadWriteKey')]"
-                                },
-                                {
-                                    "name": "Azure:DatabaseName",
-                                    "value": "[parameters('feedbackApiData').DatabaseName]"
-                                },
-                                {
-                                    "name": "Azure:EmployerFeedbackCollection",
-                                    "value": "[parameters('feedbackApiData').FeedbackCollection]"
-                                },
-                                {
-                                    "name": "Azure:TokenCollection",
-                                    "value": "[parameters('feedbackApiData').TokenCollection]"
-                                },
-                                {
                                     "name": "AzureAd:Tenant",
                                     "value": "[parameters('feedbackApiAuth').Tenant]"
                                 },
@@ -488,6 +442,11 @@
                                 {
                                     "name": "Redis",
                                     "connectionString": "[parameters('loggingRedisConnectionString')]",
+                                    "type": "Custom"
+                                },
+                                {
+                                    "name": "EmployerEmailStoreConnection",
+                                    "connectionString": "[parameters('dbConnectionString')]",
                                     "type": "Custom"
                                 }
                             ]
@@ -731,14 +690,6 @@
                                     "name": "GenerateSurveyInviteMessageQueueName",
                                     "value": "[variables('queues').GenerateSurveyInviteMessageQueueName]"
                                 },
-								                                {
-                                    "name": "MigrateCosmosRecordQueueName",
-                                    "value": "[variables('queues').MigrateCosmosRecordQueueName]"
-                                },
-								{
-                                    "name": "MigrateCosmosBatchRecordsQueueName",
-                                    "value": "[variables('queues').MigrateCosmosBatchRecordsQueueName]"
-                                },
                                 {
                                     "name": "ServiceBusConnection",
                                     "value": "[reference(concat(variables('serviceBusNamespaceName'), '-', parameters('utcValue'))).outputs.ServiceBusEndpoint.value]"
@@ -746,22 +697,6 @@
                                 {
                                     "name": "WEBSITE_RUN_FROM_PACKAGE",
                                     "value": "1"
-                                },
-								{
-                                    "name": "Azure:CosmosEndpoint",
-                                    "value": "[concat('https://', variables('cosmosDbName'), '.documents.azure.com:443/')]"
-                                },
-                                {
-                                    "name": "Azure:CosmosKey",
-                                    "value": "[parameters('cosmosDbPrimaryReadWriteKey')]"
-                                },
-                                {
-                                    "name": "Azure:DatabaseName",
-                                    "value": "[parameters('feedbackApiData').DatabaseName]"
-                                },
-                                {
-                                    "name": "Azure:EmployerFeedbackCollection",
-                                    "value": "[parameters('feedbackApiData').FeedbackCollection]"
                                 }
                             ]
                         }
@@ -798,36 +733,8 @@
                             "[variables('queues').AccountRefreshQueueName]",
                             "[variables('queues').RetrieveFeedbackAccountsQueueName]",
                             "[variables('queues').ProcessActiveFeedbackQueueName]",
-                            "[variables('queues').GenerateSurveyInviteMessageQueueName]",
-							"[variables('queues').MigrateCosmosRecordQueueName]",
-							"[variables('queues').MigrateCosmosBatchRecordsQueueName]"
+                            "[variables('queues').GenerateSurveyInviteMessageQueueName]"
                         ]
-                    }
-                }
-            }
-        },
-        {
-            "apiVersion": "2021-04-01",
-            "name": "[concat(variables('cosmosDbName'), '-', parameters('utcValue'))]",
-            "type": "Microsoft.Resources/deployments",
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "[concat(variables('deploymentUrlBase'), 'cosmos-db.json')]",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "cosmosDbName": {
-                        "value": "[variables('cosmosDbName')]"
-                    },
-                    "cosmosDbType": {
-                        "value": "GlobalDocumentDB"
-                    },
-                    "defaultConsistencyLevel": {
-                        "value": "Strong"
-                    },
-                    "ipRangeFilter": {
-                        "value": "[parameters('cosmosDbIpRangeFilter')]"
                     }
                 }
             }
