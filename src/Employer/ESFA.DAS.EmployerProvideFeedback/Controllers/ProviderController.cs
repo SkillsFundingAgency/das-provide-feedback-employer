@@ -53,6 +53,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
             model.ChangePageAction = nameof(Index);
 
             var idClaim = HttpContext.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
+            await _sessionService.Set($"{idClaim.Value}_ProviderCount", model.TrainingProviders.TotalRecordCount);
 
             if (model.TrainingProviders.TotalRecordCount == 0)
             {

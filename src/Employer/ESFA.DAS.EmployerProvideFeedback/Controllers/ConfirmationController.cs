@@ -31,16 +31,19 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
         }
 
         [HttpGet("feedback-confirmation", Name = RouteNames.Confirmation_Get)]
-        public async Task<IActionResult> Index(Guid uniqueCode)
+        public async Task<IActionResult> Index(string encodedAccountId)
         {
             var idClaim = HttpContext.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
             var surveyModel = await _sessionService.Get<SurveyModel>(idClaim.Value);
+            var hasMultipleProviders = (await _sessionService.Get<int>($"{idClaim.Value}_ProviderCount")) > 0;
 
             var confirmationVm = new ConfirmationViewModel
             {
                 ProviderName = surveyModel.ProviderName,
                 FeedbackRating = surveyModel.Rating.Value,
-                FatUrl = _externalLinks.FindApprenticeshipTrainingSiteUrl
+                FatUrl = _externalLinks.FindApprenticeshipTrainingSiteUrl,
+                HasMultipleProviders = hasMultipleProviders,
+                EncodedAccountId = encodedAccountId
             };
 
             return View(confirmationVm);

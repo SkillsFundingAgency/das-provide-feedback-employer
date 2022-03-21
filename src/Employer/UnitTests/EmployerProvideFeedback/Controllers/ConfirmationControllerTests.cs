@@ -47,7 +47,7 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
             var uniqueCode = Guid.NewGuid();
 
             // Act
-            var result = await _controller.Index(uniqueCode) as ViewResult;
+            var result = await _controller.Index("uniqueCode") as ViewResult;
 
             // Assert
             var viewModel = Assert.IsAssignableFrom<ConfirmationViewModel>(result.Model);
