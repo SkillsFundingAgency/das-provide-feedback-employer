@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoFixture;
 using ESFA.DAS.EmployerProvideFeedback.Configuration.Routing;
@@ -42,6 +43,17 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
 
             _controller = new QuestionsController(_sessionServiceMock.Object);
             _controller.TempData = tempData;
+            var context = new DefaultHttpContext()
+            {
+                User = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
+                {
+                    new Claim(ClaimTypes.NameIdentifier, "TestUserIdValue"),
+                }))
+            };
+            _controller.ControllerContext = new ControllerContext
+            {
+                HttpContext = context
+            };
         }
 
         [Fact]

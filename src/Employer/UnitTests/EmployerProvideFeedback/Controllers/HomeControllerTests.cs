@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoFixture;
 using ESFA.DAS.EmployerProvideFeedback.Controllers;
@@ -9,6 +10,7 @@ using ESFA.DAS.EmployerProvideFeedback.ViewModels;
 using ESFA.DAS.ProvideFeedback.Data.Repositories;
 using ESFA.DAS.ProvideFeedback.Domain.Entities.Models;
 using FluentAssertions;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -44,6 +46,18 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
                 _sessionServiceMock.Object,
                 _encodingServiceMock.Object,
                 _loggerMock.Object);
+            var context = new DefaultHttpContext()
+            {
+                User = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
+                {
+                    new Claim(ClaimTypes.NameIdentifier, "TestUserIdValue"),
+                }))
+            };
+            _controller.ControllerContext = new ControllerContext
+            {
+                HttpContext = context
+            };
+
             _employerEmailDetailsRepoMock.Setup(mock => mock.GetEmployerInviteForUniqueCode(It.IsAny<Guid>())).Returns(Task.FromResult(_employerEmailDetail));
         }
 

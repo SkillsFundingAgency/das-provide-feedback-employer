@@ -1,5 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Security.Claims;
+using System.Security.Principal;
+using System.Threading;
 using System.Threading.Tasks;
 using AutoFixture;
 using ESFA.DAS.EmployerProvideFeedback.Configuration;
@@ -7,6 +11,8 @@ using ESFA.DAS.EmployerProvideFeedback.Controllers;
 using ESFA.DAS.EmployerProvideFeedback.Infrastructure;
 using ESFA.DAS.EmployerProvideFeedback.ViewModels;
 using FluentAssertions;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -38,16 +44,28 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
                 sessionServiceMock.Object,
                 externalLinksOptions,
                 loggerMock.Object);
+
+            var context = new DefaultHttpContext()
+            {
+                User = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
+                {
+                    new Claim(ClaimTypes.NameIdentifier, "TestUserIdValue"),
+                }))
+            };
+            _controller.ControllerContext = new ControllerContext
+            {
+                HttpContext = context
+            };
         }
 
         [Fact]
         public async void ApprenticeApi_ProviderHasFeedback_FeedbackDisplayed_InViewModel()
         {
             // Arrange
-            var uniqueCode = Guid.NewGuid();
+            var encodedAccountId = "ABCDEFG";
 
             // Act
-            var result = await _controller.Index("uniqueCode") as ViewResult;
+            var result = await _controller.Index(encodedAccountId) as ViewResult;
 
             // Assert
             var viewModel = Assert.IsAssignableFrom<ConfirmationViewModel>(result.Model);
