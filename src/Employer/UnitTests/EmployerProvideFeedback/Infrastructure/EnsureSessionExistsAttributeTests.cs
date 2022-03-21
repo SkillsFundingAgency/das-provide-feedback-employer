@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Security.Claims;
 using ESFA.DAS.EmployerProvideFeedback.Configuration.Routing;
+using ESFA.DAS.EmployerProvideFeedback.Controllers;
 using ESFA.DAS.EmployerProvideFeedback.Infrastructure;
+using ESFA.DAS.ProvideFeedback.Data.Repositories;
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -10,22 +13,44 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Logging;
 using Moq;
+using SFA.DAS.Encoding;
 using Xunit;
 
 namespace UnitTests.EmployerProvideFeedback.Infrastructure
 {
     public class EnsureSessionExistsAttributeTests
     {
+        private readonly HomeController _controller;
         private readonly Mock<ISessionService> _sessionServiceMock;
+        private readonly Mock<IEmployerFeedbackRepository> _employerEmailDetailsRepoMock;
+        private readonly Mock<IEncodingService> _encodingServiceMock;
+        private readonly Mock<ILogger<HomeController>> _controllerLoggerMock;
         private readonly Mock<ILogger<EnsureSessionExists>> _loggerMock;
-        private readonly Mock<Controller> _controllerMock;
 
         public EnsureSessionExistsAttributeTests()
         {
+            _controllerLoggerMock = new Mock<ILogger<HomeController>>();
             _loggerMock = new Mock<ILogger<EnsureSessionExists>>();
+            _employerEmailDetailsRepoMock = new Mock<IEmployerFeedbackRepository>();
             _sessionServiceMock = new Mock<ISessionService>();
-            _controllerMock = new Mock<Controller>();
-            _controllerMock.Setup(mock => mock.RedirectToRoute(It.IsAny<string>())).Returns(new RedirectToRouteResult(RouteNames.Landing_Get, null));
+            _encodingServiceMock = new Mock<IEncodingService>();
+
+            _controller = new HomeController(
+                            _employerEmailDetailsRepoMock.Object,
+                            _sessionServiceMock.Object,
+                            _encodingServiceMock.Object,
+                            _controllerLoggerMock.Object);
+            var context = new DefaultHttpContext()
+            {
+                User = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
+                {
+                    new Claim(ClaimTypes.NameIdentifier, "TestUserIdValue"),
+                }))
+            };
+            _controller.ControllerContext = new ControllerContext
+            {
+                HttpContext = context
+            };
         }
 
         [Fact]
@@ -42,7 +67,7 @@ namespace UnitTests.EmployerProvideFeedback.Infrastructure
                 },
                 new List<IFilterMetadata>(),
                 new Dictionary<string, object>(),
-               _controllerMock.Object);
+               _controller);
             context.ActionArguments.Add("uniqueCode", Guid.NewGuid());
 
             var ensureSession = new EnsureSessionExists(_sessionServiceMock.Object, _loggerMock.Object);

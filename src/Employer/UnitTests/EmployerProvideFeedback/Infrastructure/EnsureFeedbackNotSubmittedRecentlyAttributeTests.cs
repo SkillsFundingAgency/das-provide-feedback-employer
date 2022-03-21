@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Security.Claims;
 using ESFA.DAS.EmployerProvideFeedback.Configuration.Routing;
+using ESFA.DAS.EmployerProvideFeedback.Controllers;
 using ESFA.DAS.EmployerProvideFeedback.Infrastructure;
 using ESFA.DAS.ProvideFeedback.Data.Repositories;
 using FluentAssertions;
@@ -9,20 +11,44 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Routing;
+using Microsoft.Extensions.Logging;
 using Moq;
+using SFA.DAS.Encoding;
 using Xunit;
 
 namespace UnitTests.EmployerProvideFeedback.Infrastructure
 {
     public class EnsureFeedbackNotSubmittedRecentlyAttributeTests
     {
-        private readonly Mock<Controller> _controllerMock;
+        private readonly HomeController _controller;
+        private readonly Mock<ISessionService> _sessionServiceMock;
+        private readonly Mock<IEmployerFeedbackRepository> _employerEmailDetailsRepoMock;
+        private readonly Mock<IEncodingService> _encodingServiceMock;
+        private readonly Mock<ILogger<HomeController>> _loggerMock;
 
         public EnsureFeedbackNotSubmittedRecentlyAttributeTests()
         {
-            _controllerMock = new Mock<Controller>();
-            _controllerMock.Setup(mock => mock.RedirectToRoute(It.IsAny<string>())).Returns(new RedirectToRouteResult(RouteNames.FeedbackAlreadySubmitted, null));
-            _controllerMock.Setup(mock => mock.View()).Returns(new ViewResult());
+            _employerEmailDetailsRepoMock = new Mock<IEmployerFeedbackRepository>();
+            _sessionServiceMock = new Mock<ISessionService>();
+            _encodingServiceMock = new Mock<IEncodingService>();
+            _loggerMock = new Mock<ILogger<HomeController>>();
+
+            _controller = new HomeController(
+                            _employerEmailDetailsRepoMock.Object,
+                            _sessionServiceMock.Object,
+                            _encodingServiceMock.Object,
+                            _loggerMock.Object);
+            var context = new DefaultHttpContext()
+            {
+                User = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
+                {
+                    new Claim(ClaimTypes.NameIdentifier, "TestUserIdValue"),
+                }))
+            };
+            _controller.ControllerContext = new ControllerContext
+            {
+                HttpContext = context
+            };
         }
 
         [Fact]
@@ -51,7 +77,7 @@ namespace UnitTests.EmployerProvideFeedback.Infrastructure
                 },
                 new List<IFilterMetadata>(),
                 new Dictionary<string, object>(),
-               _controllerMock.Object);
+               _controller);
             context.ActionArguments.Add("uniqueCode", Guid.NewGuid());
 
             var ensureSession = new EnsureFeedbackNotSubmittedRecently(sessionServiceMock.Object, null, config);
@@ -88,17 +114,16 @@ namespace UnitTests.EmployerProvideFeedback.Infrastructure
             // Set feedback given 15 days ago
             sessionServiceMock.Setup(mock => mock.GetCodeBurntDate(It.IsAny<Guid>())).ReturnsAsync(DateTime.Now.AddDays(-15));
 
-            var httpContext = new DefaultHttpContext();
             var context = new ActionExecutingContext(
                 new ActionContext
                 {
-                    HttpContext = httpContext,
+                    HttpContext = _controller.HttpContext,
                     RouteData = new RouteData(),
                     ActionDescriptor = new ActionDescriptor()
                 },
                 new List<IFilterMetadata>(),
                 new Dictionary<string, object>(),
-               _controllerMock.Object);
+               _controller);
             context.ActionArguments.Add("uniqueCode", Guid.NewGuid());
 
             var ensureSession = new EnsureFeedbackNotSubmittedRecently(sessionServiceMock.Object, null, config);
