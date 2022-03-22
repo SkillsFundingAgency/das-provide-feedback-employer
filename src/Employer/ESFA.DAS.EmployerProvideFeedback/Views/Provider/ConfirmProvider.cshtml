@@ -1,81 +1,88 @@
 ﻿@model ProviderSearchConfirmationViewModel
 
 @{ ViewBag.PageID = "page-service-start";
-                ViewBag.Title = "Provide Feedback";
-                ViewBag.MetaDesc = "Provide feedback on training providers";
-                ViewBag.HideNav = "true";
-                var accountId = ViewContext.RouteData.Values[RouteValueKeys.EncodedAccountId] as string;
-}
+    ViewBag.Title = "Provide Feedback";
+    ViewBag.MetaDesc = "Provide feedback on training providers";
+    ViewBag.HideNav = "true";
+    var accountId = ViewContext.RouteData.Values[RouteValueKeys.EncodedAccountId] as string; }
 
 
 
-<main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content" role="main">
 
-    <h1 class="govuk-heading-xl">Confirm training provider</h1>
-
-    <h2 class="govuk-heading-m">@Model.ProviderName</h2>
-    <span class="govuk-caption-m">UKPRN:&nbsp;&nbsp;@Model.ProviderId</span>
+<main class="govuk-main-wrapper " id="main-content" role="main">
 
 
-    @if (!ViewData.ModelState.IsValid)
-    {
-<div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" data-module="govuk-error-summary">
-    <h2 class="govuk-error-summary__title" id="error-summary-title">
-        There is a problem
-    </h2>
-    <div class="govuk-error-summary__body">
-        <ul class="govuk-list govuk-error-summary__list">
-            <li>
-                <a href="#true">Please select an option</a>
-            </li>
-        </ul>
-    </div>
-</div>            }
 
-    <form asp-controller="Provider" method="post">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
 
-        <input type="hidden" name="providerId" value="@Model.ProviderId" />
-        <input type="hidden" name="ProviderName" value="@Model.ProviderName" />
+            <h1 class="govuk-heading-xl">Confirm training provider</h1>
+            <h2 class="govuk-heading-l govuk-!-margin-bottom-0">@Model.ProviderName</h2>
+            <span class="govuk-caption-m">UKPRN: @Model.ProviderId</span>
+            <br><br>
 
-        <div class="govuk-form-group">
-            <div class="govuk-form-group error-message-container" sfa-anyvalidationerror-class="govuk-form-group--error">
-
-                <fieldset class="govuk-fieldset  @(!ViewData.ModelState.IsValid ? "form-group-error" : "")">
-                    <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
-                        <h3 class="govuk-fieldset__heading">
-                            Is this the training provider you want to give feedback on?
-                        </h3>
-                    </legend>
-                    @Html.ValidationMessageFor(m => m.Confirmed, $"Please select an option", new { @class = "govuk-error-message" })
-                    <div class="govuk-radios" data-module="govuk-radios">
-                        <div class="govuk-radios__item">
-                            @Html.RadioButtonFor(model => model.Confirmed, "true", new { id = "yes", @class = "govuk-radios__input" })
-
-                            <label class="govuk-label govuk-radios__label" for="where-do-you-live">
-                                Yes
-                            </label>
-                        </div>
-                        <div class="govuk-radios__item">
-
-                            @Html.RadioButtonFor(model => model.Confirmed, "false", new { id = "no", @class = "govuk-radios__input" })
-
-
-                            <label class="govuk-label govuk-radios__label" for="where-do-you-live-2">
-                                No, select a different training provider
-                            </label>
-                        </div>
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" data-module="govuk-error-summary">
+                    <h2 class="govuk-error-summary__title" id="error-summary-title">
+                        There is a problem
+                    </h2>
+                    <div class="govuk-error-summary__body">
+                        <ul class="govuk-list govuk-error-summary__list">
+                            <li>
+                                <a href="#true">Please select an option</a>
+                            </li>
+                        </ul>
                     </div>
+                </div>
+            }
 
-                </fieldset>
-            </div>
+        <form asp-controller="Provider" method="post">
+
+            <input type="hidden" name="providerId" value="@Model.ProviderId" />
+            <input type="hidden" name="ProviderName" value="@Model.ProviderName" />
+
+            <div class="govuk-form-group">
+                <div class="govuk-form-group error-message-container" sfa-anyvalidationerror-class="govuk-form-group--error">
+
+                    <fieldset class="govuk-fieldset  @(!ViewData.ModelState.IsValid ? "form-group-error" : "")">
+                        <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
+                            <h3 class="govuk-fieldset__heading">
+                                Is this the training provider you want to give feedback on?
+                            </h3>
+                        </legend>
+                        @Html.ValidationMessageFor(m => m.Confirmed, $"Please select an option", new { @class = "govuk-error-message" })
+                        <div class="govuk-radios" data-module="govuk-radios">
+                            <div class="govuk-radios__item">
+                                @Html.RadioButtonFor(model => model.Confirmed, "true", new { id = "yes", @class = "govuk-radios__input" })
+
+                                <label class="govuk-label govuk-radios__label" for="where-do-you-live">
+                                    Yes
+                                </label>
+                            </div>
+                            <div class="govuk-radios__item">
+
+                                @Html.RadioButtonFor(model => model.Confirmed, "false", new { id = "no", @class = "govuk-radios__input" })
+
+
+                                <label class="govuk-label govuk-radios__label" for="where-do-you-live-2">
+                                    No, select a different training provider
+                                </label>
+                            </div>
+                        </div>
+
+                    </fieldset>
+                </div>
             </div>
 
             <button class="govuk-button" data-module="govuk-button">
                 Continue
             </button>
 
-</form>
+        </form>
 
+        </div>
+    </div>
 
 
 </main>
