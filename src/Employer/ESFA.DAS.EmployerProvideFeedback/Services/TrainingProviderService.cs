@@ -65,6 +65,34 @@ namespace ESFA.DAS.EmployerProvideFeedback.Services
                 })
                 .ToList();
 
+            // Augment the provider records with feedback data. Urgh.
+            // We need to do this so that the date filtering will work.
+
+            var employerFeedback = await _employerFeedbackRepository.GetAllFeedbackAndResultFromEmployer(model.AccountId);
+            foreach (var provider in providers)
+            {
+                var feedBackForProvider = employerFeedback.FirstOrDefault(fp => fp.Ukprn == provider.ProviderId);
+                if (null == feedBackForProvider)
+                {
+                    provider.FeedbackStatus = "Not yet submitted";
+                    provider.DateSubmitted = null;
+                }
+                else
+                {
+                    provider.FeedbackStatus = "Submitted";
+                    provider.DateSubmitted = feedBackForProvider.DateTimeCompleted;
+                }
+
+                provider.CanSubmitFeedback = true;
+                if (provider.DateSubmitted.HasValue)
+                {
+                    if ((DateTime.UtcNow - provider.DateSubmitted.Value).TotalDays < _config.FeedbackWaitPeriodDays)
+                    {
+                        provider.CanSubmitFeedback = false;
+                    }
+                }
+            }
+
             // Filter
 
             model.ProviderNameFilter = providers.Select(p => p.ProviderName).OrderBy(p => p).ToList();
@@ -78,7 +106,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Services
             }
             if (selectedFeedbackStatus == "Not yet submitted")
             {
-                filteredProviders = filteredProviders.Where(p => !p.DateSubmitted.HasValue);
+                filteredProviders = filteredProviders.Where(p => null == p.DateSubmitted || !p.DateSubmitted.HasValue);
             }
 
             // Page
@@ -86,33 +114,6 @@ namespace ESFA.DAS.EmployerProvideFeedback.Services
             var pagedFilteredProviders = filteredProviders.OrderBy(p => p.ProviderName).Skip((page - 1) * pageSize).Take(pageSize).ToList();
             model.TrainingProviders = new PaginatedList<ProviderSearchViewModel.EmployerTrainingProvider>(pagedFilteredProviders, filteredProviders.Count(), page, pageSize);
             model.TrainingProviders.PageSetSize = 6;
-
-            // Urgh.
-
-            var employerFeedback = await _employerFeedbackRepository.GetAllFeedbackAndResultFromEmployer(model.AccountId);
-            foreach(var provider in pagedFilteredProviders)
-            {
-                var feedBackForProvider = employerFeedback.FirstOrDefault(fp => fp.Ukprn == provider.ProviderId);
-                if(null == feedBackForProvider)
-                {
-                    provider.FeedbackStatus = "Not yet submitted";
-                    provider.DateSubmitted = null;
-                }
-                else
-                {
-                    provider.FeedbackStatus = "Submitted";
-                    provider.DateSubmitted = feedBackForProvider.DateTimeCompleted;
-                }
-
-                provider.CanSubmitFeedback = true;
-                if(provider.DateSubmitted.HasValue)
-                {                    
-                    if ((DateTime.UtcNow - provider.DateSubmitted.Value).TotalDays < _config.FeedbackWaitPeriodDays)
-                    {
-                        provider.CanSubmitFeedback = false;
-                    }
-                }
-            }
 
             return model;
         }
