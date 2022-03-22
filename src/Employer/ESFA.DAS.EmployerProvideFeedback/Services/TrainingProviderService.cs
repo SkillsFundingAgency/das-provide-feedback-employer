@@ -1,9 +1,11 @@
-﻿using ESFA.DAS.EmployerProvideFeedback.Paging;
+﻿using ESFA.DAS.EmployerProvideFeedback.Infrastructure;
+using ESFA.DAS.EmployerProvideFeedback.Paging;
 using ESFA.DAS.EmployerProvideFeedback.ViewModels;
 using ESFA.DAS.ProvideFeedback.Data.Repositories;
 using ESFA.DAS.ProvideFeedback.Domain.Entities.Models;
 using ESFA.DAS.ProvideFeedback.Employer.ApplicationServices;
 using SFA.DAS.Encoding;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -25,12 +27,18 @@ namespace ESFA.DAS.EmployerProvideFeedback.Services
         private readonly ICommitmentService _commitmentService;
         private readonly IEncodingService _encodingService;
         private readonly IEmployerFeedbackRepository _employerFeedbackRepository;
+        private readonly ProvideFeedbackEmployerWeb _config;
 
-        public TrainingProviderService(ICommitmentService commitmentService, IEncodingService encodingService, IEmployerFeedbackRepository employerFeedbackRepository)
+        public TrainingProviderService(
+            ICommitmentService commitmentService
+            , IEncodingService encodingService
+            , IEmployerFeedbackRepository employerFeedbackRepository
+            , ProvideFeedbackEmployerWeb config)
         {
             _commitmentService = commitmentService;
             _encodingService = encodingService;
             _employerFeedbackRepository = employerFeedbackRepository;
+            _config = config;
         }
 
         public async Task<ProviderSearchViewModel> GetTrainingProviderSearchViewModel(
@@ -94,6 +102,15 @@ namespace ESFA.DAS.EmployerProvideFeedback.Services
                 {
                     provider.FeedbackStatus = "Submitted";
                     provider.DateSubmitted = feedBackForProvider.DateTimeCompleted;
+                }
+
+                provider.CanSubmitFeedback = true;
+                if(provider.DateSubmitted.HasValue)
+                {                    
+                    if ((DateTime.UtcNow - provider.DateSubmitted.Value).TotalDays < _config.FeedbackWaitPeriodDays)
+                    {
+                        provider.CanSubmitFeedback = false;
+                    }
                 }
             }
 

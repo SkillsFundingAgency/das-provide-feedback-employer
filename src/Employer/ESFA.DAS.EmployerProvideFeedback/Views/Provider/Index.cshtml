@@ -110,7 +110,7 @@
                     </td>
 
                     <td class="govuk-table__cell govuk-table__cell--numeric" data-label="Action">
-                        @if (null == provider.DateSubmitted || !provider.DateSubmitted.HasValue)  // plus some date logic for 21 (configurable) days?
+                        @if (provider.CanSubmitFeedback)
                         {
                             <a class="govuk-link--no-visited-state" href="/@Model.EncodedAccountId/providers/@provider.ProviderId">Select</a>
                         }

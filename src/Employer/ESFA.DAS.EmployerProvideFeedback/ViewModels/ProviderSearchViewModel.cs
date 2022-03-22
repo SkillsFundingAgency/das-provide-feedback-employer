@@ -31,6 +31,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.ViewModels
             public string ProviderName { get; set; }
             public string FeedbackStatus { get; set; }
             public DateTime? DateSubmitted { get; set; }
+            public bool CanSubmitFeedback { get; set; }
         }
     }
 }
