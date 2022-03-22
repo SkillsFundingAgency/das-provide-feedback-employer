@@ -29,8 +29,8 @@
 
                                 @Html.LabelFor(m => m.SelectedProviderName, new { @class = "govuk-label" })
                                 @Html.DropDownListFor(m => m.SelectedProviderName,
-                               new SelectList(Model.ProviderNameFilter.Select(n => n)),
-                               "All", new { @class = "govuk-select govuk-!-width-full" })
+    new SelectList(Model.ProviderNameFilter.Select(n => n)),
+    "All", new { @class = "govuk-select govuk-!-width-full" })
                             </div>
                         </div>
 
@@ -39,19 +39,49 @@
 
                                 @Html.LabelFor(m => m.SelectedFeedbackStatus, new { @class = "govuk-label" })
                                 @Html.DropDownListFor(m => m.SelectedFeedbackStatus,
-                               new SelectList(Model.FeedbackStatusFilter.Select(n => n)),
-                               "All", new { @class = "govuk-select govuk-!-width-full" })
+    new SelectList(Model.FeedbackStatusFilter.Select(n => n)),
+    "All", new { @class = "govuk-select govuk-!-width-full" })
                             </div>
                         </div>
                     </div>
                     <button class="govuk-button govuk-!-margin-0" type="submit">Apply filters</button>
+                    @{
+                        if (!string.IsNullOrWhiteSpace(Model.SelectedProviderName) || (!string.IsNullOrWhiteSpace(Model.SelectedFeedbackStatus)))
+                        {
+                            <div class="govuk-body" style="display: inline-block; padding-left: 16px; padding-top: 8px"><a href="/@Model.EncodedAccountId/providers">Clear filters</a></div>
+                        }
+                    }
                 </div>
             </div>
         </div>
     </form>
     <div class="govuk-grid-row govuk-!-margin-bottom-2">
         <div class="govuk-grid-column-two-thirds">
-            <p class="govuk-body">@Model.TrainingProviders.TotalRecordCount training provider record@{if (Model.TrainingProviders.TotalRecordCount != 1) { <text>s</text> }   }</p>
+            <p class="govuk-body">
+                @Model.TrainingProviders.TotalRecordCount training provider record@{if (Model.TrainingProviders.TotalRecordCount != 1)
+                    { <text>s</text> } }
+                @{
+                    var providerCaptionDisplayed = false;
+                    if (null != Model.SelectedProviderName && Model.SelectedProviderName != string.Empty)
+                    {
+                        <text> matching <strong>@Model.SelectedProviderName</strong> </text>
+                        providerCaptionDisplayed = true;
+                    }
+                    if (null != Model.SelectedFeedbackStatus && Model.SelectedFeedbackStatus != string.Empty)
+                    {
+                        if (providerCaptionDisplayed)
+                        {
+                            <text> and </text>
+                        }
+                        else
+                        {
+                            <text> matching </text>
+                        }
+
+                        <text> <strong>@Model.SelectedFeedbackStatus</strong> </text>
+                    }
+                }
+            </p>
 
         </div>
 
