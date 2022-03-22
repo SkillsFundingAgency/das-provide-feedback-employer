@@ -18,16 +18,16 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
     {
         private readonly ISessionService _sessionService;
         private readonly ILogger<ConfirmationController> _logger;
-        private readonly ExternalLinksConfiguration _externalLinks;
+        private readonly ProvideFeedbackEmployerWeb _config;
 
         public ConfirmationController(
-            ISessionService sessionService,  
-            IOptions<ExternalLinksConfiguration> externalLinks,
+            ISessionService sessionService,
+            ProvideFeedbackEmployerWeb config,
             ILogger<ConfirmationController> logger)
         {
             _sessionService = sessionService;
             _logger = logger;
-            _externalLinks = externalLinks.Value;
+            _config = config;
         }
 
         [HttpGet("feedback-confirmation", Name = RouteNames.Confirmation_Get)]
@@ -42,7 +42,9 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
             {
                 ProviderName = surveyModel.ProviderName,
                 FeedbackRating = surveyModel.Rating.Value,
-                FatUrl = _externalLinks.FindApprenticeshipTrainingSiteUrl,
+                FatUrl = _config.ExternalLinks.FindApprenticeshipTrainingSiteUrl,
+                ComplaintSiteUrl = _config.ExternalLinks.ComplaintSiteUrl,
+                ComplaintToProviderSiteUrl = _config.ExternalLinks.ComplaintToProviderSiteUrl,
                 HasMultipleProviders = hasMultipleProviders,
                 EncodedAccountId = encodedAccountId
             };

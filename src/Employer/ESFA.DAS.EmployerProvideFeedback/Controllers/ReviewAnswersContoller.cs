@@ -18,17 +18,17 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
     {
         private readonly ISessionService _sessionService;
         private readonly ReviewAnswersOrchestrator _orchestrator;
-        private readonly ExternalLinksConfiguration _externalLinks;
+        private readonly ProvideFeedbackEmployerWeb _config;
 
         public ReviewAnswersController(
             ISessionService sessionService
             , ReviewAnswersOrchestrator orchestrator
-            , IOptions<ExternalLinksConfiguration> externalLinks
+            , ProvideFeedbackEmployerWeb config
             )
         {
             _sessionService = sessionService;
             _orchestrator = orchestrator;
-            _externalLinks = externalLinks.Value;
+            _config = config;
         }
 
         [HttpGet("review-answers", Name = RouteNames.ReviewAnswers_Get)]
@@ -36,7 +36,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
         {
             var idClaim = HttpContext.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
             var vm = await _sessionService.Get<SurveyModel>(idClaim.Value);
-            vm.FatUrl = _externalLinks.FindApprenticeshipTrainingSiteUrl;
+            vm.FatUrl = _config.ExternalLinks.FindApprenticeshipTrainingSiteUrl;
             return View(vm);
         }
 
