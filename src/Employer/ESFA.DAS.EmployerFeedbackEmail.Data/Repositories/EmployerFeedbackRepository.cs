@@ -302,10 +302,10 @@ namespace ESFA.DAS.ProvideFeedback.Data.Repositories
                 QueryFirstOrDefaultAsync<EmployerFeedbackResult>(@"SELECT TOP 1 * FROM EmployerFeedbackResult WHERE feedbackId = @feedbackId AND dateTimeCompleted = @dateTimeCompleted", parameters);
         }
 
-        public async Task<IEnumerable<EmployerFeedbackAndSurveyCode>> GetAllFeedbackWithSurveyCodeFromEmployer(long accountId)
+        public async Task<IEnumerable<EmployerFeedbackAndResult>> GetAllFeedbackAndResultFromEmployer(long accountId)
         {
             return await _dbConnection.
-                QueryAsync<EmployerFeedbackAndSurveyCode>(@"SELECT * FROM EmployerFeedback ef INNER JOIN EmployerSurveyCodes esc ON ef.FeedbackId = esc.FeedbackId WHERE ef.AccountId = @accountId",
+                QueryAsync<EmployerFeedbackAndResult>(@"SELECT * FROM EmployerFeedback ef INNER JOIN EmployerFeedbackResult efr ON ef.FeedbackId = efr.FeedbackId WHERE ef.AccountId = @accountId",
                 new
                 {
                     accountId,

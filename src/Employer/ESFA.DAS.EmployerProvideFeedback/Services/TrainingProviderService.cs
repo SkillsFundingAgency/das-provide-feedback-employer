@@ -81,7 +81,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Services
 
             // Urgh.
 
-            var employerFeedback = await _employerFeedbackRepository.GetAllFeedbackWithSurveyCodeFromEmployer(model.AccountId);
+            var employerFeedback = await _employerFeedbackRepository.GetAllFeedbackAndResultFromEmployer(model.AccountId);
             foreach(var provider in pagedFilteredProviders)
             {
                 var feedBackForProvider = employerFeedback.FirstOrDefault(fp => fp.Ukprn == provider.ProviderId);
@@ -93,7 +93,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Services
                 else
                 {
                     provider.FeedbackStatus = "Submitted";
-                    provider.DateSubmitted = feedBackForProvider.BurnDate;
+                    provider.DateSubmitted = feedBackForProvider.DateTimeCompleted;
                 }
             }
 
