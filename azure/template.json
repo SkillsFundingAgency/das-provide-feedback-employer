@@ -363,7 +363,7 @@
                                 },
                                 {
                                     "name": "RedisApplication",
-                                    "connectionString": "[parameters('appRedisConnectionString')]",
+                                    "connectionString": "[parameters('sharedRedisConnectionString')]",
                                     "type": "Custom"
                                 },
                                 {
