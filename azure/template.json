@@ -86,7 +86,7 @@
         "googleAnalyticsTrackingId": {
             "type": "string"
         },
-        "appRedisConnectionString": {
+        "sharedRedisConnectionString": {
             "type": "secureString"
         },
         "inviteEmailerSchedule": {
