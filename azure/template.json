@@ -780,6 +780,12 @@
                             "[variables('queues').ProcessActiveFeedbackQueueName]",
                             "[variables('queues').GenerateSurveyInviteMessageQueueName]"
                         ]
+                    },
+                    "logAnalyticsWorkspaceName": {
+                        "value": "[parameters('logAnalyticsWorkspaceName')]"
+                    },
+                    "logAnalyticsWorkspaceResourceGroupName": {
+                        "value": "[parameters('sharedManagementResourceGroup')]"
                     }
                 }
             }
