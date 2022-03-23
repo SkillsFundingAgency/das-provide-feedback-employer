@@ -7,6 +7,8 @@
     var accountId = ViewContext.RouteData.Values[RouteValueKeys.EncodedAccountId] as string;
     ViewBag.HideHeaderBorder = true;
     var footerModel = new FooterModel { AccountId = accountId, UsePrivacyV2 = true };
+
+    var zendeskSectionId = Config.ZendeskSectionId;
 }
 
 <!DOCTYPE html>
@@ -49,8 +51,7 @@
     <partial name="_Header" />
     @if (accountId != null)
     {
-        <partial name="_Menu" model="@accountId" />
-    }
+<partial name="_Menu" model="@accountId" />}
 
     <div class="govuk-phase-banner govuk-width-container">
         <p class="govuk-phase-banner__content">
@@ -77,5 +78,31 @@
         window.GOVUKFrontend.initAll();
         window.DASFrontend.initAll();
     </script>
+
+    <script type="text/javascript">
+        window.zESettings = {
+            webWidget: {
+                contactForm: {
+                    attachments: false
+                },
+                chat: {
+                    talk: {
+                        nickname: "Vacancies"
+                    },
+                    menuOptions: {
+                        emailTranscript: false
+                    }
+                },
+                helpCenter: {
+                    filter: {
+                        section: "@zendeskSectionId"
+                    }
+                }
+            }
+        };
+    </script>
+    <script id="ze-snippet" src="https://static.zdassets.com/ekr/snippet.js?key=1b1ce288-39ea-4d40-a5e1-3a5e08aadd89"></script>
+    <script id="co-snippet" src="https://embed-euw1.rcrsv.io/h6255jcoYuIOGsFnsagb3xgrbKz9mHeBGjifWcngdcP05WZQu46kKykuID1LpD9d?zwwi=1"></script>
+
 </body>
 </html>

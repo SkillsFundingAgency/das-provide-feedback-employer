@@ -9,5 +9,6 @@
         public string DataProtectionKeysDatabase { get; set; }
         public string EmployerFeedbackDatabaseConnectionString { get; set; }
         public int FeedbackWaitPeriodDays { get; set; }
+        public string ZendeskSectionId { get; set; }
     }
 }
