@@ -36,6 +36,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
             var idClaim = HttpContext.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
             var surveyModel = await _sessionService.Get<SurveyModel>(idClaim.Value);
             var providerCount = await _sessionService.Get<int>($"{idClaim.Value}_ProviderCount");
+            await _sessionService.Remove($"{idClaim.Value}_PagingState");  // remove paging state incase we loop round for another provider
             var hasMultipleProviders = providerCount > 0;
 
             var confirmationVm = new ConfirmationViewModel

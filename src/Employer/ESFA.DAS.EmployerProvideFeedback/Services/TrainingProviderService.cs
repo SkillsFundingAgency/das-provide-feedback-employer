@@ -13,7 +13,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Services
 {
     public interface ITrainingProviderService
     {
-        Task<ProviderSearchViewModel> GetTrainingProviderSearchViewModel(string encodedAccountId, string selectedProviderName, string selectedFeedbackStatus, int pageSize = 10, int pageIndex = 0);
+        Task<ProviderSearchViewModel> GetTrainingProviderSearchViewModel(string encodedAccountId, string selectedProviderName, string selectedFeedbackStatus, int pageSize, int pageIndex, string sortColumn, string sortDirection);
 
         Task<ProviderSearchConfirmationViewModel> GetTrainingProviderConfirmationViewModel(string encodedAccountId, long providerId);
 
@@ -45,14 +45,18 @@ namespace ESFA.DAS.EmployerProvideFeedback.Services
             string encodedAccountId, 
             string selectedProviderName,
             string selectedFeedbackStatus,
-            int pageSize = 10, 
-            int page = 1)
+            int pageSize, 
+            int page,
+            string sortColumn,
+            string sortDirection)
         {
             ProviderSearchViewModel model = new ProviderSearchViewModel();
             model.AccountId = _encodingService.Decode(encodedAccountId, EncodingType.AccountId);
             model.EncodedAccountId = encodedAccountId;
             model.SelectedProviderName = selectedProviderName;
             model.SelectedFeedbackStatus = selectedFeedbackStatus;
+            model.SortColumn = sortColumn;
+            model.SortDirection = sortDirection;
 
             // Select all 
             var apprenticeshipsResponse = await _commitmentService.GetApprenticeships(model.AccountId);
@@ -109,9 +113,42 @@ namespace ESFA.DAS.EmployerProvideFeedback.Services
                 filteredProviders = filteredProviders.Where(p => null == p.DateSubmitted || !p.DateSubmitted.HasValue);
             }
 
+            // Sort
+
+            if(PagingState.SortDescending == model.SortDirection)
+            {
+                if(!string.IsNullOrWhiteSpace(model.SortColumn) && model.SortColumn.Equals("FeedbackStatus", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    filteredProviders = filteredProviders.OrderByDescending(p => p.FeedbackStatus);
+                }
+                else if (!string.IsNullOrWhiteSpace(model.SortColumn) && model.SortColumn.Equals("DateSubmitted", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    filteredProviders = filteredProviders.OrderByDescending(p => p.DateSubmitted);
+                }
+                else
+                {
+                    filteredProviders = filteredProviders.OrderByDescending(p => p.ProviderName);
+                }
+            }
+            else
+            {
+                if (!string.IsNullOrWhiteSpace(model.SortColumn) && model.SortColumn.Equals("FeedbackStatus", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    filteredProviders = filteredProviders.OrderBy(p => p.FeedbackStatus);
+                }
+                else if (!string.IsNullOrWhiteSpace(model.SortColumn) && model.SortColumn.Equals("DateSubmitted", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    filteredProviders = filteredProviders.OrderBy(p => p.DateSubmitted);
+                }
+                else
+                {
+                    filteredProviders = filteredProviders.OrderBy(p => p.ProviderName);
+                }
+            }
+
             // Page
 
-            var pagedFilteredProviders = filteredProviders.OrderBy(p => p.ProviderName).Skip((page - 1) * pageSize).Take(pageSize).ToList();
+            var pagedFilteredProviders = filteredProviders.Skip((page - 1) * pageSize).Take(pageSize).ToList();
             model.TrainingProviders = new PaginatedList<ProviderSearchViewModel.EmployerTrainingProvider>(pagedFilteredProviders, filteredProviders.Count(), page, pageSize);
             model.TrainingProviders.PageSetSize = 6;
 

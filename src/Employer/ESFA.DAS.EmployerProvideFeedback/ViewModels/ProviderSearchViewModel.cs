@@ -22,6 +22,9 @@ namespace ESFA.DAS.EmployerProvideFeedback.ViewModels
 
 
         public PaginatedList<ProviderSearchViewModel.EmployerTrainingProvider> TrainingProviders { get; set; }
+        public string Fragment { get; set; }
+        public string SortColumn { get; set; }
+        public string SortDirection { get; set; }
 
         public string ChangePageAction { get; set; }
 

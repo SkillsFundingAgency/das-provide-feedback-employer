@@ -1,5 +1,6 @@
 ﻿using ESFA.DAS.EmployerProvideFeedback.Configuration.Routing;
 using ESFA.DAS.EmployerProvideFeedback.Infrastructure;
+using ESFA.DAS.EmployerProvideFeedback.Paging;
 using ESFA.DAS.EmployerProvideFeedback.Services;
 using ESFA.DAS.EmployerProvideFeedback.ViewModels;
 using ESFA.DAS.ProvideFeedback.Data.Repositories;
@@ -22,9 +23,6 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
         private readonly ILogger<ProviderController> _logger;
         private readonly IEncodingService _encodingService;
 
-        private const int DefaultPageIndex = 1;
-        private const int DefaultPageSize = 2;
-
         public ProviderController(
             IEmployerFeedbackRepository employerEmailDetailsRepository
             , ISessionService sessionService
@@ -42,17 +40,27 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
 
         [HttpGet]
         [Route("/{encodedAccountId}/providers")]
-        public async Task<IActionResult> Index(GetProvidersForFeedbackRequest request, int pageIndex = DefaultPageIndex)
+        public async Task<IActionResult> Index(GetProvidersForFeedbackRequest request, int pageIndex = PagingState.DefaultPageIndex)
         {
+            var idClaim = HttpContext.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
+            var pagingState = await _sessionService.Get<PagingState>($"{idClaim.Value}_PagingState");
+            if(null == pagingState)
+            {
+                pagingState = new PagingState();
+            }
+            pagingState.PageIndex = pageIndex;
+            await _sessionService.Set($"{idClaim.Value}_PagingState", pagingState);
+
             var model = await _trainingProviderService.GetTrainingProviderSearchViewModel(
-                request.EncodedAccountId, 
-                string.Empty,
-                string.Empty,
-                DefaultPageSize,
-                pageIndex);
+                request.EncodedAccountId,
+                pagingState.SelectedProviderName,
+                pagingState.SelectedFeedbackStatus,
+                pagingState.PageSize,
+                pagingState.PageIndex,
+                pagingState.SortColumn,
+                pagingState.SortDirection);
             model.ChangePageAction = nameof(Index);
 
-            var idClaim = HttpContext.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
             await _sessionService.Set($"{idClaim.Value}_ProviderCount", model.TrainingProviders.TotalRecordCount);
 
             if (model.TrainingProviders.TotalRecordCount == 0)
@@ -71,15 +79,63 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
         [Route("/{encodedAccountId}/providers")]
         public async Task<IActionResult> Filter(ProviderSearchViewModel postedModel)
         {
+            var idClaim = HttpContext.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
+            var pagingState = await _sessionService.Get<PagingState>($"{idClaim.Value}_PagingState");
+            if (null == pagingState)
+            {
+                pagingState = new PagingState();
+            }
+            pagingState.PageIndex = PagingState.DefaultPageIndex; // applying filter resets the paging
+            pagingState.SelectedProviderName = postedModel.SelectedProviderName;
+            pagingState.SelectedFeedbackStatus = postedModel.SelectedFeedbackStatus;
+            await _sessionService.Set($"{idClaim.Value}_PagingState", pagingState);
+
             var model = await _trainingProviderService.GetTrainingProviderSearchViewModel(
                 postedModel.EncodedAccountId,
-                postedModel.SelectedProviderName,
-                postedModel.SelectedFeedbackStatus,
-                DefaultPageSize,
-                DefaultPageIndex);  // applying filter resets the paging
+                pagingState.SelectedProviderName,
+                pagingState.SelectedFeedbackStatus,
+                pagingState.PageSize,
+                pagingState.PageIndex,
+                pagingState.SortColumn,
+                pagingState.SortDirection);  
 
             return View("Index", model);
         }
+
+        [HttpGet]
+        [Route("/{encodedAccountId}/providers/sort")]
+        public async Task<IActionResult> SortProviders(string encodedAccountId, string sortColumn, string sortDirection)
+        {
+            var idClaim = HttpContext.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
+            var pagingState = await _sessionService.Get<PagingState>($"{idClaim.Value}_PagingState");
+            if (null == pagingState)
+            {
+                pagingState = new PagingState();
+            }
+            pagingState.SortColumn = sortColumn;
+            pagingState.SortDirection = sortDirection;
+            await _sessionService.Set($"{idClaim.Value}_PagingState", pagingState);
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpGet]
+        [Route("/{encodedAccountId}/providers/unfilter")]
+        public async Task<IActionResult> ClearFilters(string encodedAccountId)
+        {
+            var idClaim = HttpContext.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
+            var pagingState = await _sessionService.Get<PagingState>($"{idClaim.Value}_PagingState");
+            if (null == pagingState)
+            {
+                pagingState = new PagingState();
+            }
+            pagingState.SelectedProviderName = string.Empty;
+            pagingState.SelectedFeedbackStatus = string.Empty;
+            await _sessionService.Set($"{idClaim.Value}_PagingState", pagingState);
+
+            return RedirectToAction(nameof(Index));
+        }
+
 
         [HttpGet]
         [Route("/{encodedAccountId}/providers/{providerId}")]
