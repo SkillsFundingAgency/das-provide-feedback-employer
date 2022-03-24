@@ -80,7 +80,7 @@
                 "Identifier": ""
             }
         },
-        "sqlConnectionString": {
+        "dbConnectionString": {
             "type": "secureString"
         },
         "googleAnalyticsTrackingId": {
@@ -323,26 +323,6 @@
                         "value": {
                             "array": [
                                 {
-                                    "name": "ExternalLinks:FindApprenticeshipTrainingSiteUrl",
-                                    "value": "[parameters('externalLinks').FindApprenticeshipTrainingSiteUrl]"
-                                },
-                                {
-                                    "name": "ExternalLinks:ManageApprenticeshipSiteUrl",
-                                    "value": "[parameters('externalLinks').ManageApprenticeshipSiteUrl]"
-                                },
-                                {
-                                    "name": "ExternalLinks:EmployerIdamsSiteUrl",
-                                    "value": "[parameters('externalLinks').EmployerIdamsSiteUrl]"
-                                },
-                                {
-                                    "name": "ExternalLinks:FeedbackSurveyUrl",
-                                    "value": "[parameters('externalLinks').FeedbackSurveyUrl]"
-                                },
-                                {
-                                    "name": "GoogleAnalytics:TrackingId",
-                                    "value": "[parameters('GoogleAnalyticsTrackingId')]"
-                                },
-                                {
                                     "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
                                     "value": "[reference(concat(variables('uiAppServiceName'), '-application-insights-', parameters('utcValue'))).outputs.InstrumentationKey.value]"
                                 },
@@ -368,7 +348,7 @@
                                 },
                                 {
                                     "name": "EmployerEmailStoreConnection",
-                                    "connectionString": "[parameters('sqlConnectionString ')]",
+                                    "connectionString": "[parameters('dbConnectionString')]",
                                     "type": "Custom"
                                 }
                             ]
@@ -487,7 +467,7 @@
                                 },
                                 {
                                     "name": "EmployerEmailStoreConnection",
-                                    "connectionString": "[parameters('sqlConnectionString ')]",
+                                    "connectionString": "[parameters('dbConnectionString')]",
                                     "type": "Custom"
                                 }
                             ]
@@ -696,7 +676,7 @@
                                 },
                                 {
                                     "name": "EmployerEmailStoreConnection",
-                                    "value": "[parameters('sqlConnectionString ')]"
+                                    "value": "[parameters('dbConnectionString')]"
                                 },
                                 {
                                     "name": "InviteEmailerSchedule",
