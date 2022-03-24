@@ -342,7 +342,7 @@
                                 {
                                     "name": "LoggingRedisKey",
                                     "value": "[parameters('loggingRedisKey')]"
-                                }
+                                },
                                 {
                                     "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
                                     "value": "[reference(concat(variables('uiAppServiceName'), '-application-insights-', parameters('utcValue'))).outputs.InstrumentationKey.value]"
