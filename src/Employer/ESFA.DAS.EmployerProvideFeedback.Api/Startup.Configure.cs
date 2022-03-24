@@ -2,11 +2,9 @@
 
 namespace ESFA.DAS.EmployerProvideFeedback.Api
 {
-    using System.Reflection;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.Extensions.Logging;
-    using NJsonSchema.Generation;
 
     /// <summary>
     /// The configure method.
@@ -40,11 +38,13 @@ namespace ESFA.DAS.EmployerProvideFeedback.Api
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
-            // Enable the Swagger UI middleware and the Swagger generator
-            app.UseOpenApi();
-            app.UseSwaggerUi3();
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("swagger/v1/swagger.json", "Employer Feedback API");
+                c.RoutePrefix = string.Empty;
+            });
 
-            
             app.UseHealthChecks("/health");
         }
     }

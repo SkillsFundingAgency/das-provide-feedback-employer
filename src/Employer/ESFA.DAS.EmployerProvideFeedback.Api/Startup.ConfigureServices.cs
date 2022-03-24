@@ -4,7 +4,6 @@ using MediatR;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using SFA.DAS.Api.Common.AppStart;
 
 namespace ESFA.DAS.EmployerProvideFeedback.Api
 {
@@ -31,13 +30,9 @@ namespace ESFA.DAS.EmployerProvideFeedback.Api
             services.AddDatabaseConnection(_configuration, _hostingEnvironment);
             services.AddMediatR(typeof(Startup));
             services.AddTransient<IEmployerFeedbackRepository, EmployerFeedbackRepository>();
-             
+            services.AddSwaggerGen();
             services.AddControllers();
-
-            services.AddSwaggerDocument();
             services.AddHealthChecks();
-
-
         }
     }
 }
