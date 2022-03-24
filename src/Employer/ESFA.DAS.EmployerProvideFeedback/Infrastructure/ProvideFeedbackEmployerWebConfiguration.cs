@@ -12,7 +12,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Infrastructure
         public string RedisConnectionString { get; set; }
         public string DataProtectionKeysDatabase { get; set; }
         public string EmployerFeedbackDatabaseConnectionString { get; set; }
-        public Authentication Authentication { get; set; }
+        public AuthenticationConfiguration Authentication { get; set; }
         public CommitmentApiConfiguration CommitmentsApiConfiguration { get; set; }
     }
 }

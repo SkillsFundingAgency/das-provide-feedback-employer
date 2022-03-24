@@ -13,7 +13,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.StartupExtensions
 {
     public static class AddEmployerSharedUIExtensions
     {
-        public static void AddEmployerSharedUI(this IServiceCollection services, Authentication config, IConfiguration configuration)
+        public static void AddEmployerSharedUI(this IServiceCollection services, AuthenticationConfiguration config, IConfiguration configuration)
         {
             services.AddEmployerUrlHelper(configuration);
             services.AddMaMenuConfiguration(configuration, "signout", config.ClientId);
