@@ -80,7 +80,7 @@
                 "Identifier": ""
             }
         },
-        "dbConnectionString": {
+        "sqlConnectionString": {
             "type": "secureString"
         },
         "googleAnalyticsTrackingId": {
@@ -368,7 +368,7 @@
                                 },
                                 {
                                     "name": "EmployerEmailStoreConnection",
-                                    "connectionString": "[parameters('dbConnectionString')]",
+                                    "connectionString": "[parameters('sqlConnectionString ')]",
                                     "type": "Custom"
                                 }
                             ]
@@ -487,7 +487,7 @@
                                 },
                                 {
                                     "name": "EmployerEmailStoreConnection",
-                                    "connectionString": "[parameters('dbConnectionString')]",
+                                    "connectionString": "[parameters('sqlConnectionString ')]",
                                     "type": "Custom"
                                 }
                             ]
@@ -696,7 +696,7 @@
                                 },
                                 {
                                     "name": "EmployerEmailStoreConnection",
-                                    "value": "[parameters('dbConnectionString')]"
+                                    "value": "[parameters('sqlConnectionString ')]"
                                 },
                                 {
                                     "name": "InviteEmailerSchedule",
