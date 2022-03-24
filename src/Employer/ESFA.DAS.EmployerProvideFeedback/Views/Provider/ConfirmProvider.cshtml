@@ -54,18 +54,18 @@
                         @Html.ValidationMessageFor(m => m.Confirmed, $"Please select an option", new { @class = "govuk-error-message" })
                         <div class="govuk-radios" data-module="govuk-radios">
                             <div class="govuk-radios__item">
-                                @Html.RadioButtonFor(model => model.Confirmed, "true", new { id = "yes", @class = "govuk-radios__input" })
+                                @Html.RadioButtonFor(model => model.Confirmed, "true", new { id = "correctprovider-yes", @class = "govuk-radios__input" })
 
-                                <label class="govuk-label govuk-radios__label" for="where-do-you-live">
+                                <label class="govuk-label govuk-radios__label" for="correctprovider-yes">
                                     Yes
                                 </label>
                             </div>
                             <div class="govuk-radios__item">
 
-                                @Html.RadioButtonFor(model => model.Confirmed, "false", new { id = "no", @class = "govuk-radios__input" })
+                                @Html.RadioButtonFor(model => model.Confirmed, "false", new { id = "correctprovider-no", @class = "govuk-radios__input" })
 
 
-                                <label class="govuk-label govuk-radios__label" for="where-do-you-live-2">
+                                <label class="govuk-label govuk-radios__label" for="correctprovider-no">
                                     No, select a different training provider
                                 </label>
                             </div>
