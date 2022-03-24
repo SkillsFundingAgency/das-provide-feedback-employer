@@ -31,12 +31,19 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
         private IFixture _fixture = new Fixture();
         private readonly IOptions<List<ProviderAttributeModel>> _providerAttributeOptions;
         private readonly EmployerSurveyInvite _employerEmailDetail;
+        private readonly SurveyModel _surveyModel;
 
         public HomeControllerTests()
         {
             _employerEmailDetail = _fixture.Create<EmployerSurveyInvite>();
+            _surveyModel = new SurveyModel()
+            {
+                UserRef = Guid.NewGuid(),
+                ProviderName = _employerEmailDetail.ProviderName,
+            };
             _providerAttributes = GetProviderAttributes();
             _sessionServiceMock = new Mock<ISessionService>();
+            _sessionServiceMock.Setup(mock => mock.Get<SurveyModel>(It.IsAny<string>())).Returns(Task.FromResult(_surveyModel));
             _employerEmailDetailsRepoMock = new Mock<IEmployerFeedbackRepository>();
             _encodingServiceMock = new Mock<IEncodingService>();
             _loggerMock = new Mock<ILogger<HomeController>>();
@@ -50,7 +57,7 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
             {
                 User = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
                 {
-                    new Claim(ClaimTypes.NameIdentifier, "TestUserIdValue"),
+                    new Claim(ClaimTypes.NameIdentifier, _surveyModel.UserRef.ToString()),
                 }))
             };
             _controller.ControllerContext = new ControllerContext
@@ -79,10 +86,7 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
         public async void SessionSurvey_DoesNotExist_ShouldPopulateProviderName_OnViewData_FromEmployerEmailDetail()
         {
             // Arrange
-            var request = new StartFeedbackRequest()
-            {
-                UniqueCode = Guid.NewGuid(),
-            };
+            var request = new StartFeedbackRequest();
 
             // Act
             var result = await _controller.Index(request) as ViewResult;
@@ -97,16 +101,13 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
         public async void SessionSurvey_DoesNotExist_ShouldCreateNewSurveyInSession()
         {
             // Arrange
-            var request = new StartFeedbackRequest()
-            {
-                UniqueCode = Guid.NewGuid(),
-            };
+            var uniqueEmailCode = Guid.NewGuid();
 
             // Act
-            var result = await _controller.Index(request) as ViewResult;
+            var result = await _controller.Index(uniqueEmailCode) as ViewResult;
 
             // Assert
-            _sessionServiceMock.Verify(mock => mock.Set(request.UniqueCode.ToString(), It.IsAny<SurveyModel>()), Times.Once);
+            _sessionServiceMock.Verify(mock => mock.Set(_surveyModel.UserRef.ToString(), It.IsAny<SurveyModel>()), Times.Once);
         }
 
         [Fact]

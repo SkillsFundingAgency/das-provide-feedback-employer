@@ -36,7 +36,10 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
             _cachedSurveyModel = _fixture.Create<SurveyModel>();
             var sessionServiceMock = new Mock<ISessionService>();
             var loggerMock = new Mock<ILogger<ConfirmationController>>();
-            var config = new ProvideFeedbackEmployerWeb();
+            var config = new ProvideFeedbackEmployerWeb()
+            {
+                ExternalLinks = _externalLinks
+            };
             sessionServiceMock
                 .Setup(mock => mock.Get<SurveyModel>(It.IsAny<string>()))
                 .Returns(Task.FromResult(_cachedSurveyModel));
