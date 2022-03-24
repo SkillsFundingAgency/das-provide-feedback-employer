@@ -9,10 +9,10 @@
             <form asp-route="@RouteNames.ReviewAnswers_Post">
                 <div class="govuk-form-group">
                     <h1 class="govuk-heading-l">Check your answers</h1>
-                    <h2 class="govuk-heading-m">Training provider: @Model.ProviderName</h2>
 
                     <fieldset name="check-your-answers" class="govuk-fieldset checkbox-limit @(!ViewData.ModelState.IsValid ? "form-group-error" : "")">
 
+                        <legend class="govuk-heading-m">Training provider: @Model.ProviderName</legend>
                         <input type="hidden" asp-for="@Model.ProviderName" />
 
                         <ul class="govuk-body check-your-answers">
@@ -24,18 +24,14 @@
                                 <span class="answer">
                                     @{ if (Model.HasStrengths)
                                         {
-                                            <ul class="">
-                                            @foreach (var item in Model.Attributes.Where(x => x.Good))
-                                            {
-                                                <li>@item.Name</li>
-                                            }                                        
-                                            </ul> 
-                                        }
+                            <ul class="">
+                                @foreach (var item in Model.Attributes.Where(x => x.Good))
+                                {
+                    <li>@item.Name</li>}
+                            </ul> }
                                         else
                                         {
-                                            <p>You didn't select any</p> 
-                                        }
-                                    }
+                            <p>You didn't select any</p> } }
                                 </span>
                                 <span class="change">
                                     <a asp-route="@RouteNames.QuestionOne_Get" asp-route-returnUrl="@RouteNames.ReviewAnswers_Get">Change<span class="sr-only" /> strength answers</a>
@@ -48,18 +44,14 @@
                                 <span class="answer">
                                     @{ if (Model.HasWeaknesses)
                                         {
-                                            <ul>
-                                                @foreach (var item in Model.Attributes.Where(x => x.Bad))
-                                                {
-                                                    <li>@item.Name</li>
-                                                }
-                                            </ul> 
-                                        }
+                            <ul>
+                                @foreach (var item in Model.Attributes.Where(x => x.Bad))
+                                {
+                    <li>@item.Name</li>}
+                            </ul> }
                                         else
                                         {
-                                            <p>You didn't select any</p> 
-                                        } 
-                                   }
+                            <p>You didn't select any</p> } }
                                 </span>
                                 <span class="change">
                                     <a asp-route="@RouteNames.QuestionTwo_Get" asp-route-returnUrl="@RouteNames.ReviewAnswers_Get">Change<span class="sr-only" /> improvements answers</a>

@@ -24,8 +24,9 @@
         <form asp-route="@RouteNames.QuestionThree_Post">
             <div class="govuk-form-group error-message-container" sfa-anyvalidationerror-class="govuk-form-group--error">
                 <h1 class="govuk-heading-l">Overall rating</h1>
-                <h2 class="govuk-heading-m">How would you rate @(Model.ProviderName.EndsWith("'s") ? @Model.ProviderName : $"{@Model.ProviderName}'s") training and service overall?</h2>
                 <fieldset name="doing-well" aria-describedby="doing-well-hint" class="govuk-fieldset checkbox-limit @(!ViewData.ModelState.IsValid ? "form-group-error" : "")">
+                    <legend class="govuk-heading-m">How would you rate @(Model.ProviderName.EndsWith("'s") ? @Model.ProviderName : $"{@Model.ProviderName}'s") training and service overall?</legend>
+
                     <input type="hidden" asp-for="@Model.ProviderName" />
 
                     @Html.ValidationMessageFor(m => m.Rating, $"Please rate {@Model.ProviderName}", new { @class = "govuk-error-message" })
