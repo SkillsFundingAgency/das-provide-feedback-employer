@@ -2,27 +2,26 @@
     "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json",
     "contentVersion": "1.0.0.0",
     "parameters": {
+        "environmentName": {
+            "type": "string"
+        },
         "tags": {
             "type": "object"
         },
         "serviceName": {
             "type": "string"
         },
-        "resourceEnvironmentName": {
-            "type": "string"
-        },
-        "externalLinks": {
-            "type": "object",
-            "defaultValue": {
-                "FindApprenticeshipTrainingSiteUrl": "",
-                "ManageApprenticeshipSiteUrl": "",
-                "EmployerIdamsSiteUrl": "",
-                "FeedbackSurveyUrl": ""
-            }
+        "configurationStorageConnectionString": {
+            "type": "securestring"
         },
         "loggingRedisConnectionString": {
-            "type": "securestring",
-            "defaultValue": ""
+            "type": "securestring"
+        },
+        "loggingRedisKey": {
+            "type": "string"
+        },
+        "resourceEnvironmentName": {
+            "type": "string"
         },
         "aspNetCoreEnvironment": {
             "type": "string"
@@ -82,9 +81,6 @@
         },
         "dbConnectionString": {
             "type": "secureString"
-        },
-        "googleAnalyticsTrackingId": {
-            "type": "string"
         },
         "sharedRedisConnectionString": {
             "type": "secureString"
@@ -209,6 +205,7 @@
         "functionAppPlanName": "[concat(variables('resourceNamePrefix'), 'wkr-asp')]",
         "databaseName": "[concat(variables('resourceNamePrefix'), '-db')]",
         "resourceGroupName": "[concat(variables('resourceNamePrefix'), '-rg')]",
+        "configNames": "SFA.DAS.ProvideFeedbackEmployer.Web,SFA.DAS.EmployerUrlHelper:EmployerUrlHelper,SFA.DAS.Employer.Shared.UI,SFA.DAS.Encoding:EncodingService",
         "queues": {
             "RetrieveProvidersQueueName": "retrieve-providers",
             "AccountRefreshQueueName": "refresh-account",
@@ -322,6 +319,30 @@
                     "appServiceAppSettings": {
                         "value": {
                             "array": [
+                                {
+                                    "name": "EnvironmentName",
+                                    "value": "[parameters('environmentName')]"
+                                },
+                                {
+                                    "name": "ConfigurationStorageConnectionString",
+                                    "value": "[parameters('configurationStorageConnectionString')]"
+                                },
+                                {
+                                    "name": "ConfigNames",
+                                    "value": "[variables('configNames')]"
+                                },
+                                {
+                                    "name": "Version",
+                                    "value": "1.0"
+                                },
+                                {
+                                    "name": "LoggingRedisConnectionString",
+                                    "value": "[parameters('loggingRedisConnectionString')]"
+                                },
+                                {
+                                    "name": "LoggingRedisKey",
+                                    "value": "[parameters('loggingRedisKey')]"
+                                }
                                 {
                                     "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
                                     "value": "[reference(concat(variables('uiAppServiceName'), '-application-insights-', parameters('utcValue'))).outputs.InstrumentationKey.value]"
