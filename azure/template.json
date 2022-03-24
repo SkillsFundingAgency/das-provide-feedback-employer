@@ -345,11 +345,6 @@
                                     "name": "RedisApplication",
                                     "connectionString": "[parameters('sharedRedisConnectionString')]",
                                     "type": "Custom"
-                                },
-                                {
-                                    "name": "EmployerEmailStoreConnection",
-                                    "connectionString": "[parameters('dbConnectionString')]",
-                                    "type": "Custom"
                                 }
                             ]
                         }
