@@ -324,6 +324,10 @@
                                     "value": "[parameters('environmentName')]"
                                 },
                                 {
+                                    "name": "EnvironmentName",
+                                    "value": "[parameters('environmentName')]"
+                                },
+                                {
                                     "name": "ConfigurationStorageConnectionString",
                                     "value": "[parameters('configurationStorageConnectionString')]"
                                 },
@@ -350,22 +354,6 @@
                                 {
                                     "name": "ASPNETCORE_ENVIRONMENT",
                                     "value": "[parameters('aspNetCoreEnvironment')]"
-                                }
-                            ]
-                        }
-                    },
-                    "appServiceConnectionStrings": {
-                        "value": {
-                            "array": [
-                                {
-                                    "name": "Redis",
-                                    "connectionString": "[parameters('loggingRedisConnectionString')]",
-                                    "type": "Custom"
-                                },
-                                {
-                                    "name": "RedisApplication",
-                                    "connectionString": "[parameters('sharedRedisConnectionString')]",
-                                    "type": "Custom"
                                 }
                             ]
                         }
