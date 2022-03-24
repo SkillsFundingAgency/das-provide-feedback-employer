@@ -27,13 +27,13 @@ namespace ESFA.DAS.EmployerProvideFeedback.Services
         private readonly ICommitmentService _commitmentService;
         private readonly IEncodingService _encodingService;
         private readonly IEmployerFeedbackRepository _employerFeedbackRepository;
-        private readonly ProvideFeedbackEmployerWeb _config;
+        private readonly ProvideFeedbackEmployerWebConfiguration _config;
 
         public TrainingProviderService(
             ICommitmentService commitmentService
             , IEncodingService encodingService
             , IEmployerFeedbackRepository employerFeedbackRepository
-            , ProvideFeedbackEmployerWeb config)
+            , ProvideFeedbackEmployerWebConfiguration config)
         {
             _commitmentService = commitmentService;
             _encodingService = encodingService;

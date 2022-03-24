@@ -6,7 +6,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.StartupExtensions
 {
     public static class AddCacheExtensions
     {
-        public static IServiceCollection AddCache(this IServiceCollection services, IHostEnvironment environment, ProvideFeedbackEmployerWeb config)
+        public static IServiceCollection AddCache(this IServiceCollection services, IHostEnvironment environment, ProvideFeedbackEmployerWebConfiguration config)
         {
             if (environment.IsDevelopment())
             {

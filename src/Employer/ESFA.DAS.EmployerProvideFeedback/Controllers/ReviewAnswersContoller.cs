@@ -18,12 +18,12 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
     {
         private readonly ISessionService _sessionService;
         private readonly ReviewAnswersOrchestrator _orchestrator;
-        private readonly ProvideFeedbackEmployerWeb _config;
+        private readonly ProvideFeedbackEmployerWebConfiguration _config;
 
         public ReviewAnswersController(
             ISessionService sessionService
             , ReviewAnswersOrchestrator orchestrator
-            , ProvideFeedbackEmployerWeb config
+            , ProvideFeedbackEmployerWebConfiguration config
             )
         {
             _sessionService = sessionService;
