@@ -63,11 +63,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
 
             await _sessionService.Set($"{idClaim.Value}_ProviderCount", model.TrainingProviders.TotalRecordCount);
 
-            if (model.TrainingProviders.TotalRecordCount == 0)
-            {
-                // Can this happen in prod?
-            }
-            else if (model.TrainingProviders.TotalRecordCount == 1)
+            if (model.TrainingProviders.TotalRecordCount == 1)
             {
                 // Go straight to Start
             }
