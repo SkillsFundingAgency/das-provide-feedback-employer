@@ -9,11 +9,11 @@
         <div class="govuk-grid-column-two-thirds">
             @if (!ViewData.ModelState.IsValid)
             {
-                <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
+                <div class="govuk-error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
                     @*<h2 class="heading-medium error-summary-heading" id="error-summary-heading">
                         Error on page
                         </h2>*@
-                    <ul class="error-summary-list">
+                    <ul class="govuk-list govuk-error-summary__list">
                         <!--TODO: Match this text to content-->
                     <li><a href="#error">Choose up to 3 options</a></li>
                     </ul>
