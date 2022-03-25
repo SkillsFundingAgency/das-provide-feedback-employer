@@ -10,7 +10,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Database
 {
     public static class AddDatabaseExtension
     {
-        public static void AddDatabaseRegistration(this IServiceCollection services, ProvideFeedbackEmployerWeb configuration, IWebHostEnvironment environment)
+        public static void AddDatabaseRegistration(this IServiceCollection services, ProvideFeedbackEmployerWebConfiguration configuration, IWebHostEnvironment environment)
         {
             services.AddTransient<IDbConnection>(c =>
             {

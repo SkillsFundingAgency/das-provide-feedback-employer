@@ -11,13 +11,13 @@ namespace ESFA.DAS.EmployerProvideFeedback.Infrastructure
     public class EnsureFeedbackNotSubmittedRecently : ActionFilterAttribute
     {
         private readonly IEmployerFeedbackRepository _employerEmailDetailRepository;
-        private readonly ProvideFeedbackEmployerWeb _config;
+        private readonly ProvideFeedbackEmployerWebConfiguration _config;
         private readonly ISessionService _sessionService;
 
         public EnsureFeedbackNotSubmittedRecently(
             IEmployerFeedbackRepository employerEmailDetailRepository
             , ISessionService sessionService
-            , ProvideFeedbackEmployerWeb config
+            , ProvideFeedbackEmployerWebConfiguration config
             )
         {
             _employerEmailDetailRepository = employerEmailDetailRepository;

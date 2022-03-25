@@ -56,7 +56,7 @@ namespace UnitTests.EmployerProvideFeedback.Infrastructure
         {
             // Arrange
 
-            var config = new ProvideFeedbackEmployerWeb()
+            var config = new ProvideFeedbackEmployerWebConfiguration()
             {
                 // Configure "recently" to be 10 days ago
                 FeedbackWaitPeriodDays = 10
@@ -103,7 +103,7 @@ namespace UnitTests.EmployerProvideFeedback.Infrastructure
         {
             // Arrange
 
-            var config = new ProvideFeedbackEmployerWeb()
+            var config = new ProvideFeedbackEmployerWebConfiguration()
             {
                 // Configure "recently" to be 10 days ago
                 FeedbackWaitPeriodDays = 10

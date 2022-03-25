@@ -15,7 +15,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Infrastructure
 
         public SessionService(
             IDistributedCache sessionCache,
-            ProvideFeedbackEmployerWeb configuration,
+            ProvideFeedbackEmployerWebConfiguration configuration,
             IWebHostEnvironment environment)
         {
             _slidingExpirationMinutes = configuration.SlidingExpirationMinutes;

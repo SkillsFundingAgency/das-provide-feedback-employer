@@ -13,7 +13,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.StartupExtensions
 {
     public static class AddServiceRegistrationExtensions
     {
-        public static void AddServiceRegistrations(this IServiceCollection services, IConfiguration configuration)
+        public static void AddServiceRegistrations(this IServiceCollection services, ProvideFeedbackEmployerWebConfiguration configuration)
         {
             services.AddTransient<IEmployerFeedbackRepository, EmployerFeedbackRepository>();
             services.AddTransient<EnsureFeedbackNotSubmitted>();
@@ -22,8 +22,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.StartupExtensions
             services.AddTransient<ISessionService, SessionService>();
             services.AddTransient<ReviewAnswersOrchestrator>();
 
-            var commitmentV2ApiConfig = configuration.GetSection("AccountApi").Get<CommitmentApiConfiguration>();
-            services.AddSingleton<ICommitmentApiConfiguration>(commitmentV2ApiConfig);
+            services.AddSingleton<ICommitmentApiConfiguration>(configuration.CommitmentsApiConfiguration);
             services.AddTransient<ICommitmentService, CommitmentService>();
             services.AddHttpClient<SecureHttpClient>();
             services.AddTransient<IAzureClientCredentialHelper, AzureClientCredentialHelper>();

@@ -9,7 +9,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.StartupExtensions
 {
     public static class DataProtectionStartupExtensions
     {
-        public static IServiceCollection AddDasDataProtection(this IServiceCollection services, ProvideFeedbackEmployerWeb webConfiguration, IWebHostEnvironment environment)
+        public static IServiceCollection AddDasDataProtection(this IServiceCollection services, ProvideFeedbackEmployerWebConfiguration webConfiguration, IWebHostEnvironment environment)
         {
             if (!environment.IsDevelopment())
             {

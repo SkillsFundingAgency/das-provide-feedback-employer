@@ -13,11 +13,10 @@ namespace ESFA.DAS.EmployerProvideFeedback.StartupExtensions
 {
     public static class AddEmployerSharedUIExtensions
     {
-        public static void AddEmployerSharedUI(this IServiceCollection services, IConfiguration configuration)
+        public static void AddEmployerSharedUI(this IServiceCollection services, AuthenticationConfiguration config, IConfiguration configuration)
         {
-            var authenticationConfig = configuration.GetSection<Authentication>();
             services.AddEmployerUrlHelper(configuration);
-            services.AddMaMenuConfiguration(configuration, "signout", authenticationConfig.ClientId);
+            services.AddMaMenuConfiguration(configuration, "signout", config.ClientId);
 
             services.Configure<EmployerUrlHelperConfiguration>(configuration.GetSection("EmployerUrlHelper"));
             services.AddSingleton(cfg => cfg.GetService<IOptions<EmployerUrlHelperConfiguration>>().Value);

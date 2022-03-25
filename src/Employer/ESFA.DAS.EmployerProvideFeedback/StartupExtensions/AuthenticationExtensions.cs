@@ -11,7 +11,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.StartupExtensions
 {
     public static class AuthenticationExtensions
     {
-        public static void AddEmployerAuthentication(this IServiceCollection services, Authentication configuration)
+        public static void AddEmployerAuthentication(this IServiceCollection services, AuthenticationConfiguration configuration)
         {
             services
                 .AddAuthentication(sharedOptions =>

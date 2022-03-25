@@ -24,11 +24,11 @@ namespace ESFA.DAS.EmployerProvideFeedback
     public class Startup
     {
         private readonly IWebHostEnvironment _hostingEnvironment;
-        public IConfiguration Configuration { get; }
+        public IConfiguration _configuration { get; }
 
         public Startup(IConfiguration configuration, IWebHostEnvironment hostingEnvironment)
         {
-            Configuration = configuration;
+            _configuration = configuration;
             _hostingEnvironment = hostingEnvironment;
 
             var config = new ConfigurationBuilder()
@@ -52,7 +52,7 @@ namespace ESFA.DAS.EmployerProvideFeedback
                 );
             }
 
-            Configuration = config.Build();
+            _configuration = config.Build();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IHostApplicationLifetime applicationLifetime, ILogger<Startup> logger)
@@ -76,7 +76,7 @@ namespace ESFA.DAS.EmployerProvideFeedback
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseSession();
-                        
+
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseMvc(routes =>
@@ -90,19 +90,18 @@ namespace ESFA.DAS.EmployerProvideFeedback
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddConfigurationOptions(Configuration);
-            var config = Configuration.GetSection<ProvideFeedbackEmployerWeb>();
-            services.AddSingleton(config);
+            services.AddConfigurationOptions(_configuration);
+            var config = _configuration.GetSection("ProvideFeedbackEmployerWeb").Get<ProvideFeedbackEmployerWebConfiguration>();
 
-            services.AddApplicationInsightsTelemetry(Configuration.GetValue<string>("APPINSIGHTS_INSTRUMENTATIONKEY"));
+            services.AddApplicationInsightsTelemetry(_configuration.GetValue<string>("APPINSIGHTS_INSTRUMENTATIONKEY"));
             services.AddDatabaseRegistration(config, _hostingEnvironment);
-            services.AddEmployerAuthentication(Configuration.GetSection<Authentication>());
-            services.AddEmployerSharedUI(Configuration);
+            services.AddEmployerAuthentication(config.Authentication);
+            services.AddEmployerSharedUI(config.Authentication, _configuration);
             services.AddEmployerUrlHelper();
             services.AddMemoryCache();
             services.AddCache(_hostingEnvironment, config);
             services.AddDasDataProtection(config, _hostingEnvironment);
-            services.AddServiceRegistrations(Configuration);
+            services.AddServiceRegistrations(config);
             services.AddSessionPersistance();
 
             services.AddMvc(options =>
@@ -112,8 +111,8 @@ namespace ESFA.DAS.EmployerProvideFeedback
                 options.ModelBinderProviders.Insert(0, new AutoDecodeModelBinderProvider());
             })
             .SetDefaultNavigationSection(NavigationSection.AccountsHome);
-                
-                
+
+
         }
     }
 }

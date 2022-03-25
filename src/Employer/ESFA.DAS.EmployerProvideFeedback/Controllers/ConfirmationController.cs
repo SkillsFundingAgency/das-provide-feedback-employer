@@ -18,11 +18,11 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
     {
         private readonly ISessionService _sessionService;
         private readonly ILogger<ConfirmationController> _logger;
-        private readonly ProvideFeedbackEmployerWeb _config;
+        private readonly ProvideFeedbackEmployerWebConfiguration _config;
 
         public ConfirmationController(
             ISessionService sessionService,
-            ProvideFeedbackEmployerWeb config,
+            ProvideFeedbackEmployerWebConfiguration config,
             ILogger<ConfirmationController> logger)
         {
             _sessionService = sessionService;
