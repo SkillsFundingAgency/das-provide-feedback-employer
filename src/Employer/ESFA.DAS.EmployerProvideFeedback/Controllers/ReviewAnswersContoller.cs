@@ -48,7 +48,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
             var answers = await _sessionService.Get<SurveyModel>(idClaim.Value);
 
             answers.Submitted = true;
-            await _orchestrator.SubmitConfirmedEmployerFeedback(answers, uniqueCode);
+            await _orchestrator.SubmitConfirmedEmployerFeedback(answers/*, uniqueCode*/);
             await _sessionService.Set(idClaim.Value, answers);
 
             return RedirectToRoute(RouteNames.Confirmation_Get);

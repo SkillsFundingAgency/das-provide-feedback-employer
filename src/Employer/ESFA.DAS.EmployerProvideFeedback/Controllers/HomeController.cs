@@ -53,7 +53,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
             return View();
         }
 
-        [ServiceFilter(typeof(EnsureFeedbackNotSubmittedRecently))]
+        [ServiceFilter(typeof(EnsureFeedbackNotSubmitted))]
         [Route(RoutePrefixPaths.FeedbackFromEmailRoutePath, Name = RouteNames.Landing_Get)]
         [HttpGet]
         public async Task<IActionResult> Index(Guid uniqueCode)
@@ -77,6 +77,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
 
             var providerAttributesModel = providerAttributes.Select(s => new ProviderAttributeModel { Name = s.AttributeName });
             var newSurveyModel = MapToNewSurveyModel(employerEmailDetail, providerAttributesModel);
+            newSurveyModel.UniqueCode = uniqueCode;
             await _sessionService.Set(idClaim.Value, newSurveyModel);
 
             var encodedAccountId = _encodingService.Encode(employerEmailDetail.AccountId, EncodingType.AccountId);

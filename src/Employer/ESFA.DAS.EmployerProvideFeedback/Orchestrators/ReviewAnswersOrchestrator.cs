@@ -21,7 +21,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Orchestrators
             _logger = logger;
         }
 
-        public async Task SubmitConfirmedEmployerFeedback(SurveyModel surveyModel, Guid uniqueCode)
+        public async Task SubmitConfirmedEmployerFeedback(SurveyModel surveyModel)
         {
             var employerFeedback = await _employerFeedbackRepository.GetEmployerFeedbackRecord(surveyModel.UserRef, surveyModel.AccountId, surveyModel.Ukprn);
             long feedbackId = 0;
@@ -49,7 +49,12 @@ namespace ESFA.DAS.EmployerProvideFeedback.Orchestrators
                     surveyModel.Rating.Value.GetDisplayName(),
                     DateTime.UtcNow,
                     providerAttributes);
-                await _employerFeedbackRepository.SetCodeBurntDate(uniqueCode);
+
+                if(null != surveyModel.UniqueCode && surveyModel.UniqueCode.HasValue)
+                {
+                    // Email journey. Burn the survey code.
+                    await _employerFeedbackRepository.SetCodeBurntDate(surveyModel.UniqueCode.Value);
+                }
             }
             catch (Exception ex)
             {
