@@ -7,8 +7,8 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
     [Authorize]
     public class FeedbackSubmittedController : Controller
     {
-        [HttpGet("feedback-submitted", Name = RouteNames.FeedbackAlreadySubmitted)]
-        public IActionResult Index()
+        [HttpGet("/{encodedAccountId}/feedback-submitted", Name = RouteNames.FeedbackAlreadySubmitted)]
+        public IActionResult Index(string encodedAccountId)
         {
             return View();
         }
