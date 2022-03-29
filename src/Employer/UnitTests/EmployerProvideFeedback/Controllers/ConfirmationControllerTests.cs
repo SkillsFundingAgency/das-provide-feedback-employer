@@ -39,14 +39,28 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
             _cachedSurveyModel = _fixture.Create<SurveyModel>();
             var sessionServiceMock = new Mock<ISessionService>();
             var loggerMock = new Mock<ILogger<ConfirmationController>>();
+            var optionsMock = new Mock<IOptionsMonitor<MaPageConfiguration>>();
+            var linkGeneratorMock = new Mock<ILinkGenerator>();
+
+            var maPageConfiguration = new MaPageConfiguration
+            {
+                Routes = new MaRoutes
+                {
+                    Accounts = new Dictionary<string, string>()
+                }
+            };
+            maPageConfiguration.Routes.Accounts.Add("AccountsHome", "http://AnAccountsLink/{0}");
+            optionsMock.Setup(s => s.CurrentValue).Returns(maPageConfiguration);
+            linkGeneratorMock.Setup(s => s.AccountsLink(It.IsAny<string>())).Returns<string>(x => x);
+
             var config = new ProvideFeedbackEmployerWebConfiguration()
             {
                 ExternalLinks = _externalLinks
             };
-            var urlBuilder = new UrlBuilder(Mock.Of<ILogger<UrlBuilder>>(), Mock.Of<IOptionsMonitor<MaPageConfiguration>>(), Mock.Of<ILinkGenerator>());
+            var urlBuilder = new UrlBuilder(Mock.Of<ILogger<UrlBuilder>>(), optionsMock.Object, linkGeneratorMock.Object);
             sessionServiceMock
                 .Setup(mock => mock.Get<SurveyModel>(It.IsAny<string>()))
-                .Returns(Task.FromResult(_cachedSurveyModel));
+                    .Returns(Task.FromResult(_cachedSurveyModel));
             _controller = new ConfirmationController(
                 sessionServiceMock.Object,
                 config,
@@ -80,6 +94,7 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
             viewModel.FeedbackRating.Should().Be(_cachedSurveyModel.Rating);
             viewModel.ProviderName.Should().Be(_cachedSurveyModel.ProviderName);
             viewModel.FatUrl.ToLowerInvariant().Should().Be(_externalLinks.FindApprenticeshipTrainingSiteUrl.ToLowerInvariant());
+            viewModel.EmployerAccountsHomeUrl.Should().Be($"http://AnAccountsLink/{encodedAccountId}");
         }
 
     }
