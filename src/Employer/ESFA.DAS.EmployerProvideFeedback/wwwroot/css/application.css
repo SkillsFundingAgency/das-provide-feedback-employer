@@ -103,3 +103,32 @@
 .field-validation-valid {
     display: none;
 }
+
+
+.sorted-descending::after {
+    content: "";
+    margin-left: 3px;
+    display: inline-block;
+    width: 0;
+    height: 0;
+    -webkit-clip-path: polygon(0 0, 50% 100%, 100% 0);
+    clip-path: polygon(0 0, 50% 100%, 100% 0);
+    border-color: rgba(0, 0, 0, 0);
+    border-style: solid;
+    border-width: 10px 5px 0;
+    border-top-color: inherit;
+}
+
+.sorted-ascending::after {
+    content: "";
+    margin-left: 3px;
+    display: inline-block;
+    width: 0;
+    height: 0;
+    -webkit-clip-path: polygon(50% 0, 0 100%, 100% 100%);
+    clip-path: polygon(50% 1%, 1% 100%, 100% 100%);
+    border-color: rgba(0, 0, 0, 0);
+    border-style: solid;
+    border-width: 0 5px 10px;
+    border-bottom-color: inherit;
+}
