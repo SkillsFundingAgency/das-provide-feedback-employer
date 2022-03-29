@@ -17,6 +17,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
+using SFA.DAS.Employer.Shared.UI;
+using SFA.DAS.Employer.Shared.UI.Configuration;
+using SFA.DAS.EmployerUrlHelper;
 using Xunit;
 
 namespace UnitTests.EmployerProvideFeedback.Controllers
@@ -40,12 +43,14 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
             {
                 ExternalLinks = _externalLinks
             };
+            var urlBuilder = new UrlBuilder(Mock.Of<ILogger<UrlBuilder>>(), Mock.Of<IOptionsMonitor<MaPageConfiguration>>(), Mock.Of<ILinkGenerator>());
             sessionServiceMock
                 .Setup(mock => mock.Get<SurveyModel>(It.IsAny<string>()))
                 .Returns(Task.FromResult(_cachedSurveyModel));
             _controller = new ConfirmationController(
                 sessionServiceMock.Object,
                 config,
+                urlBuilder,
                 loggerMock.Object);
 
             var context = new DefaultHttpContext()

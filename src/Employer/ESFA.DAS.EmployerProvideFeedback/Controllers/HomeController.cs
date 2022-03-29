@@ -7,6 +7,8 @@ using ESFA.DAS.EmployerProvideFeedback.Infrastructure;
 using ESFA.DAS.EmployerProvideFeedback.ViewModels;
 using ESFA.DAS.ProvideFeedback.Data.Repositories;
 using ESFA.DAS.ProvideFeedback.Domain.Entities.Models;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -84,7 +86,26 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
             return RedirectToRoute(RouteNames.Landing_Get_New, new { encodedAccountId = encodedAccountId });
         }
 
-        
+        [Route("signout", Name = RouteNames.Signout)]
+        public IActionResult SignOut()
+        {
+            return SignOut(
+                new Microsoft.AspNetCore.Authentication.AuthenticationProperties
+                {
+                    RedirectUri = "",
+                    AllowRefresh = true
+                },
+                CookieAuthenticationDefaults.AuthenticationScheme,
+                OpenIdConnectDefaults.AuthenticationScheme);
+        }
+
+        [Route("signoutcleanup")]
+        public void SignOutCleanup()
+        {
+            Response.Cookies.Delete("SFA.DAS.ProvideFeedbackEmployer.Web.Auth");
+        }
+
+
         private SurveyModel MapToNewSurveyModel(EmployerSurveyInvite employerEmailDetail, IEnumerable<ProviderAttributeModel> providerAttributes)
         {
             return new SurveyModel
