@@ -2,7 +2,6 @@
                 ViewBag.Title = "Feedback Already Submitted"; }
 @using ESFA.DAS.EmployerProvideFeedback.Infrastructure
 @using Microsoft.Extensions.Options;
-@inject IOptions<ExternalLinksConfiguration> externalLinks;
 
 <main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing">
     <div class="govuk-grid-row">
@@ -11,7 +10,7 @@
                 Feedback already submitted
             </h1>
             <p class="govuk-body">You'll get chance to leave feedback in a few months.</p>
-            <p class="govuk-body">You can <a class="govuk-link" href="@externalLinks.Value.ManageApprenticeshipSiteUrl">sign into your apprenticeship account</a>.</p>
+            <p class="govuk-body"><a href="@ViewBag.EmployerAccountsHomeUrl" class="govuk-link govuk-link--no-visited-state">Return home</a></p>
         </div>
     </div>
 </main>
