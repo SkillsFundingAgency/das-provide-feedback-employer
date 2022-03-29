@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using ESFA.DAS.ProvideFeedback.Data.Enums;
 using ESFA.DAS.ProvideFeedback.Domain.Entities.Models;
 
 namespace ESFA.DAS.ProvideFeedback.Data.Repositories
@@ -28,7 +29,7 @@ namespace ESFA.DAS.ProvideFeedback.Data.Repositories
         Task<EmployerFeedback> GetEmployerFeedbackRecord(Guid userRef, long accountId, long ukprn);
         Task<EmployerFeedbackResult> GetEmployerFeedbackResultRecord(long feedbackId, DateTime datetimeCompleted);
         Task<IEnumerable<FeedbackQuestionAttribute>> GetAllAttributes();
-        Task<Guid> CreateEmployerFeedbackResult(long feedbackId, string providerRating, DateTime dateTimeCompleted, IEnumerable<ProviderAttribute> providerAttributes);
+        Task<Guid> CreateEmployerFeedbackResult(long feedbackId, string providerRating, DateTime dateTimeCompleted, FeedbackSourceEnum feedbackSource, IEnumerable<ProviderAttribute> providerAttributes);
         Task<long> GetFeedbackIdFromUniqueSurveyCode(Guid uniqueCode);
         Task<IEnumerable<EmployerFeedbackViewModel>> GetEmployerFeedback();
         Task<IEnumerable<EmployerFeedbackAndResult>> GetAllFeedbackAndResultFromEmployer(long accountId);

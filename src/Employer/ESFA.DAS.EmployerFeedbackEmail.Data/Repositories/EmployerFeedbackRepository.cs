@@ -4,6 +4,7 @@ using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
+using ESFA.DAS.ProvideFeedback.Data.Enums;
 using ESFA.DAS.ProvideFeedback.Domain.Entities.Models;
 
 namespace ESFA.DAS.ProvideFeedback.Data.Repositories
@@ -227,7 +228,7 @@ namespace ESFA.DAS.ProvideFeedback.Data.Repositories
                 , new { uniqueSurveyCode = uniqueSurveyCode });
         }
 
-        public async Task<Guid> CreateEmployerFeedbackResult(long feedbackId, string providerRating, DateTime dateTimeCompleted, IEnumerable<ProviderAttribute> providerAttributes)
+        public async Task<Guid> CreateEmployerFeedbackResult(long feedbackId, string providerRating, DateTime dateTimeCompleted, FeedbackSourceEnum feedbackSource, IEnumerable<ProviderAttribute> providerAttributes)
         {
             var providerAttributesDt = ProviderAttributesToDataTable(providerAttributes);
 
@@ -242,6 +243,7 @@ namespace ESFA.DAS.ProvideFeedback.Data.Repositories
                 {
                     FeedbackId = feedbackId,
                     ProviderRating = providerRating,
+                    FeedbackSource = (int)feedbackSource,
                     ProviderAttributesDt = providerAttributesDt.AsTableValuedParameter("ProviderAttributesTemplate")
                 };
                 var parameters = new DynamicParameters(parameterTemplate);
