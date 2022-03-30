@@ -4,6 +4,7 @@ using ESFA.DAS.EmployerProvideFeedback.Paging;
 using ESFA.DAS.EmployerProvideFeedback.Services;
 using ESFA.DAS.EmployerProvideFeedback.ViewModels;
 using ESFA.DAS.ProvideFeedback.Data.Repositories;
+using ESFA.DAS.ProvideFeedback.Domain.Entities.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -179,6 +180,17 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
             };
 
             await _sessionService.Set(idClaim.Value, newSurveyModel);
+
+            // Make sure the user exists.
+            var emailAddressClaim = HttpContext.User.FindFirst("http://das/employer/identity/claims/email_address");
+            var firstNameClaim = HttpContext.User.FindFirst("http://das/employer/identity/claims/given_name");
+            var user = new User()
+            {
+                UserRef = new Guid(idClaim?.Value),
+                EmailAddress = emailAddressClaim?.Value,
+                FirstName = firstNameClaim?.Value,
+            };
+            await _employerEmailDetailsRepository.UpsertIntoUsers(user);
 
             // Make sure the provider exists and is active.
             await _trainingProviderService.UpsertTrainingProvider(newSurveyModel.Ukprn, newSurveyModel.ProviderName);
