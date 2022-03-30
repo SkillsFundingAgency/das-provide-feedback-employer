@@ -7,6 +7,8 @@
     var accountId = ViewContext.RouteData.Values[RouteValueKeys.EncodedAccountId] as string;
 }
 
+<a class="govuk-back-link" href="@ViewBag.EmployerAccountsHomeUrl">Back</a>
+
 <main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content" role="main">
 
     @if (0 == Model.TrainingProviders.TotalRecordCount)

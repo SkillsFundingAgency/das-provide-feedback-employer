@@ -8,6 +8,7 @@ using ESFA.DAS.ProvideFeedback.Domain.Entities.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using SFA.DAS.Employer.Shared.UI;
 using SFA.DAS.Encoding;
 using System;
 using System.Linq;
@@ -23,6 +24,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
         private readonly ITrainingProviderService _trainingProviderService;
         private readonly ILogger<ProviderController> _logger;
         private readonly IEncodingService _encodingService;
+        private readonly UrlBuilder _urlBuilder;
 
         public ProviderController(
             IEmployerFeedbackRepository employerEmailDetailsRepository
@@ -30,6 +32,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
             , ITrainingProviderService trainingProviderService
             , IEncodingService encodingService
             , ILogger<ProviderController> logger
+            , UrlBuilder urlBuilder
             )
         {
             _employerEmailDetailsRepository = employerEmailDetailsRepository;
@@ -37,6 +40,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
             _trainingProviderService = trainingProviderService;
             _encodingService = encodingService;
             _logger = logger;
+            _urlBuilder = urlBuilder;
         }
 
         [HttpGet]
@@ -61,6 +65,8 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
                 pagingState.SortColumn,
                 pagingState.SortDirection);
             model.ChangePageAction = nameof(Index);
+
+            ViewBag.EmployerAccountsHomeUrl = _urlBuilder.AccountsLink("AccountsHome", request.EncodedAccountId);
 
             await _sessionService.Set($"{idClaim.Value}_ProviderCount", model.TrainingProviders.TotalRecordCount);
 
