@@ -126,11 +126,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.TagHelpers
 
         private string ToogleSortDirection()
         {
-            return SfaSortColumn == SfaTableSortColumn
-                ? SfaSortDirection == SortOrder.Asc
-                    ? SortOrder.Desc
-                    : SortOrder.Asc
-                : SfaSortDirection;
+            return (SfaSortColumn == SfaTableSortColumn) ? SortOrder.Toggle(SfaSortDirection) : SfaSortDirection;
         }
 
         private Dictionary<string, object> GetPassThroughAttributes(TagHelperOutput output)
@@ -148,5 +144,19 @@ namespace ESFA.DAS.EmployerProvideFeedback.TagHelpers
     {
         public const string Asc = "Asc";
         public const string Desc = "Desc";
+
+        public static string Toggle(string sortOrder)
+        {
+            if (string.IsNullOrWhiteSpace(sortOrder))
+                return Asc;
+            if(sortOrder.Equals(Asc, StringComparison.InvariantCultureIgnoreCase))
+            {
+                return Desc;
+            }
+            else
+            {
+                return Asc;
+            }
+        }
     }
 }
