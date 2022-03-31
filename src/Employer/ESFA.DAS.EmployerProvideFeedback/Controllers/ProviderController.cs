@@ -186,6 +186,11 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
             var providerAttributesModel = providerAttributes.Select(s => new ProviderAttributeModel { Name = s.AttributeName }).ToList();
 
             var idClaim = HttpContext.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
+            if(null == idClaim)
+            {
+                _logger.LogError($"User id not found in user claims.");
+                return RedirectToAction("Error", "Error");
+            }
 
             var newSurveyModel = new SurveyModel
             {
