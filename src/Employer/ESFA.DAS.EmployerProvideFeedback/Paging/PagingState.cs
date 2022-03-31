@@ -19,7 +19,7 @@
         {
             PageIndex = DefaultPageIndex;
             PageSize = DefaultPageSize;
-            SortColumn = "TrainingProvider";
+            SortColumn = "ProviderName";
             SortDirection = SortAscending;
         }
     }
