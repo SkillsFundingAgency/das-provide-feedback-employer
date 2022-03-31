@@ -43,10 +43,10 @@ namespace ESFA.DAS.EmployerProvideFeedback.Orchestrators
             {
                 var providerAttributes = await ConvertSurveyToProviderAttributes(surveyModel);
 
-                var feedbackSource = ProvideFeedback.Data.Enums.FeedbackSourceEnum.AdHoc;
+                var feedbackSource = ProvideFeedback.Data.Enums.FeedbackSource.AdHoc;
                 if(surveyModel.UniqueCode.HasValue)
                 {
-                    feedbackSource = ProvideFeedback.Data.Enums.FeedbackSourceEnum.Email;
+                    feedbackSource = ProvideFeedback.Data.Enums.FeedbackSource.Email;
                 }
 
                 var employerFeedbackResultId =
