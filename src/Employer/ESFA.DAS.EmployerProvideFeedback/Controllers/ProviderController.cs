@@ -19,6 +19,8 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
     [Authorize]
     public class ProviderController : Controller
     {
+        private const string CLAIMTYPE_EMAILADDRESS = "http" + "://das/employer/identity/claims/email_address";
+
         private readonly IEmployerFeedbackRepository _employerEmailDetailsRepository;
         private readonly ISessionService _sessionService;
         private readonly ITrainingProviderService _trainingProviderService;
@@ -70,9 +72,17 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
 
             await _sessionService.Set($"{idClaim.Value}_ProviderCount", model.TrainingProviders.TotalRecordCount);
 
-            if (model.TrainingProviders.TotalRecordCount == 1)
+            if (model.TrainingProviders.TotalRecordCount > 1)
             {
                 // Go straight to Start
+                return RedirectToAction(nameof(ProviderConfirmed), 
+                    new ProviderSearchConfirmationViewModel() 
+                    { 
+                        Confirmed = true,
+                        EncodedAccountId = request.EncodedAccountId,
+                        ProviderId = model.TrainingProviders.Items[0].ProviderId,
+                        ProviderName = model.TrainingProviders.Items[0].ProviderName
+                    });
             }
 
             return View(model);
@@ -188,7 +198,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
             await _sessionService.Set(idClaim.Value, newSurveyModel);
 
             // Make sure the user exists.
-            var emailAddressClaim = HttpContext.User.FindFirst("http://das/employer/identity/claims/email_address");
+            var emailAddressClaim = HttpContext.User.FindFirst(CLAIMTYPE_EMAILADDRESS);
             var firstNameClaim = HttpContext.User.FindFirst("http://das/employer/identity/claims/given_name");
             var user = new User()
             {
