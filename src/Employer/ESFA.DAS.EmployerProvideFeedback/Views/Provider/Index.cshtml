@@ -11,7 +11,7 @@
 
 <main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content" role="main">
 
-    @if (0 == Model.TrainingProviders.TotalRecordCount)
+    @if (0 == Model.UnfilteredTotalRecordCount)
     {
         <partial name="_NoProvidersPartial" />
     }

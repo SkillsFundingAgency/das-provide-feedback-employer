@@ -25,6 +25,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.ViewModels
         public string Fragment { get; set; }
         public string SortColumn { get; set; }
         public string SortDirection { get; set; }
+        public int UnfilteredTotalRecordCount { get; set; }
 
         public string ChangePageAction { get; set; }
 

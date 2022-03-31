@@ -77,6 +77,10 @@ new SelectList(Model.FeedbackStatusFilter.Select(n => n)),
     </div>
 
 </div>
+@if (Model.TrainingProviders.TotalRecordCount > 0)
+{
+
+
 <br>
 <table class="govuk-table das-table--responsive das-table--double-arrows das-table--condensed" aria-label="Training providers">
     <thead class="govuk-table__head">
@@ -172,3 +176,4 @@ new SelectList(Model.FeedbackStatusFilter.Select(n => n)),
 
 </nav>
 
+}

@@ -99,6 +99,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Services
 
             // Filter
 
+            model.UnfilteredTotalRecordCount = providers.Count();
             model.ProviderNameFilter = providers.Select(p => p.ProviderName).OrderBy(p => p).ToList();
             model.FeedbackStatusFilter = new string[] { "Not yet submitted" };
 
