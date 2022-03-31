@@ -8,13 +8,13 @@ using Microsoft.Extensions.Options;
 
 namespace ESFA.DAS.EmployerProvideFeedback.Infrastructure
 {
-    public class EnsureFeedbackNotSubmittedRecently : ActionFilterAttribute
+    public class EnsureFeedbackNotSubmittedRecentlyAttribute : ActionFilterAttribute
     {
         private readonly IEmployerFeedbackRepository _employerEmailDetailRepository;
         private readonly ProvideFeedbackEmployerWebConfiguration _config;
         private readonly ISessionService _sessionService;
 
-        public EnsureFeedbackNotSubmittedRecently(
+        public EnsureFeedbackNotSubmittedRecentlyAttribute(
             IEmployerFeedbackRepository employerEmailDetailRepository
             , ISessionService sessionService
             , ProvideFeedbackEmployerWebConfiguration config
