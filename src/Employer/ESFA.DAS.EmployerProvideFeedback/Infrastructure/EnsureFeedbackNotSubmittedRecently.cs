@@ -4,7 +4,6 @@ using ESFA.DAS.EmployerProvideFeedback.Configuration.Routing;
 using ESFA.DAS.ProvideFeedback.Data.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using Microsoft.Extensions.Options;
 
 namespace ESFA.DAS.EmployerProvideFeedback.Infrastructure
 {
@@ -12,17 +11,14 @@ namespace ESFA.DAS.EmployerProvideFeedback.Infrastructure
     {
         private readonly IEmployerFeedbackRepository _employerEmailDetailRepository;
         private readonly ProvideFeedbackEmployerWebConfiguration _config;
-        private readonly ISessionService _sessionService;
 
         public EnsureFeedbackNotSubmittedRecentlyAttribute(
             IEmployerFeedbackRepository employerEmailDetailRepository
-            , ISessionService sessionService
             , ProvideFeedbackEmployerWebConfiguration config
             )
         {
             _employerEmailDetailRepository = employerEmailDetailRepository;
             _config = config;
-            _sessionService = sessionService;
         }
 
         public override void OnActionExecuting(ActionExecutingContext context)
