@@ -22,8 +22,6 @@ namespace ESFA.DAS.EmployerProvideFeedback.Infrastructure
 
         public override void OnActionExecuting(ActionExecutingContext context)
         {
-            var c = context.Controller as Controller;
-
             if(context.ActionArguments.ContainsKey("uniqueCode"))
             {
                 var uniqueCode = (Guid)context.ActionArguments["uniqueCode"];
@@ -32,7 +30,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Infrastructure
                 if (isCodeBurnt)
                 {
                     var dateCodeBurnt = _employerEmailDetailRepository.GetCodeBurntDate(uniqueCode).GetAwaiter().GetResult();
-                    if (null != dateCodeBurnt && dateCodeBurnt.HasValue)
+                    if (dateCodeBurnt.HasValue)
                     {
                         var daysSinceFeedback = DateTime.Now - dateCodeBurnt.Value;
                         if (daysSinceFeedback.TotalDays > _config.FeedbackWaitPeriodDays)

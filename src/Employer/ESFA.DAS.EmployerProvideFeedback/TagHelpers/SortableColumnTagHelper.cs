@@ -144,7 +144,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.TagHelpers
         }
     }
 
-    public class SortOrder
+    public static class SortOrder
     {
         public const string Asc = "Asc";
         public const string Desc = "Desc";
