@@ -45,10 +45,10 @@ namespace ESFA.DAS.EmployerProvideFeedback.Paging
             }
         }
 
-        public PaginatedList(List<T> items, int totalRecordCount, int pageIndex, int pageSize, int? pageSetSize = null)
+        public PaginatedList(List<T> items, int totalRecordCount, int pageIndex, int pageSize, int pageSetSize)
             : this(items, totalRecordCount, pageIndex, pageSize)
         {
-            PageSetSize = pageSetSize ?? 1;
+            PageSetSize = (pageSetSize == default(int)) ? 1 : pageSetSize;
         }
 
         public override bool HasPreviousPage => (PageIndex > 1);
