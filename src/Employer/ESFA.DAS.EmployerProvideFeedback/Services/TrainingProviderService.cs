@@ -88,18 +88,15 @@ namespace ESFA.DAS.EmployerProvideFeedback.Services
                 }
 
                 provider.CanSubmitFeedback = true;
-                if (provider.DateSubmitted.HasValue)
+                if (provider.DateSubmitted.HasValue && (DateTime.UtcNow - provider.DateSubmitted.Value).TotalDays < _config.FeedbackWaitPeriodDays)
                 {
-                    if ((DateTime.UtcNow - provider.DateSubmitted.Value).TotalDays < _config.FeedbackWaitPeriodDays)
-                    {
-                        provider.CanSubmitFeedback = false;
-                    }
-                }
+                    provider.CanSubmitFeedback = false;
+                }                
             }
 
             // Filter
 
-            model.UnfilteredTotalRecordCount = providers.Count();
+            model.UnfilteredTotalRecordCount = providers.Count;
             model.ProviderNameFilter = providers.Select(p => p.ProviderName).OrderBy(p => p).ToList();
             model.FeedbackStatusFilter = new string[] { "Not yet submitted" };
 

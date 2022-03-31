@@ -74,21 +74,6 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
 
             await _sessionService.Set($"{idClaim.Value}_ProviderCount", model.TrainingProviders.TotalRecordCount);
 
-            if (model.TrainingProviders.TotalRecordCount == 1)
-            {
-                /*
-                // Go straight to Start
-                return RedirectToAction(nameof(ProviderConfirmed), 
-                    new ProviderSearchConfirmationViewModel() 
-                    { 
-                        Confirmed = true,
-                        EncodedAccountId = request.EncodedAccountId,
-                        ProviderId = model.TrainingProviders.Items[0].ProviderId,
-                        ProviderName = model.TrainingProviders.Items[0].ProviderName
-                    });
-                */
-            }
-
             return View(model);
         }
 
