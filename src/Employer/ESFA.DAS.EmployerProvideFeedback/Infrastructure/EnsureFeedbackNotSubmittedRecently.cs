@@ -24,7 +24,6 @@ namespace ESFA.DAS.EmployerProvideFeedback.Infrastructure
         public override void OnActionExecuting(ActionExecutingContext context)
         {
             var c = context.Controller as Controller;
-            var userId = c.User.FindFirstValue(ClaimTypes.NameIdentifier);
 
             if(context.ActionArguments.ContainsKey("uniqueCode"))
             {
