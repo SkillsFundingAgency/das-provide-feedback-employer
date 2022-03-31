@@ -161,7 +161,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Services
 
             if(null == response)
             {
-                // return error view
+                return null;
             }
 
             var model = new ProviderSearchConfirmationViewModel();
