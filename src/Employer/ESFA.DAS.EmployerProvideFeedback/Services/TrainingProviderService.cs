@@ -46,7 +46,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Services
             string selectedProviderName,
             string selectedFeedbackStatus,
             int pageSize, 
-            int page,
+            int pageIndex,
             string sortColumn,
             string sortDirection)
         {
@@ -148,8 +148,8 @@ namespace ESFA.DAS.EmployerProvideFeedback.Services
 
             // Page
 
-            var pagedFilteredProviders = filteredProviders.Skip((page - 1) * pageSize).Take(pageSize).ToList();
-            model.TrainingProviders = new PaginatedList<ProviderSearchViewModel.EmployerTrainingProvider>(pagedFilteredProviders, filteredProviders.Count(), page, pageSize);
+            var pagedFilteredProviders = filteredProviders.Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
+            model.TrainingProviders = new PaginatedList<ProviderSearchViewModel.EmployerTrainingProvider>(pagedFilteredProviders, filteredProviders.Count(), pageIndex, pageSize);
             model.TrainingProviders.PageSetSize = 6;
 
             return model;
