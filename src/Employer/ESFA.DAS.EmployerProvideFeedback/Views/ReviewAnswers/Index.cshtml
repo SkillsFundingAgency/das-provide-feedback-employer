@@ -1,80 +1,83 @@
 ﻿@model SurveyModel;
-@{
-    ViewBag.PageID = "page-review-answers";
-    ViewBag.Title = "Check your answers";
-}
-<a asp-route="@RouteNames.QuestionThree_Get" class="link-back">Back</a>
-<div class="grid-row">
-    <div class="column-two-thirds">
-        <h1 class="heading-xlarge">
-            Check your answers
-        </h1>
-        <form asp-route="@RouteNames.ReviewAnswers_Post">
-            <ul class="check-your-answers">
-                <li>
-                    <span class="question">
-                        @(Model.ProviderName.EndsWith("'s") ? @Model.ProviderName : $"{@Model.ProviderName}'s") strengths
-                    </span>
-                        
-                    <span class="answer">
-                        @{
-                            if (Model.HasStrengths)
-                            {
-                                <ul class="list">
-                                    @foreach (var item in Model.Attributes.Where(x => x.Good))
-                                    {
-                                        <li>@item.Name</li>
-                                    }
-                                </ul>
-                            }
-                            else
-                            {
-                                <p>You didn't select any</p>
-                            }
-                        }
-                    </span>
-                    <span class="change">
-                        <a asp-route="@RouteNames.QuestionOne_Get" asp-route-returnUrl="@RouteNames.ReviewAnswers_Get">Change<span class="visually-hidden" /> strength answers</a>
-                    </span>
-                </li>
-                <li>
-                    <span class="question">
-                        Areas to improve
-                    </span>
-                    <span class="answer">
-                        @{ if (Model.HasWeaknesses)
-                            {
-                                <ul class="list">
-                                    @foreach (var item in Model.Attributes.Where(x => x.Bad))
-                                    {
-                                        <li>@item.Name</li>
-                                    }
-                                </ul>
-                            }
-                            else
-                            {
-                                <p>You didn't select any</p>
-                            }
-                        }
-                    </span>
-                    <span class="change">
-                        <a asp-route="@RouteNames.QuestionTwo_Get" asp-route-returnUrl="@RouteNames.ReviewAnswers_Get">Change<span class="visually-hidden"/> improvements answers</a>
-                    </span>
-                </li>
-                <li>
-                    <span class="question">
-                        Overall rating
-                    </span>
-                    <span class="answer">
-                        <p>@Model.Rating.GetDisplayName()</p>
-                    </span>
-                    <span class="change">
-                        <a asp-route="@RouteNames.QuestionThree_Get" asp-route-returnUrl="@RouteNames.ReviewAnswers_Get">Change<span class="visually-hidden"/> quality rating answer</a>
-                    </span>
-                </li>
-            </ul>
-            <p>Your answers will be published anonymously on the <span class="bold-small">Find apprenticeship training service</span> in the near future.</p>
-            <button type="submit" class="button save-button">Submit answers</button>
-        </form>
+@{ ViewBag.PageID = "page-review-answers";
+                ViewBag.Title = "Check your answers"; }
+<a asp-route="@RouteNames.QuestionOne_Get" class="govuk-back-link">Back</a>
+<main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+
+            <form asp-route="@RouteNames.ReviewAnswers_Post">
+                <div class="govuk-form-group">
+                    <h1 class="govuk-heading-l">Check your answers</h1>
+
+                    <fieldset name="check-your-answers" class="govuk-fieldset checkbox-limit @(!ViewData.ModelState.IsValid ? "form-group-error" : "")">
+
+                        <legend class="govuk-heading-m">Training provider: @Model.ProviderName</legend>
+                        <input type="hidden" asp-for="@Model.ProviderName" />
+
+                        <ul class="govuk-body check-your-answers">
+                            <li>
+                                <span class="question">
+                                    Strengths
+                                </span>
+
+                                <span class="answer">
+                                    @{ if (Model.HasStrengths)
+                                        {
+                            <ul class="">
+                                @foreach (var item in Model.Attributes.Where(x => x.Good))
+                                {
+                    <li>@item.Name</li>}
+                            </ul> }
+                                        else
+                                        {
+                            <p>You didn't select any</p> } }
+                                </span>
+                                <span class="change">
+                                    <a asp-route="@RouteNames.QuestionOne_Get" asp-route-returnUrl="@RouteNames.ReviewAnswers_Get">Change<span class="sr-only" /> strength answers</a>
+                                </span>
+                            </li>
+                            <li>
+                                <span class="question">
+                                    Areas to improve
+                                </span>
+                                <span class="answer">
+                                    @{ if (Model.HasWeaknesses)
+                                        {
+                            <ul>
+                                @foreach (var item in Model.Attributes.Where(x => x.Bad))
+                                {
+                    <li>@item.Name</li>}
+                            </ul> }
+                                        else
+                                        {
+                            <p>You didn't select any</p> } }
+                                </span>
+                                <span class="change">
+                                    <a asp-route="@RouteNames.QuestionTwo_Get" asp-route-returnUrl="@RouteNames.ReviewAnswers_Get">Change<span class="sr-only" /> improvements answers</a>
+                                </span>
+                            </li>
+                            <li>
+                                <span class="question">
+                                    Overall rating
+                                </span>
+                                <span class="answer">
+                                    <p>@Model.Rating.GetDisplayName()</p>
+                                </span>
+                                <span class="change">
+                                    <a asp-route="@RouteNames.QuestionThree_Get" asp-route-returnUrl="@RouteNames.ReviewAnswers_Get">Change<span class="sr-only" /> quality rating answer</a>
+                                </span>
+                            </li>
+                        </ul>
+
+
+                    </fieldset>
+                </div>
+                <div class="govuk-button-group">
+                    <p>Your answers will be published anonymously on the <a href="@Model.FatUrl" target="_blank">Find apprenticeship training (opens in a new tab)</a> in the near future.</p>
+                    <button type="submit" class="govuk-button">Submit answers</button>
+                </div>
+            </form>
+        </div>
     </div>
-</div>
+</main>

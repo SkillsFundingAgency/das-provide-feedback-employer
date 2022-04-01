@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoFixture;
 using ESFA.DAS.EmployerProvideFeedback.Configuration.Routing;
@@ -22,6 +23,7 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
         private IFixture _fixture;
         private List<ProviderAttributeModel> _providerAttributes;
         private Guid _uniqueCode = Guid.NewGuid();
+        private string _accountId = string.Empty;
 
         public QuestionsControllerTests()
         {
@@ -41,6 +43,17 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
 
             _controller = new QuestionsController(_sessionServiceMock.Object);
             _controller.TempData = tempData;
+            var context = new DefaultHttpContext()
+            {
+                User = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
+                {
+                    new Claim(ClaimTypes.NameIdentifier, "TestUserIdValue"),
+                }))
+            };
+            _controller.ControllerContext = new ControllerContext
+            {
+                HttpContext = context
+            };
         }
 
         [Fact]
@@ -49,7 +62,7 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
             // Arrange
 
             // Act
-            var result = await _controller.QuestionOne(_uniqueCode) as ViewResult;
+            var result = await _controller.QuestionOne(_accountId, _uniqueCode) as ViewResult;
 
             // Assert
             Assert.IsAssignableFrom<SurveyModel>(result.Model);
@@ -68,7 +81,7 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
             _sessionServiceMock.Setup(mock => mock.Get<SurveyModel>(It.IsAny<string>())).Returns(Task.FromResult(surveyModel));
 
             // Act
-            var result = await _controller.QuestionOne(_uniqueCode) as ViewResult;
+            var result = await _controller.QuestionOne(_accountId, _uniqueCode) as ViewResult;
 
             // Assert
             Assert.IsAssignableFrom<SurveyModel>(result.Model);

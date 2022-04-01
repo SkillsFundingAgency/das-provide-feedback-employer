@@ -3,50 +3,44 @@
     ViewBag.PageID = "page-weaknesses-question";
     ViewBag.Title = "Providers Weaknesses";
 }
-<a asp-route="@RouteNames.QuestionOne_Get" class="link-back">Back</a>
-<div class="grid-row">
-    <div class="column-two-thirds">
-        @if (!ViewData.ModelState.IsValid)
-        {
-        <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
-            @*<h2 class="heading-medium error-summary-heading" id="error-summary-heading">
-                Error on page
-            </h2>*@
-            <ul class="error-summary-list">
-                <!--TODO: Match this text to content-->
-                <li><a href="#error">Choose up to 3 options</a></li>
-            </ul>
-        </div>
-        }
-        <h1 class="heading-xlarge">
-            How could @Model.ProviderName improve?
-        </h1>
-        <form asp-route="@RouteNames.QuestionTwo_Post">
-            <div class="form-group">
-                <fieldset class="checkbox-limit @(!ViewData.ModelState.IsValid ? " form-group-error" : "" )">
-                    <legend>
-                        <h2 class="heading-medium">Does @Model.ProviderName need to improve any of these?</h2>
-                        <span class="body-text">It's optional. You can choose up to 3.</span>
-                    </legend>
-
-                    <input type="hidden" asp-for="@Model.ProviderName" />
-
-                    @for (var i=0; i < Model.Attributes.Count; i++)
-                    {
-                    <div class="multiple-choice" style="display: @(Model.Attributes[i].Good ? " none" : "block" );">
-                        <input asp-for="@Model.Attributes[i].Bad" id="col1-@i" type="checkbox">
-                        <label for="col1-@i">@Model.Attributes[i].Name</label>
-                        <input asp-for="@Model.Attributes[i].Name" type="hidden" />
-                    </div>
-                    }
-                </fieldset>
-            </div>
-            <button id="q2-continue" type="submit" class="button save-button">Continue</button>
-            @if (string.IsNullOrEmpty(Convert.ToString(TempData.Peek("ReturnUrl"))))
+<a asp-route="@RouteNames.QuestionOne_Get" class="govuk-back-link">Back</a>
+<main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            @if (!ViewData.ModelState.IsValid)
             {
-            // TODO: Replace TempData by adding a flag to the ViewModel. Move this to a partial view?
-            <a asp-route="@RouteNames.QuestionThree_Get" class="button-link">Skip this question</a>
+                <div class="govuk-error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
+                    <ul class="govuk-list govuk-error-summary__list">
+                        <li><a href="#error">Choose up to 3 options</a></li>
+                    </ul>
+                </div>
             }
-        </form>
+            <form asp-route="@RouteNames.QuestionTwo_Post">
+                <div class="govuk-form-group">
+                    <h1 class="govuk-heading-l">How could @Model.ProviderName improve?</h1>
+                    <h2 class="govuk-heading-m">Does @Model.ProviderName need to improve any of these?</h2>
+
+                    <fieldset name="areas-to-improve" aria-describedby="areas-to-improve-hint" class="govuk-fieldset checkbox-limit @(!ViewData.ModelState.IsValid ? " form-group-error" : "" )">
+                        <div id="areas-to-improve-hint" class="govuk-hint">
+                            It's optional. You can choose up to 3.
+                        </div>
+
+                        <input type="hidden" asp-for="@Model.ProviderName" />
+                        <div class="govuk-checkboxes" data-module="govuk-checkboxes">
+                            @for (var i = 0; i < Model.Attributes.Count; i++)
+                            {
+                <div class="govuk-checkboxes__item" style="display: @(Model.Attributes[i].Good ? " none" : "block" );">
+                    <input asp-for="@Model.Attributes[i].Bad" id="col1-@i" type="checkbox" class="govuk-checkboxes__input">
+                    <label for="col1-@i" class="govuk-label govuk-checkboxes__label">@Model.Attributes[i].Name</label>
+                    <input asp-for="@Model.Attributes[i].Name" type="hidden" />
+                </div>}
+                        </div>
+                    </fieldset>
+                </div>
+                <div class="govuk-button-group">
+                    <button id="q2-continue" type="submit" class="govuk-button">Continue</button>
+                </div>
+            </form>
+        </div>
     </div>
-</div>
+</main>

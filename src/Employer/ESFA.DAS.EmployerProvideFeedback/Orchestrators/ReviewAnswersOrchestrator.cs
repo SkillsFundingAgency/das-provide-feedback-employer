@@ -21,25 +21,47 @@ namespace ESFA.DAS.EmployerProvideFeedback.Orchestrators
             _logger = logger;
         }
 
-        public async Task SubmitConfirmedEmployerFeedback(SurveyModel surveyModel, Guid uniqueCode)
+        public async Task SubmitConfirmedEmployerFeedback(SurveyModel surveyModel)
         {
-            var providerAttributes = await ConvertSurveyToProviderAttributes(surveyModel);
-            var feedbackId = await _employerFeedbackRepository.GetFeedbackIdFromUniqueSurveyCode(uniqueCode);
+            var employerFeedback = await _employerFeedbackRepository.GetEmployerFeedbackRecord(surveyModel.UserRef, surveyModel.AccountId, surveyModel.Ukprn);
+            long feedbackId = 0;
+            if(null == employerFeedback)
+            {
+                feedbackId = await _employerFeedbackRepository.UpsertIntoFeedback(surveyModel.UserRef, surveyModel.AccountId, surveyModel.Ukprn);
+            }
+            else
+            {
+                feedbackId = employerFeedback.FeedbackId;
+            }
 
             if (feedbackId == default(long))
             {
-                throw new InvalidOperationException($"Unable to find feedback Id for Survey Invite {uniqueCode}");
+                throw new InvalidOperationException($"Unable to find or create feedback record");
             }
 
             try
             {
+                var providerAttributes = await ConvertSurveyToProviderAttributes(surveyModel);
+
+                var feedbackSource = ProvideFeedback.Data.Enums.FeedbackSource.AdHoc;
+                if(surveyModel.UniqueCode.HasValue)
+                {
+                    feedbackSource = ProvideFeedback.Data.Enums.FeedbackSource.Email;
+                }
+
                 var employerFeedbackResultId =
                     await _employerFeedbackRepository.CreateEmployerFeedbackResult(
                     feedbackId,
                     surveyModel.Rating.Value.GetDisplayName(),
                     DateTime.UtcNow,
+                    feedbackSource,
                     providerAttributes);
-                await _employerFeedbackRepository.SetCodeBurntDate(uniqueCode);
+
+                if(null != surveyModel.UniqueCode && surveyModel.UniqueCode.HasValue)
+                {
+                    // Email journey. Burn the survey code.
+                    await _employerFeedbackRepository.SetCodeBurntDate(surveyModel.UniqueCode.Value);
+                }
             }
             catch (Exception ex)
             {

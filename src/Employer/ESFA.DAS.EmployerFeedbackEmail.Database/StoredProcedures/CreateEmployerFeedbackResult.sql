@@ -2,15 +2,16 @@
 	@FeedbackId BIGINT, 
 	@ProviderRating VARCHAR(20),
 	@DateTimeCompleted DateTime2,
-	@ProviderAttributesDt ProviderAttributesTemplate READONLY
+	@ProviderAttributesDt ProviderAttributesTemplate READONLY,
+	@FeedbackSource INT = 1
 AS
 	DECLARE @EmployerFeedbackResultId UNIQUEIDENTIFIER;
 	DECLARE @EmployerFeedbackResultTableVar TABLE(EmployerFeedbackResultId UNIQUEIDENTIFIER);
 
-	INSERT INTO EmployerFeedbackResult (FeedbackId, ProviderRating, DateTimeCompleted)
+	INSERT INTO EmployerFeedbackResult (FeedbackId, ProviderRating, DateTimeCompleted, FeedbackSource)
 	OUTPUT inserted.Id
 	INTO @EmployerFeedbackResultTableVar
-	VALUES (@FeedbackId, @ProviderRating, @DateTimeCompleted)
+	VALUES (@FeedbackId, @ProviderRating, @DateTimeCompleted, @FeedbackSource)
 	
 	SELECT @EmployerFeedbackResultId = EmployerFeedbackResultId FROM @EmployerFeedbackResultTableVar
 		

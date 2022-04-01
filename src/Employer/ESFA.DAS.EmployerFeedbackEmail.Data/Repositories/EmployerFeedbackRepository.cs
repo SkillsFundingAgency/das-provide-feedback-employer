@@ -4,6 +4,7 @@ using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
+using ESFA.DAS.ProvideFeedback.Data.Enums;
 using ESFA.DAS.ProvideFeedback.Domain.Entities.Models;
 
 namespace ESFA.DAS.ProvideFeedback.Data.Repositories
@@ -77,6 +78,15 @@ namespace ESFA.DAS.ProvideFeedback.Data.Repositories
                                 SET BurnDate = @now
                                 WHERE UniqueSurveyCode = @{nameof(uniqueCode)}",
                                 new { now, uniqueCode });
+        }
+
+        public async Task<DateTime?> GetCodeBurntDate(Guid uniqueCode)
+        {
+            return await _dbConnection.QueryFirstOrDefaultAsync<DateTime?>($@"
+                                       SELECT BurnDate 
+                                       FROM {EmployerSurveyCodes} 
+                                       WHERE UniqueSurveyCode = @{nameof(uniqueCode)}",
+                                       new { uniqueCode });
         }
 
         public async Task InsertSurveyInviteHistory(IEnumerable<Guid> uniqueSurveyCodes, int inviteType)
@@ -218,7 +228,7 @@ namespace ESFA.DAS.ProvideFeedback.Data.Repositories
                 , new { uniqueSurveyCode = uniqueSurveyCode });
         }
 
-        public async Task<Guid> CreateEmployerFeedbackResult(long feedbackId, string providerRating, DateTime dateTimeCompleted, IEnumerable<ProviderAttribute> providerAttributes)
+        public async Task<Guid> CreateEmployerFeedbackResult(long feedbackId, string providerRating, DateTime dateTimeCompleted, FeedbackSource feedbackSource, IEnumerable<ProviderAttribute> providerAttributes)
         {
             var providerAttributesDt = ProviderAttributesToDataTable(providerAttributes);
 
@@ -233,6 +243,7 @@ namespace ESFA.DAS.ProvideFeedback.Data.Repositories
                 {
                     FeedbackId = feedbackId,
                     ProviderRating = providerRating,
+                    FeedbackSource = (int)feedbackSource,
                     ProviderAttributesDt = providerAttributesDt.AsTableValuedParameter("ProviderAttributesTemplate")
                 };
                 var parameters = new DynamicParameters(parameterTemplate);
@@ -291,6 +302,16 @@ namespace ESFA.DAS.ProvideFeedback.Data.Repositories
             
             return await _dbConnection.
                 QueryFirstOrDefaultAsync<EmployerFeedbackResult>(@"SELECT TOP 1 * FROM EmployerFeedbackResult WHERE feedbackId = @feedbackId AND dateTimeCompleted = @dateTimeCompleted", parameters);
+        }
+
+        public async Task<IEnumerable<EmployerFeedbackAndResult>> GetAllFeedbackAndResultFromEmployer(long accountId)
+        {
+            return await _dbConnection.
+                QueryAsync<EmployerFeedbackAndResult>(@"SELECT * FROM EmployerFeedback ef INNER JOIN EmployerFeedbackResult efr ON ef.FeedbackId = efr.FeedbackId WHERE ef.AccountId = @accountId ORDER BY DateTimeCompleted DESC",
+                new
+                {
+                    accountId,
+                });
         }
 
         private DataTable ProvidersToDatatable(IEnumerable<Provider> providers)

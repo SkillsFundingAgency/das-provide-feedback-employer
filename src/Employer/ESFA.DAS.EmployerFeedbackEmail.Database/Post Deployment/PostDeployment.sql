@@ -12,5 +12,5 @@ Post-Deployment Script Template
 
  :r .\DropUserTemplateTableType.sql
  :r .\LoadAttributes.sql
-
+ :r .\SetExistingFeedbackSources.sql
 

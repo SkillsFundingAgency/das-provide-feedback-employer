@@ -3,6 +3,7 @@
     public static class RouteNames
     {
         public const string Landing_Get = "Landing_Get";
+        public const string Landing_Get_New = "Landing_Get_New";
 
         public const string QuestionOne_Get = "QuestionOne_Get";
         public const string QuestionOne_Post = "QuestionOne_Post";
@@ -19,7 +20,6 @@
         public const string Confirmation_Get = "Confirmation_Get";
 
         public const string FeedbackAlreadySubmitted = "Feedback_Submitted_Get";
-        public const string Cookies = "Cookies";
-        public const string Privacy = "Privacy";
+        public const string Signout = "signout";
     }
 }

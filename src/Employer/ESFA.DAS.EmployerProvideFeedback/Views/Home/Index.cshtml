@@ -3,16 +3,27 @@
     ViewBag.Title = "Provide Feedback";
     ViewBag.MetaDesc = "Provide feedback on training providers";
     ViewBag.HideNav = "true";
+    var accountId = ViewContext.RouteData.Values[RouteValueKeys.EncodedAccountId] as string;
 }
-<div class="grid-row">
-    <div class="column-two-thirds">
-        <h1 class="heading-xlarge">
+
+<main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing">
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <h1 class="govuk-heading-xl">
             Give feedback on @ViewData["ProviderName"]
         </h1>
         <p class="lede">Give feedback to let other employers know how @ViewData["ProviderName"] is doing. It'll also help @ViewData["ProviderName"] improve its apprenticeship training.</p>
         <p>It's just 3 questions.</p>
         <p>We publish your feedback but we don’t publish it with your name or the name of your organisation.</p>
         <p>We would only disclose your name and the name of your organisation with your feedback if we were legally required to do so.</p>
-        <p><a class="button button-start" id="service-start" asp-route="@RouteNames.QuestionOne_Get">Start now</a></p>
+        <p>
+            <a id="service-start" asp-route="@RouteNames.QuestionOne_Get" asp-route-EncodedAccountId="@accountId" role="button" draggable="false" class="govuk-button govuk-button--start" data-module="govuk-button">
+                Start now
+                <svg class="govuk-button__start-icon" xmlns="http://www.w3.org/2000/svg" width="17.5" height="19" viewBox="0 0 33 40" aria-hidden="true" focusable="false">
+                    <path fill="currentColor" d="M0 0h13l20 20-20 20H0l20-20z" />
+                </svg>
+            </a>
+        </p>
     </div>
 </div>
+</main>

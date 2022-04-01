@@ -98,5 +98,6 @@
   <ItemGroup>
     <None Include="Post Deployment\TranslateCurrentDataIntoNew.sql" />
     <None Include="Post Deployment\LoadAttributes.sql" />
+    <None Include="Post Deployment\SetExistingFeedbackSources.sql" />
   </ItemGroup>
 </Project>

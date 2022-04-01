@@ -1,0 +1,179 @@
+﻿@model ProviderSearchViewModel
+
+<h1 class="govuk-heading-xl">Select a training provider</h1>
+
+<form method="post">
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <div class="govuk-inset-text">
+                You can give feedback once every three weeks for each training provider.
+            </div>
+        </div>
+    </div>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+            <div class="das-pane govuk-!-margin-bottom-3">
+                <div class="govuk-grid-row">
+                    <div class="govuk-grid-column-one-third">
+                        <div class="govuk-form-group">
+
+                            @Html.LabelFor(m => m.SelectedProviderName, new { @class = "govuk-label" })
+                            @Html.DropDownListFor(m => m.SelectedProviderName,
+new SelectList(Model.ProviderNameFilter.Select(n => n)),
+"All", new { @class = "govuk-select govuk-!-width-full" })
+                        </div>
+                    </div>
+
+                    <div class="govuk-grid-column-one-third">
+                        <div class="govuk-form-group">
+
+                            @Html.LabelFor(m => m.SelectedFeedbackStatus, new { @class = "govuk-label" })
+                            @Html.DropDownListFor(m => m.SelectedFeedbackStatus,
+new SelectList(Model.FeedbackStatusFilter.Select(n => n)),
+"All", new { @class = "govuk-select govuk-!-width-full" })
+                        </div>
+                    </div>
+                </div>
+                <button class="govuk-button govuk-!-margin-0" type="submit">Apply filters</button>
+                @{
+                    if (!string.IsNullOrWhiteSpace(Model.SelectedProviderName) || (!string.IsNullOrWhiteSpace(Model.SelectedFeedbackStatus)))
+                    {
+                        <div class="govuk-body" style="display: inline-block; padding-left: 16px; padding-top: 8px"><a href="/@Model.EncodedAccountId/providers/unfilter">Clear filters</a></div>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+</form>
+<div class="govuk-grid-row govuk-!-margin-bottom-2">
+    <div class="govuk-grid-column-two-thirds">
+        <p class="govuk-body">
+            @Model.TrainingProviders.TotalRecordCount training provider record@{if (Model.TrainingProviders.TotalRecordCount != 1)
+                { <text>s</text> } }
+            @{
+                var providerCaptionDisplayed = false;
+                if (null != Model.SelectedProviderName && Model.SelectedProviderName != string.Empty)
+                {
+                    <text> matching <strong>@Model.SelectedProviderName</strong> </text>
+                    providerCaptionDisplayed = true;
+                }
+                if (null != Model.SelectedFeedbackStatus && Model.SelectedFeedbackStatus != string.Empty)
+                {
+                    if (providerCaptionDisplayed)
+                    {
+                        <text> and </text>
+                    }
+                    else
+                    {
+                        <text> matching </text>
+                    }
+
+                    <text> <strong>@Model.SelectedFeedbackStatus</strong> </text>
+                }
+            }
+        </p>
+
+    </div>
+
+</div>
+@if (Model.TrainingProviders.TotalRecordCount > 0)
+{
+
+
+<br>
+<table class="govuk-table das-table--responsive das-table--double-arrows das-table--condensed" aria-label="Training providers">
+    <thead class="govuk-table__head">
+        <tr class="govuk-table__row">
+
+            <th scope="col" class="govuk-table__header">
+                <sfa-sortable-column-header class=@(Model.Fragment + "-sort govuk-link" + " das-no-wrap")
+                                            data-sortColumn="ProviderName"
+                                            asp-action="SortProviders"
+                                            asp-controller="Provider"
+                                            sfa-sort-column="ProviderName"
+                                            sfa-table-sort-column="@Model.SortColumn"
+                                            sfa-sort-direction="@Model.SortDirection">Training provider</sfa-sortable-column-header>
+            </th>
+
+            <th scope="col" class="govuk-table__header">
+                <sfa-sortable-column-header class=@(Model.Fragment + "-sort govuk-link" + " das-no-wrap")
+                                            data-sortColumn="FeedbackStatus"
+                                            asp-action="SortProviders"
+                                            asp-controller="Provider"
+                                            sfa-sort-column="FeedbackStatus"
+                                            sfa-table-sort-column="@Model.SortColumn"
+                                            sfa-sort-direction="@Model.SortDirection">Feedback status</sfa-sortable-column-header>
+            </th>
+
+            <th scope="col" class="govuk-table__header govuk-table__header--numeric">
+
+                <sfa-sortable-column-header class=@(Model.Fragment + "-sort govuk-link" + " das-no-wrap")
+                                            data-sortColumn="DateSubmitted"
+                                            asp-action="SortProviders"
+                                            asp-controller="Provider"
+                                            sfa-sort-column="DateSubmitted"
+                                            sfa-table-sort-column="@Model.SortColumn"
+                                            sfa-sort-direction="@Model.SortDirection">Date submitted</sfa-sortable-column-header>
+
+            </th>
+
+            <th id="dreapta" scope="col" class="govuk-table__header govuk-table__header--numeric">
+                Action
+            </th>
+        </tr>
+    </thead>
+    <tbody class="govuk-table__body">
+
+        @foreach (var provider in Model.TrainingProviders.Items)
+        {
+            <tr class="govuk-table__row">
+
+                <td class="govuk-table__cell" data-label="Provider">
+                    @provider.ProviderName
+                </td>
+
+                <td class="govuk-table__cell" data-label="Status">
+                    @provider.FeedbackStatus
+                </td>
+
+                <td class="govuk-table__cell govuk-table__cell--numeric" data-label="Date submitted">
+                    @if (null == provider.DateSubmitted || !provider.DateSubmitted.HasValue)
+                    {
+                        <text>N/A</text>
+                    }
+                    else
+                    {
+                        @provider.DateSubmitted.Value.ToString("d MMM yyyy")
+                    }
+                </td>
+
+                <td class="govuk-table__cell govuk-table__cell--numeric" data-label="Action">
+                    @if (provider.CanSubmitFeedback)
+                    {
+                        <a class="govuk-link--no-visited-state" href="/@Model.EncodedAccountId/providers/@provider.ProviderId">Select</a>
+                    }
+                </td>
+
+            </tr>
+        }
+
+    </tbody>
+
+</table>
+
+<nav role="navigation" aria-label="Pagination">
+
+    <div class="das-pagination__summary">Showing @Model.TrainingProviders.FirstVisibleItem to @Model.TrainingProviders.LastVisibleItem of @Model.TrainingProviders.TotalRecordCount training providers</div>
+
+    @{await Html.RenderPartialAsync("_PaginationLinksPartial", new PaginationLinksViewModel
+        {
+            PaginatedList = Model.TrainingProviders,
+            ChangePageAction = Model.ChangePageAction,
+            ChangePageController = "Provider",
+            //Fragment = Model.Fragment
+        });}
+
+</nav>
+
+}

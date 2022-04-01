@@ -5,12 +5,14 @@ using System.Threading.Tasks;
 using ESFA.DAS.EmployerProvideFeedback.Configuration.Routing;
 using ESFA.DAS.EmployerProvideFeedback.Infrastructure;
 using ESFA.DAS.EmployerProvideFeedback.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace ESFA.DAS.EmployerProvideFeedback.Controllers
 {
-    [ServiceFilter(typeof(EnsureFeedbackNotSubmitted))]
+    [Authorize]
+    [ServiceFilter(typeof(EnsureFeedbackNotSubmittedRecentlyAttribute))]
     [ServiceFilter(typeof(EnsureSessionExists))]
     [Route(RoutePrefixPaths.FeedbackRoutePath)]
     public class QuestionsController : Controller
@@ -24,11 +26,12 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
         }
 
         [HttpGet("question-one", Name = RouteNames.QuestionOne_Get)]
-        public async Task<IActionResult> QuestionOne(Guid uniqueCode, string returnUrl = null)
+        public async Task<IActionResult> QuestionOne(string encodedAccountId, Guid uniqueCode, string returnUrl = null)
         {
             // TODO: Replace TempData by adding a flag to the ViewModel.
             TempData[ReturnUrlKey] = returnUrl;
-            var cachedAnswers = await _sessionService.Get<SurveyModel>(uniqueCode.ToString());
+            var idClaim = HttpContext.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
+            var cachedAnswers = await _sessionService.Get<SurveyModel>(idClaim.Value);
             
             // TODO: Redirect from all questions and review route to landing if no survey in the session.
 
@@ -43,10 +46,11 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
                 return View(surveyModel);
             }
 
-            var sessionAnswer = await _sessionService.Get<SurveyModel>(uniqueCode.ToString());
+            var idClaim = HttpContext.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
+            var sessionAnswer = await _sessionService.Get<SurveyModel>(idClaim.Value);
             SetStengths(sessionAnswer, surveyModel.Attributes.Where(x => x.Good));
 
-            await _sessionService.Set(uniqueCode.ToString(), sessionAnswer);
+            await _sessionService.Set(idClaim.Value, sessionAnswer);
 
             return await HandleRedirect(RouteNames.QuestionTwo_Get);
         }
@@ -73,7 +77,8 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
         public async Task<IActionResult> QuestionTwo(Guid uniqueCode, string returnUrl = null)
         {
             TempData[ReturnUrlKey] = returnUrl;
-            var sessionAnswers = await _sessionService.Get<SurveyModel>(uniqueCode.ToString());
+            var idClaim = HttpContext.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
+            var sessionAnswers = await _sessionService.Get<SurveyModel>(idClaim.Value);
             return View(sessionAnswers);
         }
 
@@ -85,10 +90,11 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
                 return View(surveyModel);
             }
 
-            var sessionAnswer = await _sessionService.Get<SurveyModel>(uniqueCode.ToString());
+            var idClaim = HttpContext.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
+            var sessionAnswer = await _sessionService.Get<SurveyModel>(idClaim.Value);
 
             SetWeaknesses(sessionAnswer, surveyModel.Attributes.Where(x => x.Bad));
-            await _sessionService.Set(uniqueCode.ToString(), sessionAnswer);
+            await _sessionService.Set(idClaim.Value, sessionAnswer);
             return await HandleRedirect(RouteNames.QuestionThree_Get);
         }
 
@@ -98,7 +104,8 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
         public async Task<IActionResult> QuestionThree(Guid uniqueCode, string returnUrl = null)
         {
             TempData[ReturnUrlKey] = returnUrl;
-            var sessionAnswer = await _sessionService.Get<SurveyModel>(uniqueCode.ToString());
+            var idClaim = HttpContext.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
+            var sessionAnswer = await _sessionService.Get<SurveyModel>(idClaim.Value);
             return View(sessionAnswer);
         }
 
@@ -110,9 +117,10 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
                 return View(surveyModel);
             }
 
-            var sessionAnswer = await _sessionService.Get<SurveyModel>(uniqueCode.ToString());
+            var idClaim = HttpContext.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
+            var sessionAnswer = await _sessionService.Get<SurveyModel>(idClaim.Value);
             sessionAnswer.Rating = surveyModel.Rating;
-            await _sessionService.Set(uniqueCode.ToString(), sessionAnswer);
+            await _sessionService.Set(idClaim.Value, sessionAnswer);
             return await HandleRedirect(RouteNames.ReviewAnswers_Get);
         }
 

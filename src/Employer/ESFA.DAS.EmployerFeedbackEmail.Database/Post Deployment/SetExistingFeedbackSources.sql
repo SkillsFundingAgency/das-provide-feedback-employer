@@ -1,0 +1,1 @@
+﻿UPDATE [dbo].[EmployerFeedbackResult] SET FeedbackSource = 1 WHERE FeedbackSource IS NULL

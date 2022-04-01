@@ -3,48 +3,47 @@
     ViewBag.PageID = "page-strengths-question";
     ViewBag.Title = "Providers Strengths";
 }
-<a asp-controller="Home" asp-action="Index" class="link-back">Back</a>
-<div class="grid-row">
-    <div class="column-two-thirds">
-        @if (!ViewData.ModelState.IsValid)
-        {
-            <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
-                @*<h2 class="heading-medium error-summary-heading" id="error-summary-heading">
-                        Error on page
-                    </h2>*@
-                <ul class="error-summary-list">
-                    <!--TODO: Match this text to content-->
-                    <li><a href="#error">Choose up to 3 options</a></li>
-                </ul>
-            </div>
-        }
-        <h1 class="heading-xlarge">
-            @(Model.ProviderName.EndsWith("'s") ? @Model.ProviderName : $"{@Model.ProviderName}'s") strengths
-        </h1>
-        <form asp-route="@RouteNames.QuestionOne_Post">
-            <div class="form-group">
-                <fieldset name="DoingWell" class="checkbox-limit @(!ViewData.ModelState.IsValid ? "form-group-error" : "")">
-                    <legend>
-                        <h2 class="heading-medium">What is @Model.ProviderName doing very well?</h2>
-                        <span class="body-text">It's optional. You can choose up to 3.</span>
-                    </legend>
-                    <input type="hidden" asp-for="@Model.ProviderName" />
-                    @for (var i = 0; i < Model.Attributes.Count; i++)
-                    {
-                        <div class="multiple-choice" style="display: @(Model.Attributes[i].Bad ? "none" : "block");">
-                            <input asp-for="@Model.Attributes[i].Good" id="col1-@i" type="checkbox">
-                            <label for="col1-@i">@Model.Attributes[i].Name</label>
-                            <input asp-for="@Model.Attributes[i].Name" type="hidden" />
-                        </div>
-                    }
-                </fieldset>
-            </div>
-            <button id="q1-continue" type="submit" class="button save-button">Continue</button>
-            @if (string.IsNullOrEmpty(Convert.ToString(TempData.Peek("ReturnUrl"))))
+<a asp-controller="Home" asp-action="Index" class="govuk-back-link">Back</a>
+<main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            @if (!ViewData.ModelState.IsValid)
             {
-                // TODO: Replace TempData by adding a flag to the ViewModel.
-                <a asp-route="@RouteNames.QuestionTwo_Get" class="button-link">Skip this question</a>
+                <div class="govuk-error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
+                    @*<h2 class="heading-medium error-summary-heading" id="error-summary-heading">
+                        Error on page
+                        </h2>*@
+                    <ul class="govuk-list govuk-error-summary__list">
+                        <!--TODO: Match this text to content-->
+                    <li><a href="#error">Choose up to 3 options</a></li>
+                    </ul>
+                </div>
             }
-        </form>
+            <form asp-route="@RouteNames.QuestionOne_Post">
+                <div class="govuk-form-group">
+                    <h1 class="govuk-heading-l">@(Model.ProviderName.EndsWith("'s") ? @Model.ProviderName : $"{@Model.ProviderName}'s") strengths</h1>
+                    <h2 class="govuk-heading-m">What is @Model.ProviderName doing very well?</h2>
+
+                    <fieldset name="doing-well" aria-describedby="doing-well-hint" class="govuk-fieldset checkbox-limit @(!ViewData.ModelState.IsValid ? "form-group-error" : "")">
+                        <div id="doing-well-hint" class="govuk-hint">
+                            It's optional. You can choose up to 3.
+                        </div>
+                        <input type="hidden" asp-for="@Model.ProviderName" />
+                        <div class="govuk-checkboxes" data-module="govuk-checkboxes">
+                            @for (var i = 0; i < Model.Attributes.Count; i++)
+                            {
+                <div class="govuk-checkboxes__item" style="display: @(Model.Attributes[i].Bad ? "none" : "block");">
+                    <input asp-for="@Model.Attributes[i].Good" id="col1-@i" type="checkbox" class="govuk-checkboxes__input">
+                    <label for="col1-@i" class="govuk-label govuk-checkboxes__label">@Model.Attributes[i].Name</label>
+                    <input asp-for="@Model.Attributes[i].Name" type="hidden" />
+                </div>}
+                        </div>
+                    </fieldset>
+                </div>
+                <div class="govuk-button-group">
+                <button id="q1-continue" type="submit" class="govuk-button">Continue</button>
+                </div>
+            </form>
+        </div>
     </div>
-</div>
+</main>

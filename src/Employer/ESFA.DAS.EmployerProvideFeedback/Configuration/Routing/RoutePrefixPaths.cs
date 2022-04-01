@@ -2,6 +2,7 @@
 {
     public static class RoutePrefixPaths
     {
-        public const string FeedbackRoutePath = "{uniqueCode:guid}";
+        public const string FeedbackFromEmailRoutePath = "{uniqueCode:guid}";
+        public const string FeedbackRoutePath = "{encodedAccountId}";  // /{uniqueCode:guid}
     }
 }

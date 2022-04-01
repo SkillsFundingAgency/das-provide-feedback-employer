@@ -1,0 +1,23 @@
+﻿@model ProviderSearchViewModel
+
+@{ ViewBag.PageID = "page-service-start";
+    ViewBag.Title = "Provide Feedback";
+    ViewBag.MetaDesc = "Provide feedback on training providers";
+    ViewBag.HideNav = "true";
+    var accountId = ViewContext.RouteData.Values[RouteValueKeys.EncodedAccountId] as string;
+}
+
+<a class="govuk-back-link" href="@ViewBag.EmployerAccountsHomeUrl">Back</a>
+
+<main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content" role="main">
+
+    @if (0 == Model.UnfilteredTotalRecordCount)
+    {
+        <partial name="_NoProvidersPartial" />
+    }
+    else
+    {
+        <partial name="_SelectProviderPartial" />
+    }
+
+</main>

@@ -1,37 +1,43 @@
 ﻿@using Microsoft.Extensions.Options;
-@inject IOptions<ExternalLinksConfiguration> externalLinks;
+@using ESFA.DAS.EmployerProvideFeedback.Infrastructure
 @model ConfirmationViewModel
 @{
     ViewBag.PageID = "page-confirmation";
     ViewBag.Title = "Provide Feedback";
 }
-<div class="grid-row">
-    <div class="column-two-thirds">
-        <div class="govuk-box-highlight">
-            <h1 class="font-xlarge bold">
-                Feedback complete
-            </h1>
-        </div>
-        <p>Thanks for your feedback. It'll help @Model.ProviderName to continuously improve its apprenticeship training.</p>
-        <p>You rated @Model.ProviderName as <span class="bold-small">@Model.FeedbackRating.GetDisplayName()</span>. Your feedback will be published in the near future.</p>
-
-
-        @if (Model.FeedbackRating == ProviderRating.VeryPoor)
-        {
-            <div class="form-group">
-                <details>
-                    <summary><span class="summary">Have concerns about @Model.ProviderName?</span></summary>
-
-                    <div class="panel panel-border-narrow">
-                        <p>If you have concerns about @Model.ProviderName, tell your line manager or Human Resources team - your organisation might be able to solve your problem informally.</p>
-
-                        <p>If you can't resolve it informally, you can <a href="@externalLinks.Value.ComplaintToProviderSiteUrl">make a formal complaint</a> to your training provider.</p>
-
-                        <p>If you've done this and you're not satisfied with the result, you can <a href="@externalLinks.Value.ComplaintSiteUrl">ask ESFA to investigate how the provider handled your case.</a> ESFA can't review the result of your complaint - it can only investigate whether it was reached in a fair way.</p>
-                    </div>
-                </details>
+<main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <div class="govuk-panel govuk-panel--confirmation">
+                <h1 class="govuk-panel__title">
+                    Feedback complete
+                </h1>
             </div>
-        }
-        <p><a class="button" href="@Model.FatUrl">Find apprenticeship training</a></p>
+            <p class="govuk-body">Thanks for your feedback. It'll help @Model.ProviderName to continuously improve their training provision.</p>
+            <p class="govuk-body">You rated @Model.ProviderName as <span class="bold-small">@Model.FeedbackRating.GetDisplayName()</span>. Your feedback will be published anonymously on <a href="https://www.gov.uk/employers-find-apprenticeship-training" target="_blank" rel="noopener">Find apprenticeship training (opens in a new tab)</a>.</p>
+
+            @if (Model.FeedbackRating == ProviderRating.VeryPoor)
+            {
+            <details class="govuk-details" data-module="govuk-details">
+                <summary class="govuk-details__summary">
+                    <span class="govuk-details__summary-text">
+                        Need help?
+                    </span>
+                </summary>
+                <div class="govuk-details__text">
+                    <p class="govuk-body">If you have concerns about @Model.ProviderName, tell your line manager or Human Resources team - your organisation might be able to solve your problem informally.</p>
+                    <p class="govuk-body">If you cannot resolve it informally, you can make a formal complaint to your training provider.</p>
+                    <p class="govuk-body">If you've done this and you're not satisfied with the result, you can ask ESFA to investigate how the provider handled your case. ESFA can't review the result of your complaint - it can only investigate whether it was reached in a fair way.</p>
+                </div>
+            </details>
+            }
+            <h2 class="govuk-heading-m">What do you want to do next?</h2>
+            @if(Model.HasMultipleProviders)
+            {
+                <p class="govuk-body"><a href="/@Model.EncodedAccountId/providers" class="govuk-link govuk-link--no-visited-state">Give feedback on another training provider</a></p>
+                <p class="govuk-body">or</p>
+            }
+            <p class="govuk-body"><a href="@Model.EmployerAccountsHomeUrl" class="govuk-link govuk-link--no-visited-state">Return home</a></p>
+        </div>
     </div>
-</div>
+</main>

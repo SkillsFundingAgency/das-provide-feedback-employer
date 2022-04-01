@@ -27,5 +27,9 @@ namespace ESFA.DAS.EmployerProvideFeedback.ViewModels
         public bool Submitted { get; internal set; }
 
         public string ProviderName { get; set; }
+
+        public string FatUrl { get; internal set; }
+
+        public Guid? UniqueCode { get; set; }
     }
 }
