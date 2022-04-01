@@ -72,12 +72,11 @@
             "type": "int",
             "defaultValue": 90
         },
-        "feedbackApiAuth": {
-            "type": "object",
-            "defaultValue": {
-                "Tenant": "",
-                "Identifier": ""
-            }
+        "feedbackApiAuthTenant": {
+            "type": "string"
+        },
+        "feedbackApiAuthIdentifier": {
+            "type": "string"
         },
         "dbConnectionString": {
             "type": "secureString"
@@ -444,11 +443,11 @@
                             "array": [
                                 {
                                     "name": "AzureAd:Tenant",
-                                    "value": "[parameters('feedbackApiAuth').Tenant]"
+                                    "value": "[parameters('FeedbackApiAuthTenant')]"
                                 },
                                 {
                                     "name": "AzureAd:Identifier",
-                                    "value": "[parameters('feedbackApiAuth').Identifier]"
+                                    "value": "[parameters('FeedbackApiAuthIdentifier')]"
                                 },
                                 {
                                     "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
