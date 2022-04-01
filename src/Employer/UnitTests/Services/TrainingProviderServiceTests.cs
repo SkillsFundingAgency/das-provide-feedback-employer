@@ -96,7 +96,6 @@ namespace UnitTests.Services
             {
                 var testAccountId = 1;
                 var testAccountIdEncoded = "MANYTEST1";
-
                 _encodingServiceMock.Setup(m => m.Decode(testAccountIdEncoded, EncodingType.AccountId)).Returns(testAccountId);
 
                 _commitmentServiceMock.Setup(m => m.GetApprenticeships(testAccountId)).ReturnsAsync(
@@ -113,6 +112,32 @@ namespace UnitTests.Services
 
                 Assert.Equal(expectedTotalRecordCount, model.TrainingProviders.TotalRecordCount);
                 Assert.Equal(expectedTotalPages, model.TrainingProviders.TotalPages);
+            }
+        }
+
+        public class GetTrainingProviderConfirmationViewModel
+        {
+            [Fact]
+            public async Task When_Provider_Exists_Then_Return_ProviderViewModel()
+            {
+                var testAccountId = 2;
+                var testAccountIdEncoded = "CONFIRMATIONMODELTEST1";
+                _encodingServiceMock.Setup(m => m.Decode(testAccountIdEncoded, EncodingType.AccountId)).Returns(testAccountId);
+
+                _commitmentServiceMock.Setup(m => m.GetProvider(1)).ReturnsAsync(
+                    new GetProviderResponse() { ProviderId = 1, Name = "Test Provider" });
+
+                ITrainingProviderService sut = new TrainingProviderService(
+                    _commitmentServiceMock.Object,
+                    _encodingServiceMock.Object,
+                    _employerFeedbackRepositoryMock.Object,
+                    _config);
+
+                var model = await sut.GetTrainingProviderConfirmationViewModel(testAccountIdEncoded, 1);
+
+                Assert.NotNull(model);
+                Assert.Equal(1, model.ProviderId);
+                Assert.Equal("Test Provider", model.ProviderName);
             }
         }
     }
