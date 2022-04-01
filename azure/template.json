@@ -26,12 +26,11 @@
         "aspNetCoreEnvironment": {
             "type": "string"
         },
-        "notificationApiCredentials": {
-            "type": "secureObject",
-            "defaultValue": {
-                "BaseUrl": "",
-                "ClientToken": ""
-            }
+        "notificationsApiBaseUrl": {
+            "type": "string"
+        },
+        "notificationsApiClientToken": {
+            "type": "securestring"
         },
         "commitmentApiBaseUrl": {
             "type": "string"
@@ -40,7 +39,7 @@
             "type": "array"
         },
         "commitmentApiClientToken": {
-            "type": "secureString"
+            "type": "securestring"
         },
         "commitmentV2ApiBaseUrl": {
             "type": "string"
@@ -611,11 +610,11 @@
                                 },
                                 {
                                     "name": "NotificationApi:BaseUrl",
-                                    "value": "[parameters('notificationApiCredentials').BaseUrl]"
+                                    "value": "[parameters('notificationsApiBaseUrl')]"
                                 },
                                 {
                                     "name": "NotificationApi:ClientToken",
-                                    "value": "[parameters('notificationApiCredentials').ClientToken]"
+                                    "value": "[parameters('notificationsApiClientToken')]"
                                 },
                                 {
                                     "name": "RoatpApi:Url",
