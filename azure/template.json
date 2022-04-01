@@ -444,11 +444,11 @@
                             "array": [
                                 {
                                     "name": "AzureAd:Tenant",
-                                    "value": "[parameters('feedbackApiAuth').Tenant]"
+                                    "value": "[parameters('FeedbackApiAuthTenant')]"
                                 },
                                 {
                                     "name": "AzureAd:Identifier",
-                                    "value": "[parameters('feedbackApiAuth').Identifier]"
+                                    "value": "[parameters('FeedbackApiAuthIdentifier')]"
                                 },
                                 {
                                     "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
