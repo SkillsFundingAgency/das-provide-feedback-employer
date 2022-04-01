@@ -99,12 +99,19 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
                 OpenIdConnectDefaults.AuthenticationScheme);
         }
 
+        [AllowAnonymous]
         [Route("signoutcleanup")]
         public void SignOutCleanup()
         {
             Response.Cookies.Delete("SFA.DAS.ProvideFeedbackEmployer.Web.Auth");
         }
 
+        [AllowAnonymous]
+        [Route("ping")]
+        public IActionResult Ping()
+        {
+            return Ok();
+        }
 
         private SurveyModel MapToNewSurveyModel(EmployerSurveyInvite employerEmailDetail, IEnumerable<ProviderAttributeModel> providerAttributes)
         {
