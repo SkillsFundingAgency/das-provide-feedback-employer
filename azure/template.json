@@ -72,12 +72,11 @@
             "type": "int",
             "defaultValue": 90
         },
-        "feedbackApiAuth": {
-            "type": "object",
-            "defaultValue": {
-                "Tenant": "",
-                "Identifier": ""
-            }
+        "feedbackApiAuthTenant": {
+            "type": "string"
+        },
+        "feedbackApiAuthIdentifier": {
+            "type": "string"
         },
         "dbConnectionString": {
             "type": "secureString"
