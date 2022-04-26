@@ -34,7 +34,7 @@
                             <p>You didn't select any</p> } }
                                 </span>
                                 <span class="change">
-                                    <a asp-route="@RouteNames.QuestionOne_Get" asp-route-returnUrl="@RouteNames.ReviewAnswers_Get">Change<span class="sr-only" /> strength answers</a>
+                                    <a class="govuk-link" asp-route="@RouteNames.QuestionOne_Get" asp-route-returnUrl="@RouteNames.ReviewAnswers_Get">Change<span class="sr-only" /> strength answers</a>
                                 </span>
                             </li>
                             <li>
@@ -54,7 +54,7 @@
                             <p>You didn't select any</p> } }
                                 </span>
                                 <span class="change">
-                                    <a asp-route="@RouteNames.QuestionTwo_Get" asp-route-returnUrl="@RouteNames.ReviewAnswers_Get">Change<span class="sr-only" /> improvements answers</a>
+                                    <a class="govuk-link" asp-route="@RouteNames.QuestionTwo_Get" asp-route-returnUrl="@RouteNames.ReviewAnswers_Get">Change<span class="sr-only" /> improvements answers</a>
                                 </span>
                             </li>
                             <li>
@@ -65,7 +65,7 @@
                                     <p>@Model.Rating.GetDisplayName()</p>
                                 </span>
                                 <span class="change">
-                                    <a asp-route="@RouteNames.QuestionThree_Get" asp-route-returnUrl="@RouteNames.ReviewAnswers_Get">Change<span class="sr-only" /> quality rating answer</a>
+                                    <a class="govuk-link" asp-route="@RouteNames.QuestionThree_Get" asp-route-returnUrl="@RouteNames.ReviewAnswers_Get">Change<span class="sr-only" /> quality rating answer</a>
                                 </span>
                             </li>
                         </ul>
