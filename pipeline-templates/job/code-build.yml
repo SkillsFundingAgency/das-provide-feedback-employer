@@ -20,11 +20,31 @@ jobs:
   - template: azure-pipelines-templates/build/step/dependency-check.yml@das-platform-building-blocks
 
   - task: DotNetCoreCLI@2
-    displayName: Publish - dotnet publish ${{ parameters.SolutionBaseName }}
+    displayName: Publish - dotnet publish FunctionApp
     inputs:
       command: publish
       publishWebProjects: false
-      projects: src/Employer/**/*.csproj
+      projects: src/Employer/${{ parameters.SolutionBaseName }}.Employer.Functions.Emailer/${{ parameters.SolutionBaseName }}.Employer.Functions.Emailer.csproj
+      arguments: -o $(build.artifactstagingdirectory)/publish -c ${{ parameters.BuildConfiguration }} --no-build
+      modifyOutputPath: true
+      zipAfterPublish: true
+
+  - task: DotNetCoreCLI@2
+    displayName: Publish - dotnet publish UIApp
+    inputs:
+      command: publish
+      publishWebProjects: false
+      projects: src/Employer/${{ parameters.SolutionBaseName }}/${{ parameters.SolutionBaseName }}.csproj
+      arguments: -o $(build.artifactstagingdirectory)/publish -c ${{ parameters.BuildConfiguration }} --no-build
+      modifyOutputPath: true
+      zipAfterPublish: true
+
+  - task: DotNetCoreCLI@2
+    displayName: Publish - dotnet publish ApiApp
+    inputs:
+      command: publish
+      publishWebProjects: false
+      projects: src/Employer/${{ parameters.SolutionBaseName }}.Api/${{ parameters.SolutionBaseName }}.Api.csproj
       arguments: -o $(build.artifactstagingdirectory)/publish -c ${{ parameters.BuildConfiguration }} --no-build
       modifyOutputPath: true
       zipAfterPublish: true
