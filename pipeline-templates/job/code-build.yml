@@ -24,7 +24,7 @@ jobs:
     inputs:
       command: publish
       publishWebProjects: false
-      projects: src/Employer/${{ parameters.SolutionBaseName }}.Employer.Functions.Emailer/${{ parameters.SolutionBaseName }}.Employer.Functions.Emailer.csproj
+      projects: src/Employer/ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer\ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer.csproj
       arguments: -o $(build.artifactstagingdirectory)/publish -c ${{ parameters.BuildConfiguration }} --no-build
       modifyOutputPath: true
       zipAfterPublish: true
