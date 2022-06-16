@@ -17,8 +17,6 @@ jobs:
     parameters:
       SonarCloudProjectKey: SkillsFundingAgency_das-provide-feedback-employer
 
-  - template: azure-pipelines-templates/build/step/dependency-check.yml@das-platform-building-blocks
-
   - task: DotNetCoreCLI@2
     displayName: Publish - dotnet publish FunctionApp
     inputs:
