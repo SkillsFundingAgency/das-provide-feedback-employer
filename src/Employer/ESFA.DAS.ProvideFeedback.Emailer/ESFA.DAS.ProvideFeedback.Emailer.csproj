@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk;Microsoft.NET.Sdk.Publish">
   <PropertyGroup>
     <OutputType>Library</OutputType>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <UserSecretsId>759fd71d-4d3e-43e2-af78-140169b06b64</UserSecretsId>
     <RootNamespace>ESFA.DAS.Feedback.Employer.Emailer</RootNamespace>
   </PropertyGroup>
