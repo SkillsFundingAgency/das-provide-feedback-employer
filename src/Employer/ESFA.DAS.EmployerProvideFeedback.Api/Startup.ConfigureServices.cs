@@ -33,6 +33,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Api
             services.AddSwaggerGen();
             services.AddControllers();
             services.AddHealthChecks();
+            services.AddApplicationInsightsTelemetry();
         }
     }
 }
