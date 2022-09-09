@@ -8,8 +8,8 @@ using ESFA.DAS.ProvideFeedback.Domain.Entities.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
-using SFA.DAS.Notifications.Api.Client;
-using SFA.DAS.Notifications.Api.Types;
+using NServiceBus;
+using SFA.DAS.Notifications.Messages.Commands;
 using Xunit;
 
 namespace ESFA.DAS.Feedback.Employer.UnitTests.Emailer
@@ -17,7 +17,7 @@ namespace ESFA.DAS.Feedback.Employer.UnitTests.Emailer
     public class ReminderEmailerTests
     {
         private readonly Mock<IEmployerFeedbackRepository> _mockStore = new Mock<IEmployerFeedbackRepository>();
-        private readonly Mock<INotificationsApi> _mockEmailService = new Mock<INotificationsApi>();
+        private readonly Mock<IMessageSession> _mockMessageSession = new Mock<IMessageSession>();
         private readonly Mock<ILogger<EmployerSurveyEmailer>> _mockLogger = new Mock<ILogger<EmployerSurveyEmailer>>();
         private readonly IOptions<EmailSettings> _options;
         private readonly EmployerSurveyReminderEmailer _emailer;
@@ -33,7 +33,7 @@ namespace ESFA.DAS.Feedback.Employer.UnitTests.Emailer
 
             _mockStore.Setup(x => x.GetEmployerInvitesToBeSentReminder(It.IsAny<int>())).ReturnsAsync(emailDetails);
 
-            _emailer = new EmployerSurveyReminderEmailer(_mockStore.Object, _mockEmailService.Object, _options, _mockLogger.Object);
+            _emailer = new EmployerSurveyReminderEmailer(_mockStore.Object, _mockMessageSession.Object, _options, _mockLogger.Object);
         }
 
         [Fact]
@@ -41,7 +41,7 @@ namespace ESFA.DAS.Feedback.Employer.UnitTests.Emailer
         {
             await _emailer.SendEmailsAsync();
 
-            _mockEmailService.Verify(x => x.SendEmail(It.Is<Email>(a => a.TemplateId == EmailTemplates.ReminderTemplateId)));
+            _mockMessageSession.Verify(x => x.Send(It.Is<SendEmailCommand>(a => a.TemplateId == EmailTemplates.ReminderTemplateId), It.IsAny<SendOptions>()));
         }
 
         [Fact]
@@ -49,7 +49,7 @@ namespace ESFA.DAS.Feedback.Employer.UnitTests.Emailer
         {
             await _emailer.SendEmailsAsync();
 
-            _mockEmailService.Verify(x => x.SendEmail(It.Is<Email>(a => a.RecipientsAddress == "test@test.com")), Times.Once);
+            _mockMessageSession.Verify(x => x.Send(It.Is<SendEmailCommand>(a => a.RecipientsAddress == "test@test.com"), It.IsAny<SendOptions>()), Times.Once);
         }
 
         [Fact]
@@ -66,7 +66,7 @@ namespace ESFA.DAS.Feedback.Employer.UnitTests.Emailer
             _mockStore.Reset();
             await _emailer.SendEmailsAsync();
 
-            _mockEmailService.Verify(x => x.SendEmail(It.IsAny<Email>()), Times.Never);
+            _mockMessageSession.Verify(x => x.Send(It.IsAny<SendEmailCommand>(), It.IsAny<SendOptions>()), Times.Never);
         }
 
         [Fact]

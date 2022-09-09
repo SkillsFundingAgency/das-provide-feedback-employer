@@ -7,21 +7,21 @@ using ESFA.DAS.Feedback.Employer.Emailer.Configuration;
 using ESFA.DAS.ProvideFeedback.Domain.Entities.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using SFA.DAS.Notifications.Api.Client;
-using SFA.DAS.Notifications.Api.Types;
+using NServiceBus;
+using SFA.DAS.Notifications.Messages.Commands;
 
 namespace ESFA.DAS.Feedback.Employer.Emailer
 {
     public abstract class EmployerSurveyEmailer
     {
-        private readonly INotificationsApi _emailService;
+        private readonly IMessageSession _messageSession;
         private readonly ILogger<EmployerSurveyEmailer> _logger;
         private readonly string _feedbackBaseUrl;
         private readonly int _numberOfEmailsToSend;
 
-        public EmployerSurveyEmailer(INotificationsApi emailService, ILogger<EmployerSurveyEmailer> logger, IOptions<EmailSettings> settings)
+        public EmployerSurveyEmailer(IMessageSession messageSession, ILogger<EmployerSurveyEmailer> logger, IOptions<EmailSettings> settings)
         {
-            _emailService = emailService;
+            _messageSession = messageSession;
             _logger = logger;
             _feedbackBaseUrl = settings.Value.FeedbackSiteBaseUrl.Last() != '/' ? settings.Value.FeedbackSiteBaseUrl + "/" : settings.Value.FeedbackSiteBaseUrl;
             _numberOfEmailsToSend = settings.Value.BatchSize;
@@ -33,21 +33,14 @@ namespace ESFA.DAS.Feedback.Employer.Emailer
             var feedbackUrlStrings = userGroup.Select(employerEmailDetail => $"{employerEmailDetail.ProviderName} {Environment.NewLine} {_feedbackBaseUrl}{employerEmailDetail.UniqueSurveyCode}");
             var feedbackUrls = string.Join("\r\n \r\n", feedbackUrlStrings);
 
-            var email = new Email
-            {
-                SystemId = "employer-feedback",
-                TemplateId = templateId,
-                Subject = "not-set",
-                RecipientsAddress = userGroup.First().EmailAddress,
-                ReplyToAddress = "not-set",
-                Tokens = new Dictionary<string, string>
+            var tokens = new Dictionary<string, string>
                     {
                         {"provider_name", userGroup.First().ProviderName},
                         { "first_name", userGroup.First().FirstName},
                         {"feedback_urls", feedbackUrls}
-                    }
-            };
+                    };
 
+            var email = new SendEmailCommand(templateId, userGroup.First().EmailAddress, tokens);
             await SendEmail(emailAddress, email);
         }
 
@@ -68,12 +61,12 @@ namespace ESFA.DAS.Feedback.Employer.Emailer
 
         protected abstract Task HandleSendAsync(IGrouping<Guid, EmployerSurveyInvite> userGroup);
 
-        private async Task SendEmail(string sendToAddress, Email email)
+        private async Task SendEmail(string sendToAddress, SendEmailCommand email)
         {
             try
             {
                 _logger.LogInformation($"Sending email to {sendToAddress}");
-                await _emailService.SendEmail(email);
+                await _messageSession.Send(email);
             }
             catch (HttpRequestException ex)
             {

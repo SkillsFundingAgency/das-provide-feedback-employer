@@ -1,12 +1,8 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Logging;
-using ESFA.DAS.EmployerProvideFeedback.Configuration;
 using ESFA.DAS.EmployerProvideFeedback.Database;
 using ESFA.DAS.EmployerProvideFeedback.Infrastructure;
-using ESFA.DAS.EmployerProvideFeedback.Orchestrators;
-using ESFA.DAS.ProvideFeedback.Data.Repositories;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;

@@ -17,8 +17,6 @@ using Moq;
 using Newtonsoft.Json;
 using NUnit.Framework;
 using SFA.DAS.EAS.Account.Api.Types;
-using SFA.DAS.Notifications.Api.Client;
-using SFA.DAS.Notifications.Api.Types;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -29,6 +27,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using SFA.DAS.CommitmentsV2.Api.Types.Responses;
 using SFA.DAS.CommitmentsV2.Types;
+using SFA.DAS.Notifications.Messages.Commands;
+using NServiceBus;
 
 namespace IntegrationTests
 {
@@ -39,7 +39,7 @@ namespace IntegrationTests
         private Mock<ICommitmentService> _commitmentServiceMock;
 
         private Mock<IAccountService> _accountServiceMock;
-        private Mock<INotificationsApi> _notificationsApiClientMock;
+        private Mock<IMessageSession> _messageSession;
 
         private GetApprenticeshipsResponse _commitmentGetApprenticeshipsReturn;
         private ICollection<TeamMemberViewModel> _accountApiClientReturn;
@@ -95,7 +95,7 @@ namespace IntegrationTests
         {
             _commitmentServiceMock = new Mock<ICommitmentService>();
             _accountServiceMock = new Mock<IAccountService>();
-            _notificationsApiClientMock = new Mock<INotificationsApi>();
+            _messageSession = new Mock<IMessageSession>();
             _surveyLoggerMock = new Mock<ILogger<EmployerSurveyEmailer>>();
             _roatpService = new Mock<IRoatpService>();
 
@@ -165,10 +165,10 @@ namespace IntegrationTests
         public async Task FirstRoundInviteEmailsSentCorrectly()
         {
             //Assign
-            _notificationsApiClientMock = new Mock<INotificationsApi>();
+            _messageSession = new Mock<IMessageSession>();
             _employerSurveyInviteEmailer = new EmployerSurveyInviteEmailer(
                 _dbEmployerFeedbackRepository,
-                _notificationsApiClientMock.Object,
+                _messageSession.Object,
                 _options,
                 _surveyLoggerMock.Object);
 
@@ -176,7 +176,7 @@ namespace IntegrationTests
             await _employerSurveyInviteEmailer.SendEmailsAsync();
 
             //Assert
-            _notificationsApiClientMock.Verify(x => x.SendEmail(It.IsAny<Email>()), Times.Exactly(2));
+            _messageSession.Verify(x => x.Send(It.IsAny<SendEmailCommand>()), Times.Exactly(2));
         }
 
         [Test, Order(3)]
@@ -188,15 +188,15 @@ namespace IntegrationTests
                 SET SentDate = @newSentDate
                 WHERE UniqueSurveyCode IN (SELECT UniqueSurveyCode FROM EmployerSurveyCodes WHERE FeedbackId IN (SELECT FeedbackId FROM EmployerFeedback WHERE UserRef in @userRefs))",
                 new { newSentDate = DateTime.UtcNow.AddDays(-15), userRefs = new[] { _user1Guid, _user2Guid } });
-            _notificationsApiClientMock = new Mock<INotificationsApi>();
+            _messageSession = new Mock<IMessageSession>();
             _employerSurveyReminderEmailer = new EmployerSurveyReminderEmailer(_dbEmployerFeedbackRepository,
-                _notificationsApiClientMock.Object, _options, _surveyLoggerMock.Object);
+                _messageSession.Object, _options, _surveyLoggerMock.Object);
 
             //Act
             await _employerSurveyReminderEmailer.SendEmailsAsync();
 
             //Assert
-            _notificationsApiClientMock.Verify(x => x.SendEmail(It.IsAny<Email>()), Times.Exactly(2));
+            _messageSession.Verify(x => x.Send(It.IsAny<SendEmailCommand>()), Times.Exactly(2));
         }
 
         [Test, Order(4)]
@@ -230,15 +230,15 @@ namespace IntegrationTests
                 SET SentDate = @newSentDate
                 WHERE EmailType = 1 AND UniqueSurveyCode IN (SELECT UniqueSurveyCode FROM EmployerSurveyCodes WHERE FeedbackId IN (SELECT FeedbackId FROM EmployerFeedback WHERE UserRef in @userRefs))",
                 new { newSentDate = DateTime.UtcNow - TimeSpan.FromDays(91), userRefs = new[] { _user1Guid, _user2Guid } });
-            _notificationsApiClientMock = new Mock<INotificationsApi>();
+            _messageSession = new Mock<IMessageSession>();
             _employerSurveyInviteEmailer = new EmployerSurveyInviteEmailer(_dbEmployerFeedbackRepository,
-                _notificationsApiClientMock.Object, _options, _surveyLoggerMock.Object);
+                _messageSession.Object, _options, _surveyLoggerMock.Object);
 
             //Act
             await _employerSurveyInviteEmailer.SendEmailsAsync();
 
             //Assert
-            _notificationsApiClientMock.Verify(x => x.SendEmail(It.IsAny<Email>()), Times.Exactly(2));
+            _messageSession.Verify(x => x.Send(It.IsAny<SendEmailCommand>()), Times.Exactly(2));
         }
 
         [Test, Order(6)]
@@ -250,15 +250,15 @@ namespace IntegrationTests
                 SET SentDate = DATEADD(DAY,-15,SentDate)
                 WHERE UniqueSurveyCode IN (SELECT UniqueSurveyCode FROM EmployerSurveyCodes WHERE FeedbackId IN (SELECT FeedbackId FROM EmployerFeedback WHERE UserRef in @userRefs))",
                 new { userRefs = new[] { _user1Guid, _user2Guid } });
-            _notificationsApiClientMock = new Mock<INotificationsApi>();
+            _messageSession = new Mock<IMessageSession>();
             _employerSurveyReminderEmailer = new EmployerSurveyReminderEmailer(_dbEmployerFeedbackRepository,
-                _notificationsApiClientMock.Object, _options, _surveyLoggerMock.Object);
+                _messageSession.Object, _options, _surveyLoggerMock.Object);
 
             //Act
             await _employerSurveyReminderEmailer.SendEmailsAsync();
 
             //Assert
-            _notificationsApiClientMock.Verify(x => x.SendEmail(It.IsAny<Email>()), Times.Exactly(2));
+            _messageSession.Verify(x => x.Send(It.IsAny<SendEmailCommand>()), Times.Exactly(2));
         }
 
         [Test, Order(7)]
@@ -270,7 +270,7 @@ namespace IntegrationTests
                 WHERE EmailType = 1 AND UniqueSurveyCode IN (SELECT UniqueSurveyCode FROM EmployerSurveyCodes WHERE FeedbackId IN (SELECT FeedbackId FROM EmployerFeedback WHERE UserRef in @userRefs))",
                 new { newSentDate = DateTime.UtcNow - TimeSpan.FromDays(91), userRefs = new[] { _user1Guid, _user2Guid } });
             _employerSurveyInviteEmailer = new EmployerSurveyInviteEmailer(_dbEmployerFeedbackRepository,
-                _notificationsApiClientMock.Object, _options, _surveyLoggerMock.Object);
+                _messageSession.Object, _options, _surveyLoggerMock.Object);
 
             await RunThroughRefreshFunctions();
 
@@ -278,7 +278,7 @@ namespace IntegrationTests
             await _employerSurveyInviteEmailer.SendEmailsAsync();
 
             //Assert
-            _notificationsApiClientMock.Verify(x => x.SendEmail(It.IsAny<Email>()), Times.Exactly(2));
+            _messageSession.Verify(x => x.Send(It.IsAny<SendEmailCommand>()), Times.Exactly(2));
         }
 
         [Test, Order(8)]
@@ -322,13 +322,13 @@ namespace IntegrationTests
                 WHERE UniqueSurveyCode IN (SELECT UniqueSurveyCode FROM EmployerSurveyCodes WHERE FeedbackId IN (SELECT FeedbackId FROM EmployerFeedback WHERE UserRef in @userRefs))",
                 new { userRefs = new[] { _user3Guid } });
             _employerSurveyReminderEmailer = new EmployerSurveyReminderEmailer(_dbEmployerFeedbackRepository,
-                _notificationsApiClientMock.Object, _options, _surveyLoggerMock.Object);
+                _messageSession.Object, _options, _surveyLoggerMock.Object);
 
             //Act
             await _employerSurveyReminderEmailer.SendEmailsAsync();
 
             //Assert
-            _notificationsApiClientMock.Verify(x => x.SendEmail(It.IsAny<Email>()), Times.Exactly(0));
+            _messageSession.Verify(x => x.Send(It.IsAny<SendEmailCommand>()), Times.Exactly(0));
         }
 
         private void SetUpApiReturn(long changeableUkprn)

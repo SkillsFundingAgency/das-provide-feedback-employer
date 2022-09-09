@@ -8,8 +8,8 @@ using ESFA.DAS.ProvideFeedback.Domain.Entities.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
-using SFA.DAS.Notifications.Api.Client;
-using SFA.DAS.Notifications.Api.Types;
+using NServiceBus;
+using SFA.DAS.Notifications.Messages.Commands;
 using Xunit;
 
 namespace ESFA.DAS.Feedback.Employer.UnitTests.Emailer
@@ -19,7 +19,7 @@ namespace ESFA.DAS.Feedback.Employer.UnitTests.Emailer
         public class UserWithSingleEntry
         {
             private readonly Mock<IEmployerFeedbackRepository> _mockStore = new Mock<IEmployerFeedbackRepository>();
-            private readonly Mock<INotificationsApi> _mockEmailService = new Mock<INotificationsApi>();
+            private readonly Mock<IMessageSession> _mockEmailService = new Mock<IMessageSession>();
             private readonly Mock<ILogger<EmployerSurveyInviteEmailer>> _mockLogger = new Mock<ILogger<EmployerSurveyInviteEmailer>>();
             private readonly IOptions<EmailSettings> _options;
             private readonly EmployerSurveyInviteEmailer _emailer;
@@ -43,7 +43,7 @@ namespace ESFA.DAS.Feedback.Employer.UnitTests.Emailer
             {
                 await _emailer.SendEmailsAsync();
 
-                _mockEmailService.Verify(x => x.SendEmail(It.Is<Email>(a => a.TemplateId == EmailTemplates.MultipleLinkTemplateId)));
+                _mockEmailService.Verify(x => x.Send(It.Is<SendEmailCommand>(a => a.TemplateId == EmailTemplates.MultipleLinkTemplateId), It.IsAny<SendOptions>()));
             }
 
             [Fact]
@@ -51,7 +51,7 @@ namespace ESFA.DAS.Feedback.Employer.UnitTests.Emailer
             {
                 await _emailer.SendEmailsAsync();
 
-                _mockEmailService.Verify(x => x.SendEmail(It.Is<Email>(a => a.RecipientsAddress == "test@test.com")), Times.Once);
+                _mockEmailService.Verify(x => x.Send(It.Is<SendEmailCommand>(a => a.RecipientsAddress == "test@test.com"), It.IsAny<SendOptions>()), Times.Once);
             }
 
             [Fact]
@@ -66,7 +66,7 @@ namespace ESFA.DAS.Feedback.Employer.UnitTests.Emailer
         public class UserWithMultipleEntries
         {
             private Mock<IEmployerFeedbackRepository> _mockStore = new Mock<IEmployerFeedbackRepository>();
-            private Mock<INotificationsApi> _mockEmailService = new Mock<INotificationsApi>();
+            private Mock<IMessageSession> _mockEmailService = new Mock<IMessageSession>();
             private readonly Mock<ILogger<EmployerSurveyInviteEmailer>> _mockLogger = new Mock<ILogger<EmployerSurveyInviteEmailer>>();
 
             private readonly IOptions<EmailSettings> _options;
@@ -93,7 +93,7 @@ namespace ESFA.DAS.Feedback.Employer.UnitTests.Emailer
             {
                 await _emailer.SendEmailsAsync();
 
-                _mockEmailService.Verify(x => x.SendEmail(It.Is<Email>(a => a.TemplateId == EmailTemplates.MultipleLinkTemplateId)), Times.Once);
+                _mockEmailService.Verify(x => x.Send(It.Is<SendEmailCommand>(a => a.TemplateId == EmailTemplates.MultipleLinkTemplateId), It.IsAny<SendOptions>()), Times.Once);
             }
 
             [Fact]
@@ -101,7 +101,7 @@ namespace ESFA.DAS.Feedback.Employer.UnitTests.Emailer
             {
                 await _emailer.SendEmailsAsync();
 
-                _mockEmailService.Verify(x => x.SendEmail(It.Is<Email>(a => a.RecipientsAddress == "test@test.com")));
+                _mockEmailService.Verify(x => x.Send(It.Is<SendEmailCommand>(a => a.RecipientsAddress == "test@test.com"), It.IsAny<SendOptions>()));
             }
 
             [Fact]

@@ -6,7 +6,7 @@ using ESFA.DAS.ProvideFeedback.Data.Repositories;
 using ESFA.DAS.ProvideFeedback.Domain.Entities.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using SFA.DAS.Notifications.Api.Client;
+using NServiceBus;
 
 namespace ESFA.DAS.Feedback.Employer.Emailer
 {
@@ -17,9 +17,9 @@ namespace ESFA.DAS.Feedback.Employer.Emailer
 
         public EmployerSurveyReminderEmailer(
             IEmployerFeedbackRepository emailDetailsStore,
-            INotificationsApi emailService,
+            IMessageSession _messageSession,
             IOptions<EmailSettings> settings,
-            ILogger<EmployerSurveyEmailer> logger) : base(emailService, logger, settings)
+            ILogger<EmployerSurveyEmailer> logger) : base(_messageSession, logger, settings)
         {
             _emailDetailsStore = emailDetailsStore;
             _reminderDays = settings.Value.ReminderDays;

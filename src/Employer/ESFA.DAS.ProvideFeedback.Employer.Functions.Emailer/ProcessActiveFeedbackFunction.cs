@@ -23,7 +23,7 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
         public async Task Run(
             [ServiceBusTrigger("%ProcessActiveFeedbackQueueName%", Connection = "ServiceBusConnection")]string myQueueItem,
             ILogger log,
-            [ServiceBus("%GenerateSurveyInviteMessageQueueName%", Connection = "ServiceBusConnection", EntityType = EntityType.Queue)]ICollector<GenerateSurveyCodeMessage> queue)
+            [ServiceBus("%GenerateSurveyInviteMessageQueueName%", Connection = "ServiceBusConnection", EntityType = ServiceBusEntityType.Queue)]ICollector<GenerateSurveyCodeMessage> queue)
         {
             log.LogInformation("Data refresh function started.");
             GroupedFeedbackRefreshMessage message = JsonConvert.DeserializeObject<GroupedFeedbackRefreshMessage>(myQueueItem);
