@@ -30,7 +30,7 @@
       "type": "string"
     },
     "nServiceBusLicense": {
-      "type": "string"
+      "type": "securestring"
     },
     "commitmentApiBaseUrl": {
       "type": "string"
