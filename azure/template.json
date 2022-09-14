@@ -1,197 +1,197 @@
 {
     "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json",
     "contentVersion": "1.0.0.0",
-    "parameters": {
-        "environmentName": {
-            "type": "string"
-        },
-        "tags": {
-            "type": "object"
-        },
-        "serviceName": {
-            "type": "string"
-        },
-        "configurationStorageConnectionString": {
-            "type": "securestring"
-        },
-        "loggingRedisConnectionString": {
-            "type": "securestring"
-        },
-        "loggingRedisKey": {
-            "type": "string"
-        },
-        "resourceEnvironmentName": {
-            "type": "string"
-        },
-        "aspNetCoreEnvironment": {
-            "type": "string"
-        },
-        "notificationsApiBaseUrl": {
-            "type": "string"
-        },
-        "notificationsApiClientToken": {
-            "type": "securestring"
-        },
-        "commitmentApiBaseUrl": {
-            "type": "string"
-        },
-        "frontEndAccessRestrictions": {
-            "type": "array"
-        },
-        "commitmentApiClientToken": {
-            "type": "securestring"
-        },
-        "commitmentV2ApiBaseUrl": {
-            "type": "string"
-        },
-        "commitmentV2ApiIdentifierUri": {
-            "type": "string"
-        },
-        "roatpApiBaseUrl": {
-            "type": "string"
-        },
-        "roatpApiIdentifier": {
-            "type": "string"
-        },
-        "accountApiBaseUrl": {
-            "type": "string"
-        },
-        "accountApiIdentifierUri": {
-            "type": "string"
-        },
-        "emailBatchSize": {
-            "type": "int",
-            "defaultValue": 25
-        },
-        "reminderDays": {
-            "type": "int",
-            "defaultValue": 14
-        },
-        "inviteCycleDays": {
-            "type": "int",
-            "defaultValue": 90
-        },
-        "feedbackApiAuthTenant": {
-            "type": "string"
-        },
-        "feedbackApiAuthIdentifier": {
-            "type": "string"
-        },
-        "dbConnectionString": {
-            "type": "secureString"
-        },
-        "sharedRedisConnectionString": {
-            "type": "secureString"
-        },
-        "inviteEmailerSchedule": {
-            "type": "string"
-        },
-        "reminderEmailerSchedule": {
-            "type": "string"
-        },
-        "dataRefreshSchedule": {
-            "type": "string"
-        },
-        "emailerAppName": {
-            "type": "string",
-            "defaultValue": "das-provide-feedback-emailer"
-        },
-        "slidingExpirationMinutes": {
-            "type": "int"
-        },
-        "uiCustomHostname": {
-            "type": "string"
-        },
-        "apiCustomHostname": {
-            "type": "string",
-            "defaultValue": ""
-        },
-        "sharedKeyVaultName": {
-            "type": "string"
-        },
-        "appServiceAllowedIPs": {
-            "type": "array"
-        },
-        "appServicePlanSize": {
-            "type": "string",
-            "defaultValue": "1"
-        },
-        "appServicePlanInstances": {
-            "type": "int",
-            "defaultValue": 1
-        },
-        "sharedFrontEndAppServicePlanName": {
-            "type": "string"
-        },
-        "sharedBackEndAppServicePlanName": {
-            "type": "string"
-        },
-        "sharedFrontEndSubnetResourceId": {
-            "type": "string"
-        },
-        "sharedBackEndSubnetResourceId": {
-            "type": "string"
-        },
-        "sharedAppServicePlanResourceGroup": {
-            "type": "string"
-        },
-        "functionsExtensionVersion": {
-            "type": "string",
-            "defaultValue": "~3"
-        },
-        "sharedEnvResourceGroup": {
-            "type": "string"
-        },
-        "sharedEnvVirtualNetworkName": {
-            "type": "string"
-        },
-        "subnetObject": {
-            "type": "object"
-        },
-        "subnetServiceEndpointList": {
-            "type": "array"
-        },
-        "subnetDelegations": {
-            "type": "array"
-        },
-        "sharedManagementResourceGroup": {
-            "type": "string"
-        },
-        "sharedSQLServerName": {
-            "type": "string"
-        },
-        "elasticPoolName": {
-            "defaultValue": "",
-            "type": "string"
-        },
-        "databaseSkuName": {
-            "type": "string",
-            "defaultValue": "S0"
-        },
-        "databaseTier": {
-            "type": "string",
-            "defaultValue": "Standard"
-        },
-        "logAnalyticsWorkspaceName": {
-            "type": "string"
-        },
-        "resourceGroupLocation": {
-            "type": "string"
-        },
-        "uiCertificateName": {
-            "type": "string"
-        },
-        "apiCertificateName": {
-            "type": "string"
-        },
-        "utcValue": {
-            "type": "string",
-            "defaultValue": "[utcNow()]"
-        },
-        "workerAccessRestrictions": {
-            "type": "array"
-        }
+  "parameters": {
+    "environmentName": {
+      "type": "string"
     },
+    "tags": {
+      "type": "object"
+    },
+    "serviceName": {
+      "type": "string"
+    },
+    "configurationStorageConnectionString": {
+      "type": "securestring"
+    },
+    "loggingRedisConnectionString": {
+      "type": "securestring"
+    },
+    "loggingRedisKey": {
+      "type": "string"
+    },
+    "resourceEnvironmentName": {
+      "type": "string"
+    },
+    "aspNetCoreEnvironment": {
+      "type": "string"
+    },
+    "sharedServiceBusName": {
+      "type": "string"
+    },
+    "nServiceBusLicense": {
+      "type": "string"
+    },
+    "commitmentApiBaseUrl": {
+      "type": "string"
+    },
+    "frontEndAccessRestrictions": {
+      "type": "array"
+    },
+    "commitmentApiClientToken": {
+      "type": "securestring"
+    },
+    "commitmentV2ApiBaseUrl": {
+      "type": "string"
+    },
+    "commitmentV2ApiIdentifierUri": {
+      "type": "string"
+    },
+    "roatpApiBaseUrl": {
+      "type": "string"
+    },
+    "roatpApiIdentifier": {
+      "type": "string"
+    },
+    "accountApiBaseUrl": {
+      "type": "string"
+    },
+    "accountApiIdentifierUri": {
+      "type": "string"
+    },
+    "emailBatchSize": {
+      "type": "int",
+      "defaultValue": 25
+    },
+    "reminderDays": {
+      "type": "int",
+      "defaultValue": 14
+    },
+    "inviteCycleDays": {
+      "type": "int",
+      "defaultValue": 90
+    },
+    "feedbackApiAuthTenant": {
+      "type": "string"
+    },
+    "feedbackApiAuthIdentifier": {
+      "type": "string"
+    },
+    "dbConnectionString": {
+      "type": "secureString"
+    },
+    "sharedRedisConnectionString": {
+      "type": "secureString"
+    },
+    "inviteEmailerSchedule": {
+      "type": "string"
+    },
+    "reminderEmailerSchedule": {
+      "type": "string"
+    },
+    "dataRefreshSchedule": {
+      "type": "string"
+    },
+    "emailerAppName": {
+      "type": "string",
+      "defaultValue": "das-provide-feedback-emailer"
+    },
+    "slidingExpirationMinutes": {
+      "type": "int"
+    },
+    "uiCustomHostname": {
+      "type": "string"
+    },
+    "apiCustomHostname": {
+      "type": "string",
+      "defaultValue": ""
+    },
+    "sharedKeyVaultName": {
+      "type": "string"
+    },
+    "appServiceAllowedIPs": {
+      "type": "array"
+    },
+    "appServicePlanSize": {
+      "type": "string",
+      "defaultValue": "1"
+    },
+    "appServicePlanInstances": {
+      "type": "int",
+      "defaultValue": 1
+    },
+    "sharedFrontEndAppServicePlanName": {
+      "type": "string"
+    },
+    "sharedBackEndAppServicePlanName": {
+      "type": "string"
+    },
+    "sharedFrontEndSubnetResourceId": {
+      "type": "string"
+    },
+    "sharedBackEndSubnetResourceId": {
+      "type": "string"
+    },
+    "sharedAppServicePlanResourceGroup": {
+      "type": "string"
+    },
+    "functionsExtensionVersion": {
+      "type": "string",
+      "defaultValue": "~3"
+    },
+    "sharedEnvResourceGroup": {
+      "type": "string"
+    },
+    "sharedEnvVirtualNetworkName": {
+      "type": "string"
+    },
+    "subnetObject": {
+      "type": "object"
+    },
+    "subnetServiceEndpointList": {
+      "type": "array"
+    },
+    "subnetDelegations": {
+      "type": "array"
+    },
+    "sharedManagementResourceGroup": {
+      "type": "string"
+    },
+    "sharedSQLServerName": {
+      "type": "string"
+    },
+    "elasticPoolName": {
+      "defaultValue": "",
+      "type": "string"
+    },
+    "databaseSkuName": {
+      "type": "string",
+      "defaultValue": "S0"
+    },
+    "databaseTier": {
+      "type": "string",
+      "defaultValue": "Standard"
+    },
+    "logAnalyticsWorkspaceName": {
+      "type": "string"
+    },
+    "resourceGroupLocation": {
+      "type": "string"
+    },
+    "uiCertificateName": {
+      "type": "string"
+    },
+    "apiCertificateName": {
+      "type": "string"
+    },
+    "utcValue": {
+      "type": "string",
+      "defaultValue": "[utcNow()]"
+    },
+    "workerAccessRestrictions": {
+      "type": "array"
+    }
+  },
     "variables": {
         "deploymentUrlBase": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/",
         "resourceNamePrefix": "[toLower(concat('das-', parameters('resourceEnvironmentName'),'-', parameters('serviceName')))]",
@@ -609,12 +609,12 @@
                                     "value": "[reference(concat(variables('functionAppName'), '-app-insights-', parameters('utcValue'))).outputs.InstrumentationKey.value]"
                                 },
                                 {
-                                    "name": "NotificationApi:BaseUrl",
-                                    "value": "[parameters('notificationsApiBaseUrl')]"
+                                    "name": "NServiceBusConfiguration:License",
+                                    "value": "[parameters('nServiceBusLicense')]"
                                 },
                                 {
-                                    "name": "NotificationApi:ClientToken",
-                                    "value": "[parameters('notificationsApiClientToken')]"
+                                  "name": "NServiceBusConfiguration:ConnectionString",
+                                  "value": "[parameters('sharedServiceBusName')]"
                                 },
                                 {
                                     "name": "RoatpApi:Url",
