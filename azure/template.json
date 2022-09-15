@@ -833,8 +833,8 @@
             }
         },
         {
-            "apiVersion": "2020-06-01",
-            "name": "[concat('role-assignments-', copyIndex())]",
+            "apiVersion": "2021-04-01",
+            "name": "[concat(variables('functionAppName'), '-sb-role', parameters('utcValue'))]",
             "type": "Microsoft.Resources/deployments",
             "resourceGroup": "[parameters('sharedEnvResourceGroup')]",
             "properties": {
@@ -845,7 +845,7 @@
                 },
                 "parameters": {
                     "principalId": {
-                        "value": "[createArray(reference('[concat(variables('functionAppName'), '-', parameters('utcValue'))]').outputs.managedServiceIdentityId.value, reference('[concat(variables('functionAppName'), '-', parameters('utcValue'))]').outputs.stagingManagedServiceIdentityId.value)[copyIndex()]]"
+                        "value": "[reference(concat(variables('functionAppName'), '-', parameters('utcValue'))).outputs.managedServiceIdentityId.value]"
                     },
                     "assignmentType": {
                         "value": "ServiceBusSender"
@@ -854,10 +854,6 @@
                         "value": "[parameters('sharedServiceBusName')]"
                     }
                 }
-            },
-            "copy": {
-                "name": "role-assignments",
-                "count": 2
             }
         }
     ],
