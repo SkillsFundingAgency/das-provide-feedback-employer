@@ -151,7 +151,7 @@ new SelectList(Model.FeedbackStatusFilter.Select(n => n)),
                 <td class="govuk-table__cell govuk-table__cell--numeric" data-label="Action">
                     @if (provider.CanSubmitFeedback)
                     {
-                        <a class="govuk-link--no-visited-state" href="/@Model.EncodedAccountId/providers/@provider.ProviderId">Select</a>
+                        <a class="govuk-link govuk-link--no-visited-state" href="/@Model.EncodedAccountId/providers/@provider.ProviderId">Select<span class="govuk-visually-hidden">@provider.ProviderName</span></a>
                     }
                 </td>
 

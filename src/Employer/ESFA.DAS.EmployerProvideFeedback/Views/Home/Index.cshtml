@@ -6,13 +6,13 @@
     var accountId = ViewContext.RouteData.Values[RouteValueKeys.EncodedAccountId] as string;
 }
 
-<main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing">
+<main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content">
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
         <h1 class="govuk-heading-xl">
             Give feedback on @ViewData["ProviderName"]
         </h1>
-        <p class="lede">Give feedback to let other employers know how @ViewData["ProviderName"] is doing. It'll also help @ViewData["ProviderName"] improve its apprenticeship training.</p>
+        <p class="govuk-body-l">Give feedback to let other employers know how @ViewData["ProviderName"] is doing. It'll also help @ViewData["ProviderName"] improve its apprenticeship training.</p>
         <p>It's just 3 questions.</p>
         <p>We publish your feedback but we don’t publish it with your name or the name of your organisation.</p>
         <p>We would only disclose your name and the name of your organisation with your feedback if we were legally required to do so.</p>
