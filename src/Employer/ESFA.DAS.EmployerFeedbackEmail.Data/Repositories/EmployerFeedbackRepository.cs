@@ -228,6 +228,12 @@ namespace ESFA.DAS.ProvideFeedback.Data.Repositories
                 , new { uniqueSurveyCode = uniqueSurveyCode });
         }
 
+        public async Task<Guid> GetUniqueSurveyCodeFromFeedbackId(long feedbackId)
+        {
+            return await _dbConnection.QueryFirstOrDefaultAsync<Guid>("SELECT UniqueSurveyCode FROM EmployerSurveyCodes WHERE FeedbackId = @feedbackId"
+                , new { feedbackId = feedbackId });
+        }
+
         public async Task<Guid> CreateEmployerFeedbackResult(long feedbackId, string providerRating, DateTime dateTimeCompleted, FeedbackSource feedbackSource, IEnumerable<ProviderAttribute> providerAttributes)
         {
             var providerAttributesDt = ProviderAttributesToDataTable(providerAttributes);
