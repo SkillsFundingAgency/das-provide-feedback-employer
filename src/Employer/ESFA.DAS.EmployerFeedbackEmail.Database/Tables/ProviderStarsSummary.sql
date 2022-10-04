@@ -8,6 +8,3 @@ PRIMARY KEY CLUSTERED
 ))
 
 GO
-
-ALTER TABLE [dbo].[ProviderStarsSummary] ADD  DEFAULT ((0)) FOR [ReviewCount]
-GO
