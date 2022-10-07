@@ -67,8 +67,8 @@ namespace ESFA.DAS.EmployerProvideFeedback.Orchestrators
                 {
                     // Ad Hoc journey
                     Guid? uniqueSurveyCode = await _employerFeedbackRepository.GetUniqueSurveyCodeFromFeedbackId(feedbackId);
-
-                    await _employerFeedbackRepository.SetCodeBurntDate(uniqueSurveyCode.Value);
+                    if (uniqueSurveyCode != Guid.Empty)
+                        await _employerFeedbackRepository.SetCodeBurntDate(uniqueSurveyCode.Value);
                 }
             }
             catch (Exception ex)
