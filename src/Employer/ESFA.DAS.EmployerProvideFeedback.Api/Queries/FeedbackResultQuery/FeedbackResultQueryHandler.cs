@@ -27,11 +27,13 @@ namespace ESFA.DAS.EmployerProvideFeedback.Api.Queries.FeedbackResultQuery
             IEnumerable<EmployerFeedbackResultSummary> feedback = await _employerfeedbackRepository.GetFeedbackResultSummary(request.Ukprn);
 
             if (feedback == null || !feedback.Any())
+            {
                 return new EmployerFeedbackResultDto()
                 {
                     Ukprn = request.Ukprn,
                     ProviderAttribute = Enumerable.Empty<ProviderAttributeSummaryItemDto>()
                 };
+            }
 
             IEnumerable<EmployerFeedbackResultDto> grouped = feedback.GroupBy(
                 x => new { x.Ukprn, x.Stars, x.ReviewCount },

@@ -31,6 +31,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Api.Controllers
         [HttpGet]
         [ProducesResponseType(200, Type = typeof(EmployerFeedbackResultDto))]
         [ProducesResponseType(401)]
+        [ProducesResponseType(500)]
         [Route("{ukprn}")]
         public async Task<IActionResult> GetEmployerfeedbackResult(long ukprn)
         {
@@ -49,16 +50,14 @@ namespace ESFA.DAS.EmployerProvideFeedback.Api.Controllers
 
         [HttpGet]
         [ProducesResponseType(200, Type = typeof(IEnumerable<EmployerFeedbackStarsSummaryDto>))]
-        [ProducesResponseType(204)]
         [ProducesResponseType(401)]
+        [ProducesResponseType(500)]
         [Route("reviews")]
         public async Task<IActionResult> GetAllStarsSummary()
         {
             try
             {
                 IEnumerable<EmployerFeedbackStarsSummaryDto> result = await _mediator.Send(new ProviderSummaryStarsQuery());
-                if (result == null || !result.Any())
-                    return NoContent();
                 return Ok(result);
             }
             catch (Exception e)
