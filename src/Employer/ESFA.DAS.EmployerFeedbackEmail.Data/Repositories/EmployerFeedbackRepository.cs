@@ -314,6 +314,22 @@ namespace ESFA.DAS.ProvideFeedback.Data.Repositories
                 });
         }
 
+        public async Task<IEnumerable<EmployerFeedbackResultSummary>> GetFeedbackResultSummary(long ukprn)
+        {
+            return await _dbConnection.
+                QueryAsync<EmployerFeedbackResultSummary>(@"SELECT pss.Ukprn, pss.ReviewCount, pss.Stars, a.AttributeName, pas.Strength, pas.Weakness, pas.UpdatedOn FROM ProviderStarsSummary pss INNER JOIN ProviderAttributeSummary pas ON pss.Ukprn = pas.Ukprn INNER JOIN Attributes a ON pas.AttributeId = a.AttributeId WHERE pss.Ukprn = @ukprn",
+                new
+                {
+                    ukprn,
+                });
+        }
+
+        public async Task<IEnumerable<ProviderStarsSummary>> GetAllStarsSummary()
+        {
+            return await _dbConnection.
+                QueryAsync<ProviderStarsSummary>(@"SELECT Ukprn, ReviewCount, Stars FROM ProviderStarsSummary");
+        }
+
         private DataTable ProvidersToDatatable(IEnumerable<Provider> providers)
         {
             var dt = new DataTable();
