@@ -18,8 +18,7 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
         }
 
         [FunctionName("GenerateFeedbackSummariesFunction")]
-        //public async Task Run([TimerTrigger("0 0 */3 * * *", RunOnStartup = false)] TimerInfo myTimer, ILogger log)
-        public async Task Run([TimerTrigger("0 0 */3 * * *", RunOnStartup = true)] TimerInfo myTimer, ILogger log)
+        public async Task Run([TimerTrigger("0 0 */3 * * *")] TimerInfo myTimer, ILogger log)
         {
             log.LogInformation("Generate feedback summaries function started.");
 

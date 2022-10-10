@@ -316,6 +316,8 @@ namespace ESFA.DAS.ProvideFeedback.Data.Repositories
 
         public async Task<int> GenerateProviderRatingResults(int allUserFeedback, int resultsforAllTime, int recentFeedbackMonths, decimal tolerance)
         {
+            if (_dbConnection.State == ConnectionState.Closed)
+                _dbConnection.Open();
             var parameters = new DynamicParameters();
             parameters.Add("@AllUserFeedback", allUserFeedback, DbType.Int64);
             parameters.Add("@ResultsforAllTime", resultsforAllTime, DbType.Int64);
@@ -331,6 +333,8 @@ namespace ESFA.DAS.ProvideFeedback.Data.Repositories
 
         public async Task<int> GenerateProviderAttributeResults(int allUserFeedback, int resultsforAllTime, int recentFeedbackMonths)
         {
+            if (_dbConnection.State == ConnectionState.Closed)
+                _dbConnection.Open();
             var parameters = new DynamicParameters();
             parameters.Add("@AllUserFeedback", allUserFeedback, DbType.Int64);
             parameters.Add("@ResultsforAllTime", resultsforAllTime, DbType.Int64);
