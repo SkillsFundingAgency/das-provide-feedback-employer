@@ -31,6 +31,7 @@ namespace ESFA.DAS.ProvideFeedback.Data.Repositories
         Task<IEnumerable<FeedbackQuestionAttribute>> GetAllAttributes();
         Task<Guid> CreateEmployerFeedbackResult(long feedbackId, string providerRating, DateTime dateTimeCompleted, FeedbackSource feedbackSource, IEnumerable<ProviderAttribute> providerAttributes);
         Task<long> GetFeedbackIdFromUniqueSurveyCode(Guid uniqueCode);
+        Task<Guid> GetUniqueSurveyCodeFromFeedbackId(long feedbackId);
         Task<IEnumerable<EmployerFeedbackViewModel>> GetEmployerFeedback();
         Task<IEnumerable<EmployerFeedbackAndResult>> GetAllFeedbackAndResultFromEmployer(long accountId);
         Task<IEnumerable<EmployerFeedbackResultSummary>> GetFeedbackResultSummary(long ukprn);

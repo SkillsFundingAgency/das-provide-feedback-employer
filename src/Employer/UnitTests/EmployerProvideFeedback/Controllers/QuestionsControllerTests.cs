@@ -22,7 +22,6 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
         private Mock<ISessionService> _sessionServiceMock;
         private IFixture _fixture;
         private List<ProviderAttributeModel> _providerAttributes;
-        private Guid _uniqueCode = Guid.NewGuid();
         private string _accountId = string.Empty;
 
         public QuestionsControllerTests()
@@ -62,7 +61,7 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
             // Arrange
 
             // Act
-            var result = await _controller.QuestionOne(_accountId, _uniqueCode) as ViewResult;
+            var result = await _controller.QuestionOne(_accountId) as ViewResult;
 
             // Assert
             Assert.IsAssignableFrom<SurveyModel>(result.Model);
@@ -81,7 +80,7 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
             _sessionServiceMock.Setup(mock => mock.Get<SurveyModel>(It.IsAny<string>())).Returns(Task.FromResult(surveyModel));
 
             // Act
-            var result = await _controller.QuestionOne(_accountId, _uniqueCode) as ViewResult;
+            var result = await _controller.QuestionOne(_accountId) as ViewResult;
 
             // Assert
             Assert.IsAssignableFrom<SurveyModel>(result.Model);
@@ -99,7 +98,7 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
             var surveyModel = new SurveyModel { Attributes = _providerAttributes };
 
             // Act
-            var result = await _controller.QuestionOne(_uniqueCode, surveyModel);
+            var result = await _controller.QuestionOne(surveyModel);
 
             // Assert
             _sessionServiceMock.Verify(mock => mock.Set(It.IsAny<string>(), It.IsAny<object>()), Times.Once);
@@ -114,7 +113,7 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
             _controller.TempData.Add("ReturnUrl", RouteNames.ReviewAnswers_Get);
 
             // Act
-            var result = await _controller.QuestionOne(_uniqueCode, new SurveyModel { Attributes = _providerAttributes });
+            var result = await _controller.QuestionOne(new SurveyModel { Attributes = _providerAttributes });
 
             // Assert
             Assert.IsAssignableFrom<RedirectToRouteResult>(result);
@@ -127,7 +126,7 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
             // Arrange
 
             // Act
-            var result = await _controller.QuestionTwo(_uniqueCode) as ViewResult;
+            var result = await _controller.QuestionTwo() as ViewResult;
 
             // Assert
             Assert.IsAssignableFrom<SurveyModel>(result.Model);
@@ -146,7 +145,7 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
             _sessionServiceMock.Setup(mock => mock.Get<SurveyModel>(It.IsAny<string>())).Returns(Task.FromResult(surveyModel));
 
             // Act
-            var result = await _controller.QuestionTwo(_uniqueCode) as ViewResult;
+            var result = await _controller.QuestionTwo() as ViewResult;
 
             // Assert
             Assert.IsAssignableFrom<SurveyModel>(result.Model);
@@ -164,7 +163,7 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
             var surveyModel = new SurveyModel { Attributes = _providerAttributes };
 
             // Act
-            var result = await _controller.QuestionTwo(_uniqueCode, surveyModel);
+            var result = await _controller.QuestionTwo(surveyModel);
 
             // Assert
             _sessionServiceMock.Verify(mock => mock.Set(It.IsAny<string>(), It.IsAny<object>()), Times.Once);
@@ -179,7 +178,7 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
             _controller.TempData.Add("ReturnUrl", RouteNames.ReviewAnswers_Get);
 
             // Act
-            var result = await _controller.QuestionTwo(_uniqueCode, new SurveyModel { Attributes = _providerAttributes });
+            var result = await _controller.QuestionTwo(new SurveyModel { Attributes = _providerAttributes });
 
             // Assert
             Assert.IsAssignableFrom<RedirectToRouteResult>(result);
@@ -192,7 +191,7 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
             // Arrange
 
             // Act
-            var result = await _controller.QuestionThree(_uniqueCode) as ViewResult;
+            var result = await _controller.QuestionThree() as ViewResult;
 
             // Assert
             Assert.IsAssignableFrom<SurveyModel>(result.Model);
@@ -210,7 +209,7 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
             _sessionServiceMock.Setup(mock => mock.Get<SurveyModel>(It.IsAny<string>())).Returns(Task.FromResult(surveyModel));
 
             // Act
-            var result = await _controller.QuestionThree(_uniqueCode) as ViewResult;
+            var result = await _controller.QuestionThree() as ViewResult;
 
             // Assert
             Assert.IsAssignableFrom<SurveyModel>(result.Model);
@@ -229,7 +228,7 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
             _controller.ModelState.AddModelError("ProviderRating", "Required Field");
 
             // Act
-            var result = await _controller.QuestionThree(_uniqueCode, surveyModel);
+            var result = await _controller.QuestionThree(surveyModel);
 
             // Assert
             _sessionServiceMock.Verify(mock => mock.Set(It.IsAny<string>(), It.IsAny<object>()), Times.Never);
@@ -243,7 +242,7 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
             var surveyModel = new SurveyModel { Rating = ProviderRating.Excellent };
 
             // Act
-            var result = await _controller.QuestionThree(_uniqueCode, surveyModel);
+            var result = await _controller.QuestionThree(surveyModel);
 
             // Assert
             _sessionServiceMock.Verify(mock => mock.Set(It.IsAny<string>(), It.IsAny<object>()), Times.Once);
@@ -259,7 +258,7 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
             _controller.TempData.Add("ReturnUrl", RouteNames.ReviewAnswers_Get);
 
             // Act
-            var result = await _controller.QuestionThree(_uniqueCode, surveyModel);
+            var result = await _controller.QuestionThree(surveyModel);
 
             // Assert
             Assert.IsAssignableFrom<RedirectToRouteResult>(result);
