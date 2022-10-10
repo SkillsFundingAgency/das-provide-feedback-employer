@@ -228,6 +228,12 @@ namespace ESFA.DAS.ProvideFeedback.Data.Repositories
                 , new { uniqueSurveyCode = uniqueSurveyCode });
         }
 
+        public async Task<Guid> GetUniqueSurveyCodeFromFeedbackId(long feedbackId)
+        {
+            return await _dbConnection.QueryFirstOrDefaultAsync<Guid>("SELECT UniqueSurveyCode FROM EmployerSurveyCodes WHERE FeedbackId = @feedbackId"
+                , new { feedbackId = feedbackId });
+        }
+
         public async Task<Guid> CreateEmployerFeedbackResult(long feedbackId, string providerRating, DateTime dateTimeCompleted, FeedbackSource feedbackSource, IEnumerable<ProviderAttribute> providerAttributes)
         {
             var providerAttributesDt = ProviderAttributesToDataTable(providerAttributes);
@@ -345,6 +351,22 @@ namespace ESFA.DAS.ProvideFeedback.Data.Repositories
                 sql: "[dbo].[GenerateProviderRatingResults]",
                 param: parameters,
                 commandTimeout: _commandTimeoutSeconds);
+        }
+
+        public async Task<IEnumerable<EmployerFeedbackResultSummary>> GetFeedbackResultSummary(long ukprn)
+        {
+            return await _dbConnection.
+                QueryAsync<EmployerFeedbackResultSummary>(@"SELECT pss.Ukprn, pss.ReviewCount, pss.Stars, a.AttributeName, pas.Strength, pas.Weakness, pas.UpdatedOn FROM ProviderStarsSummary pss INNER JOIN ProviderAttributeSummary pas ON pss.Ukprn = pas.Ukprn INNER JOIN Attributes a ON pas.AttributeId = a.AttributeId WHERE pss.Ukprn = @ukprn",
+                new
+                {
+                    ukprn,
+                });
+        }
+
+        public async Task<IEnumerable<ProviderStarsSummary>> GetAllStarsSummary()
+        {
+            return await _dbConnection.
+                QueryAsync<ProviderStarsSummary>(@"SELECT Ukprn, ReviewCount, Stars FROM ProviderStarsSummary");
         }
 
         private DataTable ProvidersToDatatable(IEnumerable<Provider> providers)
