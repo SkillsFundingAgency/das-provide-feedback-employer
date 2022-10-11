@@ -31,7 +31,7 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Application
             bool toleranceParsedOk = decimal.TryParse(_settings.Tolerance, out decimal tolerance);
             Task<int> task1 = _dbRepository.GenerateProviderRatingResults(_settings.AllUsersFeedback, _settings.ResultsForAllTime, _settings.RecentFeedbackMonths, toleranceParsedOk ? tolerance : 0);
             Task<int> task2 = _dbRepository.GenerateProviderAttributeResults(_settings.AllUsersFeedback, _settings.ResultsForAllTime, _settings.RecentFeedbackMonths);
-            Task.WaitAll(task1, task2);
+            await Task.WhenAll(task1, task2);
             _logger.LogInformation("GenerateFeedbackSummaries complete");
         }
     }
