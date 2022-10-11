@@ -320,6 +320,39 @@ namespace ESFA.DAS.ProvideFeedback.Data.Repositories
                 });
         }
 
+        public async Task<int> GenerateProviderRatingResults(int allUserFeedback, int resultsforAllTime, int recentFeedbackMonths, decimal tolerance)
+        {
+            if (_dbConnection.State == ConnectionState.Closed)
+                _dbConnection.Open();
+            var parameters = new DynamicParameters();
+            parameters.Add("@AllUserFeedback", allUserFeedback, DbType.Int64);
+            parameters.Add("@ResultsforAllTime", resultsforAllTime, DbType.Int64);
+            parameters.Add("@RecentFeedbackMonths", recentFeedbackMonths, DbType.Int64);
+            parameters.Add("@Tolerance", tolerance, DbType.Decimal);
+
+            return await _dbConnection.ExecuteAsync(
+                commandType: CommandType.StoredProcedure,
+                sql: "[dbo].[GenerateProviderRatingResults]",
+                param: parameters,
+                commandTimeout: _commandTimeoutSeconds);
+        }
+
+        public async Task<int> GenerateProviderAttributeResults(int allUserFeedback, int resultsforAllTime, int recentFeedbackMonths)
+        {
+            if (_dbConnection.State == ConnectionState.Closed)
+                _dbConnection.Open();
+            var parameters = new DynamicParameters();
+            parameters.Add("@AllUserFeedback", allUserFeedback, DbType.Int64);
+            parameters.Add("@ResultsforAllTime", resultsforAllTime, DbType.Int64);
+            parameters.Add("@RecentFeedbackMonths", recentFeedbackMonths, DbType.Int64);
+
+            return await _dbConnection.ExecuteAsync(
+                commandType: CommandType.StoredProcedure,
+                sql: "[dbo].[GenerateProviderRatingResults]",
+                param: parameters,
+                commandTimeout: _commandTimeoutSeconds);
+        }
+
         public async Task<IEnumerable<EmployerFeedbackResultSummary>> GetFeedbackResultSummary(long ukprn)
         {
             return await _dbConnection.
