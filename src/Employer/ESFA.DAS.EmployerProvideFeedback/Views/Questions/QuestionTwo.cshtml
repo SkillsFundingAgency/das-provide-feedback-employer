@@ -4,7 +4,7 @@
     ViewBag.Title = "Providers Weaknesses";
 }
 <a asp-route="@RouteNames.QuestionOne_Get" class="govuk-back-link">Back</a>
-<main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing">
+<main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content">
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             @if (!ViewData.ModelState.IsValid)
@@ -18,9 +18,11 @@
             <form asp-route="@RouteNames.QuestionTwo_Post">
                 <div class="govuk-form-group">
                     <h1 class="govuk-heading-l">How could @Model.ProviderName improve?</h1>
-                    <h2 class="govuk-heading-m">Does @Model.ProviderName need to improve any of these?</h2>
-
+                    
                     <fieldset name="areas-to-improve" aria-describedby="areas-to-improve-hint" class="govuk-fieldset checkbox-limit @(!ViewData.ModelState.IsValid ? " form-group-error" : "" )">
+                         <legend class="govuk-fieldset_legend govuk-fieldset_legend--1">
+                             <h2 class="govuk-heading-m">Does @Model.ProviderName need to improve any of these?</h2>
+                        </legend>
                         <div id="areas-to-improve-hint" class="govuk-hint">
                             It's optional. You can choose up to 3.
                         </div>
