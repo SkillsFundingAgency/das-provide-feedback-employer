@@ -348,7 +348,7 @@ namespace ESFA.DAS.ProvideFeedback.Data.Repositories
 
             return await _dbConnection.ExecuteAsync(
                 commandType: CommandType.StoredProcedure,
-                sql: "[dbo].[GenerateProviderRatingResults]",
+                sql: "[dbo].[GenerateProviderAttributeResults]",
                 param: parameters,
                 commandTimeout: _commandTimeoutSeconds);
         }
