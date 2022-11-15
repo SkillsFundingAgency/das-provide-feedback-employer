@@ -3,7 +3,7 @@
 @{ ViewBag.PageID = "page-overall-quality-question";
                 ViewBag.Title = "Provide Feedback"; }
 <a asp-route="@RouteNames.QuestionTwo_Get" class="govuk-back-link">Back</a>
-<main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing">
+<main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content">
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             @if (!ViewData.ModelState.IsValid)

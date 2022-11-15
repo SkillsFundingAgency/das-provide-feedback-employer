@@ -32,6 +32,22 @@
         "notificationsApiClientToken": {
             "type": "securestring"
         },
+        "employerFeedbackSettingsResultsForAllTime": {
+            "type": "int",
+            "defaultValue": 1
+        },
+        "employerFeedbackSettingsRecentFeedbackMonths": {
+            "type": "int",
+            "defaultValue": 12
+        },
+        "employerFeedbackSettingsAllUsersFeedback": {
+            "type": "int",
+            "defaultValue": 1
+        },
+        "employerFeedbackSettingsTolerance": {
+            "type": "string",
+            "defaultValue": "0.3"
+        },
         "commitmentApiBaseUrl": {
             "type": "string"
         },
@@ -615,6 +631,22 @@
                                 {
                                     "name": "NotificationApi:ClientToken",
                                     "value": "[parameters('notificationsApiClientToken')]"
+                                },
+                                {
+                                    "name": "EmployerFeedbackSettings:ResultsForAllTime",
+                                    "value": "[parameters('employerFeedbackSettingsResultsForAllTime')]"
+                                },
+                                {
+                                    "name": "EmployerFeedbackSettings:RecentFeedbackMonths",
+                                    "value": "[parameters('employerFeedbackSettingsRecentFeedbackMonths')]"
+                                },
+                                {
+                                    "name": "EmployerFeedbackSettings:AllUsersFeedback",
+                                    "value": "[parameters('employerFeedbackSettingsAllUsersFeedback')]"
+                                },
+                                {
+                                    "name": "EmployerFeedbackSettings:Tolerance",
+                                    "value": "[parameters('employerFeedbackSettingsTolerance')]"
                                 },
                                 {
                                     "name": "RoatpApi:Url",

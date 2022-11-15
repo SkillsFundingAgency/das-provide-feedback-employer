@@ -26,7 +26,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
         }
 
         [HttpGet("question-one", Name = RouteNames.QuestionOne_Get)]
-        public async Task<IActionResult> QuestionOne(string encodedAccountId, Guid uniqueCode, string returnUrl = null)
+        public async Task<IActionResult> QuestionOne(string encodedAccountId, string returnUrl = null)
         {
             // TODO: Replace TempData by adding a flag to the ViewModel.
             TempData[ReturnUrlKey] = returnUrl;
@@ -39,7 +39,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
         }
 
         [HttpPost("question-one", Name = RouteNames.QuestionOne_Post)]
-        public async Task<IActionResult> QuestionOne(Guid uniqueCode, SurveyModel surveyModel)
+        public async Task<IActionResult> QuestionOne(SurveyModel surveyModel)
         {
             if (!IsProviderAttributesValid(surveyModel))
             {
@@ -74,7 +74,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
         }
 
         [HttpGet("question-two", Name = RouteNames.QuestionTwo_Get)]
-        public async Task<IActionResult> QuestionTwo(Guid uniqueCode, string returnUrl = null)
+        public async Task<IActionResult> QuestionTwo(string returnUrl = null)
         {
             TempData[ReturnUrlKey] = returnUrl;
             var idClaim = HttpContext.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
@@ -83,7 +83,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
         }
 
         [HttpPost("question-two", Name = RouteNames.QuestionTwo_Post)]
-        public async Task<IActionResult> QuestionTwo(Guid uniqueCode, SurveyModel surveyModel)
+        public async Task<IActionResult> QuestionTwo(SurveyModel surveyModel)
         {
             if (!IsProviderAttributesValid(surveyModel))
             {
@@ -101,7 +101,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
         
 
         [HttpGet("question-three", Name = RouteNames.QuestionThree_Get)]
-        public async Task<IActionResult> QuestionThree(Guid uniqueCode, string returnUrl = null)
+        public async Task<IActionResult> QuestionThree(string returnUrl = null)
         {
             TempData[ReturnUrlKey] = returnUrl;
             var idClaim = HttpContext.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
@@ -110,7 +110,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
         }
 
         [HttpPost("question-three", Name = RouteNames.QuestionThree_Post)]
-        public async Task<IActionResult> QuestionThree(Guid uniqueCode, SurveyModel surveyModel)
+        public async Task<IActionResult> QuestionThree(SurveyModel surveyModel)
         {
             if (!ModelState.IsValid)
             {

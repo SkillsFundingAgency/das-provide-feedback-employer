@@ -5,7 +5,7 @@
     ViewBag.PageID = "page-confirmation";
     ViewBag.Title = "Provide Feedback";
 }
-<main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing">
+<main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content">
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             <div class="govuk-panel govuk-panel--confirmation">
@@ -14,7 +14,7 @@
                 </h1>
             </div>
             <p class="govuk-body">Thanks for your feedback. It'll help @Model.ProviderName to continuously improve their training provision.</p>
-            <p class="govuk-body">You rated @Model.ProviderName as <span class="bold-small">@Model.FeedbackRating.GetDisplayName()</span>. Your feedback will be published anonymously on <a href="https://www.gov.uk/employers-find-apprenticeship-training" target="_blank" rel="noopener">Find apprenticeship training (opens in a new tab)</a>.</p>
+            <p class="govuk-body">You rated @Model.ProviderName as <span class="bold-small">@Model.FeedbackRating.GetDisplayName()</span>. Your feedback will be published anonymously on <a class="govuk-link" href="https://www.gov.uk/employers-find-apprenticeship-training" target="_blank" rel="noopener">Find apprenticeship training (opens in a new tab)</a>.</p>
 
             @if (Model.FeedbackRating == ProviderRating.VeryPoor)
             {

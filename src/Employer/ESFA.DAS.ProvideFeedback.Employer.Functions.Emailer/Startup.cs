@@ -59,6 +59,7 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
             builder.Services.AddSingleton(typeof(ILogger<>), typeof(Logger<>));
 
             builder.Services.Configure<EmailSettings>(_configuration.GetSection("EmailSettings"));
+            builder.Services.Configure<EmployerFeedbackSettings>(_configuration.GetSection("EmployerFeedbackSettings"));
 
             var notificationApiConfig = _configuration.GetSection("NotificationApi").Get<NotificationApiConfig>();
 
@@ -83,7 +84,8 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
             builder.Services.AddTransient<UserRefreshService>();
             builder.Services.AddTransient<SurveyInviteGenerator>();
             builder.Services.AddTransient<ProviderRefreshService>();
-            
+            builder.Services.AddTransient<FeedbackSummariesService>();
+
             var accApiConfig = _configuration.GetSection("AccountApi").Get<AccountApiConfiguration>();
             builder.Services.AddSingleton<IAccountApiConfiguration>(accApiConfig);
             builder.Services.AddSingleton<IAccountService, AccountService>();
