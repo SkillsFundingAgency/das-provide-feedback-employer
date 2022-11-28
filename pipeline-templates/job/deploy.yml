@@ -24,7 +24,7 @@ jobs:
           parameters:
             ServiceConnection: ${{ parameters.ServiceConnection }}
             SharedEnvResourceGroup: $(SharedEnvResourceGroup)
-            SharedEnvVirtualNetworkName : $(SharedEnvVirtualNetworkName)
+            SharedEnvVirtualNetworkName: $(SharedEnvVirtualNetworkName)
             BackEndAccessRestrictionsExcludedSubnets: $(BackEndAccessRestrictionsExcludedSubnets)
             ResourceEnvironmentName: $(ResourceEnvironmentName)
             UnrestrictedEnvironments: $(UnrestrictedEnvironments)
