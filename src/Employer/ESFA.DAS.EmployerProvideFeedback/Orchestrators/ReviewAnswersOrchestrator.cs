@@ -24,11 +24,12 @@ namespace ESFA.DAS.EmployerProvideFeedback.Orchestrators
 
         public async Task SubmitConfirmedEmployerFeedback(SurveyModel surveyModel)
         {
-            var employerFeedback = await _employerFeedbackRepository.GetEmployerFeedbackRecord(surveyModel.UserRef, surveyModel.AccountId, surveyModel.Ukprn);
+            //email and adhoc journeys
+            var employerFeedback = await _employerFeedbackRepository.GetEmployerFeedbackRecord(surveyModel.UserRef, surveyModel.AccountId, surveyModel.Ukprn); //gets record from empl feedback database
             long feedbackId = 0;
             if(null == employerFeedback)
             {
-                feedbackId = await _employerFeedbackRepository.UpsertIntoFeedback(surveyModel.UserRef, surveyModel.AccountId, surveyModel.Ukprn);
+                feedbackId = await _employerFeedbackRepository.UpsertIntoFeedback(surveyModel.UserRef, surveyModel.AccountId, surveyModel.Ukprn); //database sotred proc
             }
             else
             {
@@ -42,7 +43,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Orchestrators
 
             try
             {
-                var providerAttributes = await ConvertSurveyToProviderAttributes(surveyModel);
+                var providerAttributes = await ConvertSurveyToProviderAttributes(surveyModel); //adds provider attributes table to db
 
                 var feedbackSource = ProvideFeedback.Data.Enums.FeedbackSource.AdHoc;
                 if(surveyModel.UniqueCode.HasValue)
@@ -51,7 +52,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Orchestrators
                 }
 
                 var employerFeedbackResultId =
-                    await _employerFeedbackRepository.CreateEmployerFeedbackResult(
+                    await _employerFeedbackRepository.CreateEmployerFeedbackResult( //uses stored proc to add an employer feedback record to table in db
                     feedbackId,
                     surveyModel.Rating.Value.GetDisplayName(),
                     DateTime.UtcNow,
@@ -61,14 +62,14 @@ namespace ESFA.DAS.EmployerProvideFeedback.Orchestrators
                 if(null != surveyModel.UniqueCode && surveyModel.UniqueCode.HasValue)
                 {
                     // Email journey.
-                    await _employerFeedbackRepository.SetCodeBurntDate(surveyModel.UniqueCode.Value);
+                    await _employerFeedbackRepository.SetCodeBurntDate(surveyModel.UniqueCode.Value); //adds burn date to db
                 }
                 else
                 {
                     // Ad Hoc journey
-                    Guid? uniqueSurveyCode = await _employerFeedbackRepository.GetUniqueSurveyCodeFromFeedbackId(feedbackId);
+                    Guid? uniqueSurveyCode = await _employerFeedbackRepository.GetUniqueSurveyCodeFromFeedbackId(feedbackId); //gets unique code from db
                     if (uniqueSurveyCode != Guid.Empty)
-                        await _employerFeedbackRepository.SetCodeBurntDate(uniqueSurveyCode.Value);
+                        await _employerFeedbackRepository.SetCodeBurntDate(uniqueSurveyCode.Value);//adds burn date to db
                 }
             }
             catch (Exception ex)
@@ -79,7 +80,8 @@ namespace ESFA.DAS.EmployerProvideFeedback.Orchestrators
 
         private async Task<IEnumerable<ProviderAttribute>> ConvertSurveyToProviderAttributes(SurveyModel surveyModel)
         {
-            var feedbackQuestionAttributes = await _employerFeedbackRepository.GetAllAttributes();
+            //email and ahoc journeys
+            var feedbackQuestionAttributes = await _employerFeedbackRepository.GetAllAttributes(); //gets all from attributes table in emp feedback db
             var providerAttributes = new List<ProviderAttribute>();
 
             foreach (var attribute in surveyModel.Attributes.Where(s => s.Good || s.Bad))

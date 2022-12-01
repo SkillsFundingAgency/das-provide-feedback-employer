@@ -63,12 +63,12 @@ namespace ESFA.DAS.EmployerProvideFeedback.Services
 
             // Select all the providers for this employer.
 
-            var providers = await SelectAllProvidersForAccount(model.AccountId);
+            var providers = await SelectAllProvidersForAccount(model.AccountId); //API call to commitments to get all providers associated with the employer.
 
             // Augment the provider records with feedback data. Urgh.
             // We need to do this so that the date filtering will work.
 
-            await AugmentProviderRecordsWithFeedbackStatus(model.AccountId, providers);
+            await AugmentProviderRecordsWithFeedbackStatus(model.AccountId, providers); // Database Employer Feedback, no removed tables
 
             // Initialise the filter options.
 
@@ -125,7 +125,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Services
 
         public async Task<ProviderSearchConfirmationViewModel> GetTrainingProviderConfirmationViewModel(string encodedAccountId, long providerId)
         {
-            var response = await _commitmentService.GetProvider(providerId);
+            var response = await _commitmentService.GetProvider(providerId); //API call to Commitments.
 
             if(null == response)
             {
@@ -146,8 +146,10 @@ namespace ESFA.DAS.EmployerProvideFeedback.Services
 
         private async Task<List<ProviderSearchViewModel.EmployerTrainingProvider>> SelectAllProvidersForAccount(long accountId)
         {
+            //adhoc only
             // Select all 
-            var apprenticeshipsResponse = await _commitmentService.GetApprenticeships(accountId);
+            var apprenticeshipsResponse = await _commitmentService.GetApprenticeships(accountId); 
+            // API call to commitments. Gets all apprenticeships associated with the employer logged in (by their accountID)
 
             var providers = apprenticeshipsResponse.Apprenticeships.GroupBy(p => p.ProviderId)
                 .Select(a => new ProviderSearchViewModel.EmployerTrainingProvider()
@@ -162,7 +164,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Services
 
         private async Task AugmentProviderRecordsWithFeedbackStatus(long accountId, List<ProviderSearchViewModel.EmployerTrainingProvider> providers)
         {
-            var employerFeedback = await _employerFeedbackRepository.GetAllFeedbackAndResultFromEmployer(accountId);
+            var employerFeedback = await _employerFeedbackRepository.GetAllFeedbackAndResultFromEmployer(accountId); //Employer Feedback Database
             foreach (var provider in providers)
             {
                 var feedBackForProvider = employerFeedback.FirstOrDefault(fp => fp.Ukprn == provider.ProviderId);

@@ -47,7 +47,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
         }
 
         [HttpGet]
-        [Route("/{encodedAccountId}/providers")]
+        [Route("/{encodedAccountId}/providers")] //from employer account page
         public async Task<IActionResult> Index(GetProvidersForFeedbackRequest request, int pageIndex = PagingState.DefaultPageIndex)
         {
             var idClaim = HttpContext.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
@@ -59,7 +59,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
             pagingState.PageIndex = pageIndex;
             await _sessionService.Set($"{idClaim.Value}_PagingState", pagingState);
 
-            var model = await _trainingProviderService.GetTrainingProviderSearchViewModel(
+            var model = await _trainingProviderService.GetTrainingProviderSearchViewModel( //API call to commitments & looks at its own database
                 request.EncodedAccountId,
                 pagingState.SelectedProviderName,
                 pagingState.SelectedFeedbackStatus,

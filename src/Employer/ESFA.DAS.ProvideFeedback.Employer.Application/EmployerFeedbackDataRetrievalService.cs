@@ -29,15 +29,15 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Application
 
         public async Task<IEnumerable<EmployerFeedbackRefreshMessage>> GetRefreshData(long accountId)
         {
-            var mappedUsersTask = GetAccountUsersForFeedback(accountId);
+            var mappedUsersTask = GetAccountUsersForFeedback(accountId); //gets all users & their emails per employer account
 
-            var accCommitments = await _commitmentService.GetApprenticeships(accountId).ConfigureAwait(false);
+            var accCommitments = await _commitmentService.GetApprenticeships(accountId).ConfigureAwait(false); //gets all aprenticeships connected to said employer account IDs
 
             var commitmentUkprns = accCommitments.Apprenticeships
                 .GroupBy(acc => acc.ProviderId)
                 .Select(group => group.Key);
 
-            var providers = await _emailDetailsRepository.GetProvidersByUkprn(commitmentUkprns);
+            var providers = await _emailDetailsRepository.GetProvidersByUkprn(commitmentUkprns); //gets all providers related to UKRPNS returned from prev method
 
             var validCommitments = accCommitments.Apprenticeships
                 .Where(app => app.PaymentStatus == PaymentStatus.Active || app.PaymentStatus == PaymentStatus.Paused)
