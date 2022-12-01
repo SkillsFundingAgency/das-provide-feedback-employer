@@ -15,7 +15,7 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
             _inviteEmailer = inviteEmailer;
         }
 
-        [FunctionName("SurveyInviteEmailer")]
+        [FunctionName("SurveyInviteEmailer")] //start here
         public async Task Run(
            [TimerTrigger("%InviteEmailerSchedule%")]TimerInfo myTimer,
             ILogger log)

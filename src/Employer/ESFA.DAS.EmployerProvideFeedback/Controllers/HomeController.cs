@@ -60,13 +60,13 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
         
         [Authorize(Policy = nameof(PolicyNames.EmployerAuthenticated))]
         [ServiceFilter(typeof(EnsureFeedbackNotSubmitted))]
-        [Route(RoutePrefixPaths.FeedbackFromEmailRoutePath, Name = RouteNames.Landing_Get)]
+        [Route(RoutePrefixPaths.FeedbackFromEmailRoutePath, Name = RouteNames.Landing_Get)] //email
         [HttpGet]
         public async Task<IActionResult> Index(Guid uniqueCode)
         {
             var idClaim = HttpContext.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);    //System.Security.Claims.ClaimTypes.NameIdentifier
 
-            var employerEmailDetail = await _employerEmailDetailsRepository.GetEmployerInviteForUniqueCode(uniqueCode);
+            var employerEmailDetail = await _employerEmailDetailsRepository.GetEmployerInviteForUniqueCode(uniqueCode); //gets view from employer feedback database
 
             if (employerEmailDetail == null)
             {
@@ -118,6 +118,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
 
         private SurveyModel MapToNewSurveyModel(EmployerSurveyInvite employerEmailDetail, IEnumerable<ProviderAttributeModel> providerAttributes)
         {
+            //email journey
             return new SurveyModel
             {
                 AccountId = employerEmailDetail.AccountId,

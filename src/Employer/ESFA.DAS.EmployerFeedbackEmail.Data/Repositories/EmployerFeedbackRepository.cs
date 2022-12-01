@@ -36,7 +36,7 @@ namespace ESFA.DAS.ProvideFeedback.Data.Repositories
         {
             return await _dbConnection.QueryFirstOrDefaultAsync<EmployerSurveyInvite>(
                                         $@"SELECT TOP(1) *
-                                          FROM {EmployerSurveyHistoryComplete}
+                                          FROM EmployerSurveyCode
                                           WHERE UniqueSurveyCode = @{nameof(uniqueCode)}",
                                           new { uniqueCode });
         }
@@ -72,6 +72,7 @@ namespace ESFA.DAS.ProvideFeedback.Data.Repositories
 
         public async Task SetCodeBurntDate(Guid uniqueCode)
         {
+            //adhoc and email journeys
             var now = DateTime.UtcNow;
             await _dbConnection.QueryAsync($@"
                                 UPDATE {EmployerSurveyCodes}
@@ -219,7 +220,7 @@ namespace ESFA.DAS.ProvideFeedback.Data.Repositories
 
         public async Task<IEnumerable<FeedbackQuestionAttribute>> GetAllAttributes()
         {
-            return await _dbConnection.QueryAsync<FeedbackQuestionAttribute>("SELECT * FROM Attributes");
+            return await _dbConnection.QueryAsync<FeedbackQuestionAttribute>("SELECT * FROM Attributes"); //email journey
         }
 
         public async Task<long> GetFeedbackIdFromUniqueSurveyCode(Guid uniqueSurveyCode)
@@ -228,15 +229,15 @@ namespace ESFA.DAS.ProvideFeedback.Data.Repositories
                 , new { uniqueSurveyCode = uniqueSurveyCode });
         }
 
-        public async Task<Guid> GetUniqueSurveyCodeFromFeedbackId(long feedbackId)
+        public async Task<Guid> GetUniqueSurveyCodeFromFeedbackId(long feedbackId) //Decommissioned table
         {
             return await _dbConnection.QueryFirstOrDefaultAsync<Guid>("SELECT UniqueSurveyCode FROM EmployerSurveyCodes WHERE FeedbackId = @feedbackId"
                 , new { feedbackId = feedbackId });
         }
 
         public async Task<Guid> CreateEmployerFeedbackResult(long feedbackId, string providerRating, DateTime dateTimeCompleted, FeedbackSource feedbackSource, IEnumerable<ProviderAttribute> providerAttributes)
-        {
-            var providerAttributesDt = ProviderAttributesToDataTable(providerAttributes);
+        { //email and adhoc journeys
+            var providerAttributesDt = ProviderAttributesToDataTable(providerAttributes); //adds a provider attributes table and adds rows/data to it
 
             if (_dbConnection.State != ConnectionState.Open)
             {
@@ -279,6 +280,7 @@ namespace ESFA.DAS.ProvideFeedback.Data.Repositories
 
         public async Task<EmployerFeedback> GetEmployerFeedbackRecord(Guid userRef, long accountId, long ukprn)
         {
+            //adhoc and email journey
             return await _dbConnection.
                 QueryFirstOrDefaultAsync<EmployerFeedback>(@"SELECT TOP 1 * FROM EmployerFeedback WHERE UserRef = @userRef AND Ukprn = @ukprn AND AccountId = @accountId",
                 new
@@ -384,7 +386,7 @@ namespace ESFA.DAS.ProvideFeedback.Data.Repositories
         }
 
         private DataTable ProviderAttributesToDataTable(IEnumerable<ProviderAttribute> providerAttributes)
-        {
+        {//email and adhoc journeys
             var dt = new DataTable();
             dt.Columns.Add("AttributeId", typeof(long));
             dt.Columns.Add("AttributeValue", typeof(int));

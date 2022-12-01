@@ -26,24 +26,26 @@ namespace ESFA.DAS.EmployerProvideFeedback.Infrastructure
         public async Task<T> Get<T>(string key)
         {
             var sessionObject = await GetString(key);
-            return string.IsNullOrWhiteSpace(sessionObject) ? default(T) : JsonConvert.DeserializeObject<T>(sessionObject);
+            return string.IsNullOrWhiteSpace(sessionObject) ? default(T) : JsonConvert.DeserializeObject<T>(sessionObject); //adhoc and email journey
         }
 
         public async Task<string> GetString(string key)
         {
-            return await _sessionCache.GetStringAsync(_environment + "_" + key);
+            return await _sessionCache.GetStringAsync(_environment + "_" + key); //adhoc and email journey
         }
 
         public async Task Set(string key, object value)
         {
+            //adhoc and email journey
             await _sessionCache.SetStringAsync(_environment + "_" + key, JsonConvert.SerializeObject(value), new DistributedCacheEntryOptions
             {
-                SlidingExpiration = TimeSpan.FromMinutes(_slidingExpirationMinutes)
+                SlidingExpiration = TimeSpan.FromMinutes(_slidingExpirationMinutes) //adhoc and email journeys
             });
         }
 
         public async Task Remove(string key)
         {
+            //email journey
             await _sessionCache.RemoveAsync(_environment + "_" + key);
         }
 

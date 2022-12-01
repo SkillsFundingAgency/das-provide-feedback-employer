@@ -67,6 +67,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
 
         private void SetWeaknesses(SurveyModel sessionAnswer, IEnumerable<ProviderAttributeModel> currentAnswerAttributes)
         {
+            //adhoc and email journey
             foreach (var attr in sessionAnswer.Attributes)
             {
                 var match = currentAnswerAttributes.SingleOrDefault(x => x.Name == attr.Name);
@@ -127,12 +128,14 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
 
         private async Task<IActionResult> HandleRedirect(string nextRoute)
         {
+            //adhoc and email journey
             var returnRoute = Convert.ToString(TempData[ReturnUrlKey]);
             return await Task.Run(() => RedirectToRoute(string.IsNullOrEmpty(returnRoute) ? nextRoute : returnRoute) as IActionResult);
         }
 
         private bool IsProviderAttributesValid(SurveyModel surveyModel)
         {
+            //ashoc and email journey
             ModelState.TryGetValue(nameof(surveyModel.Attributes), out ModelStateEntry modelState);
             return modelState == null ? true : modelState.ValidationState == ModelValidationState.Valid;
         }

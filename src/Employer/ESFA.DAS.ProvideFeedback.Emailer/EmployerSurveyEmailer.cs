@@ -60,7 +60,7 @@ namespace ESFA.DAS.Feedback.Employer.Emailer
 
         protected async Task SendGroupedEmails(IEnumerable<IGrouping<Guid, EmployerSurveyInvite>> emailsGroupByUser)
         {
-            foreach (var userGroup in emailsGroupByUser)
+            foreach (var userGroup in emailsGroupByUser) //sends emails by user
             {
                 await HandleSendAsync(userGroup);
             }

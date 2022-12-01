@@ -25,11 +25,11 @@ namespace ESFA.DAS.Feedback.Employer.Emailer
 
         public async Task SendEmailsAsync()
         {
-            var emailsToSend = await _emailDetailsStore.GetEmployerUsersToBeSentInvite();
+            var emailsToSend = await _emailDetailsStore.GetEmployerUsersToBeSentInvite(); //gets employers from database
 
-            var emailsGroupByUser = GroupEmailsToSendByUser(emailsToSend);
+            var emailsGroupByUser = GroupEmailsToSendByUser(emailsToSend); //groups emails by user
 
-            await SendGroupedEmails(emailsGroupByUser);
+            await SendGroupedEmails(emailsGroupByUser); //sends emails by user
         }
 
         protected override async Task HandleSendAsync(IGrouping<Guid, EmployerSurveyInvite> userGroup)

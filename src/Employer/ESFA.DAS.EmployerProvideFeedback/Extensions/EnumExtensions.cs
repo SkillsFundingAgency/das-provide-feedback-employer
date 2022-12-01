@@ -5,7 +5,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Extensions
 {
     public static class EnumExtensions
     {
-        public static string GetDisplayName(this Enum enumerationValue)
+        public static string GetDisplayName(this Enum enumerationValue) //adhoc and email journeys
         {
             var type = enumerationValue.GetType();
             if (!type.IsEnum)
