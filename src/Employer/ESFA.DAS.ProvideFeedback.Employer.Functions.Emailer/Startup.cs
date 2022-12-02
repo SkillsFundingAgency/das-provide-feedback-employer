@@ -1,5 +1,4 @@
-﻿using ESFA.DAS.Feedback.Employer.Emailer;
-using ESFA.DAS.Feedback.Employer.Emailer.Configuration;
+﻿using ESFA.DAS.Feedback.Employer.Emailer.Configuration;
 using ESFA.DAS.ProvideFeedback.Data.Repositories;
 using ESFA.DAS.ProvideFeedback.Employer.Application;
 using ESFA.DAS.ProvideFeedback.Employer.ApplicationServices;
@@ -17,11 +16,8 @@ using NLog.Config;
 using NLog.Extensions.Logging;
 using NLog.Targets;
 using SFA.DAS.NLog.Targets.Redis.DotNetCore;
-using SFA.DAS.Notifications.Api.Client;
-using SFA.DAS.Notifications.Api.Client.Configuration;
 using System;
 using System.IO;
-using System.Net.Http.Headers;
 using LogLevel = NLog.LogLevel;
 
 [assembly: FunctionsStartup(typeof(Startup))]
@@ -58,32 +54,9 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
 
             builder.Services.AddSingleton(typeof(ILogger<>), typeof(Logger<>));
 
-            builder.Services.Configure<EmailSettings>(_configuration.GetSection("EmailSettings"));
             builder.Services.Configure<EmployerFeedbackSettings>(_configuration.GetSection("EmployerFeedbackSettings"));
 
-            var notificationApiConfig = _configuration.GetSection("NotificationApi").Get<NotificationApiConfig>();
-
-            builder.Services.AddHttpClient<INotificationsApi, NotificationsApi>(c =>
-            {
-                c.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", notificationApiConfig.ClientToken);
-            });
-
-            builder.Services.AddSingleton<INotificationsApiClientConfiguration, NotificationsApiClientConfiguration>(a =>
-                new NotificationsApiClientConfiguration
-                {
-                    ApiBaseUrl = notificationApiConfig.BaseUrl,
-                    ClientToken = notificationApiConfig.ClientToken
-                }
-            );
-
-            builder.Services.AddSingleton<EmployerSurveyInviteEmailer>();
-            builder.Services.AddSingleton<EmployerSurveyReminderEmailer>();
             builder.Services.AddTransient<IEmployerFeedbackRepository, EmployerFeedbackRepository>();
-
-            builder.Services.AddTransient<EmployerFeedbackDataRetrievalService>();
-            builder.Services.AddTransient<UserRefreshService>();
-            builder.Services.AddTransient<SurveyInviteGenerator>();
-            builder.Services.AddTransient<ProviderRefreshService>();
             builder.Services.AddTransient<FeedbackSummariesService>();
 
             var accApiConfig = _configuration.GetSection("AccountApi").Get<AccountApiConfiguration>();

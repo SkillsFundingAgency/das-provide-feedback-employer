@@ -1,11 +1,8 @@
-﻿
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using ESFA.DAS.Feedback.Employer.Emailer.Configuration;
 using ESFA.DAS.ProvideFeedback.Data.Repositories;
-
+using ESFA.DAS.Feedback.Employer.Emailer.Configuration;
 
 namespace ESFA.DAS.ProvideFeedback.Employer.Application
 {
