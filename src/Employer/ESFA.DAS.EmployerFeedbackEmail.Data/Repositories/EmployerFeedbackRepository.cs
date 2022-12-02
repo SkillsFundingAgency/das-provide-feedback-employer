@@ -14,7 +14,6 @@ namespace ESFA.DAS.ProvideFeedback.Data.Repositories
         private int _commandTimeoutSeconds = 120;
         private readonly IDbConnection _dbConnection;
         private const string EmployerSurveyCodes = "EmployerSurveyCodes";
-        private const string EmployerSurveyHistoryComplete = "vw_EmployerSurveyHistoryComplete";
 
         public EmployerFeedbackRepository(IDbConnection dbConnection)
         {
@@ -32,13 +31,15 @@ namespace ESFA.DAS.ProvideFeedback.Data.Repositories
                 commandTimeout: _commandTimeoutSeconds);
         }
 
-        public async Task<EmployerSurveyInvite> GetEmployerInviteForUniqueCode(Guid uniqueCode)
+        public async Task<int> GetEmployerAccountIdFromUniqueSurveyCode(Guid uniqueCode)
         {
-            return await _dbConnection.QueryFirstOrDefaultAsync<EmployerSurveyInvite>(
-                                        $@"SELECT TOP(1) *
-                                          FROM EmployerSurveyCode
-                                          WHERE UniqueSurveyCode = @{nameof(uniqueCode)}",
-                                          new { uniqueCode });
+            return await _dbConnection.QueryFirstOrDefaultAsync<int>(
+                                        $@"SELECT AccountId
+                                        FROM EmployerSurveyCodes ESC
+                                        JOIN EmployerFeedback EF ON ESC.FeedbackId = EF.FeedbackId
+                                        WHERE ESC.UniqueSurveyCode = @{nameof(uniqueCode)}",
+                                        new {uniqueCode}
+                                        );
         }
 
         public async Task<IEnumerable<EmployerSurveyInvite>> GetEmployerUsersToBeSentInvite()

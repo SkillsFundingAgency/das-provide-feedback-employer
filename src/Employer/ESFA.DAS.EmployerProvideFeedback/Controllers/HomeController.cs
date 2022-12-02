@@ -56,34 +56,21 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
         }
 
         [ServiceFilter(typeof(EnsureFeedbackNotSubmitted))]
-        [Route(RoutePrefixPaths.FeedbackFromEmailRoutePath, Name = RouteNames.Landing_Get)] //email
+        [Route(RoutePrefixPaths.FeedbackFromEmailRoutePath, Name = RouteNames.Landing_Get)]
         [HttpGet]
         public async Task<IActionResult> Index(Guid uniqueCode)
         {
-            var idClaim = HttpContext.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);    //System.Security.Claims.ClaimTypes.NameIdentifier
+            var employerEmailDetail = await _employerEmailDetailsRepository.GetEmployerAccountIdFromUniqueSurveyCode(uniqueCode);
 
-            var employerEmailDetail = await _employerEmailDetailsRepository.GetEmployerInviteForUniqueCode(uniqueCode); //gets view from employer feedback database
-
-            if (employerEmailDetail == null)
+            if (employerEmailDetail.ToString() == null)
             {
                 _logger.LogWarning($"Attempt to use invalid unique code: {uniqueCode}");
                 return NotFound();
             }
 
-            var providerAttributes = await _employerEmailDetailsRepository.GetAllAttributes();
-            if (providerAttributes == null)
-            {
-                _logger.LogError($"Unable to load Provider Attributes from the database.");
-                return RedirectToAction("Error", "Error");
-            }
+            var encodedAccountId = _encodingService.Encode(employerEmailDetail, EncodingType.AccountId);
 
-            var providerAttributesModel = providerAttributes.Select(s => new ProviderAttributeModel { Name = s.AttributeName });
-            var newSurveyModel = MapToNewSurveyModel(employerEmailDetail, providerAttributesModel);
-            newSurveyModel.UniqueCode = uniqueCode;
-            await _sessionService.Set(idClaim.Value, newSurveyModel);
-
-            var encodedAccountId = _encodingService.Encode(employerEmailDetail.AccountId, EncodingType.AccountId);
-            return RedirectToRoute(RouteNames.Landing_Get_New, new { encodedAccountId = encodedAccountId });
+            return RedirectToRoute(RouteNames.ProviderSelect, new { encodedAccountId = encodedAccountId});
         }
 
         [Route("signout", Name = RouteNames.Signout)]
@@ -111,20 +98,6 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
         public IActionResult Ping()
         {
             return Ok();
-        }
-
-        private SurveyModel MapToNewSurveyModel(EmployerSurveyInvite employerEmailDetail, IEnumerable<ProviderAttributeModel> providerAttributes)
-        {
-            //email journey
-            return new SurveyModel
-            {
-                AccountId = employerEmailDetail.AccountId,
-                Ukprn = employerEmailDetail.Ukprn,
-                UserRef = employerEmailDetail.UserRef,
-                Submitted = employerEmailDetail.CodeBurntDate != null,
-                ProviderName = employerEmailDetail.ProviderName,
-                Attributes = providerAttributes.ToList()
-            };
         }
     }
 }
