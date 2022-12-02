@@ -25,7 +25,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Orchestrators
         {
             var employerFeedback = await _employerFeedbackRepository.GetEmployerFeedbackRecord(surveyModel.UserRef, surveyModel.AccountId, surveyModel.Ukprn);
             long feedbackId = 0;
-            if(null == employerFeedback)
+            if (null == employerFeedback)
             {
                 feedbackId = await _employerFeedbackRepository.UpsertIntoFeedback(surveyModel.UserRef, surveyModel.AccountId, surveyModel.Ukprn);
             }
@@ -44,7 +44,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Orchestrators
                 var providerAttributes = await ConvertSurveyToProviderAttributes(surveyModel);
 
                 var feedbackSource = ProvideFeedback.Data.Enums.FeedbackSource.AdHoc;
-                if(surveyModel.UniqueCode.HasValue)
+                if (surveyModel.UniqueCode.HasValue)
                 {
                     feedbackSource = ProvideFeedback.Data.Enums.FeedbackSource.Email;
                 }
@@ -57,17 +57,11 @@ namespace ESFA.DAS.EmployerProvideFeedback.Orchestrators
                     feedbackSource,
                     providerAttributes);
 
-                if(null != surveyModel.UniqueCode && surveyModel.UniqueCode.HasValue)
+                Guid? uniqueSurveyCode = await _employerFeedbackRepository.GetUniqueSurveyCodeFromFeedbackId(feedbackId);
+
+                if (uniqueSurveyCode != Guid.Empty)
                 {
-                    // Email journey.
-                    await _employerFeedbackRepository.SetCodeBurntDate(surveyModel.UniqueCode.Value);
-                }
-                else
-                {
-                    // Ad Hoc journey
-                    Guid? uniqueSurveyCode = await _employerFeedbackRepository.GetUniqueSurveyCodeFromFeedbackId(feedbackId);
-                    if (uniqueSurveyCode != Guid.Empty)
-                        await _employerFeedbackRepository.SetCodeBurntDate(uniqueSurveyCode.Value);
+                    await _employerFeedbackRepository.SetCodeBurntDate(uniqueSurveyCode.Value);
                 }
             }
             catch (Exception ex)
