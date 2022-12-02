@@ -1,4 +1,5 @@
-﻿using ESFA.DAS.EmployerProvideFeedback.Infrastructure;
+﻿using ESFA.DAS.EmployerProvideFeedback.Configuration.Routing;
+using ESFA.DAS.EmployerProvideFeedback.Infrastructure;
 using ESFA.DAS.EmployerProvideFeedback.Paging;
 using ESFA.DAS.EmployerProvideFeedback.Services;
 using ESFA.DAS.EmployerProvideFeedback.ViewModels;
@@ -47,7 +48,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
         }
 
         [HttpGet]
-        [Route("/{encodedAccountId}/providers")]
+        [Route(RoutePrefixPaths.FeedbackFromEmailRoutePath, Name = RouteNames.ProviderSelect)]
         public async Task<IActionResult> Index(GetProvidersForFeedbackRequest request, int pageIndex = PagingState.DefaultPageIndex)
         {
             var idClaim = HttpContext.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);

@@ -83,7 +83,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
             await _sessionService.Set(idClaim.Value, newSurveyModel);
 
             var encodedAccountId = _encodingService.Encode(employerEmailDetail.AccountId, EncodingType.AccountId);
-            return RedirectToRoute(RouteNames.Landing_Get_New, new { encodedAccountId = encodedAccountId });
+            return RedirectToRoute(RouteNames.ProviderSelect, new { encodedAccountId = encodedAccountId });
         }
 
         [Route("signout", Name = RouteNames.Signout)]
