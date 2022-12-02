@@ -28,7 +28,7 @@ namespace UnitTests.EmployerProvideFeedback.Infrastructure
             _controllerMock = new Mock<Controller>();
             _controllerMock.Setup(mock => mock.RedirectToRoute(It.IsAny<string>(), It.IsAny<object>())).Returns(new RedirectToRouteResult(RouteNames.FeedbackAlreadySubmitted, new { encodedAccountId = "ABCDEF" }));
             _sessionServiceMock.Setup(mock => mock.IsCodeBurnt(It.IsAny<Guid>())).ReturnsAsync(true);
-            _sessionServiceMock.Setup(mock => mock.GetEmployerInviteForUniqueCode(It.IsAny<Guid>())).ReturnsAsync(new EmployerSurveyInvite());
+            _sessionServiceMock.Setup(mock => mock.GetEmployerAccountIdFromUniqueSurveyCode(It.IsAny<Guid>())).ReturnsAsync(new int());
             _encodingServiceMock = new Mock<IEncodingService>();
             _encodingServiceMock.Setup(m => m.Encode(It.IsAny<long>(), EncodingType.AccountId)).Returns("ABCDEF");
         }

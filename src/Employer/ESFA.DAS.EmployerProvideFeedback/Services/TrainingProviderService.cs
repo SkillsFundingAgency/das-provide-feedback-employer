@@ -146,10 +146,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Services
 
         private async Task<List<ProviderSearchViewModel.EmployerTrainingProvider>> SelectAllProvidersForAccount(long accountId)
         {
-            //adhoc only
-            // Select all 
             var apprenticeshipsResponse = await _commitmentService.GetApprenticeships(accountId); 
-            // API call to commitments. Gets all apprenticeships associated with the employer logged in (by their accountID)
 
             var providers = apprenticeshipsResponse.Apprenticeships.GroupBy(p => p.ProviderId)
                 .Select(a => new ProviderSearchViewModel.EmployerTrainingProvider()

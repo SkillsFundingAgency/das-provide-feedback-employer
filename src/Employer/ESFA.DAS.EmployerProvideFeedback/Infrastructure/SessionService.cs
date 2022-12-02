@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Caching.Distributed;
-using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 
 namespace ESFA.DAS.EmployerProvideFeedback.Infrastructure
@@ -26,20 +25,19 @@ namespace ESFA.DAS.EmployerProvideFeedback.Infrastructure
         public async Task<T> Get<T>(string key)
         {
             var sessionObject = await GetString(key);
-            return string.IsNullOrWhiteSpace(sessionObject) ? default(T) : JsonConvert.DeserializeObject<T>(sessionObject); //adhoc and email journey
+            return string.IsNullOrWhiteSpace(sessionObject) ? default(T) : JsonConvert.DeserializeObject<T>(sessionObject);
         }
 
         public async Task<string> GetString(string key)
         {
-            return await _sessionCache.GetStringAsync(_environment + "_" + key); //adhoc and email journey
+            return await _sessionCache.GetStringAsync(_environment + "_" + key);
         }
 
         public async Task Set(string key, object value)
         {
-            //adhoc and email journey
             await _sessionCache.SetStringAsync(_environment + "_" + key, JsonConvert.SerializeObject(value), new DistributedCacheEntryOptions
             {
-                SlidingExpiration = TimeSpan.FromMinutes(_slidingExpirationMinutes) //adhoc and email journeys
+                SlidingExpiration = TimeSpan.FromMinutes(_slidingExpirationMinutes)
             });
         }
 
