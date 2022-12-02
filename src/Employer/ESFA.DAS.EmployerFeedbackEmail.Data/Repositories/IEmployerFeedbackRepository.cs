@@ -11,7 +11,6 @@ namespace ESFA.DAS.ProvideFeedback.Data.Repositories
     public interface IEmployerFeedbackRepository
     {
         Task<IEnumerable<EmployerSurveyInvite>> GetEmployerUsersToBeSentInvite();
-        Task<EmployerSurveyInvite> GetEmployerInviteForUniqueCode(Guid guid);
         Task SetCodeBurntDate(Guid uniqueCode);
         Task<DateTime?> GetCodeBurntDate(Guid uniqueCode);
         Task<bool> IsCodeBurnt(Guid emailCode);
@@ -23,7 +22,6 @@ namespace ESFA.DAS.ProvideFeedback.Data.Repositories
         Task ResetFeedback();
         Task UpsertIntoProviders(IEnumerable<Provider> providers);
         Task<long> UpsertIntoFeedback(Guid userRef, long accountId, long ukprn);
-        Task<EmployerSurveyInvite> GetEmployerSurveyInvite(long feedbackId);
         Task<IEnumerable<Provider>> GetProvidersByUkprn(IEnumerable<long> commitmentUkprns);
         Task<Provider> GetProviderByUkprn(long ukprn);
         Task<User> GetUserByUserRef(Guid userRef);
@@ -40,5 +38,6 @@ namespace ESFA.DAS.ProvideFeedback.Data.Repositories
         Task<int> GenerateProviderAttributeResults(int allUserFeedback, int resultsforAllTime, int recentFeedbackMonths);
         Task<IEnumerable<EmployerFeedbackResultSummary>> GetFeedbackResultSummary(long ukprn);
         Task<IEnumerable<ProviderStarsSummary>> GetAllStarsSummary();
+        Task<int> GetEmployerAccountIdFromUniqueSurveyCode(Guid uniqueCode);
     }
 }

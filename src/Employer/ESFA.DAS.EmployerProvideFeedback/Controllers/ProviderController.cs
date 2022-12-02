@@ -1,4 +1,5 @@
-﻿using ESFA.DAS.EmployerProvideFeedback.Infrastructure;
+﻿using ESFA.DAS.EmployerProvideFeedback.Configuration.Routing;
+using ESFA.DAS.EmployerProvideFeedback.Infrastructure;
 using ESFA.DAS.EmployerProvideFeedback.Paging;
 using ESFA.DAS.EmployerProvideFeedback.Services;
 using ESFA.DAS.EmployerProvideFeedback.ViewModels;
@@ -44,7 +45,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
         }
 
         [HttpGet]
-        [Route("/{encodedAccountId}/providers")] //from employer account page
+        [Route(RoutePrefixPaths.ProviderSelectPath, Name = RouteNames.ProviderSelect)]
         public async Task<IActionResult> Index(GetProvidersForFeedbackRequest request, int pageIndex = PagingState.DefaultPageIndex)
         {
             var idClaim = HttpContext.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
@@ -56,7 +57,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
             pagingState.PageIndex = pageIndex;
             await _sessionService.Set($"{idClaim.Value}_PagingState", pagingState);
 
-            var model = await _trainingProviderService.GetTrainingProviderSearchViewModel( //API call to commitments & looks at its own database
+            var model = await _trainingProviderService.GetTrainingProviderSearchViewModel(
                 request.EncodedAccountId,
                 pagingState.SelectedProviderName,
                 pagingState.SelectedFeedbackStatus,
