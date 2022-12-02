@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using ESFA.DAS.EmployerProvideFeedback.Authentication;
 using ESFA.DAS.EmployerProvideFeedback.Configuration.Routing;
 using ESFA.DAS.EmployerProvideFeedback.Infrastructure;
@@ -7,7 +6,6 @@ using ESFA.DAS.EmployerProvideFeedback.Orchestrators;
 using ESFA.DAS.EmployerProvideFeedback.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
 
 namespace ESFA.DAS.EmployerProvideFeedback.Controllers
 {
@@ -49,7 +47,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
             var answers = await _sessionService.Get<SurveyModel>(idClaim.Value);
 
             answers.Submitted = true;
-            await _orchestrator.SubmitConfirmedEmployerFeedback(answers); //lots of db
+            await _orchestrator.SubmitConfirmedEmployerFeedback(answers);
             await _sessionService.Set(idClaim.Value, answers);
 
             return RedirectToRoute(RouteNames.Confirmation_Get);
