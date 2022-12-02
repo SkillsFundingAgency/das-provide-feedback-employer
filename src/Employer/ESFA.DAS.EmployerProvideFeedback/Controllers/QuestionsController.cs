@@ -32,7 +32,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
             TempData[ReturnUrlKey] = returnUrl;
             var idClaim = HttpContext.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
             var cachedAnswers = await _sessionService.Get<SurveyModel>(idClaim.Value);
-            
+
             // TODO: Redirect from all questions and review route to landing if no survey in the session.
 
             return View(cachedAnswers);
@@ -66,7 +66,6 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
 
         private void SetWeaknesses(SurveyModel sessionAnswer, IEnumerable<ProviderAttributeModel> currentAnswerAttributes)
         {
-            //adhoc and email journey
             foreach (var attr in sessionAnswer.Attributes)
             {
                 var match = currentAnswerAttributes.SingleOrDefault(x => x.Name == attr.Name);
@@ -99,7 +98,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
             return await HandleRedirect(RouteNames.QuestionThree_Get);
         }
 
-        
+
 
         [HttpGet("question-three", Name = RouteNames.QuestionThree_Get)]
         public async Task<IActionResult> QuestionThree(string returnUrl = null)
@@ -127,14 +126,12 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
 
         private async Task<IActionResult> HandleRedirect(string nextRoute)
         {
-            //adhoc and email journey
             var returnRoute = Convert.ToString(TempData[ReturnUrlKey]);
             return await Task.Run(() => RedirectToRoute(string.IsNullOrEmpty(returnRoute) ? nextRoute : returnRoute) as IActionResult);
         }
 
         private bool IsProviderAttributesValid(SurveyModel surveyModel)
         {
-            //ashoc and email journey
             ModelState.TryGetValue(nameof(surveyModel.Attributes), out ModelStateEntry modelState);
             return modelState == null ? true : modelState.ValidationState == ModelValidationState.Valid;
         }

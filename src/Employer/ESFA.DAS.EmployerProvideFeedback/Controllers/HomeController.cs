@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using ESFA.DAS.EmployerProvideFeedback.Configuration.Routing;
 using ESFA.DAS.EmployerProvideFeedback.Infrastructure;
 using ESFA.DAS.EmployerProvideFeedback.ViewModels;
 using ESFA.DAS.ProvideFeedback.Data.Repositories;
-using ESFA.DAS.ProvideFeedback.Domain.Entities.Models;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authorization;
@@ -70,7 +67,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
 
             var encodedAccountId = _encodingService.Encode(employerEmailDetail, EncodingType.AccountId);
 
-            return RedirectToRoute(RouteNames.ProviderSelect, new { encodedAccountId = encodedAccountId});
+            return RedirectToRoute(RouteNames.ProviderSelect, new { encodedAccountId = encodedAccountId });
         }
 
         [Route("signout", Name = RouteNames.Signout)]
