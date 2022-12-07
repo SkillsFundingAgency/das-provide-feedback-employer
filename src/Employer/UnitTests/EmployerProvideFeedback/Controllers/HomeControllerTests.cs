@@ -70,7 +70,7 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
             // Assert
             var viewData = _controller.ViewData;
             Assert.Single(viewData);
-            Assert.Equal(result.ViewData, viewData["ProviderName"]); //does not work 
+            Assert.Equal(result.ViewData["ProviderName"], viewData["ProviderName"]);
         }
 
         [Fact]
