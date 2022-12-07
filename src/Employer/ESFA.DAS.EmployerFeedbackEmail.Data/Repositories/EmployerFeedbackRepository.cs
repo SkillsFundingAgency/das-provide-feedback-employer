@@ -25,7 +25,7 @@ namespace ESFA.DAS.ProvideFeedback.Data.Repositories
                                         $@"SELECT AccountId
                                         FROM EmployerSurveyCodes ESC
                                         JOIN EmployerFeedback EF ON ESC.FeedbackId = EF.FeedbackId
-                                        WHERE ESC.UniqueSurveyCode = @{nameof( uniqueCode)}",
+                                        WHERE ESC.UniqueSurveyCode = @{uniqueCode}",
                                         new { uniqueCode });
         }
 
