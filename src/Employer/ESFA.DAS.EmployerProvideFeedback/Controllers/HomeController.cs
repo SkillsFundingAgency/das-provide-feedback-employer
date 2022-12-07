@@ -62,7 +62,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
         {
             var employerEmailDetail = await _employerEmailDetailsRepository.GetEmployerAccountIdFromUniqueSurveyCode(uniqueCode);
 
-            if (employerEmailDetail.ToString() == null)
+            if (employerEmailDetail == 0)
             {
                 _logger.LogWarning($"Attempt to use invalid unique code: {uniqueCode}");
                 return NotFound();
