@@ -78,13 +78,13 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
         {
             // Arrange
             var uniqueCode = Guid.NewGuid();
-            _employerEmailDetailsRepoMock.Setup(mock => mock.GetEmployerAccountIdFromUniqueSurveyCode(uniqueCode)).ReturnsAsync(null);
+            _employerEmailDetailsRepoMock.Setup(mock => mock.GetEmployerAccountIdFromUniqueSurveyCode(uniqueCode)).ReturnsAsync(0);
 
             // Act
             var result = await _controller.Index(uniqueCode);
 
             // Assert
-            Assert.IsAssignableFrom<NotFoundResult>(result); //does not work - null reference exception
+            Assert.IsAssignableFrom<NotFoundResult>(result);
         }
 
         [Fact]
