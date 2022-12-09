@@ -1,48 +1,42 @@
-# Digital Apprenticeships Service
+# Employer Feedback
 
-## das-provider-feedback-employer
+<img src="https://avatars.githubusercontent.com/u/9841374?s=200&v=4" align="right" alt="UK Government logo">
 
-|                                                                                                                                                                 |                                                                                                                                    |
-| --------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
-| ![crest](https://assets.publishing.service.gov.uk/government/assets/crests/org_crest_27px-916806dcf065e7273830577de490d5c7c42f36ddec83e907efe62086785f24fb.png) | Tasks                                                                                                                              |
-| Build                                                                                                                                                           | ![Build badge](https://sfa-gov-uk.visualstudio.com/_apis/public/build/definitions/c39e0c0b-7aff-4606-b160-3566f3bbce23/1090/badge) |
+[![Build Status](https://sfa-gov-uk.visualstudio.com/Digital%20Apprenticeship%20Service/_apis/build/status/das-provide-feedback-employer?repoName=SkillsFundingAgency%2Fdas-provide-feedback-employer&branchName=master)](https://sfa-gov-uk.visualstudio.com/Digital%20Apprenticeship%20Service/_build/latest?definitionId=2539&repoName=SkillsFundingAgency%2Fdas-provide-feedback-employer&branchName=master)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=SkillsFundingAgency_das-provide-feedback-employer&metric=alert_status)](https://sonarcloud.io/project/overview?id=SkillsFundingAgency_das-provide-feedback-employer)
+[![Jira Project](https://img.shields.io/badge/Jira-Project-blue)](https://skillsfundingagency.atlassian.net/browse/QF-79)
+[![Confluence Project](https://img.shields.io/badge/Confluence-Project-blue)](https://skillsfundingagency.atlassian.net/wiki/spaces/NDL/pages/3773497345/Employer+Feedback+-+QF)
+[![License](https://img.shields.io/badge/license-MIT-lightgrey.svg?longCache=true&style=flat-square)](https://en.wikipedia.org/wiki/MIT_License)                                                                                                                                                        | ![Build badge](https://sfa-gov-uk.visualstudio.com/_apis/public/build/definitions/c39e0c0b-7aff-4606-b160-3566f3bbce23/1090/badge) |
 
-## Provide Feedback (Beta)
+This repository represents the code base for the employer feedback service. This is a service that allows employers to provide feedback on their training providers. Employers can give feedback via the ad hoc journey from their employer account. The employer has previously been able to provide feedback via emails, as they would recieve emails prompting them to give feedback. However, this emailing function is in the process of being decommissioned. 
 
-This solution represents the Provider Feedback code base currently in alpha.
-
-## Developer setup
-
+## Developer Setup
 ### Requirements
 
-- [.NET Core SDK >= 2.1.302](https://www.microsoft.com/net/download/)
-- [Docker for X](https://docs.docker.com/install/#supported-platforms) (not required for emailer functions)
-- [Azure Cosmos DB Emulator](https://docs.microsoft.com/en-us/azure/cosmos-db/local-emulator) (not required for emailer functions)
-- Azure Service Bus
+* [.NET Core SDK >= 2.1.302](https://www.microsoft.com/net/download/)
+* [Docker for X](https://docs.docker.com/install/#supported-platforms) (not required for emailer functions)
+* [Azure Cosmos DB Emulator](https://docs.microsoft.com/en-us/azure/cosmos-db/local-emulator) (not required for emailer functions)
+* (VS Code Only) [C# Extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode.csharp)
+* [SQL Server Express LocalDB](https://docs.microsoft.com/en-us/sql/database-engine/configure-windows/sql-server-express-localdb)
 
 ### Environment Setup
 
-The default development environment uses docker containers to host the following dependencies.
+* **Database** - Publish the local databse from the `ESFA.DAS.EmployerFeedbackEmail.Database` project.
+    * Setup your database - You will need your `SFA.DAS.Commitments.Database` database setup with data before following these steps:
+        * 
+* **Docker** - The default development environment uses docker containers to host the following dependencies.
+    * Redis
+    * Elasticsearch
+    * Logstash
 
-- Redis
-- Elasticsearch
-- Logstash
+    On first setup run the following command from _**/setup/containers/**_ to create the docker container images:
+    `docker-compose build`
 
-On first setup run the following command from _**/setup/containers/**_ to create the docker container images:
+    To start the containers run:
+    `docker-compose up -d`
 
-`docker-compose build`
-
-To start the containers run:
-
-`docker-compose up -d`
-
-You can view the state of the running containers using:
-
-`docker ps -a`
-
-Run Azure Cosmos DB Emulator
-
-#### Setting up emailer functions to run locally
+    You can view the state of the running containers using:
+    `docker ps -a`
 
 ##### Add local.settings.json to ESFA.DAS.ProviderFeedback.Employer.Functions.Emailer
 
