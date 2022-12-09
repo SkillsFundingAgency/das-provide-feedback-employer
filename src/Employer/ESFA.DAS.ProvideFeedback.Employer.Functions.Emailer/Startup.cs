@@ -1,6 +1,6 @@
-﻿using ESFA.DAS.Feedback.Employer.Emailer.Configuration;
-using ESFA.DAS.ProvideFeedback.Data.Repositories;
+﻿using ESFA.DAS.ProvideFeedback.Data.Repositories;
 using ESFA.DAS.ProvideFeedback.Employer.Application;
+using ESFA.DAS.ProvideFeedback.Employer.Application.Configuration;
 using ESFA.DAS.ProvideFeedback.Employer.ApplicationServices;
 using ESFA.DAS.ProvideFeedback.Employer.ApplicationServices.Configuration;
 using ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer;
@@ -59,15 +59,8 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
             builder.Services.AddTransient<IEmployerFeedbackRepository, EmployerFeedbackRepository>();
             builder.Services.AddTransient<FeedbackSummariesService>();
 
-            var accApiConfig = _configuration.GetSection("AccountApi").Get<AccountApiConfiguration>();
-            builder.Services.AddSingleton<IAccountApiConfiguration>(accApiConfig);
-            builder.Services.AddSingleton<IAccountService, AccountService>();
             builder.Services.AddHttpClient<SecureHttpClient>();
-
-            builder.Services.Configure<RoatpApiConfiguration>(_configuration.GetSection("RoatpApi"));
-            builder.Services.AddSingleton(cfg => cfg.GetService<IOptions<RoatpApiConfiguration>>().Value);
             builder.Services.AddTransient<IAzureClientCredentialHelper, AzureClientCredentialHelper>();
-            builder.Services.AddHttpClient<IRoatpService, RoatpService>();
 
             var commitmentV2ApiConfig = _configuration.GetSection("CommitmentV2Api").Get<CommitmentApiConfiguration>();
             builder.Services.AddSingleton<ICommitmentApiConfiguration>(commitmentV2ApiConfig);
