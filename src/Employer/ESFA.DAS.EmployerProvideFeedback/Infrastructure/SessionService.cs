@@ -43,7 +43,6 @@ namespace ESFA.DAS.EmployerProvideFeedback.Infrastructure
 
         public async Task Remove(string key)
         {
-            //email journey
             await _sessionCache.RemoveAsync(_environment + "_" + key);
         }
 

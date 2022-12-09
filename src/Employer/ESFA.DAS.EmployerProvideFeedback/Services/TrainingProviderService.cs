@@ -61,14 +61,11 @@ namespace ESFA.DAS.EmployerProvideFeedback.Services
             model.SortColumn = sortColumn;
             model.SortDirection = sortDirection;
 
-            // Select all the providers for this employer.
-
-            var providers = await SelectAllProvidersForAccount(model.AccountId); //API call to commitments to get all providers associated with the employer.
+            var providers = await SelectAllProvidersForAccount(model.AccountId);
 
             // Augment the provider records with feedback data. Urgh.
-            // We need to do this so that the date filtering will work.
 
-            await AugmentProviderRecordsWithFeedbackStatus(model.AccountId, providers); // Database Employer Feedback, no removed tables
+            await AugmentProviderRecordsWithFeedbackStatus(model.AccountId, providers);
 
             // Initialise the filter options.
 
@@ -125,7 +122,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Services
 
         public async Task<ProviderSearchConfirmationViewModel> GetTrainingProviderConfirmationViewModel(string encodedAccountId, long providerId)
         {
-            var response = await _commitmentService.GetProvider(providerId); //API call to Commitments.
+            var response = await _commitmentService.GetProvider(providerId);
 
             if(null == response)
             {
@@ -161,7 +158,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Services
 
         private async Task AugmentProviderRecordsWithFeedbackStatus(long accountId, List<ProviderSearchViewModel.EmployerTrainingProvider> providers)
         {
-            var employerFeedback = await _employerFeedbackRepository.GetAllFeedbackAndResultFromEmployer(accountId); //Employer Feedback Database
+            var employerFeedback = await _employerFeedbackRepository.GetAllFeedbackAndResultFromEmployer(accountId);
             foreach (var provider in providers)
             {
                 var feedBackForProvider = employerFeedback.FirstOrDefault(fp => fp.Ukprn == provider.ProviderId);
