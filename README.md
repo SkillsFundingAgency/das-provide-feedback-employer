@@ -31,9 +31,7 @@ This repository represents the code base for the employer feedback service. This
         * Generate a random GUID, and add a record to the `Users` table. 
         * Using the same GUID, add the GUID, the `UKRPN` of a training provider(s), and the `EmployerAccountId` to the `EmployerFeedback` table in the `ESFA.DAS.EmployerFeedbackEmail.Database` database. 
         * Remembering the `FeedbackId` of the record(s) you just created, add a record to the `EmployerSurveyCodes` table in the `ESFA.DAS.EmployerFeedbackEmail.Database` database. 
-* **appsettings.development.json file** - Add the following to the appsettings.development.json file.
-
-##### Add local.settings.json to ESFA.DAS.ProviderFeedback.Employer.Functions.Emailer
+* **local.settings.json file** - Add the following to the appsettings.development.json file in the `ESFA.DAS.ProviderFeedback.Employer.Functions.Emailer` functions app.
 
 Please note all the connection string and secrets to API have been removed. This will need updating.
 
@@ -98,7 +96,6 @@ Please note all the connection string and secrets to API have been removed. This
 }
 ```
 
-* **Azure Table Storage Config** - Add the following data to your Azure Table Storage Config 
 
 ### Running
 * Start Azurite e.g. using a command `C:\Program Files (x86)\Microsoft SDKs\Azure\Storage Emulator>AzureStorageEmulator.exe start`
