@@ -6,7 +6,7 @@
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=SkillsFundingAgency_das-provide-feedback-employer&metric=alert_status)](https://sonarcloud.io/project/overview?id=SkillsFundingAgency_das-provide-feedback-employer)
 [![Jira Project](https://img.shields.io/badge/Jira-Project-blue)](https://skillsfundingagency.atlassian.net/browse/QF-79)
 [![Confluence Project](https://img.shields.io/badge/Confluence-Project-blue)](https://skillsfundingagency.atlassian.net/wiki/spaces/NDL/pages/3773497345/Employer+Feedback+-+QF)
-[![License](https://img.shields.io/badge/license-MIT-lightgrey.svg?longCache=true&style=flat-square)](https://en.wikipedia.org/wiki/MIT_License)                                                                                                                                                        | ![Build badge](https://sfa-gov-uk.visualstudio.com/_apis/public/build/definitions/c39e0c0b-7aff-4606-b160-3566f3bbce23/1090/badge) |
+[![License](https://img.shields.io/badge/license-MIT-lightgrey.svg?longCache=true&style=flat-square)](https://en.wikipedia.org/wiki/MIT_License) 
 
 This repository represents the code base for the employer feedback service. This is a service that allows employers to provide feedback on their training providers. Employers can give feedback via the ad hoc journey from their employer account. The employer has previously been able to provide feedback via emails, as they would recieve emails prompting them to give feedback. However, this emailing function is in the process of being decommissioned. 
 
@@ -14,7 +14,6 @@ This repository represents the code base for the employer feedback service. This
 ### Requirements
 
 * [.NET Core SDK >= 2.1.302](https://www.microsoft.com/net/download/)
-* [Docker for X](https://docs.docker.com/install/#supported-platforms) (not required for emailer functions)
 * [Azure Cosmos DB Emulator](https://docs.microsoft.com/en-us/azure/cosmos-db/local-emulator) (not required for emailer functions)
 * (VS Code Only) [C# Extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode.csharp)
 * [SQL Server Express LocalDB](https://docs.microsoft.com/en-us/sql/database-engine/configure-windows/sql-server-express-localdb)
@@ -22,7 +21,7 @@ This repository represents the code base for the employer feedback service. This
 ### Environment Setup
 
 * **Database** - Publish the local databse from the `ESFA.DAS.EmployerFeedbackEmail.Database` project.
-    * Setup your database - You will need your `SFA.DAS.Commitments.Database` database setup with data before following these steps:
+    * Setting up your database - You will need your `SFA.DAS.Commitments.Database` database setup with data before following these steps:
         * Pick a record from the `Commitments` table within the `SFA.DAS.Commitments.Database` database and get the `EmployerAccountId` value.
         * Search the `Commitments` table by the `EmployerAccountId`, you may find there is more than one training provider associated with the employer.
         * Get the `UKPRN` value from the `Commitments` records with the `EmployerAccountId` you picked above. 
@@ -31,7 +30,7 @@ This repository represents the code base for the employer feedback service. This
         * Generate a random GUID, and add a record to the `Users` table. 
         * Using the same GUID, add the GUID, the `UKRPN` of a training provider(s), and the `EmployerAccountId` to the `EmployerFeedback` table in the `ESFA.DAS.EmployerFeedbackEmail.Database` database. 
         * Remembering the `FeedbackId` of the record(s) you just created, add a record to the `EmployerSurveyCodes` table in the `ESFA.DAS.EmployerFeedbackEmail.Database` database. 
-* **local.settings.json file** - Add the following to the appsettings.development.json file in the `ESFA.DAS.ProviderFeedback.Employer.Functions.Emailer` functions app.
+* **local.settings.json file** - Add the following to the local.settings.json file in the `ESFA.DAS.ProviderFeedback.Employer.Functions.Emailer` functions app.
 
 Please note all the connection string and secrets to API have been removed. This will need updating.
 
@@ -101,10 +100,10 @@ Please note all the connection string and secrets to API have been removed. This
 * Start Azurite e.g. using a command `C:\Program Files (x86)\Microsoft SDKs\Azure\Storage Emulator>AzureStorageEmulator.exe start`
 * Run the solution
 * NB: You will need `das-commitments` running too, specifically the `SFA.DAS.CommitmentsV2.Api` project.
-* To start the ad hoc journey: https://localhost:{port number}/{encoded account ID}/providers (to get the encoded account ID, run the account ID through the encoding service in the solution.)
-* Or to start the emailing journey: https://localhost:{port number}/{unique survey code}
+* To start the ad hoc journey: localhost:{port number}/{encoded account ID}/providers (to get the encoded account ID, run the account ID through the encoding service in the solution.)
+* Or to start the emailing journey: localhost:{port number}/{unique survey code}
 
-###Tests
+### Tests
 
 This codebase includes unit tests and integration tests. These are each in a seperate project kept in a folder called `Testing`.
 
