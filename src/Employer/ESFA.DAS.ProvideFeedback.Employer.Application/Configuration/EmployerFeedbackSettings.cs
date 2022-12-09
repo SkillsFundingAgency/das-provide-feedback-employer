@@ -1,5 +1,5 @@
 ﻿
-namespace ESFA.DAS.Feedback.Employer.Emailer.Configuration
+namespace ESFA.DAS.ProvideFeedback.Employer.Application.Configuration
 {
     public class EmployerFeedbackSettings
     {
