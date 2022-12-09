@@ -23,20 +23,15 @@ This repository represents the code base for the employer feedback service. This
 
 * **Database** - Publish the local databse from the `ESFA.DAS.EmployerFeedbackEmail.Database` project.
     * Setup your database - You will need your `SFA.DAS.Commitments.Database` database setup with data before following these steps:
-        * 
-* **Docker** - The default development environment uses docker containers to host the following dependencies.
-    * Redis
-    * Elasticsearch
-    * Logstash
-
-    On first setup run the following command from _**/setup/containers/**_ to create the docker container images:
-    `docker-compose build`
-
-    To start the containers run:
-    `docker-compose up -d`
-
-    You can view the state of the running containers using:
-    `docker ps -a`
+        * Pick a record from the `Commitments` table within the `SFA.DAS.Commitments.Database` database and get the `EmployerAccountId` value.
+        * Search the `Commitments` table by the `EmployerAccountId`, you may find there is more than one training provider associated with the employer.
+        * Get the `UKPRN` value from the `Commitments` records with the `EmployerAccountId` you picked above. 
+        * Search the `Providers` table by the `UKPRN` within the `SFA.DAS.Commitments.Database` database to get all information about this training provider or training providers.
+        * Add the training provider(s) to the `Providers` table in the `ESFA.DAS.EmployerFeedbackEmail.Database` database. 
+        * Generate a random GUID, and add a record to the `Users` table. 
+        * Using the same GUID, add the GUID, the `UKRPN` of a training provider(s), and the `EmployerAccountId` to the `EmployerFeedback` table in the `ESFA.DAS.EmployerFeedbackEmail.Database` database. 
+        * Remembering the `FeedbackId` of the record(s) you just created, add a record to the `EmployerSurveyCodes` table in the `ESFA.DAS.EmployerFeedbackEmail.Database` database. 
+* **appsettings.development.json file** - Add the following to the appsettings.development.json file.
 
 ##### Add local.settings.json to ESFA.DAS.ProviderFeedback.Employer.Functions.Emailer
 
@@ -103,20 +98,26 @@ Please note all the connection string and secrets to API have been removed. This
 }
 ```
 
-##### Publish database (ESFA.DAS.EmployerFeedbackEmail.Database) to sql server.
+* **Azure Table Storage Config** - Add the following data to your Azure Table Storage Config 
 
-- Set the connection string to the database in the local.settings.json file under `ConnectionStrings.EmployerEmailStoreConnection`
+### Running
+* Start Azurite e.g. using a command `C:\Program Files (x86)\Microsoft SDKs\Azure\Storage Emulator>AzureStorageEmulator.exe start`
+* Run the solution
+* NB: You will need `das-commitments` running too, specifically the `SFA.DAS.CommitmentsV2.Api` project.
+* To start the ad hoc journey: https://localhost:{port number}/{encoded account ID}/providers (to get the encoded account ID, run the account ID through the encoding service in the solution.)
+* Or to start the emailing journey: https://localhost:{port number}/{unique survey code}
 
-##### Setting up service bus
+###Tests
 
-- Create a service bus account on azure subscription
-- Set the connection string to service bus account in the local.settings.json file under `Values.ServiceBusConnection`
-- Create following queues on the service bus account
-  - retrieve-employer-accounts
-  - process-active-feedback
-  - generate-survey-invite
-  - refresh-account
-  - retrieve-providers
+This codebase includes unit tests and integration tests. These are each in a seperate project kept in a folder called `Testing`.
+
+#### Unit Tests
+
+The unit tests covering each project are each kept in a folder within the `UnitTests` project in the `Testing` folder. They are built using C#, Moq, FluentAssertions, .NET, MSTest, and XUnit.
+
+#### Integration Tests
+
+There is one integration test project, `IntegrationTests`, and in it one test class.
 
 ### Application logs
 
