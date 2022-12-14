@@ -14,13 +14,12 @@ This repository represents the code base for the employer feedback service. This
 ### Requirements
 
 * [.NET Core SDK >= 2.1.302](https://www.microsoft.com/net/download/)
-* [Azure Cosmos DB Emulator](https://docs.microsoft.com/en-us/azure/cosmos-db/local-emulator) (not required for emailer functions)
 * (VS Code Only) [C# Extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode.csharp)
 * [SQL Server Express LocalDB](https://docs.microsoft.com/en-us/sql/database-engine/configure-windows/sql-server-express-localdb)
 
 ### Environment Setup
 
-* **Database** - Publish the local databse from the `ESFA.DAS.EmployerFeedbackEmail.Database` project.
+* **Database** - Publish the local database from the `ESFA.DAS.EmployerFeedbackEmail.Database` project.
     * Setting up your database - You will need your `SFA.DAS.Commitments.Database` database setup with data before following these steps:
         * Pick a record from the `Commitments` table within the `SFA.DAS.Commitments.Database` database and get the `EmployerAccountId` value.
         * Search the `Commitments` table by the `EmployerAccountId`, you may find there is more than one training provider associated with the employer.
@@ -33,7 +32,6 @@ This repository represents the code base for the employer feedback service. This
 * **local.settings.json file** - Add the following to the local.settings.json file in the `ESFA.DAS.ProviderFeedback.Employer.Functions.Emailer` functions app.
 
 Please note all the connection string and secrets to API have been removed. This will need updating.
-
 ```
 {
   "IsEncrypted": false,
@@ -44,53 +42,16 @@ Please note all the connection string and secrets to API have been removed. This
     "FUNCTIONS_EXTENSION_VERSION": "2.0.12673.0",
     "AppInsights_InstrumentationKey": "",
     "FeedbackSiteBaseUrl": "localhost:5030",
-    "EmailBatchSize": "500",
-    "NotificationApiBaseUrl": "https://at-notifications.apprenticeships.sfa.bis.gov.uk",
-    "ClientToken": "",
-    "InviteEmailerSchedule": "0 */10 10-11 * * MON-FRI",
-    "ReminderEmailerSchedule": "0 3/10 10-11 * * MON-FRI",
-    "DataRefreshSchedule": "0 0 3 * * MON-FRI",
     "AppName": "das-provide-feedback-emailer",
-    "LogDir": "C:\\Logs\\ESFA\\Provide Feedback\\Employer",
-    "ServiceBusConnection": "",
-    "RetrieveFeedbackAccountsQueueName": "retrieve-employer-accounts",
-    "ProcessActiveFeedbackQueueName": "process-active-feedback",
-    "GenerateSurveyInviteMessageQueueName": "generate-survey-invite",
-    "AccountRefreshQueueName": "refresh-account",
-    "RetrieveProvidersQueueName": "retrieve-providers"
-  },
-
-  "EmailSettings": {
-    "BatchSize": 5,
-    "FeedbackSiteBaseUrl": "localhost:5030",
-    "ReminderDays": 14,
-    "InviteCycleDays": 30
+    "LogDir": "C:\\Logs\\ESFA\\Provide Feedback\\Employer"
   },
   "ConnectionStrings": {
     "EmployerEmailStoreConnection": "Data Source=(localdb)\\ProjectsV13;Initial Catalog=ESFA.DAS.EmployerFeedbackEmail.Database;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultipleActiveResultSets=true;MultiSubnetFailover=False",
     "Redis": "localhost:6379"
   },
-  "NotificationApi": {
-    "BaseUrl": "https://at-notifications.apprenticeships.sfa.bis.gov.uk",
-    "ClientToken": "abc123"
-  },
-  "AccountApi": {
-    "ApiBaseUrl": "https://test-accounts.apprenticeships.education.gov.uk",
-    "ClientId": "",
-    "ClientSecret": "",
-    "IdentifierUri": "https://citizenazuresfabisgov.onmicrosoft.com/eas-api",
-    "Tenant": "citizenazuresfabisgov.onmicrosoft.com"
-  },
-  "CommitmentApi": {
-    "BaseUrl": "https://test-commitments.apprenticeships.education.gov.uk/",
-    "ClientToken": ""
-  },
-  "ProviderApi": {
-    "BaseUrl": "https://test-fatapi.apprenticeships.education.gov.uk/"
-  },
-"CommitmentV2Api": {
-    "ApiBaseUrl": "https://test-commitments.apprenticeships.education.gov.uk/",
-    "IdentifierUri": "https://citizenazuresfabisgov.onmicrosoft.com/eas-api"
+  "CommitmentV2Api": {
+    "ApiBaseUrl": "https://******.apprenticeships.education.gov.uk/",
+    "IdentifierUri": "https://******.onmicrosoft.com/******"
   }
 }
 ```
