@@ -20,16 +20,8 @@ This repository represents the code base for the employer feedback service. This
 ### Environment Setup
 
 * **Database** - Publish the local database from the `ESFA.DAS.EmployerFeedbackEmail.Database` project.
-    * Setting up your database - You will need your `SFA.DAS.Commitments.Database` database setup with data before following these steps:
-        * Pick a record from the `Commitments` table within the `SFA.DAS.Commitments.Database` database and get the `EmployerAccountId` value.
-        * Search the `Commitments` table by the `EmployerAccountId`, you may find there is more than one training provider associated with the employer.
-        * Get the `UKPRN` value from the `Commitments` records with the `EmployerAccountId` you picked above. 
-        * Search the `Providers` table by the `UKPRN` within the `SFA.DAS.Commitments.Database` database to get all information about this training provider or training providers.
-        * Add the training provider(s) to the `Providers` table in the `ESFA.DAS.EmployerFeedbackEmail.Database` database. 
-        * Generate a random GUID, and add a record to the `Users` table. 
-        * Using the same GUID, add the GUID, the `UKRPN` of a training provider(s), and the `EmployerAccountId` to the `EmployerFeedback` table in the `ESFA.DAS.EmployerFeedbackEmail.Database` database. 
-        * Remembering the `FeedbackId` of the record(s) you just created, add a record to the `EmployerSurveyCodes` table in the `ESFA.DAS.EmployerFeedbackEmail.Database` database. 
-* **local.settings.json file** - Add the following to the local.settings.json file in the `ESFA.DAS.ProviderFeedback.Employer.Functions.Emailer` functions app.
+    * Setting up your database - [Setup your database](https://skillsfundingagency.atlassian.net/wiki/spaces/NDL/pages/3948019848/Employer+Feedback+Setup)      
+* **local.settings.json file** - Add the following to the `local.settings.json` file in the `ESFA.DAS.ProviderFeedback.Employer.Functions.Emailer` functions app.
 
 Please note all the connection string and secrets to API have been removed. This will need updating.
 ```
