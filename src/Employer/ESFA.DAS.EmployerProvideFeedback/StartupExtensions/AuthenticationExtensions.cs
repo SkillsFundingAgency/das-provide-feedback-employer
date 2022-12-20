@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Threading.Tasks;
+using ESFA.DAS.EmployerProvideFeedback.Authentication;
 
 namespace ESFA.DAS.EmployerProvideFeedback.StartupExtensions
 {
@@ -13,6 +14,25 @@ namespace ESFA.DAS.EmployerProvideFeedback.StartupExtensions
     {
         public static void AddEmployerAuthentication(this IServiceCollection services, AuthenticationConfiguration configuration)
         {
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy(
+                    PolicyNames.HasEmployerAccount
+                    , policy =>
+                    {
+                        policy.RequireClaim(EmployerClaims.Account);
+                        policy.Requirements.Add(new EmployerAccountRequirement());
+                        policy.RequireAuthenticatedUser();
+                    });
+                options.AddPolicy(
+                    PolicyNames.HasEmployerViewerTransactorAccount
+                    , policy =>
+                    {
+                        policy.RequireClaim(EmployerClaims.Account);
+                        policy.Requirements.Add(new EmployerViewerTransactorRoleRequirement());
+                        policy.RequireAuthenticatedUser();
+                    });
+            });
             services
                 .AddAuthentication(sharedOptions =>
                 {
