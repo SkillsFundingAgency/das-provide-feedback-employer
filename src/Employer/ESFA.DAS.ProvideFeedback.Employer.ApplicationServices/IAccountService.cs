@@ -8,6 +8,5 @@ namespace ESFA.DAS.ProvideFeedback.Employer.ApplicationServices
     public interface IAccountService
     {
         Task<ICollection<TeamMemberViewModel>> GetAccountUsers(long accountId);
-        Task<EmployerUserAccounts> GetUserAccounts(string userId, string email);
     }
 }

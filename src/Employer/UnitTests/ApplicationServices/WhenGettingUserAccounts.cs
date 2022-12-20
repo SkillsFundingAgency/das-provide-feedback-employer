@@ -21,7 +21,7 @@ namespace UnitTests.ApplicationServices
             string userId,
             GetUserAccountsResponse response,
             [Frozen] Mock<IOuterApiClient> apiClient,
-            AccountService service)
+            EmployerAccountService service)
         {
             var expectedRequest = new GetUserAccountsRequest(userId, email);
             apiClient.Setup(x =>

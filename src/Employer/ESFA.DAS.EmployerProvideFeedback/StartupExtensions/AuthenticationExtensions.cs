@@ -12,6 +12,7 @@ using ESFA.DAS.ProvideFeedback.Employer.ApplicationServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Configuration;
 using SFA.DAS.GovUK.Auth.AppStart;
+using SFA.DAS.GovUK.Auth.Configuration;
 using SFA.DAS.GovUK.Auth.Services;
 
 namespace ESFA.DAS.EmployerProvideFeedback.StartupExtensions
@@ -48,6 +49,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.StartupExtensions
 
             if (provideFeedbackEmployerWebConfiguration.UseGovSignIn)
             {
+                services.Configure<GovUkOidcConfiguration>(configuration.GetSection("GovUkOidcConfiguration"));
                 services.AddAndConfigureGovUkAuthentication(configuration, $"{typeof(AuthenticationExtensions).Assembly.GetName().Name}.Auth",typeof(EmployerAccountPostAuthenticationClaimsHandler));
             }
             else
@@ -100,7 +102,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.StartupExtensions
                 });
                 services
                     .AddOptions<OpenIdConnectOptions>(OpenIdConnectDefaults.AuthenticationScheme)
-                    .Configure<IAccountService, ICustomClaims>((options, accountsService, customClaims) =>
+                    .Configure<ICustomClaims>((options, customClaims) =>
                     {
                         options.Events.OnTokenValidated = async (ctx) =>
                         {

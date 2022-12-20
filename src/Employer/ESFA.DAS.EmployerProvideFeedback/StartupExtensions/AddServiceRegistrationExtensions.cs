@@ -33,6 +33,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.StartupExtensions
             // Encoding Service
             services.AddSingleton<IEncodingService, EncodingService>();
 
+            services.AddTransient<IEmployerAccountService, EmployerAccountService>();
             services.AddHttpClient<IOuterApiClient, OuterApiClient>();
         }
     }

@@ -87,7 +87,7 @@ namespace UnitTests.Web.Authentication
             EmployerAccountRequirement requirement,
             EmployerUserAccountItem serviceResponse,
             [Frozen] Mock<IHttpContextAccessor> httpContextAccessor,
-            [Frozen] Mock<IAccountService> employerAccountService,
+            [Frozen] Mock<IEmployerAccountService> employerAccountService,
             [Frozen] Mock<IOptions<ProvideFeedbackEmployerWebConfiguration>> configuration,
             EmployerAccountAuthorizationHandler authorizationHandler)
         {
@@ -128,7 +128,7 @@ namespace UnitTests.Web.Authentication
             EmployerAccountRequirement requirement,
             EmployerUserAccountItem serviceResponse,
             [Frozen] Mock<IHttpContextAccessor> httpContextAccessor,
-            [Frozen] Mock<IAccountService> employerAccountService,
+            [Frozen] Mock<IEmployerAccountService> employerAccountService,
             [Frozen] Mock<IOptions<ProvideFeedbackEmployerWebConfiguration>> configuration,
             EmployerAccountAuthorizationHandler authorizationHandler)
         {
@@ -168,7 +168,7 @@ namespace UnitTests.Web.Authentication
             EmployerAccountRequirement requirement,
             EmployerUserAccountItem serviceResponse,
             [Frozen] Mock<IHttpContextAccessor> httpContextAccessor,
-            [Frozen] Mock<IAccountService> employerAccountService,
+            [Frozen] Mock<IEmployerAccountService> employerAccountService,
             EmployerAccountAuthorizationHandler authorizationHandler)
         {
             //Arrange

@@ -28,7 +28,7 @@ namespace UnitTests.Web.Authentication
             string idamsIdentifier,
             string emailAddress,
             EmployerUserAccounts accountData,
-            [Frozen] Mock<IAccountService> accountService,
+            [Frozen] Mock<IEmployerAccountService> accountService,
             [Frozen] Mock<IOptions<ProvideFeedbackEmployerWebConfiguration>> configuration,
             EmployerAccountPostAuthenticationClaimsHandler handler)
         {
@@ -55,7 +55,7 @@ namespace UnitTests.Web.Authentication
             string nameIdentifier,
             string idamsIdentifier,
             EmployerUserAccounts accountData,
-            [Frozen] Mock<IAccountService> accountService,
+            [Frozen] Mock<IEmployerAccountService> accountService,
             [Frozen] Mock<IOptions<ProvideFeedbackEmployerWebConfiguration>> configuration,
             EmployerAccountPostAuthenticationClaimsHandler handler)
         {

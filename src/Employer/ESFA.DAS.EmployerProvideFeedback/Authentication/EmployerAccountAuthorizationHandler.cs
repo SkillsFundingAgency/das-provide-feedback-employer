@@ -24,11 +24,11 @@ namespace ESFA.DAS.EmployerProvideFeedback.Authentication
     public class EmployerAccountAuthorizationHandler : AuthorizationHandler<EmployerAccountRequirement>, IEmployerAccountAuthorisationHandler
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly IAccountService _accountsService;
+        private readonly IEmployerAccountService _accountsService;
         private readonly ILogger<EmployerAccountAuthorizationHandler> _logger;
         private readonly ProvideFeedbackEmployerWebConfiguration _configuration;
 
-        public EmployerAccountAuthorizationHandler(IHttpContextAccessor httpContextAccessor, IAccountService accountsService, ILogger<EmployerAccountAuthorizationHandler> logger, IOptions<ProvideFeedbackEmployerWebConfiguration> configuration)
+        public EmployerAccountAuthorizationHandler(IHttpContextAccessor httpContextAccessor, IEmployerAccountService accountsService, ILogger<EmployerAccountAuthorizationHandler> logger, IOptions<ProvideFeedbackEmployerWebConfiguration> configuration)
         {
             _httpContextAccessor = httpContextAccessor;
             _accountsService = accountsService;

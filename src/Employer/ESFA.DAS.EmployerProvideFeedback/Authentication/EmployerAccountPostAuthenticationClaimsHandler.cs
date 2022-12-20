@@ -15,9 +15,9 @@ namespace ESFA.DAS.EmployerProvideFeedback.Authentication
     public class EmployerAccountPostAuthenticationClaimsHandler : ICustomClaims
     {
         private readonly ProvideFeedbackEmployerWebConfiguration _configuration;
-        private readonly IAccountService _accountService;
+        private readonly IEmployerAccountService _accountService;
 
-        public EmployerAccountPostAuthenticationClaimsHandler(IOptions<ProvideFeedbackEmployerWebConfiguration> configuration, IAccountService accountService)
+        public EmployerAccountPostAuthenticationClaimsHandler(IOptions<ProvideFeedbackEmployerWebConfiguration> configuration, IEmployerAccountService accountService)
         {
             _configuration = configuration.Value;
             _accountService = accountService;
