@@ -16,7 +16,7 @@ using ESFA.DAS.EmployerProvideFeedback.Authentication;
 
 namespace ESFA.DAS.EmployerProvideFeedback.Controllers
 {
-    [Authorize]
+    [Authorize(Policy = nameof(PolicyNames.HasEmployerAccount))]
     public class ProviderController : Controller
     {
         private readonly IEmployerFeedbackRepository _employerEmailDetailsRepository;

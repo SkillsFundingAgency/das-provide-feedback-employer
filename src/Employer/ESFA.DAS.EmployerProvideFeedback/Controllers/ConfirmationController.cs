@@ -7,10 +7,11 @@ using Microsoft.Extensions.Logging;
 using SFA.DAS.Employer.Shared.UI;
 using SFA.DAS.Employer.Shared.UI.Configuration;
 using System.Threading.Tasks;
+using ESFA.DAS.EmployerProvideFeedback.Authentication;
 
 namespace ESFA.DAS.EmployerProvideFeedback.Controllers
 {
-    [Authorize]
+    [Authorize(Policy = nameof(PolicyNames.HasEmployerAccount))]
     [Route(RoutePrefixPaths.FeedbackRoutePath)]
     [ServiceFilter(typeof(EnsureSessionExists))]
     public class ConfirmationController : Controller
