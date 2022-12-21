@@ -71,9 +71,9 @@ namespace UnitTests.Web.Authentication
             var actualClaimValue = actual.First(c => c.Type.Equals(EmployerClaims.Account)).Value;
             JsonConvert.SerializeObject(accountData.UserAccounts.ToDictionary(k => k.AccountId)).Should()
                 .Be(actualClaimValue);
-            actual.First(c=>c.Type.Equals(EmployerClaims.UserId)).Value.Should().Be(accountData.EmployerUserId);
-            actual.First(c=>c.Type.Equals(EmployerClaims.GivenName)).Value.Should().Be(accountData.FirstName);
-            actual.First(c=>c.Type.Equals(EmployerClaims.FamilyName)).Value.Should().Be(accountData.LastName);
+            actual.FirstOrDefault(c=>c.Type.Equals(EmployerClaims.UserId)).Should().BeNull();
+            actual.FirstOrDefault(c=>c.Type.Equals(EmployerClaims.GivenName)).Should().BeNull();
+            actual.FirstOrDefault(c=>c.Type.Equals(EmployerClaims.FamilyName)).Should().BeNull();
         }
 
         private TokenValidatedContext ArrangeTokenValidatedContext(string nameIdentifier, string idamsIdentifier,

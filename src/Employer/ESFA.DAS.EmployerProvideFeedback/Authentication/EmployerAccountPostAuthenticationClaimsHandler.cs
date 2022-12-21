@@ -51,10 +51,16 @@ namespace ESFA.DAS.EmployerProvideFeedback.Authentication
             
             var accountsAsJson = JsonConvert.SerializeObject(result.UserAccounts.ToDictionary(k => k.AccountId));
             claims.Add(new Claim(EmployerClaims.Account, accountsAsJson, JsonClaimValueTypes.Json));
+
+            if (!_configuration.UseGovSignIn)
+            {
+                return claims;
+            }
+            
             claims.Add(new Claim(EmployerClaims.UserId, result.EmployerUserId));
             claims.Add(new Claim(EmployerClaims.GivenName, result.FirstName));
             claims.Add(new Claim(EmployerClaims.FamilyName, result.LastName));
-            
+
             return claims;
         }
     }
