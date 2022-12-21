@@ -1,7 +1,4 @@
-﻿using System;
-using ESFA.DAS.ProvideFeedback.Employer.ApplicationServices.Configuration;
-using Microsoft.AspNetCore.Hosting;
-using System.Net.Http;
+﻿using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 
@@ -11,13 +8,11 @@ namespace ESFA.DAS.ProvideFeedback.Employer.ApplicationServices
     {
         private readonly HttpClient _httpClient;
         private readonly IAzureClientCredentialHelper _azureClientCredentialHelper;
-        private readonly IHostingEnvironment _hostingEnvironment;
 
-        public SecureHttpClient(HttpClient httpClient, IAzureClientCredentialHelper azureClientCredentialHelper, IHostingEnvironment hostingEnvironment)
+        public SecureHttpClient(HttpClient httpClient, IAzureClientCredentialHelper azureClientCredentialHelper)
         {
             _httpClient = httpClient;
             _azureClientCredentialHelper = azureClientCredentialHelper;
-            _hostingEnvironment = hostingEnvironment;
         }
 
         protected SecureHttpClient()
@@ -27,7 +22,7 @@ namespace ESFA.DAS.ProvideFeedback.Employer.ApplicationServices
 
         public virtual async Task<string> GetAsync(string url, string apiTokenIdentifierUri)
         {
-            if (!_hostingEnvironment.IsDevelopment())
+            if (!string.IsNullOrEmpty(apiTokenIdentifierUri))
             {
                 var accessToken = await _azureClientCredentialHelper.GetAccessTokenAsync(apiTokenIdentifierUri);
                 _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
