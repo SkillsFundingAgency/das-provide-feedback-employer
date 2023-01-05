@@ -281,11 +281,11 @@ namespace UnitTests.Web.Authentication
             EmployerIdentifier employerIdentifier,
             EmployerAccountRequirement requirement,
             [Frozen] Mock<IHttpContextAccessor> httpContextAccessor,
-            [Frozen] Mock<IOptions<ProvideFeedbackEmployerWebConfiguration>> apimDeveloperWebConfiguration,
+            [Frozen] Mock<IOptions<ProvideFeedbackEmployerWebConfiguration>> provideFeedbackEmployerConfiguration,
             EmployerAccountAuthorizationHandler authorizationHandler)
         {
             //Arrange
-            apimDeveloperWebConfiguration.Object.Value.UseGovSignIn = true;
+            provideFeedbackEmployerConfiguration.Object.Value.UseGovSignIn = true;
             employerIdentifier.Role = "Viewer-Owner-Transactor";
             employerIdentifier.AccountId = employerIdentifier.AccountId.ToUpper();
             var employerAccounts = new Dictionary<string, EmployerIdentifier>{{employerIdentifier.AccountId, employerIdentifier}};
