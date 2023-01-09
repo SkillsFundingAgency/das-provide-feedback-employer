@@ -206,6 +206,9 @@
         },
         "workerAccessRestrictions": {
             "type": "array"
+        },
+        "configNames": {
+            "type": "string"
         }
     },
     "variables": {
@@ -219,7 +222,6 @@
         "functionAppPlanName": "[concat(variables('resourceNamePrefix'), 'wkr-asp')]",
         "databaseName": "[concat(variables('resourceNamePrefix'), '-db')]",
         "resourceGroupName": "[concat(variables('resourceNamePrefix'), '-rg')]",
-        "configNames": "SFA.DAS.ProvideFeedbackEmployer.Web,SFA.DAS.EmployerUrlHelper:EmployerUrlHelper,SFA.DAS.Employer.Shared.UI,SFA.DAS.Encoding:EncodingService",
         "queues": {
             "RetrieveProvidersQueueName": "retrieve-providers",
             "AccountRefreshQueueName": "refresh-account",
@@ -347,7 +349,7 @@
                                 },
                                 {
                                     "name": "ConfigNames",
-                                    "value": "[variables('configNames')]"
+                                    "value": "[parameters('configNames')]"
                                 },
                                 {
                                     "name": "Version",
