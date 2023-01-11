@@ -56,11 +56,11 @@ namespace UnitTests.Application.SurveyInviteGeneratorTests
         public async Task ThenCreateNewSurveyCode(Guid? uniqueSurveyCode, DateTime? inviteSentDate)
         {
             // Arrange
-            var feedbackInvite = new FeedbackInvite 
-            { 
-                FeedbackId = FeedBackId, 
-                UniqueSurveyCode = uniqueSurveyCode, 
-                InviteSentDate = inviteSentDate 
+            var feedbackInvite = new FeedbackInvite
+            {
+                FeedbackId = FeedBackId,
+                UniqueSurveyCode = uniqueSurveyCode,
+                InviteSentDate = inviteSentDate
             };
 
             _emailDetailsRepoMock
@@ -74,7 +74,7 @@ namespace UnitTests.Application.SurveyInviteGeneratorTests
             _emailDetailsRepoMock.Verify(mock => mock.InsertNewSurveyForFeedback(FeedBackId), Times.Once);
         }
 
-        public static IEnumerable<object[]> CreateTestData 
+        public static IEnumerable<object[]> CreateTestData
         {
             get
             {
@@ -87,11 +87,11 @@ namespace UnitTests.Application.SurveyInviteGeneratorTests
         public async Task ThenDontCreateNewSurveyCode(DateTime? inviteSentDate)
         {
             // Arrange
-            var feedbackInvite = new FeedbackInvite 
-            { 
-                FeedbackId = FeedBackId, 
-                UniqueSurveyCode = Guid.NewGuid(), 
-                InviteSentDate = DateTime.UtcNow.AddDays(InviteCycleDays - 1) 
+            var feedbackInvite = new FeedbackInvite
+            {
+                FeedbackId = FeedBackId,
+                UniqueSurveyCode = Guid.NewGuid(),
+                InviteSentDate = DateTime.UtcNow.AddDays(InviteCycleDays - 1)
             };
 
             _emailDetailsRepoMock
@@ -104,7 +104,7 @@ namespace UnitTests.Application.SurveyInviteGeneratorTests
             // Assert
             _emailDetailsRepoMock.Verify(mock => mock.InsertNewSurveyForFeedback(It.IsAny<long>()), Times.Never);
         }
-        public static IEnumerable<object[]> SkipCreationTestData 
+        public static IEnumerable<object[]> SkipCreationTestData
         {
             get
             {

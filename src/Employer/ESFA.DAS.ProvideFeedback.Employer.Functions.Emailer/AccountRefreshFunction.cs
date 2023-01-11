@@ -1,11 +1,11 @@
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 using ESFA.DAS.ProvideFeedback.Domain.Entities.Messages;
 using ESFA.DAS.ProvideFeedback.Employer.Application;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.ServiceBus;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
 {
@@ -20,8 +20,8 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
 
         [FunctionName("AccountRefreshFunction")]
         public async Task Run(
-            [ServiceBusTrigger("%AccountRefreshQueueName%", Connection = "ServiceBusConnection")]string accountIdMessage,
-            [ServiceBus("%ProcessActiveFeedbackQueueName%", Connection = "ServiceBusConnection", EntityType = EntityType.Queue)]ICollector<GroupedFeedbackRefreshMessage> queue,
+            [ServiceBusTrigger("%AccountRefreshQueueName%", Connection = "ServiceBusConnection")] string accountIdMessage,
+            [ServiceBus("%ProcessActiveFeedbackQueueName%", Connection = "ServiceBusConnection", EntityType = EntityType.Queue)] ICollector<GroupedFeedbackRefreshMessage> queue,
             ILogger log)
         {
             log.LogInformation($"Account refresh function triggered for: {accountIdMessage}");

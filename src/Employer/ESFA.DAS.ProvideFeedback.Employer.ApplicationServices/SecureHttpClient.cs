@@ -1,6 +1,4 @@
-﻿using System;
-using ESFA.DAS.ProvideFeedback.Employer.ApplicationServices.Configuration;
-using Microsoft.AspNetCore.Hosting;
+﻿using Microsoft.AspNetCore.Hosting;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;

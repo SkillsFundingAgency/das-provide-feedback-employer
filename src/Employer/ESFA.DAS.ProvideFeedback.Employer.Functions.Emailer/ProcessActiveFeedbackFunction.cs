@@ -1,12 +1,12 @@
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 using ESFA.DAS.ProvideFeedback.Domain.Entities.Messages;
 using ESFA.DAS.ProvideFeedback.Employer.Application;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.ServiceBus;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
 {
@@ -21,9 +21,9 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
 
         [FunctionName("ProcessActiveFeedbackFunction")]
         public async Task Run(
-            [ServiceBusTrigger("%ProcessActiveFeedbackQueueName%", Connection = "ServiceBusConnection")]string myQueueItem,
+            [ServiceBusTrigger("%ProcessActiveFeedbackQueueName%", Connection = "ServiceBusConnection")] string myQueueItem,
             ILogger log,
-            [ServiceBus("%GenerateSurveyInviteMessageQueueName%", Connection = "ServiceBusConnection", EntityType = EntityType.Queue)]ICollector<GenerateSurveyCodeMessage> queue)
+            [ServiceBus("%GenerateSurveyInviteMessageQueueName%", Connection = "ServiceBusConnection", EntityType = EntityType.Queue)] ICollector<GenerateSurveyCodeMessage> queue)
         {
             log.LogInformation("Data refresh function started.");
             GroupedFeedbackRefreshMessage message = JsonConvert.DeserializeObject<GroupedFeedbackRefreshMessage>(myQueueItem);
@@ -43,7 +43,7 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
                     .AsParallel()
                     .ForAll(queue.Add);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 log.LogError(ex, "Error refreshing feedback data");
                 throw;
@@ -52,6 +52,6 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
             log.LogInformation("Data refresh function complete.");
         }
 
-        
+
     }
 }

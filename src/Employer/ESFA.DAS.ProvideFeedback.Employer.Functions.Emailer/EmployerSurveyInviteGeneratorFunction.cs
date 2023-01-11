@@ -1,10 +1,10 @@
-using System;
-using System.Threading.Tasks;
 using ESFA.DAS.ProvideFeedback.Domain.Entities.Messages;
 using ESFA.DAS.ProvideFeedback.Employer.Application;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using System;
+using System.Threading.Tasks;
 
 namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
 {
@@ -19,7 +19,7 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
 
         [FunctionName("EmployerSurveyInviteGenerator")]
         public async Task Run(
-            [ServiceBusTrigger("%GenerateSurveyInviteMessageQueueName%", Connection = "ServiceBusConnection")]string feedbackForCodeGeneration,
+            [ServiceBusTrigger("%GenerateSurveyInviteMessageQueueName%", Connection = "ServiceBusConnection")] string feedbackForCodeGeneration,
             ILogger log)
         {
             log.LogInformation($"Employer Survey Invite generator executed at: {DateTime.UtcNow}");
@@ -29,7 +29,7 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
             {
                 await _surveyInviteGenerator.GenerateSurveyInvites(message);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 log.LogError(ex, $"Failed to generate survey invite for Account: {message.AccountId}, Ukprn: {message.Ukprn}, User: {message.UserRef}");
                 throw;

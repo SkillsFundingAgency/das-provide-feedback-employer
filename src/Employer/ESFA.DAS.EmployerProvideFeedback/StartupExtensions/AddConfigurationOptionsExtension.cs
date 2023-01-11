@@ -13,7 +13,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.StartupExtensions
             services.AddOptions();
             services.Configure<ProvideFeedbackEmployerWebConfiguration>(configuration.GetSection("ProvideFeedbackEmployerWeb"));
             services.AddSingleton(cfg => cfg.GetService<IOptions<ProvideFeedbackEmployerWebConfiguration>>().Value);
-                        
+
             services.Configure<EncodingConfig>(configuration.GetSection("EncodingService"));
             services.AddSingleton(cfg => cfg.GetService<IOptions<EncodingConfig>>().Value);
         }

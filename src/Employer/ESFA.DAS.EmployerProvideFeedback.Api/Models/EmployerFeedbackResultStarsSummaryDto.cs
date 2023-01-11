@@ -1,6 +1,6 @@
 ﻿
-using System;
 using Newtonsoft.Json;
+using System;
 
 
 namespace ESFA.DAS.EmployerProvideFeedback.Api.Models

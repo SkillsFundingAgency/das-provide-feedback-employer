@@ -1,5 +1,5 @@
-using System.Threading.Tasks;
 using Microsoft.Azure.Services.AppAuthentication;
+using System.Threading.Tasks;
 
 namespace ESFA.DAS.ProvideFeedback.Employer.ApplicationServices
 {
@@ -9,7 +9,7 @@ namespace ESFA.DAS.ProvideFeedback.Employer.ApplicationServices
         {
             var azureServiceTokenProvider = new AzureServiceTokenProvider();
             var accessToken = await azureServiceTokenProvider.GetAccessTokenAsync(identifier);
-         
+
             return accessToken;
         }
     }

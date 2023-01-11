@@ -1,11 +1,9 @@
 ﻿namespace ESFA.DAS.EmployerProvideFeedback.Api
 {
-    using System;
-
     using Microsoft.AspNetCore;
     using Microsoft.AspNetCore.Hosting;
-
     using NLog.Web;
+    using System;
 
     public class Program
     {

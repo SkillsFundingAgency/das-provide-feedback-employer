@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace ESFA.DAS.ProvideFeedback.Domain.Entities.Models
 {

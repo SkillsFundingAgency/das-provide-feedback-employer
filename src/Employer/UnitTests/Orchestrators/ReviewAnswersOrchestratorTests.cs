@@ -6,8 +6,6 @@ using ESFA.DAS.ProvideFeedback.Domain.Entities.Models;
 using Microsoft.Extensions.Logging;
 using Moq;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using Xunit;
 
 namespace UnitTests.Orchestrators
@@ -36,7 +34,7 @@ namespace UnitTests.Orchestrators
             employerFeedback.Object.FeedbackId = 1;
             employerFeedbackRepository.Setup(x => x.GetEmployerFeedbackRecord(surveyModel.UserRef, surveyModel.AccountId, surveyModel.Ukprn))
                 .ReturnsAsync(employerFeedback.Object);
-           
+
             //Act
             await orchestrator.SubmitConfirmedEmployerFeedback(surveyModel);
 

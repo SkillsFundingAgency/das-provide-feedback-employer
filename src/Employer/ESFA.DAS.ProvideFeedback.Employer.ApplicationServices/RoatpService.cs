@@ -1,13 +1,13 @@
-using System;
-using System.Collections.Generic;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Threading.Tasks;
 using ESFA.DAS.ProvideFeedback.Domain.Entities.ApiTypes;
 using ESFA.DAS.ProvideFeedback.Employer.ApplicationServices.Configuration;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Threading.Tasks;
 
 namespace ESFA.DAS.ProvideFeedback.Employer.ApplicationServices
 {
@@ -18,7 +18,7 @@ namespace ESFA.DAS.ProvideFeedback.Employer.ApplicationServices
         private readonly IHostingEnvironment _hostingEnvironment;
         private readonly RoatpApiConfiguration _configuration;
 
-        public RoatpService (HttpClient httpClient, IAzureClientCredentialHelper azureClientCredentialHelper, IHostingEnvironment hostingEnvironment, IOptions<RoatpApiConfiguration> configuration)
+        public RoatpService(HttpClient httpClient, IAzureClientCredentialHelper azureClientCredentialHelper, IHostingEnvironment hostingEnvironment, IOptions<RoatpApiConfiguration> configuration)
         {
             _configuration = configuration.Value;
             _httpClient = httpClient;
@@ -26,20 +26,20 @@ namespace ESFA.DAS.ProvideFeedback.Employer.ApplicationServices
             _azureClientCredentialHelper = azureClientCredentialHelper;
             _hostingEnvironment = hostingEnvironment;
         }
-        
+
         public async Task<IEnumerable<ProviderRegistration>> GetAll()
         {
             await AddAuthenticationHeader();
-            
+
             var response = await _httpClient.GetAsync("v1/fat-data-export");
-            
+
             response.EnsureSuccessStatusCode();
-            
+
             var jsonResponse = await response.Content.ReadAsStringAsync();
-            
+
             return JsonConvert.DeserializeObject<List<ProviderRegistration>>(jsonResponse);
         }
-        
+
         private async Task AddAuthenticationHeader()
         {
             if (!_hostingEnvironment.IsDevelopment())

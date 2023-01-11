@@ -1,9 +1,8 @@
-﻿using System;
-using System.Security.Claims;
-using ESFA.DAS.EmployerProvideFeedback.Configuration.Routing;
+﻿using ESFA.DAS.EmployerProvideFeedback.Configuration.Routing;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Logging;
+using System.Security.Claims;
 
 namespace ESFA.DAS.EmployerProvideFeedback.Infrastructure
 {
@@ -23,7 +22,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Infrastructure
             var c = context.Controller as Controller;
             var userId = c.User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-             if (!_sessionService.ExistsAsync(userId).Result)
+            if (!_sessionService.ExistsAsync(userId).Result)
             {
                 _logger.LogWarning($"Session for user id {userId} does not exist");
                 var controller = context.Controller as Controller;

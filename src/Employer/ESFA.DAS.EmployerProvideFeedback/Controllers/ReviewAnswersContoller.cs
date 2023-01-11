@@ -1,12 +1,10 @@
-﻿using System;
-using System.Threading.Tasks;
-using ESFA.DAS.EmployerProvideFeedback.Configuration.Routing;
+﻿using ESFA.DAS.EmployerProvideFeedback.Configuration.Routing;
 using ESFA.DAS.EmployerProvideFeedback.Infrastructure;
 using ESFA.DAS.EmployerProvideFeedback.Orchestrators;
 using ESFA.DAS.EmployerProvideFeedback.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
+using System.Threading.Tasks;
 
 namespace ESFA.DAS.EmployerProvideFeedback.Controllers
 {

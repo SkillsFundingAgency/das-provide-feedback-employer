@@ -1,15 +1,15 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Authorization;
+using Microsoft.Azure.Services.AppAuthentication;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using SFA.DAS.Api.Common.AppStart;
 using SFA.DAS.Api.Common.Configuration;
 using SFA.DAS.Api.Common.Infrastructure;
 using System.Collections.Generic;
-using Microsoft.Extensions.Hosting;
-using SFA.DAS.Api.Common.AppStart;
 using System.Data;
 using System.Data.SqlClient;
-using Microsoft.Azure.Services.AppAuthentication;
 
 namespace ESFA.DAS.EmployerProvideFeedback.Api.Configuration
 {

@@ -1,17 +1,17 @@
 ﻿
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using AutoFixture;
-using Microsoft.Extensions.Logging;
-using FluentAssertions;
-using Moq;
-using Xunit;
 using ESFA.DAS.EmployerProvideFeedback.Api.Models;
 using ESFA.DAS.EmployerProvideFeedback.Api.Queries.ProviderSummaryStarsQuery;
 using ESFA.DAS.ProvideFeedback.Data.Repositories;
 using ESFA.DAS.ProvideFeedback.Domain.Entities.Models;
+using FluentAssertions;
+using Microsoft.Extensions.Logging;
+using Moq;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using Xunit;
 
 
 namespace UnitTests.Api
@@ -35,7 +35,7 @@ namespace UnitTests.Api
         public async Task WhenQueryingProviderSummaryStars_IfNullReturnsNull()
         {
             // arrange
-            mockRepository.Setup(s => s.GetAllStarsSummary()).ReturnsAsync((IEnumerable<ProviderStarsSummary>) null);
+            mockRepository.Setup(s => s.GetAllStarsSummary()).ReturnsAsync((IEnumerable<ProviderStarsSummary>)null);
 
             // act
             IEnumerable<EmployerFeedbackStarsSummaryDto> response = await handler.Handle(new ProviderSummaryStarsQuery(), new CancellationToken());

@@ -1,10 +1,8 @@
 ﻿namespace ESFA.DAS.EmployerProvideFeedback.Api
 {
-    using System.IO;
-    using MediatR;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.Extensions.Configuration;
-    using Microsoft.Extensions.DependencyInjection;
+    using System.IO;
 
     public partial class Startup
     {

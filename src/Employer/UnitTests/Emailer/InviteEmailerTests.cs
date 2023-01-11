@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using ESFA.DAS.Feedback.Employer.Emailer;
+﻿using ESFA.DAS.Feedback.Employer.Emailer;
 using ESFA.DAS.Feedback.Employer.Emailer.Configuration;
 using ESFA.DAS.ProvideFeedback.Data.Repositories;
 using ESFA.DAS.ProvideFeedback.Domain.Entities.Models;
@@ -10,6 +7,9 @@ using Microsoft.Extensions.Options;
 using Moq;
 using SFA.DAS.Notifications.Api.Client;
 using SFA.DAS.Notifications.Api.Types;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace ESFA.DAS.Feedback.Employer.UnitTests.Emailer
@@ -109,7 +109,7 @@ namespace ESFA.DAS.Feedback.Employer.UnitTests.Emailer
             {
                 await _emailer.SendEmailsAsync();
 
-                _mockStore.Verify(x => x.InsertSurveyInviteHistory(It.IsAny < IEnumerable<Guid>>(), It.IsAny<int>()), Times.Once);
+                _mockStore.Verify(x => x.InsertSurveyInviteHistory(It.IsAny<IEnumerable<Guid>>(), It.IsAny<int>()), Times.Once);
             }
         }
     }

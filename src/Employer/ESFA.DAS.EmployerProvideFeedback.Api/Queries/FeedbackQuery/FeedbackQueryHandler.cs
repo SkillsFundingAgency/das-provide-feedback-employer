@@ -29,7 +29,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Api.Queries.FeedbackQuery
             }
 
             var groupedFeedback = feedback.GroupBy(
-                x => new { x.Id, x.Ukprn, x.DateTimeCompleted, x.ProviderRating},
+                x => new { x.Id, x.Ukprn, x.DateTimeCompleted, x.ProviderRating },
                 x => new ProviderAttributeDto
                 {
                     Name = x.AttributeName,

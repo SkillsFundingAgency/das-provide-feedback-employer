@@ -1,9 +1,7 @@
-﻿using SFA.DAS.EAS.Account.Api.Types;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using ESFA.DAS.ProvideFeedback.Employer.ApplicationServices.Configuration;
+﻿using ESFA.DAS.ProvideFeedback.Employer.ApplicationServices.Configuration;
 using Newtonsoft.Json;
 using SFA.DAS.CommitmentsV2.Api.Types.Responses;
+using System.Threading.Tasks;
 
 namespace ESFA.DAS.ProvideFeedback.Employer.ApplicationServices
 {

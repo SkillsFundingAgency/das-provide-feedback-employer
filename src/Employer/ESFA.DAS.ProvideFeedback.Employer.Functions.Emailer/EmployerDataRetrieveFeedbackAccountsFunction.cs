@@ -1,10 +1,10 @@
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 using ESFA.DAS.ProvideFeedback.Employer.ApplicationServices;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.ServiceBus;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
 {
@@ -19,8 +19,8 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
 
         [FunctionName("EmployerDataRetrieveFeedbackAccountsFunction")]
         public async Task Run(
-            [ServiceBusTrigger("%RetrieveFeedbackAccountsQueueName%", Connection = "ServiceBusConnection")]string myQueueItem,
-            [ServiceBus("%AccountRefreshQueueName%", Connection = "ServiceBusConnection", EntityType = EntityType.Queue)]ICollector<string> queue,
+            [ServiceBusTrigger("%RetrieveFeedbackAccountsQueueName%", Connection = "ServiceBusConnection")] string myQueueItem,
+            [ServiceBus("%AccountRefreshQueueName%", Connection = "ServiceBusConnection", EntityType = EntityType.Queue)] ICollector<string> queue,
             ILogger log)
         {
             log.LogInformation($"Starting Employer Account retrieval");
@@ -37,13 +37,13 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
                     .AsParallel()
                     .ForAll(queue.Add);
 
-                log.LogInformation($"Placed { allCohortAccountIdsResponse.AccountIds.Count()} messages in the queue");
+                log.LogInformation($"Placed {allCohortAccountIdsResponse.AccountIds.Count()} messages in the queue");
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 log.LogError(ex, $"Failed to retrieve Employer Accounts.");
                 throw;
-            }            
+            }
         }
     }
 }

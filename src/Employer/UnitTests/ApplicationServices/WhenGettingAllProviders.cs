@@ -1,8 +1,3 @@
-using System;
-using System.Net;
-using System.Net.Http;
-using System.Threading;
-using System.Threading.Tasks;
 using AutoFixture;
 using ESFA.DAS.ProvideFeedback.Domain.Entities.ApiTypes;
 using ESFA.DAS.ProvideFeedback.Employer.ApplicationServices;
@@ -13,6 +8,11 @@ using Microsoft.Extensions.Options;
 using Moq;
 using Moq.Protected;
 using Newtonsoft.Json;
+using System;
+using System.Net;
+using System.Net.Http;
+using System.Threading;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace UnitTests.ApplicationServices
@@ -36,7 +36,7 @@ namespace UnitTests.ApplicationServices
             var configuration = new Mock<IOptions<RoatpApiConfiguration>>();
             configuration.Setup(x => x.Value).Returns(new RoatpApiConfiguration
             {
-                Identifier =  identifier,
+                Identifier = identifier,
                 Url = providersUrl
             });
             var response = new HttpResponseMessage
@@ -46,15 +46,15 @@ namespace UnitTests.ApplicationServices
             };
             var httpMessageHandler = SetupMessageHandlerMock(response, new Uri(providersUrl + "v1/fat-data-export"), HttpMethod.Get, authToken);
             var client = new HttpClient(httpMessageHandler.Object);
-            var apprenticeshipService = new RoatpService(client,azureClientCredentialHelper.Object,Mock.Of<IHostingEnvironment>(), configuration.Object);
-            
+            var apprenticeshipService = new RoatpService(client, azureClientCredentialHelper.Object, Mock.Of<IHostingEnvironment>(), configuration.Object);
+
             //Act
             var providers = await apprenticeshipService.GetAll();
-            
+
             //Assert
             providers.Should().BeEquivalentTo(importProviders);
         }
-        
+
         private static Mock<HttpMessageHandler> SetupMessageHandlerMock(HttpResponseMessage response, Uri uri, HttpMethod httpMethod, string authToken)
         {
             var httpMessageHandler = new Mock<HttpMessageHandler>();

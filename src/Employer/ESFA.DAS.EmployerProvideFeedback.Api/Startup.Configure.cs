@@ -28,7 +28,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Api
             }
 
             app.UseAuthentication();
-            
+
             app.UseRouting();
             app.UseEndpoints(endpoints =>
             {

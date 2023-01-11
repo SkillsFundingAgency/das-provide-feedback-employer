@@ -90,7 +90,7 @@ namespace UnitTests.Services
             [Theory]
             [MemberData(nameof(MultiplePagedProvidersTestData))]
             public async Task When_Providers_Exist_Then_Return_PagedResult(
-                IEnumerable<GetApprenticeshipsResponse.ApprenticeshipDetailsResponse> providers, 
+                IEnumerable<GetApprenticeshipsResponse.ApprenticeshipDetailsResponse> providers,
                 int pageSize, int pageIndex, string selectedProviderName, string selectedFeedbackStatus, string sortColumn, string sortDirection,
                 int expectedTotalRecordCount, int expectedTotalPages)
             {
@@ -99,7 +99,7 @@ namespace UnitTests.Services
                 _encodingServiceMock.Setup(m => m.Decode(testAccountIdEncoded, EncodingType.AccountId)).Returns(testAccountId);
 
                 _commitmentServiceMock.Setup(m => m.GetApprenticeships(testAccountId)).ReturnsAsync(
-                    new GetApprenticeshipsResponse() { Apprenticeships = providers});
+                    new GetApprenticeshipsResponse() { Apprenticeships = providers });
 
                 ITrainingProviderService sut = new TrainingProviderService(
                     _commitmentServiceMock.Object,

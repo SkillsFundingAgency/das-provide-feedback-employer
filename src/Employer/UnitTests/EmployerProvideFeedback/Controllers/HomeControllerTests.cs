@@ -1,21 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
-using System.Threading.Tasks;
-using AutoFixture;
+﻿using AutoFixture;
 using ESFA.DAS.EmployerProvideFeedback.Controllers;
 using ESFA.DAS.EmployerProvideFeedback.Infrastructure;
 using ESFA.DAS.EmployerProvideFeedback.ViewModels;
 using ESFA.DAS.ProvideFeedback.Data.Repositories;
 using ESFA.DAS.ProvideFeedback.Domain.Entities.Models;
-using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
 using SFA.DAS.Encoding;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Security.Claims;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace UnitTests.EmployerProvideFeedback.Controllers
@@ -26,7 +25,7 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
         private readonly Mock<ISessionService> _sessionServiceMock;
         private readonly Mock<IEmployerFeedbackRepository> _employerEmailDetailsRepoMock;
         private readonly Mock<IEncodingService> _encodingServiceMock;
-        private readonly Mock<ILogger<HomeController>> _loggerMock; 
+        private readonly Mock<ILogger<HomeController>> _loggerMock;
         private readonly List<ProviderAttributeModel> _providerAttributes;
         private IFixture _fixture = new Fixture();
         private readonly IOptions<List<ProviderAttributeModel>> _providerAttributeOptions;
@@ -124,7 +123,7 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
         }
 
         [Fact]
-        public async  void SessionSurvey_Exists_ShouldNotCreateNewSurvey()
+        public async void SessionSurvey_Exists_ShouldNotCreateNewSurvey()
         {
             // Arrange
             var existingSurvey = _fixture.Create<SurveyModel>();

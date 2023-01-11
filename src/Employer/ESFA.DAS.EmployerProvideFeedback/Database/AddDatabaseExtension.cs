@@ -1,10 +1,10 @@
-﻿using System.Data;
-using System.Data.SqlClient;
-using ESFA.DAS.EmployerProvideFeedback.Infrastructure;
+﻿using ESFA.DAS.EmployerProvideFeedback.Infrastructure;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Azure.Services.AppAuthentication;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using System.Data;
+using System.Data.SqlClient;
 
 namespace ESFA.DAS.EmployerProvideFeedback.Database
 {

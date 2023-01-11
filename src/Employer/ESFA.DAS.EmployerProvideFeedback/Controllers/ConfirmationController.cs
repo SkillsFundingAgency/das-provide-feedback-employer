@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.Employer.Shared.UI;
-using SFA.DAS.Employer.Shared.UI.Configuration;
 using System.Threading.Tasks;
 
 namespace ESFA.DAS.EmployerProvideFeedback.Controllers
@@ -19,7 +18,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
         private readonly ILogger<ConfirmationController> _logger;
         private readonly ProvideFeedbackEmployerWebConfiguration _config;
         private readonly UrlBuilder _urlBuilder;
-        
+
         public ConfirmationController(
             ISessionService sessionService,
             ProvideFeedbackEmployerWebConfiguration config,
@@ -40,7 +39,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
             var providerCount = await _sessionService.Get<int>($"{idClaim.Value}_ProviderCount");
             await _sessionService.Remove($"{idClaim.Value}_PagingState");  // remove paging state incase we loop round for another provider
             var hasMultipleProviders = providerCount > 0;
-            
+
 
             var confirmationVm = new ConfirmationViewModel
             {

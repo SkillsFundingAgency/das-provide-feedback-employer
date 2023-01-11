@@ -149,7 +149,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.TagHelpers
         {
             if (string.IsNullOrWhiteSpace(sortOrder))
                 return Asc;
-            if(sortOrder.Equals(Asc, StringComparison.InvariantCultureIgnoreCase))
+            if (sortOrder.Equals(Asc, StringComparison.InvariantCultureIgnoreCase))
             {
                 return Desc;
             }

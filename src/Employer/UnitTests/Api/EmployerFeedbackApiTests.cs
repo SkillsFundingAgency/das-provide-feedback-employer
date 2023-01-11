@@ -34,7 +34,7 @@ namespace UnitTests.Api
         public async Task WhenGettingAllFeedback_SendsFeedbackQuery(List<EmployerFeedbackDto> feedback)
         {
             // arrange
-            mockMediator.Setup(s => s.Send(It.IsAny<FeedbackQuery>(),It.IsAny<CancellationToken>())).ReturnsAsync(feedback);
+            mockMediator.Setup(s => s.Send(It.IsAny<FeedbackQuery>(), It.IsAny<CancellationToken>())).ReturnsAsync(feedback);
 
             // act
             var actionResult = await this.controller.GetAll();

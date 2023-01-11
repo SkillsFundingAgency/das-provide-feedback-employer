@@ -1,8 +1,8 @@
-using System;
-using System.Threading.Tasks;
 using ESFA.DAS.Feedback.Employer.Emailer;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Threading.Tasks;
 
 namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
 {
@@ -17,7 +17,7 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
 
         [FunctionName("SurveyInviteEmailer")]
         public async Task Run(
-           [TimerTrigger("%InviteEmailerSchedule%")]TimerInfo myTimer,
+           [TimerTrigger("%InviteEmailerSchedule%")] TimerInfo myTimer,
             ILogger log)
         {
             log.LogInformation("Starting employer invite emailer.");

@@ -45,10 +45,10 @@ namespace ESFA.DAS.EmployerProvideFeedback.Services
         }
 
         public async Task<ProviderSearchViewModel> GetTrainingProviderSearchViewModel(
-            string encodedAccountId, 
+            string encodedAccountId,
             string selectedProviderName,
             string selectedFeedbackStatus,
-            int pageSize, 
+            int pageSize,
             int pageIndex,
             string sortColumn,
             string sortDirection)
@@ -84,9 +84,9 @@ namespace ESFA.DAS.EmployerProvideFeedback.Services
 
             // Sort
 
-            if(PagingState.SortDescending == model.SortDirection)
+            if (PagingState.SortDescending == model.SortDirection)
             {
-                if(!string.IsNullOrWhiteSpace(model.SortColumn) && model.SortColumn.Equals("FeedbackStatus", StringComparison.InvariantCultureIgnoreCase))
+                if (!string.IsNullOrWhiteSpace(model.SortColumn) && model.SortColumn.Equals("FeedbackStatus", StringComparison.InvariantCultureIgnoreCase))
                 {
                     filteredProviders = filteredProviders.OrderByDescending(p => p.FeedbackStatus);
                 }
@@ -127,7 +127,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Services
         {
             var response = await _commitmentService.GetProvider(providerId);
 
-            if(null == response)
+            if (null == response)
             {
                 return null;
             }

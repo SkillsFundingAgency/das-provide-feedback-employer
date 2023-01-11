@@ -1,8 +1,8 @@
 ﻿namespace ESFA.DAS.EmployerProvideFeedback.Api.Models
 {
+    using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
-    using Newtonsoft.Json;
 
     /// <summary>
     /// Feedback given by and Employer, omitting sensitive information such as Account Id and UserRef

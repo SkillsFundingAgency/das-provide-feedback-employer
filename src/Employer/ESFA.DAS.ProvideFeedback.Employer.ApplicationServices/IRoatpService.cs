@@ -1,6 +1,6 @@
+using ESFA.DAS.ProvideFeedback.Domain.Entities.ApiTypes;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using ESFA.DAS.ProvideFeedback.Domain.Entities.ApiTypes;
 
 namespace ESFA.DAS.ProvideFeedback.Employer.ApplicationServices
 {

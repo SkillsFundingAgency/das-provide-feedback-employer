@@ -2,14 +2,11 @@
 {
     using AutoFixture;
     using AutoFixture.Xunit2;
-    using ESFA.DAS.EmployerProvideFeedback.Api.Controllers;
     using ESFA.DAS.EmployerProvideFeedback.Api.Models;
     using ESFA.DAS.EmployerProvideFeedback.Api.Queries.FeedbackQuery;
     using ESFA.DAS.ProvideFeedback.Data.Repositories;
     using ESFA.DAS.ProvideFeedback.Domain.Entities.Models;
     using FluentAssertions;
-    using MediatR;
-    using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
     using Moq;
     using System;
@@ -40,7 +37,7 @@
         public async Task WhenQueryingFeedback_IfNullReturnsEmptyCollection()
         {
             // arrange
-            mockRepository.Setup(s => s.GetEmployerFeedback()).ReturnsAsync((IEnumerable<EmployerFeedbackViewModel>) null);
+            mockRepository.Setup(s => s.GetEmployerFeedback()).ReturnsAsync((IEnumerable<EmployerFeedbackViewModel>)null);
 
             // act
             var response = await handler.Handle(new FeedbackQuery(), new CancellationToken());
@@ -89,7 +86,7 @@
             // arrange
             var fixture = new Fixture();
             var feedback = fixture.CreateMany<EmployerFeedbackViewModel>(10);
-            foreach(var f in feedback)
+            foreach (var f in feedback)
             {
                 f.Id = Id;
                 f.Ukprn = ukprn;

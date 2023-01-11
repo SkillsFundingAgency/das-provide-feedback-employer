@@ -1,16 +1,16 @@
 ﻿
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using AutoFixture;
-using Microsoft.Extensions.Logging;
-using Moq;
-using Xunit;
 using ESFA.DAS.EmployerProvideFeedback.Api.Models;
 using ESFA.DAS.EmployerProvideFeedback.Api.Queries.FeedbackResultQuery;
 using ESFA.DAS.ProvideFeedback.Data.Repositories;
 using ESFA.DAS.ProvideFeedback.Domain.Entities.Models;
+using Microsoft.Extensions.Logging;
+using Moq;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using Xunit;
 
 
 namespace UnitTests.Api
@@ -34,7 +34,7 @@ namespace UnitTests.Api
         public async Task WhenQueryingFeedbackResult_IfNullReturnsEmptyCollection()
         {
             // arrange
-            mockRepository.Setup(s => s.GetFeedbackResultSummary(123)).ReturnsAsync((IEnumerable<EmployerFeedbackResultSummary>) null);
+            mockRepository.Setup(s => s.GetFeedbackResultSummary(123)).ReturnsAsync((IEnumerable<EmployerFeedbackResultSummary>)null);
 
             // act
             EmployerFeedbackResultDto response = await handler.Handle(new FeedbackResultQuery() { Ukprn = 123 }, new CancellationToken());

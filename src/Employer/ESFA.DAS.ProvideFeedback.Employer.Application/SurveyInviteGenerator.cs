@@ -1,10 +1,10 @@
-﻿using System;
-using System.Threading.Tasks;
-using ESFA.DAS.Feedback.Employer.Emailer.Configuration;
+﻿using ESFA.DAS.Feedback.Employer.Emailer.Configuration;
 using ESFA.DAS.ProvideFeedback.Data.Repositories;
 using ESFA.DAS.ProvideFeedback.Domain.Entities.Messages;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using System;
+using System.Threading.Tasks;
 
 namespace ESFA.DAS.ProvideFeedback.Employer.Application
 {
@@ -26,7 +26,7 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Application
 
         public async Task GenerateSurveyInvites(GenerateSurveyCodeMessage message)
         {
-            
+
             var feedbackId = await _employerEmailDetailRepository.UpsertIntoFeedback(message.UserRef, message.AccountId, message.Ukprn);
             _logger.LogInformation("Done upserting feedback");
 
@@ -42,8 +42,8 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Application
             var minimumLastReminderDate = DateTime.UtcNow.AddDays(-_emailSettingsConfig.InviteCycleDays);
             var feedbackLastSent = await _employerEmailDetailRepository.GetLatestFeedbackInviteSentDateAsync(feedbackId);
             if (feedbackLastSent is null) return false;
-            _logger.LogInformation($"FeedbackId : {feedbackId}  UniqueSurveyCode : {feedbackLastSent.UniqueSurveyCode}  InviteSentDate : {feedbackLastSent.InviteSentDate}  MinimumLastReminderDate : {minimumLastReminderDate}" );
-            return feedbackLastSent.UniqueSurveyCode == null || 
+            _logger.LogInformation($"FeedbackId : {feedbackId}  UniqueSurveyCode : {feedbackLastSent.UniqueSurveyCode}  InviteSentDate : {feedbackLastSent.InviteSentDate}  MinimumLastReminderDate : {minimumLastReminderDate}");
+            return feedbackLastSent.UniqueSurveyCode == null ||
                 (feedbackLastSent.InviteSentDate != null && feedbackLastSent.InviteSentDate < minimumLastReminderDate);
         }
     }

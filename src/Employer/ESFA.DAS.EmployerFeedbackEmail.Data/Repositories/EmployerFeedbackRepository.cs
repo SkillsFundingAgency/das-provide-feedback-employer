@@ -1,11 +1,11 @@
-﻿using System;
+﻿using Dapper;
+using ESFA.DAS.ProvideFeedback.Data.Enums;
+using ESFA.DAS.ProvideFeedback.Domain.Entities.Models;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
-using Dapper;
-using ESFA.DAS.ProvideFeedback.Data.Enums;
-using ESFA.DAS.ProvideFeedback.Domain.Entities.Models;
 
 namespace ESFA.DAS.ProvideFeedback.Data.Repositories
 {
@@ -254,7 +254,7 @@ namespace ESFA.DAS.ProvideFeedback.Data.Repositories
                 };
                 var parameters = new DynamicParameters(parameterTemplate);
                 parameters.Add("@DateTimeCompleted", dateTimeCompleted, DbType.DateTime2);
-                
+
                 var result = await _dbConnection.QueryFirstOrDefaultAsync<Guid>(
 
                     sql: "[dbo].[CreateEmployerFeedbackResult]",
@@ -305,7 +305,7 @@ namespace ESFA.DAS.ProvideFeedback.Data.Repositories
             };
             var parameters = new DynamicParameters(parameterTemplate);
             parameters.Add("@dateTimeCompleted", datetimeCompleted, DbType.DateTime2);
-            
+
             return await _dbConnection.
                 QueryFirstOrDefaultAsync<EmployerFeedbackResult>(@"SELECT TOP 1 * FROM EmployerFeedbackResult WHERE feedbackId = @feedbackId AND dateTimeCompleted = @dateTimeCompleted", parameters);
         }

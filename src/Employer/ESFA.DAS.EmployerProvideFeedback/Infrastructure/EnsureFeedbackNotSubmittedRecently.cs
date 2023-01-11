@@ -1,8 +1,8 @@
-﻿using System;
-using ESFA.DAS.EmployerProvideFeedback.Configuration.Routing;
+﻿using ESFA.DAS.EmployerProvideFeedback.Configuration.Routing;
 using ESFA.DAS.ProvideFeedback.Data.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using System;
 
 namespace ESFA.DAS.EmployerProvideFeedback.Infrastructure
 {
@@ -22,7 +22,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Infrastructure
 
         public override void OnActionExecuting(ActionExecutingContext context)
         {
-            if(context.ActionArguments.ContainsKey("uniqueCode"))
+            if (context.ActionArguments.ContainsKey("uniqueCode"))
             {
                 var uniqueCode = (Guid)context.ActionArguments["uniqueCode"];
 

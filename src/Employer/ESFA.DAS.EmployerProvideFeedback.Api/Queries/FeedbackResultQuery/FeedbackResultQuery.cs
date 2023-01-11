@@ -1,7 +1,5 @@
-﻿
-using System.Collections.Generic;
+﻿using ESFA.DAS.EmployerProvideFeedback.Api.Models;
 using MediatR;
-using ESFA.DAS.EmployerProvideFeedback.Api.Models;
 
 
 namespace ESFA.DAS.EmployerProvideFeedback.Api.Queries.FeedbackResultQuery

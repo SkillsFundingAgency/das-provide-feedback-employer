@@ -1,13 +1,12 @@
-﻿using System;
+﻿using ESFA.DAS.EmployerProvideFeedback.Extensions;
+using ESFA.DAS.EmployerProvideFeedback.ViewModels;
+using ESFA.DAS.ProvideFeedback.Data.Repositories;
+using ESFA.DAS.ProvideFeedback.Domain.Entities.Models;
+using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using ESFA.DAS.EmployerProvideFeedback.Extensions;
-using ESFA.DAS.EmployerProvideFeedback.ViewModels;
-using Microsoft.Extensions.Logging;
-using System.Collections.Generic;
-using ESFA.DAS.ProvideFeedback.Domain.Entities.Models;
-using ESFA.DAS.ProvideFeedback.Data.Repositories;
-using AspNetCore;
 
 namespace ESFA.DAS.EmployerProvideFeedback.Orchestrators
 {
@@ -26,7 +25,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Orchestrators
         {
             var employerFeedback = await _employerFeedbackRepository.GetEmployerFeedbackRecord(surveyModel.UserRef, surveyModel.AccountId, surveyModel.Ukprn);
             long feedbackId = 0;
-            if(null == employerFeedback)
+            if (null == employerFeedback)
             {
                 feedbackId = await _employerFeedbackRepository.UpsertIntoFeedback(surveyModel.UserRef, surveyModel.AccountId, surveyModel.Ukprn);
             }
@@ -45,7 +44,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Orchestrators
                 var providerAttributes = await ConvertSurveyToProviderAttributes(surveyModel);
 
                 var feedbackSource = ProvideFeedback.Data.Enums.FeedbackSource.AdHoc;
-                if(surveyModel.UniqueCode.HasValue)
+                if (surveyModel.UniqueCode.HasValue)
                 {
                     feedbackSource = ProvideFeedback.Data.Enums.FeedbackSource.Email;
                 }
@@ -58,7 +57,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Orchestrators
                     feedbackSource,
                     providerAttributes);
 
-                if(null != surveyModel.UniqueCode && surveyModel.UniqueCode.HasValue)
+                if (null != surveyModel.UniqueCode && surveyModel.UniqueCode.HasValue)
                 {
                     // Email journey.
                     await _employerFeedbackRepository.SetCodeBurntDate(surveyModel.UniqueCode.Value);

@@ -1,9 +1,9 @@
 
-using System;
-using System.Threading.Tasks;
+using ESFA.DAS.ProvideFeedback.Employer.Application;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
-using ESFA.DAS.ProvideFeedback.Employer.Application;
+using System;
+using System.Threading.Tasks;
 
 
 namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
@@ -26,13 +26,13 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
             {
                 await _feedbackSummariesService.GenerateFeedbackSummaries();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 log.LogError(ex, "Error generating feedback summaries");
                 throw;
             }
 
             log.LogInformation("Generate feedback summaries function complete.");
-        }        
+        }
     }
 }
