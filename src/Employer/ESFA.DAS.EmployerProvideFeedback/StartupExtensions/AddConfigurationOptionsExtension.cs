@@ -1,4 +1,5 @@
 ﻿using ESFA.DAS.EmployerProvideFeedback.Infrastructure;
+using ESFA.DAS.ProvideFeedback.Employer.ApplicationServices.Configuration;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -16,6 +17,9 @@ namespace ESFA.DAS.EmployerProvideFeedback.StartupExtensions
                         
             services.Configure<EncodingConfig>(configuration.GetSection("EncodingService"));
             services.AddSingleton(cfg => cfg.GetService<IOptions<EncodingConfig>>().Value);
+            
+            services.Configure<OuterApiConfiguration>(configuration.GetSection("ProvideFeedbackEmployerWeb:OuterApiConfiguration"));
+            services.AddSingleton(cfg => cfg.GetService<IOptions<OuterApiConfiguration>>().Value);
         }
     }
 }
