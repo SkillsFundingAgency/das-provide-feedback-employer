@@ -5,15 +5,58 @@ using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
+using ESFA.DAS.EmployerProvideFeedback.Authentication;
+using ESFA.DAS.ProvideFeedback.Employer.ApplicationServices;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Configuration;
+using SFA.DAS.GovUK.Auth.AppStart;
+using SFA.DAS.GovUK.Auth.Configuration;
+using SFA.DAS.GovUK.Auth.Services;
 
 namespace ESFA.DAS.EmployerProvideFeedback.StartupExtensions
 {
     public static class AuthenticationExtensions
     {
-        public static void AddEmployerAuthentication(this IServiceCollection services, AuthenticationConfiguration configuration)
+        public static void AddEmployerAuthentication(this IServiceCollection services, ProvideFeedbackEmployerWebConfiguration provideFeedbackEmployerWebConfiguration, IConfiguration configuration)
         {
-            services
+            services.AddHttpContextAccessor();
+            services.AddTransient<ICustomClaims, EmployerAccountPostAuthenticationClaimsHandler>();
+            services.AddTransient<IEmployerAccountAuthorisationHandler, EmployerAccountAuthorizationHandler>();
+            services.AddSingleton<IAuthorizationHandler, EmployerAccountAuthorizationHandler>();
+            services.AddSingleton<IAuthorizationHandler, EmployerViewerTransactorAuthorizationHandler>();
+            
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy(
+                    PolicyNames.HasEmployerAccount
+                    , policy =>
+                    {
+                        policy.RequireClaim(EmployerClaims.Account);
+                        policy.Requirements.Add(new EmployerAccountRequirement());
+                        policy.RequireAuthenticatedUser();
+                    });
+                options.AddPolicy(
+                    PolicyNames.HasEmployerViewerTransactorAccount
+                    , policy =>
+                    {
+                        policy.RequireClaim(EmployerClaims.Account);
+                        policy.Requirements.Add(new EmployerViewerTransactorRoleRequirement());
+                        policy.RequireAuthenticatedUser();
+                    });
+            });
+
+            if (provideFeedbackEmployerWebConfiguration.UseGovSignIn)
+            {
+                services.Configure<GovUkOidcConfiguration>(configuration.GetSection("GovUkOidcConfiguration"));
+                services.AddAndConfigureGovUkAuthentication(configuration, $"{typeof(AuthenticationExtensions).Assembly.GetName().Name}.Auth",typeof(EmployerAccountPostAuthenticationClaimsHandler));
+            }
+            else
+            {
+                var authenticationConfiguration = provideFeedbackEmployerWebConfiguration.Authentication;
+                
+                services
                 .AddAuthentication(sharedOptions =>
                 {
                     sharedOptions.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
@@ -23,13 +66,13 @@ namespace ESFA.DAS.EmployerProvideFeedback.StartupExtensions
 
                 }).AddOpenIdConnect(options =>
                 {
-                    options.ClientId = configuration.ClientId;
-                    options.ClientSecret = configuration.ClientSecret;
-                    options.Authority = configuration.BaseAddress;
-                    options.UsePkce = configuration.UsePkce;
-                    options.ResponseType = configuration.ResponseType;
+                    options.ClientId = authenticationConfiguration.ClientId;
+                    options.ClientSecret = authenticationConfiguration.ClientSecret;
+                    options.Authority = authenticationConfiguration.BaseAddress;
+                    options.UsePkce = authenticationConfiguration.UsePkce;
+                    options.ResponseType = authenticationConfiguration.ResponseType;
 
-                    var scopes = configuration.Scopes.Split(' ');
+                    var scopes = authenticationConfiguration.Scopes.Split(' ');
 
                     foreach (var scope in scopes)
                     {
@@ -57,6 +100,18 @@ namespace ESFA.DAS.EmployerProvideFeedback.StartupExtensions
                     options.Cookie.SameSite = SameSiteMode.None;
                     options.CookieManager = new ChunkingCookieManager() { ChunkSize = 3000 };
                 });
+                services
+                    .AddOptions<OpenIdConnectOptions>(OpenIdConnectDefaults.AuthenticationScheme)
+                    .Configure<ICustomClaims>((options, customClaims) =>
+                    {
+                        options.Events.OnTokenValidated = async (ctx) =>
+                        {
+                            var claims = await customClaims.GetClaims(ctx);
+                            ctx.Principal.Identities.First().AddClaims(claims);
+                        };
+                    });
+            }
+            
         }
     }
 }

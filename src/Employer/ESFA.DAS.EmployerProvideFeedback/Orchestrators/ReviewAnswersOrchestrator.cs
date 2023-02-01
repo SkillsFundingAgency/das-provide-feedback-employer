@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using ESFA.DAS.ProvideFeedback.Domain.Entities.Models;
 using ESFA.DAS.ProvideFeedback.Data.Repositories;
+using AspNetCore;
 
 namespace ESFA.DAS.EmployerProvideFeedback.Orchestrators
 {
@@ -59,8 +60,15 @@ namespace ESFA.DAS.EmployerProvideFeedback.Orchestrators
 
                 if(null != surveyModel.UniqueCode && surveyModel.UniqueCode.HasValue)
                 {
-                    // Email journey. Burn the survey code.
+                    // Email journey.
                     await _employerFeedbackRepository.SetCodeBurntDate(surveyModel.UniqueCode.Value);
+                }
+                else
+                {
+                    // Ad Hoc journey
+                    Guid? uniqueSurveyCode = await _employerFeedbackRepository.GetUniqueSurveyCodeFromFeedbackId(feedbackId);
+                    if (uniqueSurveyCode != Guid.Empty)
+                        await _employerFeedbackRepository.SetCodeBurntDate(uniqueSurveyCode.Value);
                 }
             }
             catch (Exception ex)

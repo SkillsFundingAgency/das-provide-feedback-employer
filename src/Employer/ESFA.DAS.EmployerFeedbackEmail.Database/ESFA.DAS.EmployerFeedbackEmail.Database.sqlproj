@@ -92,6 +92,11 @@
     <Build Include="Tables\Attributes.sql" />
     <Build Include="StoredProcedures\CreateEmployerFeedbackResult.sql" />
     <Build Include="Types\ProviderAttributesTemplate.sql" />
+    <Build Include="Tables\ProviderAttributeSummary.sql" />
+    <Build Include="Tables\ProviderRatingSummary.sql" />
+    <Build Include="Tables\ProviderStarsSummary.sql" />
+    <Build Include="StoredProcedures\GenerateProviderAttributeResults.sql" />
+    <Build Include="StoredProcedures\GenerateProviderRatingResults.sql" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Tables\EmployerSurveyCodes.sql" />

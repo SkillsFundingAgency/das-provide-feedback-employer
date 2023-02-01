@@ -32,6 +32,22 @@
         "notificationsApiClientToken": {
             "type": "securestring"
         },
+        "employerFeedbackSettingsResultsForAllTime": {
+            "type": "int",
+            "defaultValue": 1
+        },
+        "employerFeedbackSettingsRecentFeedbackMonths": {
+            "type": "int",
+            "defaultValue": 12
+        },
+        "employerFeedbackSettingsAllUsersFeedback": {
+            "type": "int",
+            "defaultValue": 1
+        },
+        "employerFeedbackSettingsTolerance": {
+            "type": "string",
+            "defaultValue": "0.3"
+        },
         "commitmentApiBaseUrl": {
             "type": "string"
         },
@@ -80,9 +96,6 @@
         "dbConnectionString": {
             "type": "secureString"
         },
-        "sharedRedisConnectionString": {
-            "type": "secureString"
-        },
         "inviteEmailerSchedule": {
             "type": "string"
         },
@@ -109,7 +122,7 @@
         "sharedKeyVaultName": {
             "type": "string"
         },
-        "appServiceAllowedIPs": {
+        "backEndAccessRestrictions": {
             "type": "array"
         },
         "appServicePlanSize": {
@@ -119,6 +132,12 @@
         "appServicePlanInstances": {
             "type": "int",
             "defaultValue": 1
+        },
+        "sharedApimName": {
+            "type": "string"
+        },
+        "sharedApimResourceGroup": {
+            "type": "string"
         },
         "sharedFrontEndAppServicePlanName": {
             "type": "string"
@@ -190,6 +209,9 @@
         },
         "workerAccessRestrictions": {
             "type": "array"
+        },
+        "configNames": {
+            "type": "string"
         }
     },
     "variables": {
@@ -203,7 +225,6 @@
         "functionAppPlanName": "[concat(variables('resourceNamePrefix'), 'wkr-asp')]",
         "databaseName": "[concat(variables('resourceNamePrefix'), '-db')]",
         "resourceGroupName": "[concat(variables('resourceNamePrefix'), '-rg')]",
-        "configNames": "SFA.DAS.ProvideFeedbackEmployer.Web,SFA.DAS.EmployerUrlHelper:EmployerUrlHelper,SFA.DAS.Employer.Shared.UI,SFA.DAS.Encoding:EncodingService",
         "queues": {
             "RetrieveProvidersQueueName": "retrieve-providers",
             "AccountRefreshQueueName": "refresh-account",
@@ -331,7 +352,7 @@
                                 },
                                 {
                                     "name": "ConfigNames",
-                                    "value": "[variables('configNames')]"
+                                    "value": "[parameters('configNames')]"
                                 },
                                 {
                                     "name": "Version",
@@ -364,6 +385,30 @@
                     },
                     "ipSecurityRestrictions": {
                         "value": "[parameters('frontEndAccessRestrictions')]"
+                    }
+                }
+            }
+        },
+        {
+            "apiVersion": "2020-06-01",
+            "name": "[concat('apim-product-subscription-', parameters('utcValue'))]",
+            "resourceGroup": "[parameters('sharedApimResourceGroup')]",
+            "type": "Microsoft.Resources/deployments",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('deploymentUrlBase'),'apim/apim-subscription.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "apimName": {
+                        "value": "[parameters('sharedApimName')]"
+                    },
+                    "subscriptionName": {
+                        "value": "[variables('uiAppServiceName')]"
+                    },
+                    "subscriptionScope": {
+                        "value": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', parameters('sharedApimResourceGroup'), '/providers/Microsoft.ApiManagement/service/', parameters('sharedApimName'), '/products/EmployerFeedbackOuterApi')]"
                     }
                 }
             }
@@ -482,7 +527,7 @@
                         "value": "[reference(concat(variables('apiAppServiceName'), '-app-service-certificate-', parameters('utcValue'))).outputs.certificateThumbprint.value]"
                     },
                     "ipSecurityRestrictions": {
-                        "value": "[parameters('appServiceAllowedIPs')]"
+                        "value": "[parameters('backEndAccessRestrictions')]"
                     }
                 }
             }
@@ -615,6 +660,22 @@
                                 {
                                     "name": "NotificationApi:ClientToken",
                                     "value": "[parameters('notificationsApiClientToken')]"
+                                },
+                                {
+                                    "name": "EmployerFeedbackSettings:ResultsForAllTime",
+                                    "value": "[parameters('employerFeedbackSettingsResultsForAllTime')]"
+                                },
+                                {
+                                    "name": "EmployerFeedbackSettings:RecentFeedbackMonths",
+                                    "value": "[parameters('employerFeedbackSettingsRecentFeedbackMonths')]"
+                                },
+                                {
+                                    "name": "EmployerFeedbackSettings:AllUsersFeedback",
+                                    "value": "[parameters('employerFeedbackSettingsAllUsersFeedback')]"
+                                },
+                                {
+                                    "name": "EmployerFeedbackSettings:Tolerance",
+                                    "value": "[parameters('employerFeedbackSettingsTolerance')]"
                                 },
                                 {
                                     "name": "RoatpApi:Url",

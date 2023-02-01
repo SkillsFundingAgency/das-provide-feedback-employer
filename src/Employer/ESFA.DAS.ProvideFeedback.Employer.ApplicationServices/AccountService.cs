@@ -10,11 +10,13 @@ namespace ESFA.DAS.ProvideFeedback.Employer.ApplicationServices
     {
         private readonly IAccountApiConfiguration _configuration;
         private readonly SecureHttpClient _httpClient;
+        
 
         public AccountService(IAccountApiConfiguration configuration, SecureHttpClient httpClient)
         {
             _configuration = configuration;
             _httpClient = httpClient;
+            
         }
 
         public async Task<ICollection<TeamMemberViewModel>> GetAccountUsers(long accountId)
@@ -25,5 +27,7 @@ namespace ESFA.DAS.ProvideFeedback.Employer.ApplicationServices
 
             return JsonConvert.DeserializeObject<ICollection<TeamMemberViewModel>>(json);
         }
+        
+        
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using ESFA.DAS.EmployerProvideFeedback.Authentication;
 using ESFA.DAS.EmployerProvideFeedback.Configuration.Routing;
 using ESFA.DAS.EmployerProvideFeedback.Infrastructure;
 using ESFA.DAS.EmployerProvideFeedback.Orchestrators;
@@ -10,7 +11,7 @@ using Microsoft.Extensions.Options;
 
 namespace ESFA.DAS.EmployerProvideFeedback.Controllers
 {
-    [Authorize]
+    [Authorize(Policy = nameof(PolicyNames.HasEmployerAccount))]
     [ServiceFilter(typeof(EnsureFeedbackNotSubmittedRecentlyAttribute))]
     [ServiceFilter(typeof(EnsureSessionExists))]
     [Route(RoutePrefixPaths.FeedbackRoutePath)]
@@ -32,7 +33,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
         }
 
         [HttpGet("review-answers", Name = RouteNames.ReviewAnswers_Get)]
-        public async Task<IActionResult> Index(Guid uniqueCode)
+        public async Task<IActionResult> Index()
         {
             var idClaim = HttpContext.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
             var vm = await _sessionService.Get<SurveyModel>(idClaim.Value);
@@ -41,14 +42,14 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
         }
 
         [HttpPost("review-answers", Name = RouteNames.ReviewAnswers_Post)]
-        public async Task<IActionResult> Confirmation(Guid uniqueCode)
+        public async Task<IActionResult> Confirmation()
         {
             var idClaim = HttpContext.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
 
             var answers = await _sessionService.Get<SurveyModel>(idClaim.Value);
 
             answers.Submitted = true;
-            await _orchestrator.SubmitConfirmedEmployerFeedback(answers/*, uniqueCode*/);
+            await _orchestrator.SubmitConfirmedEmployerFeedback(answers);
             await _sessionService.Set(idClaim.Value, answers);
 
             return RedirectToRoute(RouteNames.Confirmation_Get);

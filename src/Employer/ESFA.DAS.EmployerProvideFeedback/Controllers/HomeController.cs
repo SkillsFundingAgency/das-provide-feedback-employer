@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ESFA.DAS.EmployerProvideFeedback.Authentication;
 using ESFA.DAS.EmployerProvideFeedback.Configuration.Routing;
 using ESFA.DAS.EmployerProvideFeedback.Infrastructure;
 using ESFA.DAS.EmployerProvideFeedback.ViewModels;
 using ESFA.DAS.ProvideFeedback.Data.Repositories;
 using ESFA.DAS.ProvideFeedback.Domain.Entities.Models;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authorization;
@@ -16,7 +18,7 @@ using SFA.DAS.Encoding;
 
 namespace ESFA.DAS.EmployerProvideFeedback.Controllers
 {
-    [Authorize]
+    
     public class HomeController : Controller
     {
         private readonly IEmployerFeedbackRepository _employerEmailDetailsRepository;
@@ -37,6 +39,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
             _logger = logger;
         }
 
+        [Authorize(Policy = nameof(PolicyNames.HasEmployerAccount))]
         [HttpGet]
         [Route(RoutePrefixPaths.FeedbackRoutePath, Name = RouteNames.Landing_Get_New)]
         public async Task<IActionResult> Index(StartFeedbackRequest request)
@@ -54,7 +57,8 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
 
             return View();
         }
-
+        
+        [Authorize(Policy = nameof(PolicyNames.HasEmployerAccount))]
         [ServiceFilter(typeof(EnsureFeedbackNotSubmitted))]
         [Route(RoutePrefixPaths.FeedbackFromEmailRoutePath, Name = RouteNames.Landing_Get)]
         [HttpGet]
@@ -87,16 +91,15 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
         }
 
         [Route("signout", Name = RouteNames.Signout)]
-        public IActionResult SignOut()
+        public async Task<IActionResult> SignOut()
         {
+            var idToken = await HttpContext.GetTokenAsync("id_token");
+
+            var authenticationProperties = new AuthenticationProperties();
+            authenticationProperties.Parameters.Clear();
+            authenticationProperties.Parameters.Add("id_token",idToken);
             return SignOut(
-                new Microsoft.AspNetCore.Authentication.AuthenticationProperties
-                {
-                    RedirectUri = "",
-                    AllowRefresh = true
-                },
-                CookieAuthenticationDefaults.AuthenticationScheme,
-                OpenIdConnectDefaults.AuthenticationScheme);
+                authenticationProperties, CookieAuthenticationDefaults.AuthenticationScheme, OpenIdConnectDefaults.AuthenticationScheme);
         }
 
         [AllowAnonymous]
