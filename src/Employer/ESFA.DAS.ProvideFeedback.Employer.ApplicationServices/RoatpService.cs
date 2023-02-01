@@ -1,13 +1,14 @@
+using ESFA.DAS.ProvideFeedback.Domain.Entities.ApiTypes;
+using ESFA.DAS.ProvideFeedback.Employer.ApplicationServices.Configuration;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
-using ESFA.DAS.ProvideFeedback.Domain.Entities.ApiTypes;
-using ESFA.DAS.ProvideFeedback.Employer.ApplicationServices.Configuration;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Options;
-using Newtonsoft.Json;
 
 namespace ESFA.DAS.ProvideFeedback.Employer.ApplicationServices
 {
@@ -15,10 +16,10 @@ namespace ESFA.DAS.ProvideFeedback.Employer.ApplicationServices
     {
         private readonly HttpClient _httpClient;
         private readonly IAzureClientCredentialHelper _azureClientCredentialHelper;
-        private readonly IHostingEnvironment _hostingEnvironment;
+        private readonly IHostEnvironment _hostingEnvironment;
         private readonly RoatpApiConfiguration _configuration;
 
-        public RoatpService (HttpClient httpClient, IAzureClientCredentialHelper azureClientCredentialHelper, IHostingEnvironment hostingEnvironment, IOptions<RoatpApiConfiguration> configuration)
+        public RoatpService (HttpClient httpClient, IAzureClientCredentialHelper azureClientCredentialHelper, IHostEnvironment hostingEnvironment, IOptions<RoatpApiConfiguration> configuration)
         {
             _configuration = configuration.Value;
             _httpClient = httpClient;

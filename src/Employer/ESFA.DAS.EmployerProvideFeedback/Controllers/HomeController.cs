@@ -91,7 +91,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
         }
 
         [Route("signout", Name = RouteNames.Signout)]
-        public async Task<IActionResult> SignOut()
+        public new async Task<IActionResult> SignOut()
         {
             var idToken = await HttpContext.GetTokenAsync("id_token");
 
