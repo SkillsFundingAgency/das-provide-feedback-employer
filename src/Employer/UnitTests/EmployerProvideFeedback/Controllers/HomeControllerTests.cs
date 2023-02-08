@@ -99,30 +99,18 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
 
         private DefaultHttpContext GetHttpContext()
         {
-            var _context = new DefaultHttpContext()
+            return new DefaultHttpContext()
             {
                 User = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
-                {
+            {
                     new Claim(ClaimTypes.NameIdentifier, GetSurveyModel().UserRef.ToString()),
                 }))
             };
-            return _context;
         }
 
-        private SurveyModel GetSurveyModel()
-        {
-            var _surveyModel = new SurveyModel()
-            {
-                UserRef = Guid.NewGuid()
-            };
-            return _surveyModel;
-        }
+        private SurveyModel GetSurveyModel() { return new SurveyModel() { UserRef = Guid.NewGuid() }; }
 
-        private Mock<IEmployerFeedbackRepository> GetMockEmployerFeedbackRepository()
-        {
-            var _employerEmailDetailsRepoMock = new Mock<IEmployerFeedbackRepository>();
-            return _employerEmailDetailsRepoMock;
-        }
+        private Mock<IEmployerFeedbackRepository> GetMockEmployerFeedbackRepository() { return new Mock<IEmployerFeedbackRepository>(); }
 
         private Mock<ISessionService> GetMockSessionService()
         {
@@ -131,17 +119,9 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
             return _sessionServiceMock;
         }
 
-        private Mock<IEncodingService> GetMockEncodingService()
-        {
-            var _encodingServiceMock = new Mock<IEncodingService>();
-            return _encodingServiceMock;
-        }
+        private Mock<IEncodingService> GetMockEncodingService() { return new Mock<IEncodingService>(); }
 
-        private Mock<ILogger<HomeController>> GetMockLogger()
-        {
-            var _loggerMock = new Mock<ILogger<HomeController>>();
-            return _loggerMock;
-        }
+        private Mock<ILogger<HomeController>> GetMockLogger() { return new Mock<ILogger<HomeController>>(); }
 
         private HomeController GetHomeController()
         {

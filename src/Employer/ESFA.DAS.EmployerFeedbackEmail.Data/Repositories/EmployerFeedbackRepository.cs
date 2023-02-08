@@ -10,7 +10,7 @@ namespace ESFA.DAS.ProvideFeedback.Data.Repositories
 {
     public class EmployerFeedbackRepository : IEmployerFeedbackRepository
     {
-        const int CommandTimeoutSeconds = 120;
+        private const int CommandTimeoutSeconds = 120;
         private readonly IDbConnection _dbConnection;
         private const string EmployerSurveyCodes = "EmployerSurveyCodes";
 
