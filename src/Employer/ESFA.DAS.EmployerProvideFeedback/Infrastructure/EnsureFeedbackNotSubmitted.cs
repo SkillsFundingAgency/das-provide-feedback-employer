@@ -25,8 +25,8 @@ namespace ESFA.DAS.EmployerProvideFeedback.Infrastructure
             var isCodeBurnt = _employerEmailDetailRepository.IsCodeBurnt(uniqueCode).Result;
             if (isCodeBurnt)
             {
-                var employerEmailDetail = _employerEmailDetailRepository.GetEmployerAccountIdFromUniqueSurveyCode(uniqueCode).GetAwaiter().GetResult();
-                var encodedAccountId = _encodingService.Encode(employerEmailDetail, EncodingType.AccountId);
+                var employerAccountId = _employerEmailDetailRepository.GetEmployerAccountIdFromUniqueSurveyCode(uniqueCode).GetAwaiter().GetResult();
+                var encodedAccountId = _encodingService.Encode(employerAccountId, EncodingType.AccountId);
                 var controller = context.Controller as Controller;
                 context.Result = controller.RedirectToRoute(RouteNames.FeedbackAlreadySubmitted, new { encodedAccountId = encodedAccountId });
             }

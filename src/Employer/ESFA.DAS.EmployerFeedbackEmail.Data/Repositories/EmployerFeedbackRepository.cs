@@ -10,7 +10,7 @@ namespace ESFA.DAS.ProvideFeedback.Data.Repositories
 {
     public class EmployerFeedbackRepository : IEmployerFeedbackRepository
     {
-        private int _commandTimeoutSeconds = 120;
+        const int CommandTimeoutSeconds = 120;
         private readonly IDbConnection _dbConnection;
         private const string EmployerSurveyCodes = "EmployerSurveyCodes";
 
@@ -69,7 +69,7 @@ namespace ESFA.DAS.ProvideFeedback.Data.Repositories
                 sql: "[dbo].[UpsertUsers]",
                 param: parameters,
                 commandType: CommandType.StoredProcedure,
-                commandTimeout: _commandTimeoutSeconds
+                commandTimeout: CommandTimeoutSeconds
             );
         }
 
@@ -201,7 +201,7 @@ namespace ESFA.DAS.ProvideFeedback.Data.Repositories
                 commandType: CommandType.StoredProcedure,
                 sql: "[dbo].[GenerateProviderRatingResults]",
                 param: parameters,
-                commandTimeout: _commandTimeoutSeconds);
+                commandTimeout: CommandTimeoutSeconds);
         }
 
         public async Task<int> GenerateProviderAttributeResults(int allUserFeedback, int resultsforAllTime, int recentFeedbackMonths)
@@ -217,7 +217,7 @@ namespace ESFA.DAS.ProvideFeedback.Data.Repositories
                 commandType: CommandType.StoredProcedure,
                 sql: "[dbo].[GenerateProviderAttributeResults]",
                 param: parameters,
-                commandTimeout: _commandTimeoutSeconds);
+                commandTimeout: CommandTimeoutSeconds);
         }
 
         public async Task<IEnumerable<EmployerFeedbackResultSummary>> GetFeedbackResultSummary(long ukprn)
