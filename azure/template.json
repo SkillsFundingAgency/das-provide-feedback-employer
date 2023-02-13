@@ -26,12 +26,6 @@
         "aspNetCoreEnvironment": {
             "type": "string"
         },
-        "notificationsApiBaseUrl": {
-            "type": "string"
-        },
-        "notificationsApiClientToken": {
-            "type": "securestring"
-        },
         "employerFeedbackSettingsResultsForAllTime": {
             "type": "int",
             "defaultValue": 1
@@ -62,30 +56,6 @@
         },
         "commitmentV2ApiIdentifierUri": {
             "type": "string"
-        },
-        "roatpApiBaseUrl": {
-            "type": "string"
-        },
-        "roatpApiIdentifier": {
-            "type": "string"
-        },
-        "accountApiBaseUrl": {
-            "type": "string"
-        },
-        "accountApiIdentifierUri": {
-            "type": "string"
-        },
-        "emailBatchSize": {
-            "type": "int",
-            "defaultValue": 25
-        },
-        "reminderDays": {
-            "type": "int",
-            "defaultValue": 14
-        },
-        "inviteCycleDays": {
-            "type": "int",
-            "defaultValue": 90
         },
         "feedbackApiAuthTenant": {
             "type": "string"
@@ -225,13 +195,8 @@
         "functionAppPlanName": "[concat(variables('resourceNamePrefix'), 'wkr-asp')]",
         "databaseName": "[concat(variables('resourceNamePrefix'), '-db')]",
         "resourceGroupName": "[concat(variables('resourceNamePrefix'), '-rg')]",
-        "queues": {
-            "RetrieveProvidersQueueName": "retrieve-providers",
-            "AccountRefreshQueueName": "refresh-account",
-            "RetrieveFeedbackAccountsQueueName": "retrieve-employer-accounts",
-            "ProcessActiveFeedbackQueueName": "process-active-feedback",
-            "GenerateSurveyInviteMessageQueueName": "generate-survey-invite"
-        }
+        "configNames": "SFA.DAS.ProvideFeedbackEmployer.Web,SFA.DAS.EmployerUrlHelper:EmployerUrlHelper,SFA.DAS.Employer.Shared.UI,SFA.DAS.Encoding:EncodingService",
+        "queues": {}
     },
     "resources": [
         {
@@ -658,14 +623,6 @@
                                     "value": "[reference(concat(variables('functionAppName'), '-app-insights-', parameters('utcValue'))).outputs.InstrumentationKey.value]"
                                 },
                                 {
-                                    "name": "NotificationApi:BaseUrl",
-                                    "value": "[parameters('notificationsApiBaseUrl')]"
-                                },
-                                {
-                                    "name": "NotificationApi:ClientToken",
-                                    "value": "[parameters('notificationsApiClientToken')]"
-                                },
-                                {
                                     "name": "EmployerFeedbackSettings:ResultsForAllTime",
                                     "value": "[parameters('employerFeedbackSettingsResultsForAllTime')]"
                                 },
@@ -680,22 +637,6 @@
                                 {
                                     "name": "EmployerFeedbackSettings:Tolerance",
                                     "value": "[parameters('employerFeedbackSettingsTolerance')]"
-                                },
-                                {
-                                    "name": "RoatpApi:Url",
-                                    "value": "[parameters('roatpApiBaseUrl')]"
-                                },
-                                {
-                                    "name": "RoatpApi:Identifier",
-                                    "value": "[parameters('roatpApiIdentifier')]"
-                                },
-                                {
-                                    "name": "AccountApi:ApiBaseUrl",
-                                    "value": "[parameters('accountApiBaseUrl')]"
-                                },
-                                {
-                                    "name": "AccountApi:IdentifierUri",
-                                    "value": "[parameters('accountApiIdentifierUri')]"
                                 },
                                 {
                                     "name": "CommitmentApi:BaseUrl",
@@ -718,20 +659,8 @@
                                     "value": "[concat('https://', parameters('uiCustomHostname'), '/')]"
                                 },
                                 {
-                                    "name": "EmailSettings:BatchSize",
-                                    "value": "[parameters('emailBatchSize')]"
-                                },
-                                {
                                     "name": "SlidingExpirationMinutes",
                                     "value": "[parameters('slidingExpirationMinutes')]"
-                                },
-                                {
-                                    "name": "EmailSettings:ReminderDays",
-                                    "value": "[parameters('reminderDays')]"
-                                },
-                                {
-                                    "name": "EmailSettings:InviteCycleDays",
-                                    "value": "[parameters('inviteCycleDays')]"
                                 },
                                 {
                                     "name": "FUNCTIONS_EXTENSION_VERSION",
@@ -746,40 +675,8 @@
                                     "value": "[parameters('dbConnectionString')]"
                                 },
                                 {
-                                    "name": "InviteEmailerSchedule",
-                                    "value": "[parameters('inviteEmailerSchedule')]"
-                                },
-                                {
-                                    "name": "ReminderEmailerSchedule",
-                                    "value": "[parameters('reminderEmailerSchedule')]"
-                                },
-                                {
-                                    "name": "DataRefreshSchedule",
-                                    "value": "[parameters('dataRefreshSchedule')]"
-                                },
-                                {
                                     "name": "AppName",
                                     "value": "[parameters('emailerAppName')]"
-                                },
-                                {
-                                    "name": "RetrieveFeedbackAccountsQueueName",
-                                    "value": "[variables('queues').RetrieveFeedbackAccountsQueueName]"
-                                },
-                                {
-                                    "name": "RetrieveProvidersQueueName",
-                                    "value": "[variables('queues').RetrieveProvidersQueueName]"
-                                },
-                                {
-                                    "name": "AccountRefreshQueueName",
-                                    "value": "[variables('queues').AccountRefreshQueueName]"
-                                },
-                                {
-                                    "name": "ProcessActiveFeedbackQueueName",
-                                    "value": "[variables('queues').ProcessActiveFeedbackQueueName]"
-                                },
-                                {
-                                    "name": "GenerateSurveyInviteMessageQueueName",
-                                    "value": "[variables('queues').GenerateSurveyInviteMessageQueueName]"
                                 },
                                 {
                                     "name": "ServiceBusConnection",
@@ -820,13 +717,7 @@
                         "value": "[variables('serviceBusNamespaceName')]"
                     },
                     "serviceBusQueues": {
-                        "value": [
-                            "[variables('queues').RetrieveProvidersQueueName]",
-                            "[variables('queues').AccountRefreshQueueName]",
-                            "[variables('queues').RetrieveFeedbackAccountsQueueName]",
-                            "[variables('queues').ProcessActiveFeedbackQueueName]",
-                            "[variables('queues').GenerateSurveyInviteMessageQueueName]"
-                        ]
+                        "value": []
                     },
                     "logAnalyticsWorkspaceName": {
                         "value": "[parameters('logAnalyticsWorkspaceName')]"
