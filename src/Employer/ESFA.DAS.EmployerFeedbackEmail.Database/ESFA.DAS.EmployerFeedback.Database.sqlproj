@@ -71,7 +71,9 @@
     <Build Include="Tables\Users.sql" />
     <Build Include="Tables\EmployerFeedback.sql" />
     <Build Include="StoredProcedures\UpsertFeedback.sql" />
-    <Build Include="Views\vw_EmployerSurveyInvites.sql" />
+	  <Build Include="StoredProcedures\UpsertProviders.sql" />
+	  <Build Include="StoredProcedures\UpsertUsers.sql" />
+	  <Build Include="Views\vw_EmployerSurveyInvites.sql" />
     <Build Include="Views\vw_FeedbackToSend.sql" />
     <Build Include="Tables\EmployerSurveyHistory.sql" />
     <Build Include="Types\ProviderTemplate.sql" />
