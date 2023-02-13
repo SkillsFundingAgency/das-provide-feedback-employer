@@ -61,10 +61,6 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
 
             builder.Services.AddHttpClient<SecureHttpClient>();
             builder.Services.AddTransient<IAzureClientCredentialHelper, AzureClientCredentialHelper>();
-
-            var commitmentV2ApiConfig = _configuration.GetSection("CommitmentV2Api").Get<CommitmentApiConfiguration>();
-            builder.Services.AddSingleton<ICommitmentApiConfiguration>(commitmentV2ApiConfig);
-            builder.Services.AddSingleton<ICommitmentService, CommitmentService>();
         }
 
         private void ConfigureNLog()
