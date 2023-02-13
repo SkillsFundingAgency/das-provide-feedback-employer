@@ -79,7 +79,6 @@
     <Build Include="Views\vw_FeedbackToSend.sql" />
     <Build Include="Tables\EmployerSurveyHistory.sql" />
     <Build Include="Views\vw_EmployerSurveyHistoryComplete.sql" />
-    <Build Include="Tables\EmployerEmailDetails.sql" />
     <Build Include="StoredProcedures\GetEmployerSurveyHistory.sql" />
     <Build Include="StoredProcedures\GetSurveyInvitesToSend.sql" />
     <Build Include="StoredProcedures\GetSurveyRemindersToSend.sql" />
