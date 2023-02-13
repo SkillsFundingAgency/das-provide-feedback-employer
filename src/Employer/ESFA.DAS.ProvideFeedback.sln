@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ESFA.DAS.EmployerProvideFee
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitTests", "UnitTests\UnitTests.csproj", "{8A1869F6-E8FA-44E5-8DB4-DE4C77C2F37F}"
 EndProject
-Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "ESFA.DAS.EmployerFeedbackEmail.Database", "ESFA.DAS.EmployerFeedbackEmail.Database\ESFA.DAS.EmployerFeedbackEmail.Database.sqlproj", "{67C39E70-8FF4-4497-A60B-AD85E067B1F0}"
+Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "ESFA.DAS.EmployerFeedback.Database", "ESFA.DAS.EmployerFeedbackEmail.Database\ESFA.DAS.EmployerFeedback.Database.sqlproj", "{67C39E70-8FF4-4497-A60B-AD85E067B1F0}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ESFA.DAS.ProvideFeedback.Data", "ESFA.DAS.EmployerFeedbackEmail.Data\ESFA.DAS.ProvideFeedback.Data.csproj", "{669CE385-EF8D-42A8-87C5-F0A8725C25CF}"
 EndProject
