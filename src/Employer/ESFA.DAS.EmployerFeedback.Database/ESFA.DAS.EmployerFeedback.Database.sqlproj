@@ -4,7 +4,7 @@
 	<PropertyGroup>
 		<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
 		<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-		<Name>ESFA.DAS.EmployerFeedback.Database</Name>
+		<Name>ESFA.DAS.EmployerFeedback.ee</Name>
 		<SchemaVersion>2.0</SchemaVersion>
 		<ProjectVersion>4.1</ProjectVersion>
 		<ProjectGuid>{67c39e70-8ff4-4497-a60b-ad85e067b1f0}</ProjectGuid>
