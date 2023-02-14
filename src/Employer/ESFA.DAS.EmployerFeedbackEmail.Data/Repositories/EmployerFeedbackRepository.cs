@@ -22,10 +22,11 @@ namespace ESFA.DAS.ProvideFeedback.Data.Repositories
         public async Task<int> GetEmployerAccountIdFromUniqueSurveyCode(Guid uniqueCode)
         {
             return await _dbConnection.QueryFirstOrDefaultAsync<int>(
-                                        $@"SELECT AccountId
+                                        $@"
+                                        SELECT AccountId
                                         FROM EmployerSurveyCodes ESC
                                         JOIN EmployerFeedback EF ON ESC.FeedbackId = EF.FeedbackId
-                                        WHERE ESC.UniqueSurveyCode = @{nameof( uniqueCode) }",
+                                        WHERE ESC.UniqueSurveyCode = @{nameof(uniqueCode)}",
                                         new { uniqueCode });
         }
 
