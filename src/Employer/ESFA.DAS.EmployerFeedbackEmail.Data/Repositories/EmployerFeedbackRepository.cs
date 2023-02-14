@@ -24,7 +24,7 @@ namespace ESFA.DAS.ProvideFeedback.Data.Repositories
             return await _dbConnection.QueryFirstOrDefaultAsync<int>(
                                         $@"
                                         SELECT AccountId
-                                        FROM EmployerSurveyCodes ESC
+                                        FROM {EmployerSurveyCodes} ESC
                                         JOIN EmployerFeedback EF ON ESC.FeedbackId = EF.FeedbackId
                                         WHERE ESC.UniqueSurveyCode = @{nameof(uniqueCode)}",
                                         new { uniqueCode });
