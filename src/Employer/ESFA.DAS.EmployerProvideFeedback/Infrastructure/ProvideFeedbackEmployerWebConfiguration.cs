@@ -14,5 +14,6 @@ namespace ESFA.DAS.EmployerProvideFeedback.Infrastructure
         public string EmployerFeedbackDatabaseConnectionString { get; set; }
         public AuthenticationConfiguration Authentication { get; set; }
         public CommitmentApiConfiguration CommitmentsApiConfiguration { get; set; }
+        public bool UseGovSignIn { get; set; }
     }
 }
