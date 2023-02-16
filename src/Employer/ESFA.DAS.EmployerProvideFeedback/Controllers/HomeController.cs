@@ -39,7 +39,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
             _logger = logger;
         }
 
-        [Authorize(Policy = nameof(PolicyNames.EmployerAuthenticated))]
+        [Authorize(Policy = nameof(PolicyNames.HasEmployerAccount))]
         [HttpGet]
         [Route(RoutePrefixPaths.FeedbackRoutePath, Name = RouteNames.Landing_Get_New)]
         public async Task<IActionResult> Index(StartFeedbackRequest request)
