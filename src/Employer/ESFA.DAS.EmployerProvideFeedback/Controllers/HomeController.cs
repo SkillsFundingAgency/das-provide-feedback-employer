@@ -58,7 +58,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
             return View();
         }
         
-        [Authorize(Policy = nameof(PolicyNames.HasEmployerAccount))]
+        [Authorize(Policy = nameof(PolicyNames.EmployerAuthenticated))]
         [ServiceFilter(typeof(EnsureFeedbackNotSubmitted))]
         [Route(RoutePrefixPaths.FeedbackFromEmailRoutePath, Name = RouteNames.Landing_Get)]
         [HttpGet]
