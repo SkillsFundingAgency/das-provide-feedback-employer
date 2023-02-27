@@ -29,6 +29,12 @@ namespace ESFA.DAS.EmployerProvideFeedback.StartupExtensions
             
             services.AddAuthorization(options =>
             {
+                options.AddPolicy(PolicyNames.EmployerAuthenticated
+                , policy =>
+                {
+                    policy.RequireClaim(EmployerClaims.EmailAddress);
+                    policy.RequireAuthenticatedUser();
+                });
                 options.AddPolicy(
                     PolicyNames.HasEmployerAccount
                     , policy =>
