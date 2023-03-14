@@ -66,9 +66,6 @@
         "dbConnectionString": {
             "type": "secureString"
         },
-        "sharedRedisConnectionString": {
-            "type": "secureString"
-        },
         "inviteEmailerSchedule": {
             "type": "string"
         },
@@ -105,6 +102,12 @@
         "appServicePlanInstances": {
             "type": "int",
             "defaultValue": 1
+        },
+        "sharedApimName": {
+            "type": "string"
+        },
+        "sharedApimResourceGroup": {
+            "type": "string"
         },
         "sharedFrontEndAppServicePlanName": {
             "type": "string"
@@ -176,6 +179,9 @@
         },
         "workerAccessRestrictions": {
             "type": "array"
+        },
+        "configNames": {
+            "type": "string"
         }
     },
     "variables": {
@@ -311,7 +317,7 @@
                                 },
                                 {
                                     "name": "ConfigNames",
-                                    "value": "[variables('configNames')]"
+                                    "value": "[parameters('configNames')]"
                                 },
                                 {
                                     "name": "Version",
@@ -344,6 +350,30 @@
                     },
                     "ipSecurityRestrictions": {
                         "value": "[parameters('frontEndAccessRestrictions')]"
+                    }
+                }
+            }
+        },
+        {
+            "apiVersion": "2020-06-01",
+            "name": "[concat('apim-product-subscription-', parameters('utcValue'))]",
+            "resourceGroup": "[parameters('sharedApimResourceGroup')]",
+            "type": "Microsoft.Resources/deployments",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('deploymentUrlBase'),'apim/apim-subscription.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "apimName": {
+                        "value": "[parameters('sharedApimName')]"
+                    },
+                    "subscriptionName": {
+                        "value": "[variables('uiAppServiceName')]"
+                    },
+                    "subscriptionScope": {
+                        "value": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', parameters('sharedApimResourceGroup'), '/providers/Microsoft.ApiManagement/service/', parameters('sharedApimName'), '/products/EmployerFeedbackOuterApi')]"
                     }
                 }
             }

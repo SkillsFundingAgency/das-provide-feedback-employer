@@ -13,16 +13,13 @@ using SFA.DAS.Encoding;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using ESFA.DAS.EmployerProvideFeedback.Authentication;
 
 namespace ESFA.DAS.EmployerProvideFeedback.Controllers
 {
-    [Authorize]
+    [Authorize(Policy = nameof(PolicyNames.HasEmployerAccount))]
     public class ProviderController : Controller
     {
-        // Defeating SonarCloud's "http is bad" security warning.
-        private const string CLAIMTYPE_EMAILADDRESS = "http" + "://das/employer/identity/claims/email_address";
-        private const string CLAIMTYPE_FIRSTNAME = "http" + "://das/employer/identity/claims/given_name";
-
         private readonly IEmployerFeedbackRepository _employerEmailDetailsRepository;
         private readonly ISessionService _sessionService;
         private readonly ITrainingProviderService _trainingProviderService;
@@ -193,8 +190,8 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
             await _sessionService.Set(idClaim.Value, newSurveyModel);
 
             // Make sure the user exists.
-            var emailAddressClaim = HttpContext.User.FindFirst(CLAIMTYPE_EMAILADDRESS);
-            var firstNameClaim = HttpContext.User.FindFirst(CLAIMTYPE_FIRSTNAME);
+            var emailAddressClaim = HttpContext.User.FindFirst(EmployerClaims.EmailAddress);
+            var firstNameClaim = HttpContext.User.FindFirst(EmployerClaims.GivenName);
             var user = new User()
             {
                 UserRef = new Guid(idClaim?.Value),

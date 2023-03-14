@@ -95,7 +95,7 @@ namespace ESFA.DAS.EmployerProvideFeedback
 
             services.AddApplicationInsightsTelemetry(_configuration.GetValue<string>("APPINSIGHTS_INSTRUMENTATIONKEY"));
             services.AddDatabaseRegistration(config, _hostingEnvironment);
-            services.AddEmployerAuthentication(config.Authentication);
+            services.AddEmployerAuthentication(config, _configuration);
             services.AddEmployerSharedUI(config.Authentication, _configuration);
             services.AddEmployerUrlHelper();
             services.AddMemoryCache();

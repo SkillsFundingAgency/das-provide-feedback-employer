@@ -5,6 +5,7 @@ using ESFA.DAS.EmployerProvideFeedback.Services;
 using ESFA.DAS.ProvideFeedback.Data.Repositories;
 using ESFA.DAS.ProvideFeedback.Employer.ApplicationServices;
 using ESFA.DAS.ProvideFeedback.Employer.ApplicationServices.Configuration;
+using ESFA.DAS.ProvideFeedback.Employer.ApplicationServices.OuterApi;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using SFA.DAS.Encoding;
@@ -31,6 +32,9 @@ namespace ESFA.DAS.EmployerProvideFeedback.StartupExtensions
 
             // Encoding Service
             services.AddSingleton<IEncodingService, EncodingService>();
+
+            services.AddTransient<IEmployerAccountService, EmployerAccountService>();
+            services.AddHttpClient<IOuterApiClient, OuterApiClient>();
         }
     }
 }
