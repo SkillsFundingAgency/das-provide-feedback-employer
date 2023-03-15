@@ -17,47 +17,6 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
 {
     public class HomeControllerTests
     {
-        private readonly HomeController _controller;
-        private readonly Mock<ISessionService> _sessionServiceMock;
-        private readonly Mock<IEmployerFeedbackRepository> _employerEmailDetailsRepoMock;
-        private readonly Mock<IEncodingService> _encodingServiceMock;
-        private readonly Mock<ILogger<HomeController>> _loggerMock;
-        private IFixture _fixture = new Fixture();
-        private readonly SurveyModel _surveyModel;
-        private readonly int _mockAccountId;
-
-        public HomeControllerTests()
-        {
-            _surveyModel = new SurveyModel()
-            {
-                UserRef = Guid.NewGuid()
-            };
-            _sessionServiceMock = new Mock<ISessionService>();
-            _sessionServiceMock.Setup(mock => mock.Get<SurveyModel>(It.IsAny<string>())).Returns(Task.FromResult(_surveyModel));
-            _employerEmailDetailsRepoMock = new Mock<IEmployerFeedbackRepository>();
-            _mockAccountId = new int();
-            var context = new DefaultHttpContext()
-            {
-                User = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
-                {
-                    new Claim(ClaimTypes.NameIdentifier, _surveyModel.UserRef.ToString()),
-                }))
-            };
-            _encodingServiceMock = new Mock<IEncodingService>();
-            _loggerMock = new Mock<ILogger<HomeController>>();
-            _controller = new HomeController(
-            _employerEmailDetailsRepoMock.Object,
-            _sessionServiceMock.Object,
-            _encodingServiceMock.Object,
-            _loggerMock.Object);
-            _controller.ControllerContext = new ControllerContext
-            {
-                HttpContext = context
-            };
-
-            _employerEmailDetailsRepoMock.Setup(mock => mock.GetEmployerAccountIdFromUniqueSurveyCode(It.IsAny<Guid>())).Returns(Task.FromResult(_mockAccountId));
-        }
-
         [Fact]
         public async void SessionSurvey_DoesNotExist_ShouldPopulateProviderName_OnViewData_FromEmployerEmailDetail()
         {
@@ -75,7 +34,7 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
         }
 
         [Fact]
-        public async void SessionSurvey_DoesNotExist_ShouldCreateNewSurveyInSession()
+        public async void UniqueCode_Invalid_ShouldRedirect_ToError()
         {
             // Arrange
             var uniqueCode = Guid.NewGuid();
@@ -84,7 +43,7 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
             _employerEmailDetailsRepoMock.Setup(mock => mock.GetEmployerAccountIdFromUniqueSurveyCode(uniqueCode)).ReturnsAsync(0);
 
             // Act
-            var result = await _controller.Index(uniqueEmailCode) as ViewResult;
+            var result = await _controller.Index(uniqueCode);
 
             // Assert
             Assert.IsAssignableFrom<NotFoundResult>(result);
