@@ -33,7 +33,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
             TempData[ReturnUrlKey] = returnUrl;
             var idClaim = HttpContext.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
             var cachedAnswers = await _sessionService.Get<SurveyModel>(idClaim.Value);
-            
+
             // TODO: Redirect from all questions and review route to landing if no survey in the session.
 
             return View(cachedAnswers);
@@ -99,7 +99,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
             return await HandleRedirect(RouteNames.QuestionThree_Get);
         }
 
-        
+
 
         [HttpGet("question-three", Name = RouteNames.QuestionThree_Get)]
         public async Task<IActionResult> QuestionThree(string returnUrl = null)

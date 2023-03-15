@@ -61,28 +61,21 @@ namespace ESFA.DAS.EmployerProvideFeedback.Services
             model.SortColumn = sortColumn;
             model.SortDirection = sortDirection;
 
-            // Select all the providers for this employer.
-
             var providers = await SelectAllProvidersForAccount(model.AccountId);
 
-            // Augment the provider records with feedback data. Urgh.
-            // We need to do this so that the date filtering will work.
 
             await AugmentProviderRecordsWithFeedbackStatus(model.AccountId, providers);
 
-            // Initialise the filter options.
 
             model.UnfilteredTotalRecordCount = providers.Count;
             model.ProviderNameFilter = providers.Select(p => p.ProviderName).OrderBy(p => p).ToList();
             model.FeedbackStatusFilter = new string[] { NOT_YET_SUBMITTED };
 
-            // Apply filters.
 
             var filteredProviders = providers.AsQueryable();
             filteredProviders = ApplyProviderNameFilter(filteredProviders, selectedProviderName);
             filteredProviders = ApplyFeedbackStatusFilter(filteredProviders, selectedFeedbackStatus);
 
-            // Sort
 
             if(PagingState.SortDescending == model.SortDirection)
             {
@@ -115,7 +108,6 @@ namespace ESFA.DAS.EmployerProvideFeedback.Services
                 }
             }
 
-            // Page
 
             var pagedFilteredProviders = filteredProviders.Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
             model.TrainingProviders = new PaginatedList<ProviderSearchViewModel.EmployerTrainingProvider>(pagedFilteredProviders, filteredProviders.Count(), pageIndex, pageSize, 6);
@@ -146,8 +138,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Services
 
         private async Task<List<ProviderSearchViewModel.EmployerTrainingProvider>> SelectAllProvidersForAccount(long accountId)
         {
-            // Select all 
-            var apprenticeshipsResponse = await _commitmentService.GetApprenticeships(accountId);
+            var apprenticeshipsResponse = await _commitmentService.GetApprenticeships(accountId); 
 
             var providers = apprenticeshipsResponse.Apprenticeships.GroupBy(p => p.ProviderId)
                 .Select(a => new ProviderSearchViewModel.EmployerTrainingProvider()

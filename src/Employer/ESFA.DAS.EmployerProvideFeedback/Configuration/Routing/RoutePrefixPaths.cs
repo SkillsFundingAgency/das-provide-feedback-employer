@@ -4,5 +4,6 @@
     {
         public const string FeedbackFromEmailRoutePath = "{uniqueCode:guid}";
         public const string FeedbackRoutePath = "{encodedAccountId}";  // /{uniqueCode:guid}
+        public const string ProviderSelectPath = "{encodedAccountId}/providers";
     }
 }

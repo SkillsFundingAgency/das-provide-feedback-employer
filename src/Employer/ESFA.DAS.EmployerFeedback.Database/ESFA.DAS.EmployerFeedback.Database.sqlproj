@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <Name>ESFA.DAS.EmployerFeedbackEmail.Database</Name>
+    <Name>ESFA.DAS.EmployerFeedback.Database</Name>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectVersion>4.1</ProjectVersion>
     <ProjectGuid>{67c39e70-8ff4-4497-a60b-ad85e067b1f0}</ProjectGuid>
@@ -24,6 +24,7 @@
     <IncludeCompositeObjects>True</IncludeCompositeObjects>
     <TargetDatabaseSet>True</TargetDatabaseSet>
     <TargetFrameworkProfile />
+    <PermissionSet>EXTERNAL_ACCESS</PermissionSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <OutputPath>bin\Release\</OutputPath>
@@ -47,6 +48,7 @@
     <DefineTrace>true</DefineTrace>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <SqlTargetName>ESFA.DAS.EmployerFeedback</SqlTargetName>
   </PropertyGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">11.0</VisualStudioVersion>
@@ -65,28 +67,15 @@
     <Folder Include="Types" />
   </ItemGroup>
   <ItemGroup>
-    <RefactorLog Include="ESFA.DAS.EmployerFeedbackEmail.Database.refactorlog" />
-  </ItemGroup>
-  <ItemGroup>
     <Build Include="Tables\Providers.sql" />
     <Build Include="Tables\Users.sql" />
     <Build Include="Tables\EmployerFeedback.sql" />
-    <Build Include="StoredProcedures\UpsertProviders.sql" />
     <Build Include="StoredProcedures\UpsertFeedback.sql" />
-    <Build Include="StoredProcedures\ResetFeedback.sql" />
-    <Build Include="StoredProcedures\UpsertUsers.sql" />
-    <Build Include="Views\vw_EmployerSurveyInvites.sql" />
     <Build Include="Views\vw_FeedbackToSend.sql" />
     <Build Include="Tables\EmployerSurveyHistory.sql" />
-    <Build Include="Views\vw_EmployerSurveyHistoryComplete.sql" />
-    <Build Include="Tables\EmployerEmailDetails.sql" />
-    <Build Include="StoredProcedures\GetEmployerSurveyHistory.sql" />
-    <Build Include="StoredProcedures\GetSurveyInvitesToSend.sql" />
-    <Build Include="StoredProcedures\GetSurveyRemindersToSend.sql" />
     <Build Include="Types\ProviderTemplate.sql" />
     <PostDeploy Include="Post Deployment\PostDeployment.sql" />
     <None Include="Post Deployment\DropUserTemplateTableType.sql" />
-    <Build Include="StoredProcedures\GetLatestFeedbackInviteSentDate.sql" />
     <Build Include="Tables\EmployerFeedbackResult.sql" />
     <Build Include="Tables\ProviderAttributes.sql" />
     <Build Include="Tables\Attributes.sql" />
@@ -96,13 +85,12 @@
     <Build Include="Tables\ProviderRatingSummary.sql" />
     <Build Include="Tables\ProviderStarsSummary.sql" />
     <Build Include="StoredProcedures\GenerateProviderAttributeResults.sql" />
-    <Build Include="StoredProcedures\GenerateProviderRatingResults.sql" />
+    <Build Include="Tables\EmployerEmailDetails.sql" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Tables\EmployerSurveyCodes.sql" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Post Deployment\TranslateCurrentDataIntoNew.sql" />
     <None Include="Post Deployment\LoadAttributes.sql" />
     <None Include="Post Deployment\SetExistingFeedbackSources.sql" />
   </ItemGroup>

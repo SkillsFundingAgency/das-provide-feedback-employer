@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
 using ESFA.DAS.ProvideFeedback.Data.Enums;
@@ -11,54 +10,23 @@ namespace ESFA.DAS.ProvideFeedback.Data.Repositories
 {
     public class EmployerFeedbackRepository : IEmployerFeedbackRepository
     {
-        private int _commandTimeoutSeconds = 120;
+        private const int CommandTimeoutSeconds = 120;
         private readonly IDbConnection _dbConnection;
         private const string EmployerSurveyCodes = "EmployerSurveyCodes";
-        private const string EmployerSurveyHistoryComplete = "vw_EmployerSurveyHistoryComplete";
 
         public EmployerFeedbackRepository(IDbConnection dbConnection)
         {
             _dbConnection = dbConnection;
         }
 
-        public Task<FeedbackInvite> GetLatestFeedbackInviteSentDateAsync(long feedbackId)
+        public async Task<int> GetEmployerAccountIdFromUniqueSurveyCode(Guid uniqueCode)
         {
-            var parameters = new DynamicParameters();
-            parameters.Add("@FeedbackId", feedbackId, DbType.Int64);
-            return _dbConnection.QuerySingleAsync<FeedbackInvite>(
-                commandType: CommandType.StoredProcedure,
-                sql: "[dbo].[GetLatestFeedbackInviteSentDate]",
-                param: parameters,
-                commandTimeout: _commandTimeoutSeconds);
-        }
-
-        public async Task<EmployerSurveyInvite> GetEmployerInviteForUniqueCode(Guid uniqueCode)
-        {
-            return await _dbConnection.QueryFirstOrDefaultAsync<EmployerSurveyInvite>(
-                                        $@"SELECT TOP(1) *
-                                          FROM {EmployerSurveyHistoryComplete}
-                                          WHERE UniqueSurveyCode = @{nameof(uniqueCode)}",
-                                          new { uniqueCode });
-        }
-
-        public async Task<IEnumerable<EmployerSurveyInvite>> GetEmployerUsersToBeSentInvite()
-        {
-            return await _dbConnection.QueryAsync<EmployerSurveyInvite>(
-                sql: "[dbo].[GetSurveyInvitesToSend]",
-                commandType: CommandType.StoredProcedure,
-                commandTimeout: _commandTimeoutSeconds);
-        }
-
-        public async Task<IEnumerable<EmployerSurveyInvite>> GetEmployerInvitesToBeSentReminder(int minDaysSinceInvite)
-        {
-            var minSentDate = DateTime.UtcNow.AddDays(-minDaysSinceInvite);
-            var parameters = new DynamicParameters();
-            parameters.Add("@MinSentDate", minSentDate, DbType.DateTime2);
-            return await _dbConnection.QueryAsync<EmployerSurveyInvite>(
-                sql: "[dbo].[GetSurveyRemindersToSend]",
-                param: parameters,
-                commandType: CommandType.StoredProcedure,
-                commandTimeout: _commandTimeoutSeconds);
+            return await _dbConnection.QueryFirstOrDefaultAsync<int>(
+                                        $@"SELECT AccountId
+                                        FROM EmployerSurveyCodes ESC
+                                        JOIN EmployerFeedback EF ON ESC.FeedbackId = EF.FeedbackId
+                                        WHERE ESC.UniqueSurveyCode = @{nameof( uniqueCode) }",
+                                        new { uniqueCode });
         }
 
         public async Task<bool> IsCodeBurnt(Guid emailCode)
@@ -89,41 +57,6 @@ namespace ESFA.DAS.ProvideFeedback.Data.Repositories
                                        new { uniqueCode });
         }
 
-        public async Task InsertSurveyInviteHistory(IEnumerable<Guid> uniqueSurveyCodes, int inviteType)
-        {
-            var now = DateTime.UtcNow;
-            var toInsert = uniqueSurveyCodes.Select(uniqueSurveyCode =>
-            {
-                return new
-                {
-                    uniqueSurveyCode,
-                    inviteType,
-                    now
-                };
-            });
-
-            var sql = $@"
-                        INSERT INTO EmployerSurveyHistory
-                        VALUES(@uniqueSurveyCode, @inviteType, @now)";
-
-            await _dbConnection.ExecuteAsync(sql, toInsert);
-        }
-
-        public async Task InsertNewSurveyForFeedback(long feedbackId)
-        {
-            var sql = $@"
-                        INSERT INTO {EmployerSurveyCodes}
-                        VALUES(@UniqueSurveyCode, @FeedbackId, NULL)";
-
-            await _dbConnection.ExecuteAsync(
-                sql,
-                new
-                {
-                    UniqueSurveyCode = Guid.NewGuid(),
-                    FeedbackId = feedbackId
-                });
-        }
-
         public async Task UpsertIntoUsers(User user)
         {
             var parameters = new DynamicParameters();
@@ -136,7 +69,7 @@ namespace ESFA.DAS.ProvideFeedback.Data.Repositories
                 sql: "[dbo].[UpsertUsers]",
                 param: parameters,
                 commandType: CommandType.StoredProcedure,
-                commandTimeout: _commandTimeoutSeconds
+                commandTimeout: CommandTimeoutSeconds
             );
         }
 
@@ -169,63 +102,9 @@ namespace ESFA.DAS.ProvideFeedback.Data.Repositories
             return feedbackId;
         }
 
-        public async Task ResetFeedback()
-        {
-            await _dbConnection.ExecuteAsync
-            (
-                sql: "[dbo].[ResetFeedback]",
-                commandType: CommandType.StoredProcedure,
-                commandTimeout: _commandTimeoutSeconds
-            );
-        }
-
-        public async Task<EmployerSurveyInvite> GetEmployerSurveyInvite(long feedbackId)
-        {
-            var parameters = new DynamicParameters();
-            parameters.Add("@FeedbackId", feedbackId, DbType.Int64);
-            return await _dbConnection.QueryFirstOrDefaultAsync<EmployerSurveyInvite>
-                (
-                    sql: "[dbo].[GetEmployerSurveyHistory]",
-                    param: parameters,
-                    commandType: CommandType.StoredProcedure
-                );
-        }
-
-        public async Task MarkProviderInactive()
-        {
-            await _dbConnection.QueryAsync("UPDATE Providers SET IsActive = 0");
-        }
-
-        public async Task<IEnumerable<Provider>> GetProvidersByUkprn(IEnumerable<long> ukprns)
-        {
-            var sql = @"SELECT * FROM Providers
-                        WHERE IsActive = 1
-                        AND Ukprn in @ukprns";
-
-            return await _dbConnection.QueryAsync<Provider>(sql, new { ukprns });
-        }
-
-        public async Task<Provider> GetProviderByUkprn(long ukprn)
-        {
-            var sql = @"SELECT TOP 1 * FROM Providers WHERE Ukprn = @ukprn";
-            return await _dbConnection.QueryFirstOrDefaultAsync<Provider>(sql, new { ukprn });
-        }
-
-        public async Task<User> GetUserByUserRef(Guid userRef)
-        {
-            var sql = @"SELECT TOP 1 * FROM Users WHERE UserRef = @userRef";
-            return await _dbConnection.QueryFirstOrDefaultAsync<User>(sql, new { userRef });
-        }
-
         public async Task<IEnumerable<FeedbackQuestionAttribute>> GetAllAttributes()
         {
             return await _dbConnection.QueryAsync<FeedbackQuestionAttribute>("SELECT * FROM Attributes");
-        }
-
-        public async Task<long> GetFeedbackIdFromUniqueSurveyCode(Guid uniqueSurveyCode)
-        {
-            return await _dbConnection.QueryFirstOrDefaultAsync<long>("SELECT FeedbackId FROM EmployerSurveyCodes WHERE UniqueSurveyCode = @uniqueSurveyCode"
-                , new { uniqueSurveyCode = uniqueSurveyCode });
         }
 
         public async Task<Guid> GetUniqueSurveyCodeFromFeedbackId(long feedbackId)
@@ -235,6 +114,7 @@ namespace ESFA.DAS.ProvideFeedback.Data.Repositories
         }
 
         public async Task<Guid> CreateEmployerFeedbackResult(long feedbackId, string providerRating, DateTime dateTimeCompleted, FeedbackSource feedbackSource, IEnumerable<ProviderAttribute> providerAttributes)
+
         {
             var providerAttributesDt = ProviderAttributesToDataTable(providerAttributes);
 
@@ -254,7 +134,7 @@ namespace ESFA.DAS.ProvideFeedback.Data.Repositories
                 };
                 var parameters = new DynamicParameters(parameterTemplate);
                 parameters.Add("@DateTimeCompleted", dateTimeCompleted, DbType.DateTime2);
-                
+
                 var result = await _dbConnection.QueryFirstOrDefaultAsync<Guid>(
 
                     sql: "[dbo].[CreateEmployerFeedbackResult]",
@@ -297,19 +177,6 @@ namespace ESFA.DAS.ProvideFeedback.Data.Repositories
                   LEFT JOIN Attributes a on pa.AttributeId = a.AttributeId");
         }
 
-        public async Task<EmployerFeedbackResult> GetEmployerFeedbackResultRecord(long feedbackId, DateTime datetimeCompleted)
-        {
-            var parameterTemplate = new
-            {
-                feedbackId
-            };
-            var parameters = new DynamicParameters(parameterTemplate);
-            parameters.Add("@dateTimeCompleted", datetimeCompleted, DbType.DateTime2);
-            
-            return await _dbConnection.
-                QueryFirstOrDefaultAsync<EmployerFeedbackResult>(@"SELECT TOP 1 * FROM EmployerFeedbackResult WHERE feedbackId = @feedbackId AND dateTimeCompleted = @dateTimeCompleted", parameters);
-        }
-
         public async Task<IEnumerable<EmployerFeedbackAndResult>> GetAllFeedbackAndResultFromEmployer(long accountId)
         {
             return await _dbConnection.
@@ -334,7 +201,7 @@ namespace ESFA.DAS.ProvideFeedback.Data.Repositories
                 commandType: CommandType.StoredProcedure,
                 sql: "[dbo].[GenerateProviderRatingResults]",
                 param: parameters,
-                commandTimeout: _commandTimeoutSeconds);
+                commandTimeout: CommandTimeoutSeconds);
         }
 
         public async Task<int> GenerateProviderAttributeResults(int allUserFeedback, int resultsforAllTime, int recentFeedbackMonths)
@@ -350,7 +217,7 @@ namespace ESFA.DAS.ProvideFeedback.Data.Repositories
                 commandType: CommandType.StoredProcedure,
                 sql: "[dbo].[GenerateProviderAttributeResults]",
                 param: parameters,
-                commandTimeout: _commandTimeoutSeconds);
+                commandTimeout: CommandTimeoutSeconds);
         }
 
         public async Task<IEnumerable<EmployerFeedbackResultSummary>> GetFeedbackResultSummary(long ukprn)
@@ -396,6 +263,5 @@ namespace ESFA.DAS.ProvideFeedback.Data.Repositories
 
             return dt;
         }
-
     }
 }

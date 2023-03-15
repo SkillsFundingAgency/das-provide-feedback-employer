@@ -1,6 +1,4 @@
-﻿using SFA.DAS.EAS.Account.Api.Types;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using ESFA.DAS.ProvideFeedback.Employer.ApplicationServices.Configuration;
 using Newtonsoft.Json;
 using SFA.DAS.CommitmentsV2.Api.Types.Responses;
@@ -9,7 +7,6 @@ namespace ESFA.DAS.ProvideFeedback.Employer.ApplicationServices
 {
     public interface ICommitmentService
     {
-        Task<GetAllCohortAccountIdsResponse> GetAllCohortAccountIds();
         Task<GetApprenticeshipsResponse> GetApprenticeships(long accountId);
         Task<GetProviderResponse> GetProvider(long providerId);
     }
@@ -23,15 +20,6 @@ namespace ESFA.DAS.ProvideFeedback.Employer.ApplicationServices
         {
             _configuration = configuration;
             _httpClient = httpClient;
-        }
-
-        public async Task<GetAllCohortAccountIdsResponse> GetAllCohortAccountIds()
-        {
-            var baseUrl = GetBaseUrl(_configuration.ApiBaseUrl);
-            var url = $"{baseUrl}api/cohorts/accountIds";
-            var json = await _httpClient.GetAsync(url, _configuration.IdentifierUri);
-
-            return JsonConvert.DeserializeObject<GetAllCohortAccountIdsResponse>(json);
         }
 
         public async Task<GetApprenticeshipsResponse> GetApprenticeships(long accountId)

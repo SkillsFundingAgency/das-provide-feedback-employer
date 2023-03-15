@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Caching.Distributed;
-using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 
 namespace ESFA.DAS.EmployerProvideFeedback.Infrastructure

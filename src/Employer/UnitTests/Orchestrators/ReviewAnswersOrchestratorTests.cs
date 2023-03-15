@@ -36,13 +36,15 @@ namespace UnitTests.Orchestrators
             employerFeedback.Object.FeedbackId = 1;
             employerFeedbackRepository.Setup(x => x.GetEmployerFeedbackRecord(surveyModel.UserRef, surveyModel.AccountId, surveyModel.Ukprn))
                 .ReturnsAsync(employerFeedback.Object);
-           
+            employerFeedbackRepository.Setup(x => x.GetUniqueSurveyCodeFromFeedbackId(employerFeedback.Object.FeedbackId))
+    .ReturnsAsync(Guid.NewGuid());
+
             //Act
             await orchestrator.SubmitConfirmedEmployerFeedback(surveyModel);
 
             //Assert
             employerFeedbackRepository.Verify(x => x.SetCodeBurntDate(It.IsAny<Guid>()), Times.Once);
-            employerFeedbackRepository.Verify(x => x.GetUniqueSurveyCodeFromFeedbackId(It.IsAny<long>()), Times.Never);
+            employerFeedbackRepository.Verify(x => x.GetUniqueSurveyCodeFromFeedbackId(It.IsAny<long>()), Times.Once);
         }
 
         [Theory, AutoData]

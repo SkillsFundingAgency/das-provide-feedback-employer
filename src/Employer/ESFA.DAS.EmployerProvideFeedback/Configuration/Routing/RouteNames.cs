@@ -21,5 +21,7 @@
 
         public const string FeedbackAlreadySubmitted = "Feedback_Submitted_Get";
         public const string Signout = "signout";
+
+        public const string ProviderSelect = "Provider_Select";
     }
 }

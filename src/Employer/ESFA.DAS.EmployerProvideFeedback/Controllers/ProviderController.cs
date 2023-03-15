@@ -1,4 +1,5 @@
-﻿using ESFA.DAS.EmployerProvideFeedback.Infrastructure;
+﻿using ESFA.DAS.EmployerProvideFeedback.Configuration.Routing;
+using ESFA.DAS.EmployerProvideFeedback.Infrastructure;
 using ESFA.DAS.EmployerProvideFeedback.Paging;
 using ESFA.DAS.EmployerProvideFeedback.Services;
 using ESFA.DAS.EmployerProvideFeedback.ViewModels;
@@ -44,12 +45,12 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
         }
 
         [HttpGet]
-        [Route("/{encodedAccountId}/providers")]
+        [Route(RoutePrefixPaths.ProviderSelectPath, Name = RouteNames.ProviderSelect)]
         public async Task<IActionResult> Index(GetProvidersForFeedbackRequest request, int pageIndex = PagingState.DefaultPageIndex)
         {
             var idClaim = HttpContext.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
             var pagingState = await _sessionService.Get<PagingState>($"{idClaim.Value}_PagingState");
-            if(null == pagingState)
+            if (null == pagingState)
             {
                 pagingState = new PagingState();
             }
@@ -83,7 +84,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
             {
                 pagingState = new PagingState();
             }
-            pagingState.PageIndex = PagingState.DefaultPageIndex; // applying filter resets the paging
+            pagingState.PageIndex = PagingState.DefaultPageIndex;
             pagingState.SelectedProviderName = postedModel.SelectedProviderName;
             pagingState.SelectedFeedbackStatus = postedModel.SelectedFeedbackStatus;
             await _sessionService.Set($"{idClaim.Value}_PagingState", pagingState);
@@ -148,14 +149,14 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
         [HttpPost]
         [Route("/{encodedAccountId}/providers/{providerId}")]
         public async Task<IActionResult> ProviderConfirmed(ProviderSearchConfirmationViewModel postedModel)
-        {            
-            if(!postedModel.Confirmed.HasValue)
+        {
+            if (!postedModel.Confirmed.HasValue)
             {
                 ModelState.AddModelError("Confirmation", "Please choose an option");
                 return View("ConfirmProvider", postedModel);
             }
 
-            if(!postedModel.Confirmed.Value)
+            if (!postedModel.Confirmed.Value)
             {
                 return RedirectToAction("Index");
             }
@@ -170,7 +171,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
             var providerAttributesModel = providerAttributes.Select(s => new ProviderAttributeModel { Name = s.AttributeName }).ToList();
 
             var idClaim = HttpContext.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
-            if(null == idClaim)
+            if (null == idClaim)
             {
                 _logger.LogError($"User id not found in user claims.");
                 return RedirectToAction("Error", "Error");
@@ -180,7 +181,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
             {
                 AccountId = _encodingService.Decode(postedModel.EncodedAccountId, EncodingType.AccountId),
                 Ukprn = postedModel.ProviderId,
-                UserRef = new Guid(idClaim?.Value), 
+                UserRef = new Guid(idClaim?.Value),
                 Submitted = false, //employerEmailDetail.CodeBurntDate != null,
                 ProviderName = postedModel.ProviderName,
                 Attributes = providerAttributesModel

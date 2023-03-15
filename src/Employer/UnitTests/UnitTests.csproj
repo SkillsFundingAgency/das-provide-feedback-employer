@@ -31,7 +31,6 @@
   <ItemGroup>
     <ProjectReference Include="..\ESFA.DAS.EmployerProvideFeedback.Api\ESFA.DAS.EmployerProvideFeedback.Api.csproj" />
     <ProjectReference Include="..\ESFA.DAS.EmployerProvideFeedback\ESFA.DAS.EmployerProvideFeedback.csproj" />
-    <ProjectReference Include="..\ESFA.DAS.ProvideFeedback.Emailer\ESFA.DAS.ProvideFeedback.Emailer.csproj" />
     <ProjectReference Include="..\ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer\ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer.csproj" />
   </ItemGroup>
 
