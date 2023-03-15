@@ -57,19 +57,11 @@ namespace ESFA.DAS.EmployerProvideFeedback.Orchestrators
                     feedbackSource,
                     providerAttributes);
 
-                Guid uniqueSurveyCode = await _employerFeedbackRepository.GetUniqueSurveyCodeFromFeedbackId(feedbackId);
+                Guid? uniqueSurveyCode = await _employerFeedbackRepository.GetUniqueSurveyCodeFromFeedbackId(feedbackId);
 
                 if (uniqueSurveyCode != Guid.Empty)
                 {
-                    // Email journey.
-                    await _employerFeedbackRepository.SetCodeBurntDate(surveyModel.UniqueCode.Value);
-                }
-                else
-                {
-                    // Ad Hoc journey
-                    Guid? uniqueSurveyCode = await _employerFeedbackRepository.GetUniqueSurveyCodeFromFeedbackId(feedbackId);
-                    if (uniqueSurveyCode != Guid.Empty)
-                        await _employerFeedbackRepository.SetCodeBurntDate(uniqueSurveyCode.Value);
+                    await _employerFeedbackRepository.SetCodeBurntDate(uniqueSurveyCode.Value);
                 }
             }
             catch (Exception ex)
