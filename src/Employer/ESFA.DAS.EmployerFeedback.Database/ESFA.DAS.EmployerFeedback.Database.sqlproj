@@ -71,8 +71,8 @@
     <Build Include="Tables\Users.sql" />
     <Build Include="Tables\EmployerFeedback.sql" />
     <Build Include="StoredProcedures\UpsertFeedback.sql" />
-    <Build Include="StoredProcedures\UpsertProviders.sql" />
-    <Build Include="StoredProcedures\UpsertUsers.sql" />
+    <Build Include="Views\vw_EmployerSurveyInvites.sql" />
+    <Build Include="Views\vw_EmployerSurveyInvites.sql" />
     <Build Include="Views\vw_FeedbackToSend.sql" />
     <Build Include="Tables\EmployerSurveyHistory.sql" />
     <Build Include="Types\ProviderTemplate.sql" />
@@ -87,7 +87,6 @@
     <Build Include="Tables\ProviderRatingSummary.sql" />
     <Build Include="Tables\ProviderStarsSummary.sql" />
     <Build Include="StoredProcedures\GenerateProviderAttributeResults.sql" />
-    <Build Include="StoredProcedures\GenerateProviderRatingResults.sql" />
     <Build Include="Tables\EmployerEmailDetails.sql" />
   </ItemGroup>
   <ItemGroup>

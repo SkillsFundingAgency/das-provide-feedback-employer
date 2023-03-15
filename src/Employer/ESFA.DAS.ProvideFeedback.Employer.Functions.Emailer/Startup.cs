@@ -1,4 +1,5 @@
-﻿using ESFA.DAS.ProvideFeedback.Data.Repositories;
+﻿using ESFA.DAS.Feedback.Employer.Emailer.Configuration;
+using ESFA.DAS.ProvideFeedback.Data.Repositories;
 using ESFA.DAS.ProvideFeedback.Employer.Application;
 using ESFA.DAS.ProvideFeedback.Employer.Application.Configuration;
 using ESFA.DAS.ProvideFeedback.Employer.ApplicationServices;
