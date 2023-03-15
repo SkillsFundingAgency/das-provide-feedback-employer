@@ -2,9 +2,8 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using ESFA.DAS.ProvideFeedback.Data.Repositories;
-using ESFA.DAS.Feedback.Employer.Emailer.Configuration;
 
-namespace ESFA.DAS.ProvideFeedback.Employer.Application
+namespace ESFA.DAS.ProvideFeedback.Employer.Application.Configuration
 {
     public class FeedbackSummariesService
     {
