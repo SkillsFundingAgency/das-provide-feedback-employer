@@ -7,11 +7,8 @@ using ESFA.DAS.ProvideFeedback.Data.Repositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Moq;
 using SFA.DAS.Employer.Shared.UI;
-using SFA.DAS.Employer.Shared.UI.Configuration;
-using SFA.DAS.EmployerUrlHelper;
 using SFA.DAS.Encoding;
 using System;
 using System.Collections.Generic;
@@ -31,9 +28,7 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
         private static readonly Mock<ILogger<ProviderController>> _loggerMock;
         private static readonly SurveyModel _surveyModel;
         private static readonly UrlBuilder _urlBuilder;
-        private static readonly Mock<ILogger<UrlBuilder>> _urlBuilderloggerMock;
-        private static readonly Mock<IOptionsMonitor<MaPageConfiguration>> _maPageConfigurationMock;
-        private static readonly Mock<ILinkGenerator> _linkGeneratorMock;
+        
 
         static ProviderControllerTests()
         {
@@ -68,20 +63,7 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
 
             _loggerMock = new Mock<ILogger<ProviderController>>();
 
-            _urlBuilderloggerMock = new Mock<ILogger<UrlBuilder>>();
-            _maPageConfigurationMock = new Mock<IOptionsMonitor<MaPageConfiguration>>();
-            _linkGeneratorMock = new Mock<ILinkGenerator>();
-            var maPageConfiguration = new MaPageConfiguration
-            {
-                Routes = new MaRoutes
-                {
-                    Accounts = new Dictionary<string, string>()
-                }
-            };
-            maPageConfiguration.Routes.Accounts.Add("AccountsHome", "http://AnAccountsLink/{0}");
-            _maPageConfigurationMock.Setup(s => s.CurrentValue).Returns(maPageConfiguration);
-            _linkGeneratorMock.Setup(s => s.AccountsLink(It.IsAny<string>())).Returns<string>(x => x);
-            _urlBuilder = new UrlBuilder(_urlBuilderloggerMock.Object, _maPageConfigurationMock.Object, _linkGeneratorMock.Object);
+            _urlBuilder = new UrlBuilder("LOCAL");
 
             _controller = new ProviderController(
                 _employerEmailDetailsRepoMock.Object,
