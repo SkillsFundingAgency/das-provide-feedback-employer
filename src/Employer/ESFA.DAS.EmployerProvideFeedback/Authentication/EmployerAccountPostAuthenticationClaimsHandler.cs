@@ -56,6 +56,11 @@ namespace ESFA.DAS.EmployerProvideFeedback.Authentication
             {
                 return claims;
             }
+
+            if (result.IsSuspended)
+            {
+                claims.Add(new Claim(ClaimTypes.AuthorizationDecision, "Suspended"));    
+            }
             
             claims.Add(new Claim(EmployerClaims.UserId, result.EmployerUserId));
             claims.Add(new Claim(EmployerClaims.GivenName, result.FirstName));

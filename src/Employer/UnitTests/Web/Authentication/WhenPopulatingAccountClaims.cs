@@ -32,6 +32,7 @@ namespace UnitTests.Web.Authentication
             [Frozen] Mock<IOptions<ProvideFeedbackEmployerWebConfiguration>> configuration,
             EmployerAccountPostAuthenticationClaimsHandler handler)
         {
+            accountData.IsSuspended = false;
             configuration.Object.Value.UseGovSignIn = true;
             var tokenValidatedContext = ArrangeTokenValidatedContext(nameIdentifier, idamsIdentifier, emailAddress);
             accountService.Setup(x => x.GetUserAccounts(nameIdentifier, emailAddress)).ReturnsAsync(accountData);
@@ -48,6 +49,36 @@ namespace UnitTests.Web.Authentication
             actual.First(c=>c.Type.Equals(EmployerClaims.GivenName)).Value.Should().Be(accountData.FirstName);
             actual.First(c=>c.Type.Equals(EmployerClaims.FamilyName)).Value.Should().Be(accountData.LastName);
             actual.First(c=>c.Type.Equals(EmployerClaims.EmailAddress)).Value.Should().Be(emailAddress);
+            actual.FirstOrDefault(c=>c.Type.Equals(ClaimTypes.AuthorizationDecision)).Should().BeNull();
+        }
+        [Test, MoqAutoData]
+        public async Task Then_The_Claims_Are_Populated_For_Gov_User_With_Suspended_Flag(
+            string nameIdentifier,
+            string idamsIdentifier,
+            string emailAddress,
+            EmployerUserAccounts accountData,
+            [Frozen] Mock<IEmployerAccountService> accountService,
+            [Frozen] Mock<IOptions<ProvideFeedbackEmployerWebConfiguration>> configuration,
+            EmployerAccountPostAuthenticationClaimsHandler handler)
+        {
+            accountData.IsSuspended = true;
+            configuration.Object.Value.UseGovSignIn = true;
+            var tokenValidatedContext = ArrangeTokenValidatedContext(nameIdentifier, idamsIdentifier, emailAddress);
+            accountService.Setup(x => x.GetUserAccounts(nameIdentifier, emailAddress)).ReturnsAsync(accountData);
+
+            var actual = await handler.GetClaims(tokenValidatedContext);
+
+            accountService.Verify(x => x.GetUserAccounts(nameIdentifier, emailAddress), Times.Once);
+            accountService.Verify(x => x.GetUserAccounts(idamsIdentifier, emailAddress), Times.Never);
+            actual.Should().ContainSingle(c => c.Type.Equals(EmployerClaims.Account));
+            var actualClaimValue = actual.First(c => c.Type.Equals(EmployerClaims.Account)).Value;
+            JsonConvert.SerializeObject(accountData.UserAccounts.ToDictionary(k => k.AccountId)).Should()
+                .Be(actualClaimValue);
+            actual.First(c=>c.Type.Equals(EmployerClaims.UserId)).Value.Should().Be(accountData.EmployerUserId);
+            actual.First(c=>c.Type.Equals(EmployerClaims.GivenName)).Value.Should().Be(accountData.FirstName);
+            actual.First(c=>c.Type.Equals(EmployerClaims.FamilyName)).Value.Should().Be(accountData.LastName);
+            actual.First(c=>c.Type.Equals(EmployerClaims.EmailAddress)).Value.Should().Be(emailAddress);
+            actual.First(c=>c.Type.Equals(ClaimTypes.AuthorizationDecision)).Value.Should().Be("Suspended");
         }
 
         [Test, MoqAutoData]
