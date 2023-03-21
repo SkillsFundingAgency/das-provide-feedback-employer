@@ -10,6 +10,7 @@ namespace ESFA.DAS.ProvideFeedback.Domain.Entities.Models
         public string EmployerUserId { get; set; }
         public string LastName { get; set; }
         public string FirstName { get; set; }
+        public bool IsSuspended { get; set; }
 
         public static implicit operator EmployerUserAccounts(GetUserAccountsResponse source)
         {
@@ -29,7 +30,8 @@ namespace ESFA.DAS.ProvideFeedback.Domain.Entities.Models
                 FirstName = source.FirstName,
                 LastName = source.LastName,
                 EmployerUserId = source.EmployerUserId,
-                UserAccounts = userAccounts
+                UserAccounts = userAccounts,
+                IsSuspended = source.IsSuspended
             };
         }
     }
