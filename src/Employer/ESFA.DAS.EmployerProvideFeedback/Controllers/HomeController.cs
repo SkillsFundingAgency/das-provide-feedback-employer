@@ -13,8 +13,11 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.Encoding;
+using SFA.DAS.GovUK.Auth.Models;
+using SFA.DAS.GovUK.Auth.Services;
 
 namespace ESFA.DAS.EmployerProvideFeedback.Controllers
 {
@@ -25,18 +28,24 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
         private readonly IEncodingService _encodingService;
         private readonly ISessionService _sessionService;
         private readonly ILogger<HomeController> _logger;
+        private readonly IConfiguration _config;
+        private readonly IStubAuthenticationService _stubAuthenticationService;
 
 
         public HomeController(
             IEmployerFeedbackRepository employerEmailDetailsRepository,
             ISessionService sessionService,
             IEncodingService encodingService,
-            ILogger<HomeController> logger)
+            ILogger<HomeController> logger,
+            IConfiguration config,
+            IStubAuthenticationService stubAuthenticationService)
         {
             _employerEmailDetailsRepository = employerEmailDetailsRepository;
             _sessionService = sessionService;
             _encodingService = encodingService;
             _logger = logger;
+            _config = config;
+            _stubAuthenticationService = stubAuthenticationService;
         }
 
         [Authorize(Policy = nameof(PolicyNames.HasEmployerAccount))]
@@ -115,6 +124,38 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
         {
             return Ok();
         }
+        
+#if DEBUG
+        [AllowAnonymous()]
+        [HttpGet]
+        [Route("SignIn-Stub")]
+        public IActionResult SigninStub()
+        {
+            return View("SigninStub", new List<string>{_config["StubId"],_config["StubEmail"]});
+        }
+        
+        [AllowAnonymous()]
+        [HttpPost]
+        [Route("SignIn-Stub")]
+        public IActionResult SigninStubPost()
+        {
+            _stubAuthenticationService?.AddStubEmployerAuth(Response.Cookies, new StubAuthUserDetails
+            {
+                Email = _config["StubEmail"],
+                Id = _config["StubId"]
+            });
+
+            return RedirectToRoute("Signed-in-stub");
+        }
+
+        [Authorize()]
+        [HttpGet]
+        [Route("signed-in-stub", Name = "Signed-in-stub")]
+        public IActionResult SignedInStub()
+        {
+            return View();
+        }
+#endif
 
         private SurveyModel MapToNewSurveyModel(EmployerSurveyInvite employerEmailDetail, IEnumerable<ProviderAttributeModel> providerAttributes)
         {
