@@ -143,7 +143,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
             {
                 Email = _config["StubEmail"],
                 Id = _config["StubId"]
-            });
+            },true);
 
             return RedirectToRoute("Signed-in-stub");
         }
