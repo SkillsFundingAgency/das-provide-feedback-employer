@@ -17,8 +17,8 @@ namespace ESFA.DAS.EmployerProvideFeedback.StartupExtensions
                 var maLinkGenerator = provider.GetService<UrlBuilder>();
                 return new CookieBannerViewModel
                 {
-                    CookieDetailsUrl = maLinkGenerator.AccountsLink("cookieConsent/details"),
-                    CookieConsentUrl = maLinkGenerator.AccountsLink("cookieConsent"),
+                    CookieDetailsUrl = maLinkGenerator.AccountsLink("Cookies") + "/details",
+                    CookieConsentUrl = maLinkGenerator.AccountsLink("Cookies"),
 
                 };
             });
