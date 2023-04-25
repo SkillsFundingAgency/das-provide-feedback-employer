@@ -61,7 +61,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.StartupExtensions
             if (provideFeedbackEmployerWebConfiguration.UseGovSignIn)
             {
                 services.Configure<GovUkOidcConfiguration>(configuration.GetSection("GovUkOidcConfiguration"));
-                services.AddAndConfigureGovUkAuthentication(configuration, $"{typeof(AuthenticationExtensions).Assembly.GetName().Name}.Auth",typeof(EmployerAccountPostAuthenticationClaimsHandler));
+                services.AddAndConfigureGovUkAuthentication(configuration, typeof(EmployerAccountPostAuthenticationClaimsHandler), "", "/SignIn-Stub");
             }
             else
             {
