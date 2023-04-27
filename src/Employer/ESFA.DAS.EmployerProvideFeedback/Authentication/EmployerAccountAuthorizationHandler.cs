@@ -54,7 +54,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Authentication
                 return false;
             }
             var accountIdFromUrl = _httpContextAccessor.HttpContext.Request.RouteValues[RouteValueKeys.EncodedAccountId].ToString().ToUpper();
-            var employerAccountClaim = context.User.FindFirst(c=>c.Type.Equals(EmployerClaims.Account));
+            var employerAccountClaim = context.User.FindFirst(c=>c.Type.Equals(EmployerClaims.AccountsClaimsTypeIdentifier));
 
             if(employerAccountClaim?.Value == null)
                 return false;
@@ -97,7 +97,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Authentication
                 var result = _accountsService.GetUserAccounts(userId, email).Result;
                 
                 var accountsAsJson = JsonConvert.SerializeObject(result.UserAccounts.ToDictionary(k => k.AccountId));
-                var associatedAccountsClaim = new Claim(EmployerClaims.Account, accountsAsJson, JsonClaimValueTypes.Json);
+                var associatedAccountsClaim = new Claim(EmployerClaims.AccountsClaimsTypeIdentifier, accountsAsJson, JsonClaimValueTypes.Json);
                 
                 var updatedEmployerAccounts = JsonConvert.DeserializeObject<Dictionary<string, EmployerUserAccountItem>>(associatedAccountsClaim.Value);
 

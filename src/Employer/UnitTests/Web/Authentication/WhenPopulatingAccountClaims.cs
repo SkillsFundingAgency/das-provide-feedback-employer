@@ -41,8 +41,8 @@ namespace UnitTests.Web.Authentication
 
             accountService.Verify(x => x.GetUserAccounts(nameIdentifier, emailAddress), Times.Once);
             accountService.Verify(x => x.GetUserAccounts(idamsIdentifier, emailAddress), Times.Never);
-            actual.Should().ContainSingle(c => c.Type.Equals(EmployerClaims.Account));
-            var actualClaimValue = actual.First(c => c.Type.Equals(EmployerClaims.Account)).Value;
+            actual.Should().ContainSingle(c => c.Type.Equals(EmployerClaims.AccountsClaimsTypeIdentifier));
+            var actualClaimValue = actual.First(c => c.Type.Equals(EmployerClaims.AccountsClaimsTypeIdentifier)).Value;
             JsonConvert.SerializeObject(accountData.UserAccounts.ToDictionary(k => k.AccountId)).Should()
                 .Be(actualClaimValue);
             actual.First(c=>c.Type.Equals(EmployerClaims.UserId)).Value.Should().Be(accountData.EmployerUserId);
@@ -70,8 +70,8 @@ namespace UnitTests.Web.Authentication
 
             accountService.Verify(x => x.GetUserAccounts(nameIdentifier, emailAddress), Times.Once);
             accountService.Verify(x => x.GetUserAccounts(idamsIdentifier, emailAddress), Times.Never);
-            actual.Should().ContainSingle(c => c.Type.Equals(EmployerClaims.Account));
-            var actualClaimValue = actual.First(c => c.Type.Equals(EmployerClaims.Account)).Value;
+            actual.Should().ContainSingle(c => c.Type.Equals(EmployerClaims.AccountsClaimsTypeIdentifier));
+            var actualClaimValue = actual.First(c => c.Type.Equals(EmployerClaims.AccountsClaimsTypeIdentifier)).Value;
             JsonConvert.SerializeObject(accountData.UserAccounts.ToDictionary(k => k.AccountId)).Should()
                 .Be(actualClaimValue);
             actual.First(c=>c.Type.Equals(EmployerClaims.UserId)).Value.Should().Be(accountData.EmployerUserId);
@@ -98,8 +98,8 @@ namespace UnitTests.Web.Authentication
 
             accountService.Verify(x => x.GetUserAccounts(nameIdentifier, string.Empty), Times.Never);
             accountService.Verify(x => x.GetUserAccounts(idamsIdentifier, string.Empty), Times.Once);
-            actual.Should().ContainSingle(c => c.Type.Equals(EmployerClaims.Account));
-            var actualClaimValue = actual.First(c => c.Type.Equals(EmployerClaims.Account)).Value;
+            actual.Should().ContainSingle(c => c.Type.Equals(EmployerClaims.AccountsClaimsTypeIdentifier));
+            var actualClaimValue = actual.First(c => c.Type.Equals(EmployerClaims.AccountsClaimsTypeIdentifier)).Value;
             JsonConvert.SerializeObject(accountData.UserAccounts.ToDictionary(k => k.AccountId)).Should()
                 .Be(actualClaimValue);
             actual.FirstOrDefault(c=>c.Type.Equals(EmployerClaims.UserId)).Should().BeNull();

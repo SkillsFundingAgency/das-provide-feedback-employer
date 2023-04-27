@@ -42,7 +42,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.StartupExtensions
                     PolicyNames.HasEmployerAccount
                     , policy =>
                     {
-                        policy.RequireClaim(EmployerClaims.Account);
+                        policy.RequireClaim(EmployerClaims.AccountsClaimsTypeIdentifier);
                         policy.Requirements.Add(new EmployerAccountRequirement());
                         policy.RequireAuthenticatedUser();
                         policy.Requirements.Add(new AccountActiveRequirement());
@@ -51,7 +51,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.StartupExtensions
                     PolicyNames.HasEmployerViewerTransactorAccount
                     , policy =>
                     {
-                        policy.RequireClaim(EmployerClaims.Account);
+                        policy.RequireClaim(EmployerClaims.AccountsClaimsTypeIdentifier);
                         policy.Requirements.Add(new EmployerViewerTransactorRoleRequirement());
                         policy.RequireAuthenticatedUser();
                         policy.Requirements.Add(new AccountActiveRequirement());
