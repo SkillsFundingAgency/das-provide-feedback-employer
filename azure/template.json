@@ -215,6 +215,9 @@
         },
         "stubAuth": {
             "type": "string"
+        },
+        "cdnUrl": {
+            "type": "string"
         }
     },
     "variables": {
@@ -384,6 +387,10 @@
                                 {
                                     "name": "StubAuth",
                                     "value": "[parameters('stubAuth')]"
+                                },
+                                {
+                                    "name": "Cdn:Url",
+                                    "value": "[parameters('cdnUrl')]"
                                 }
                             ]
                         }

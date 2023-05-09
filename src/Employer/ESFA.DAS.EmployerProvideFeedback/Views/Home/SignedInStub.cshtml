@@ -8,7 +8,7 @@
     ViewBag.Title = "title";
     Layout = "_Layout";
     var accounts = JsonConvert.DeserializeObject<Dictionary<string, EmployerUserAccountItem>>(
-        User.Claims.FirstOrDefault(c => c.Type.Equals(EmployerClaims.Account))?.Value)
+        User.Claims.FirstOrDefault(c => c.Type.Equals(EmployerClaims.AccountsClaimsTypeIdentifier))?.Value)
         .Select(c => c.Value)
         .ToList();
 }

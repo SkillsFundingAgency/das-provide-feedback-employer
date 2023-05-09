@@ -19,7 +19,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.StartupExtensions
                 var redis = ConnectionMultiplexer.Connect($"{redisConnectionString},{dataProtectionKeysDatabase}");
 
                 services.AddDataProtection()
-                    .SetApplicationName("das-employer-provide-feedback")
+                    .SetApplicationName("das-employer")
                     .PersistKeysToStackExchangeRedis(redis, "DataProtection-Keys");
             }
             return services;

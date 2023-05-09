@@ -8,9 +8,17 @@ namespace ESFA.DAS.EmployerProvideFeedback.StartupExtensions
 {
     public static class AddEmployerSharedUIExtensions
     {
-        public static void AddEmployerSharedUI(this IServiceCollection services, AuthenticationConfiguration config, IConfiguration configuration)
+        public static void AddEmployerSharedUI(this IServiceCollection services, ProvideFeedbackEmployerWebConfiguration config, IConfiguration configuration)
         {
-            services.AddMaMenuConfiguration( "signout", config.ClientId, configuration["ResourceEnvironmentName"]);
+            if (config.UseGovSignIn)
+            {
+                services.AddMaMenuConfiguration( "signout", configuration["ResourceEnvironmentName"]);
+            }
+            else
+            {
+                services.AddMaMenuConfiguration( "signout", config.Authentication.ClientId, configuration["ResourceEnvironmentName"]);    
+            }
+            
 
             services.AddSingleton<ICookieBannerViewModel>(provider =>
             {
