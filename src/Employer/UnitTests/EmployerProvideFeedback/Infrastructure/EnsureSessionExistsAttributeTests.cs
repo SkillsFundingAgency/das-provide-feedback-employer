@@ -39,7 +39,9 @@ namespace UnitTests.EmployerProvideFeedback.Infrastructure
                             _employerEmailDetailsRepoMock.Object,
                             _sessionServiceMock.Object,
                             _encodingServiceMock.Object,
-                            _controllerLoggerMock.Object);
+                            _controllerLoggerMock.Object,
+                            null, 
+                            null);
             var context = new DefaultHttpContext()
             {
                 User = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]

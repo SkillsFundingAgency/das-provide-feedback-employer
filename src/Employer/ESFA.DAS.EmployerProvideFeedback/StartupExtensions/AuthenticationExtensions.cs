@@ -12,6 +12,7 @@ using ESFA.DAS.ProvideFeedback.Employer.ApplicationServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Configuration;
 using SFA.DAS.GovUK.Auth.AppStart;
+using SFA.DAS.GovUK.Auth.Authentication;
 using SFA.DAS.GovUK.Auth.Configuration;
 using SFA.DAS.GovUK.Auth.Services;
 
@@ -26,6 +27,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.StartupExtensions
             services.AddTransient<IEmployerAccountAuthorisationHandler, EmployerAccountAuthorizationHandler>();
             services.AddSingleton<IAuthorizationHandler, EmployerAccountAuthorizationHandler>();
             services.AddSingleton<IAuthorizationHandler, EmployerViewerTransactorAuthorizationHandler>();
+            services.AddSingleton<IAuthorizationHandler, AccountActiveAuthorizationHandler>();//TODO remove after gov login go live
             
             services.AddAuthorization(options =>
             {
@@ -34,29 +36,32 @@ namespace ESFA.DAS.EmployerProvideFeedback.StartupExtensions
                 {
                     policy.RequireClaim(EmployerClaims.EmailAddress);
                     policy.RequireAuthenticatedUser();
+                    policy.Requirements.Add(new AccountActiveRequirement());
                 });
                 options.AddPolicy(
                     PolicyNames.HasEmployerAccount
                     , policy =>
                     {
-                        policy.RequireClaim(EmployerClaims.Account);
+                        policy.RequireClaim(EmployerClaims.AccountsClaimsTypeIdentifier);
                         policy.Requirements.Add(new EmployerAccountRequirement());
                         policy.RequireAuthenticatedUser();
+                        policy.Requirements.Add(new AccountActiveRequirement());
                     });
                 options.AddPolicy(
                     PolicyNames.HasEmployerViewerTransactorAccount
                     , policy =>
                     {
-                        policy.RequireClaim(EmployerClaims.Account);
+                        policy.RequireClaim(EmployerClaims.AccountsClaimsTypeIdentifier);
                         policy.Requirements.Add(new EmployerViewerTransactorRoleRequirement());
                         policy.RequireAuthenticatedUser();
+                        policy.Requirements.Add(new AccountActiveRequirement());
                     });
             });
 
             if (provideFeedbackEmployerWebConfiguration.UseGovSignIn)
             {
                 services.Configure<GovUkOidcConfiguration>(configuration.GetSection("GovUkOidcConfiguration"));
-                services.AddAndConfigureGovUkAuthentication(configuration, $"{typeof(AuthenticationExtensions).Assembly.GetName().Name}.Auth",typeof(EmployerAccountPostAuthenticationClaimsHandler));
+                services.AddAndConfigureGovUkAuthentication(configuration, typeof(EmployerAccountPostAuthenticationClaimsHandler), "", "/SignIn-Stub");
             }
             else
             {

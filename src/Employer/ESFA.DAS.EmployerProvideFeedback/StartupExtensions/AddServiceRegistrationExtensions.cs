@@ -9,6 +9,7 @@ using ESFA.DAS.ProvideFeedback.Employer.ApplicationServices.OuterApi;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using SFA.DAS.Encoding;
+using SFA.DAS.GovUK.Auth.Services;
 
 namespace ESFA.DAS.EmployerProvideFeedback.StartupExtensions
 {
@@ -35,6 +36,8 @@ namespace ESFA.DAS.EmployerProvideFeedback.StartupExtensions
 
             services.AddTransient<IEmployerAccountService, EmployerAccountService>();
             services.AddHttpClient<IOuterApiClient, OuterApiClient>();
+
+            services.AddTransient<IStubAuthenticationService, StubAuthenticationService>();//TODO remove one gov login is live
         }
     }
 }
