@@ -36,7 +36,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
         [HttpGet("feedback-confirmation", Name = RouteNames.Confirmation_Get)]
         public async Task<IActionResult> Index(string encodedAccountId)
         {
-            var idClaim = HttpContext.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
+            var idClaim = HttpContext.User.FindFirst(EmployerClaims.UserId);
             var surveyModel = await _sessionService.Get<SurveyModel>(idClaim.Value);
             var providerCount = await _sessionService.Get<int>($"{idClaim.Value}_ProviderCount");
             await _sessionService.Remove($"{idClaim.Value}_PagingState");  // remove paging state incase we loop round for another provider

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Security.Claims;
+using ESFA.DAS.EmployerProvideFeedback.Authentication;
 using ESFA.DAS.EmployerProvideFeedback.Configuration.Routing;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
@@ -21,7 +22,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Infrastructure
         public override void OnActionExecuting(ActionExecutingContext context)
         {
             var c = context.Controller as Controller;
-            var userId = c.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userId = c.User.FindFirstValue(EmployerClaims.UserId);
 
              if (!_sessionService.ExistsAsync(userId).Result)
             {
