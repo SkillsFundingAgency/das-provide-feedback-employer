@@ -18,7 +18,7 @@ BEGIN
             ) ab1 WHERE (seq = 1 OR @AllUserFeedback = 1)
         ) er1
         JOIN [dbo].[EmployerFeedback] eft on er1.FeedbackId = eft.FeedbackId
-    WHERE (DatetimeCompleted >= dateadd(month,-@recentFeedbackMonths,getdate()) OR @ResultsforAllTime = 1 )
+    WHERE (DateTimeCompleted >= dateadd(month,-@recentFeedbackMonths,getdate()) OR @ResultsforAllTime = 1 )
     )
     -- Get the ratings for all eligble results for each UKPRNS
     MERGE INTO [dbo].[ProviderRatingSummary]  prs

@@ -9,6 +9,7 @@ using ESFA.DAS.ProvideFeedback.Employer.ApplicationServices;
 using ESFA.DAS.ProvideFeedback.Employer.ApplicationServices.Configuration;
 using FluentAssertions;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Moq;
 using Moq.Protected;
@@ -46,7 +47,7 @@ namespace UnitTests.ApplicationServices
             };
             var httpMessageHandler = SetupMessageHandlerMock(response, new Uri(providersUrl + "v1/fat-data-export"), HttpMethod.Get, authToken);
             var client = new HttpClient(httpMessageHandler.Object);
-            var apprenticeshipService = new RoatpService(client,azureClientCredentialHelper.Object,Mock.Of<IHostingEnvironment>(), configuration.Object);
+            var apprenticeshipService = new RoatpService(client,azureClientCredentialHelper.Object,Mock.Of<IHostEnvironment>(), configuration.Object);
             
             //Act
             var providers = await apprenticeshipService.GetAll();

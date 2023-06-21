@@ -18,6 +18,8 @@ using Newtonsoft.Json;
 using NUnit.Framework;
 using SFA.DAS.Testing.AutoFixture;
 
+#nullable enable
+
 namespace UnitTests.Web.Authentication
 {
     public class WhenPopulatingAccountClaims

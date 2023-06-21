@@ -10,7 +10,7 @@
     public class Program
     {
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
-            WebHost.CreateDefaultBuilder(args).UseApplicationInsights().UseStartup<Startup>().UseNLog()
+            WebHost.CreateDefaultBuilder(args).UseStartup<Startup>().UseNLog()
                 .UseUrls("https://localhost:5031");
 
         public static void Main(string[] args)
