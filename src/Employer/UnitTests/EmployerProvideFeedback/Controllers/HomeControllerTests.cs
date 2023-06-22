@@ -4,6 +4,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoFixture;
+using ESFA.DAS.EmployerProvideFeedback.Authentication;
 using ESFA.DAS.EmployerProvideFeedback.Controllers;
 using ESFA.DAS.EmployerProvideFeedback.Infrastructure;
 using ESFA.DAS.EmployerProvideFeedback.ViewModels;
@@ -59,7 +60,7 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
             {
                 User = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
                 {
-                    new Claim(ClaimTypes.NameIdentifier, _surveyModel.UserRef.ToString()),
+                    new Claim(EmployerClaims.UserId, _surveyModel.UserRef.ToString()),
                 }))
             };
             _controller.ControllerContext = new ControllerContext

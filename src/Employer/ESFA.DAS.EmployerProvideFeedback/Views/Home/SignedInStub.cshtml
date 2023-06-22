@@ -19,7 +19,7 @@
             You've signed in
         </h1>
 
-        <p>Id: @User.Claims.FirstOrDefault(c=>c.Type.Equals(ClaimTypes.NameIdentifier))?.Value</p>
+        <p>Id: @User.Claims.FirstOrDefault(c=>c.Type.Equals(EmployerClaims.UserId))?.Value</p>
         <p>Email: @User.Claims.FirstOrDefault(c=>c.Type.Equals(ClaimTypes.Email))?.Value</p>
         <table class="govuk-table">
             <thead class="govuk-table__head">

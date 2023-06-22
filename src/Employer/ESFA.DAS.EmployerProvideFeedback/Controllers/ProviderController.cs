@@ -47,7 +47,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
         [Route("/{encodedAccountId}/providers")]
         public async Task<IActionResult> Index(GetProvidersForFeedbackRequest request, int pageIndex = PagingState.DefaultPageIndex)
         {
-            var idClaim = HttpContext.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
+            var idClaim = HttpContext.User.FindFirst(EmployerClaims.UserId);
             var pagingState = await _sessionService.Get<PagingState>($"{idClaim.Value}_PagingState");
             if(null == pagingState)
             {
@@ -77,7 +77,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
         [Route("/{encodedAccountId}/providers")]
         public async Task<IActionResult> Filter(ProviderSearchViewModel postedModel)
         {
-            var idClaim = HttpContext.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
+            var idClaim = HttpContext.User.FindFirst(EmployerClaims.UserId);
             var pagingState = await _sessionService.Get<PagingState>($"{idClaim.Value}_PagingState");
             if (null == pagingState)
             {
@@ -105,7 +105,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
         [Route("/{encodedAccountId}/providers/sort")]
         public async Task<IActionResult> SortProviders(string encodedAccountId, string sortColumn, string sortDirection)
         {
-            var idClaim = HttpContext.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
+            var idClaim = HttpContext.User.FindFirst(EmployerClaims.UserId);
             var pagingState = await _sessionService.Get<PagingState>($"{idClaim.Value}_PagingState");
             if (null == pagingState)
             {
@@ -122,7 +122,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
         [Route("/{encodedAccountId}/providers/unfilter")]
         public async Task<IActionResult> ClearFilters(string encodedAccountId)
         {
-            var idClaim = HttpContext.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
+            var idClaim = HttpContext.User.FindFirst(EmployerClaims.UserId);
             var pagingState = await _sessionService.Get<PagingState>($"{idClaim.Value}_PagingState");
             if (null == pagingState)
             {
@@ -169,7 +169,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
 
             var providerAttributesModel = providerAttributes.Select(s => new ProviderAttributeModel { Name = s.AttributeName }).ToList();
 
-            var idClaim = HttpContext.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
+            var idClaim = HttpContext.User.FindFirst(EmployerClaims.UserId);
             if(null == idClaim)
             {
                 _logger.LogError($"User id not found in user claims.");

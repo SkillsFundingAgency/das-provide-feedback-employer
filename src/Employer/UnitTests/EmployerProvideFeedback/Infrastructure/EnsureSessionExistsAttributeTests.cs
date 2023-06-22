@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Security.Claims;
+using ESFA.DAS.EmployerProvideFeedback.Authentication;
 using ESFA.DAS.EmployerProvideFeedback.Configuration.Routing;
 using ESFA.DAS.EmployerProvideFeedback.Controllers;
 using ESFA.DAS.EmployerProvideFeedback.Infrastructure;
@@ -46,7 +47,7 @@ namespace UnitTests.EmployerProvideFeedback.Infrastructure
             {
                 User = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
                 {
-                    new Claim(ClaimTypes.NameIdentifier, "TestUserIdValue"),
+                    new Claim(EmployerClaims.UserId, "TestUserIdValue"),
                 }))
             };
             _controller.ControllerContext = new ControllerContext

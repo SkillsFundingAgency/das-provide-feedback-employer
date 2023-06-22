@@ -14,6 +14,7 @@ using System;
 using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using ESFA.DAS.EmployerProvideFeedback.Authentication;
 using Xunit;
 
 namespace UnitTests.EmployerProvideFeedback.Controllers
@@ -76,7 +77,7 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
             {
                 User = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
                 {
-                    new Claim(ClaimTypes.NameIdentifier, "TestUserIdValue"),
+                    new Claim(EmployerClaims.UserId, "TestUserIdValue"),
                 }))
             };
             _controller.ControllerContext = new ControllerContext

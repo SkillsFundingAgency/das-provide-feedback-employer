@@ -35,7 +35,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
         [HttpGet("review-answers", Name = RouteNames.ReviewAnswers_Get)]
         public async Task<IActionResult> Index()
         {
-            var idClaim = HttpContext.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
+            var idClaim = HttpContext.User.FindFirst(EmployerClaims.UserId);
             var vm = await _sessionService.Get<SurveyModel>(idClaim.Value);
             vm.FatUrl = _config.ExternalLinks.FindApprenticeshipTrainingSiteUrl;
             return View(vm);
@@ -44,7 +44,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
         [HttpPost("review-answers", Name = RouteNames.ReviewAnswers_Post)]
         public async Task<IActionResult> Confirmation()
         {
-            var idClaim = HttpContext.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
+            var idClaim = HttpContext.User.FindFirst(EmployerClaims.UserId);
 
             var answers = await _sessionService.Get<SurveyModel>(idClaim.Value);
 
