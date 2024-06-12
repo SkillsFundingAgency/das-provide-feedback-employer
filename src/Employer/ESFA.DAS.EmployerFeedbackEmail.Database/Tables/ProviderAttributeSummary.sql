@@ -3,6 +3,7 @@
 	[AttributeId] [int] NOT NULL,
 	[Strength] [int] NOT NULL,
 	[Weakness] [int] NOT NULL,
+	[TimePeriod] NVARCHAR(50) NULL,
 	[UpdatedOn] [datetime] NULL,
 PRIMARY KEY CLUSTERED 
 (
