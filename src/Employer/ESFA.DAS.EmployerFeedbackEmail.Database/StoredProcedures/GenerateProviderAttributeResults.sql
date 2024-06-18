@@ -51,6 +51,7 @@ BEGIN
        FROM (
             SELECT * FROM (
                 SELECT ROW_NUMBER() OVER (PARTITION BY FeedbackId ORDER BY DateTimeCompleted DESC) seq, * FROM [dbo].[EmployerFeedbackResult]
+                WHERE (DatetimeCompleted BETWEEN @StartDate AND @EndDate)
             ) ab1 WHERE (seq = 1 OR @AllUserFeedback = 1)
         ) er1
         JOIN [dbo].[EmployerFeedback] eft on er1.FeedbackId = eft.FeedbackId
