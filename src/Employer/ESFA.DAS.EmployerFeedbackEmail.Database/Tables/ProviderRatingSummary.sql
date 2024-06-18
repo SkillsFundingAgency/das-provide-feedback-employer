@@ -2,6 +2,7 @@
 	[Ukprn] [bigint] NOT NULL,
 	[Rating] [nvarchar](20) NOT NULL,
 	[RatingCount] [int] NOT NULL,
+	[TimePeriod] NVARCHAR(50) NULL,
 	[UpdatedOn] [datetime] NULL,
 PRIMARY KEY CLUSTERED 
 (
