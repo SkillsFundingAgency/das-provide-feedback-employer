@@ -10,6 +10,7 @@ using ESFA.DAS.EmployerProvideFeedback.Api.Models;
 using ESFA.DAS.EmployerProvideFeedback.Api.Queries.FeedbackResultQuery;
 using ESFA.DAS.EmployerProvideFeedback.Api.Queries.ProviderSummaryStarsQuery;
 using Microsoft.AspNetCore.Authorization;
+using ESFA.DAS.EmployerProvideFeedback.Api.Queries.AnnualizedFeedbackResultQuery;
 
 
 namespace ESFA.DAS.EmployerProvideFeedback.Api.Controllers
@@ -43,6 +44,26 @@ namespace ESFA.DAS.EmployerProvideFeedback.Api.Controllers
             catch (Exception e)
             {
                 var message = $"Exception when attempting to get all Employer Feedback records for UKPRN {ukprn}: {e.Message}";
+                _logger.LogError(message);
+                return this.StatusCode(500, message);
+            }
+        }
+
+        [HttpGet]
+        [ProducesResponseType(200, Type = typeof(EmployerFeedbackResultDto))]
+        [ProducesResponseType(401)]
+        [ProducesResponseType(500)]
+        [Route("{ukprn}/annual")]
+        public async Task<IActionResult> GetAnnualizedEmployerfeedbackResult(long ukprn,String? academicYear)
+        {
+            try
+            {
+                EmployerAnnualizedFeedbackResultDto result = await _mediator.Send(new AnnualizedFeedbackResultQuery() { Ukprn = ukprn,AcademicYear = academicYear });
+                return Ok(result);
+            }
+            catch (Exception e)
+            {
+                var message = $"Exception when attempting to get annualized Employer Feedback records for UKPRN {ukprn}: {e.Message}";
                 _logger.LogError(message);
                 return this.StatusCode(500, message);
             }
