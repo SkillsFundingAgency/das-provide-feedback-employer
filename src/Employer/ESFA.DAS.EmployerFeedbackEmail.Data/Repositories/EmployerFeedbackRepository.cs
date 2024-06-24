@@ -381,16 +381,9 @@ namespace ESFA.DAS.ProvideFeedback.Data.Repositories
 
         public async Task<IEnumerable<EmployerFeedbackResultSummary>> GetFeedbackResultSummaryForAcademicYear(long ukprn, String AcademicYear)
         {
-            //if (string.IsNullOrEmpty(AcademicYear))
-            //{
-
-            //}
-            //else
-            //{
             var timePeriod = AcademicYear;
             var query =
                 @"SELECT pss.Ukprn, pss.ReviewCount, pss.Stars, a.AttributeName, pas.Strength, pas.Weakness, pas.UpdatedOn,pas.TimePeriod FROM ProviderStarsSummary pss LEFT JOIN ProviderAttributeSummary pas ON pss.Ukprn = pas.Ukprn AND pas.TimePeriod = @TimePeriod LEFT JOIN Attributes a ON pas.AttributeId = a.AttributeId WHERE pss.Ukprn = @ukprn AND pss.TimePeriod = @TimePeriod";
-            //}
 
             return await _dbConnection.
                 QueryAsync<EmployerFeedbackResultSummary>(query,
