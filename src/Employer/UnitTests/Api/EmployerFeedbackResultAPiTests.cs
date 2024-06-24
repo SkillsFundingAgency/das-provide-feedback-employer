@@ -1,4 +1,5 @@
-using ESFA.DAS.EmployerProvideFeedback.Api.Queries.AnnualizedFeedbackResultQuery;
+using ESFA.DAS.EmployerProvideFeedback.Api.Queries.FeedbackResultAnnualQuery;
+using ESFA.DAS.EmployerProvideFeedback.Api.Queries.FeedbackResultForAcademicYearQuery;
 
 namespace UnitTests.Api
 {
@@ -31,23 +32,41 @@ namespace UnitTests.Api
 
 
         [Theory, AutoData]
-        public async Task WhenGettingAnnualizedEmployerfeedbackResult_SendsAnnualizedFeedbackQuery(EmployerAnnualizedFeedbackResultDto feedback)
+        public async Task WhenGettingEmployerFeedbackResultAnnual_SendsFeedbackAnnualQuery(EmployerFeedbackAnnualResultDto feedback)
         {
             // arrange
-            mockMediator.Setup(s => s.Send(It.IsAny<AnnualizedFeedbackResultQuery>(),It.IsAny<CancellationToken>())).ReturnsAsync(feedback);
+            mockMediator.Setup(s => s.Send(It.IsAny<FeedbackResultAnnualQuery>(), It.IsAny<CancellationToken>())).ReturnsAsync(feedback);
 
             // act
-            var actionResult = await this.controller.GetAnnualizedEmployerfeedbackResult(123,"AY2324");
+            var actionResult = await this.controller.GetEmployerFeedbackResultAnnual(123);
 
             // assert
             var actionOkResult = actionResult as OkObjectResult;
             Assert.NotNull(actionOkResult);
 
-            var model = actionOkResult.Value as EmployerAnnualizedFeedbackResultDto;
+            var model = actionOkResult.Value as EmployerFeedbackAnnualResultDto;
             Assert.NotNull(model);
 
             Assert.Equal(model.ReviewCount, feedback.ReviewCount);
         }
 
+        [Theory, AutoData]
+        public async Task WhenGettingEmployerFeedbackResultForAcademicYear_SendsFeedbackForAcademicYearQuery(EmployerFeedbackForAcademicYearResultDto feedback)
+        {
+            // arrange
+            mockMediator.Setup(s => s.Send(It.IsAny<FeedbackResultForAcademicYearQuery>(), It.IsAny<CancellationToken>())).ReturnsAsync(feedback);
+
+            // act
+            var actionResult = await this.controller.GetEmployerFeedbackResultForAcademicYear(123,"AY2324");
+
+            // assert
+            var actionOkResult = actionResult as OkObjectResult;
+            Assert.NotNull(actionOkResult);
+
+            var model = actionOkResult.Value as EmployerFeedbackForAcademicYearResultDto;
+            Assert.NotNull(model);
+
+            Assert.Equal(model.ReviewCount, feedback.ReviewCount);
+        }
     }
 }

@@ -2,6 +2,6 @@
 {
     public static class ReviewDataPeriod
     {
-        public const string AggregatedData = "All";
+        public const string All = "All";
     }
 }

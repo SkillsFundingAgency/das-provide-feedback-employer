@@ -356,9 +356,9 @@ namespace ESFA.DAS.ProvideFeedback.Data.Repositories
 
         public async Task<IEnumerable<EmployerFeedbackResultSummary>> GetFeedbackResultSummary(long ukprn)
         {
-            var timePeriod = ReviewDataPeriod.AggregatedData;
+            var timePeriod = ReviewDataPeriod.All;
             return await _dbConnection.
-                QueryAsync<EmployerFeedbackResultSummary>(@"SELECT pss.Ukprn, pss.ReviewCount, pss.Stars, a.AttributeName, pas.Strength, pas.Weakness, pas.UpdatedOn, pas.TimePeriod FROM ProviderStarsSummary pss LEFT JOIN ProviderAttributeSummary pas ON pss.Ukprn = pas.Ukprn AND pas.TimePeriod = @TimePeriod LEFT JOIN Attributes a ON pas.AttributeId = a.AttributeId WHERE pss.Ukprn = @ukprn AND pss.TimePeriod = @TimePeriod",
+                QueryAsync<EmployerFeedbackResultSummary>(@"SELECT pss.Ukprn, pss.ReviewCount, pss.Stars, a.AttributeName, pas.Strength, pas.Weakness, pas.UpdatedOn FROM ProviderStarsSummary pss LEFT JOIN ProviderAttributeSummary pas ON pss.Ukprn = pas.Ukprn AND pas.TimePeriod = @TimePeriod LEFT JOIN Attributes a ON pas.AttributeId = a.AttributeId WHERE pss.Ukprn = @ukprn AND pss.TimePeriod = @TimePeriod",
                     new
                     {
                         ukprn,
@@ -366,22 +366,31 @@ namespace ESFA.DAS.ProvideFeedback.Data.Repositories
                     });
         }
 
-        public async Task<IEnumerable<EmployerFeedbackResultSummary>> GetAnnualizedFeedbackResultSummary(long ukprn, String AcademicYear)
+        public async Task<IEnumerable<EmployerFeedbackResultSummary>> GetFeedbackResultSummaryAnnual(long ukprn)
         {
-            String query;
-            String timePeriod;
-            if (string.IsNullOrEmpty(AcademicYear))
-            {
-                timePeriod = ReviewDataPeriod.AggregatedData;
-                query =
-                    @"SELECT pss.Ukprn, pss.ReviewCount, pss.Stars, a.AttributeName, pas.Strength, pas.Weakness, pas.UpdatedOn,pas.TimePeriod FROM ProviderStarsSummary pss LEFT JOIN ProviderAttributeSummary pas ON pss.Ukprn = pas.Ukprn AND pas.TimePeriod != @TimePeriod LEFT JOIN Attributes a ON pas.AttributeId = a.AttributeId WHERE pss.Ukprn = @ukprn AND pss.TimePeriod != @TimePeriod";
-            }
-            else
-            {
-                timePeriod = AcademicYear;
-                query =
-                    @"SELECT pss.Ukprn, pss.ReviewCount, pss.Stars, a.AttributeName, pas.Strength, pas.Weakness, pas.UpdatedOn FROM ProviderStarsSummary pss LEFT JOIN ProviderAttributeSummary pas ON pss.Ukprn = pas.Ukprn AND pas.TimePeriod = @TimePeriod LEFT JOIN Attributes a ON pas.AttributeId = a.AttributeId WHERE pss.Ukprn = @ukprn AND pss.TimePeriod = @TimePeriod";
-            }
+            var query =
+                 @"SELECT pss.Ukprn, pss.ReviewCount, pss.Stars, a.AttributeName, pas.Strength, pas.Weakness, pas.UpdatedOn,pas.TimePeriod FROM ProviderStarsSummary pss LEFT JOIN ProviderAttributeSummary pas ON pss.Ukprn = pas.Ukprn LEFT JOIN Attributes a ON pas.AttributeId = a.AttributeId WHERE pss.Ukprn = @ukprn";
+
+            return await _dbConnection.
+                QueryAsync<EmployerFeedbackResultSummary>(query,
+                    new
+                    {
+                        ukprn
+                    });
+        }
+
+        public async Task<IEnumerable<EmployerFeedbackResultSummary>> GetFeedbackResultSummaryForAcademicYear(long ukprn, String AcademicYear)
+        {
+            //if (string.IsNullOrEmpty(AcademicYear))
+            //{
+
+            //}
+            //else
+            //{
+            var timePeriod = AcademicYear;
+            var query =
+                @"SELECT pss.Ukprn, pss.ReviewCount, pss.Stars, a.AttributeName, pas.Strength, pas.Weakness, pas.UpdatedOn,pas.TimePeriod FROM ProviderStarsSummary pss LEFT JOIN ProviderAttributeSummary pas ON pss.Ukprn = pas.Ukprn AND pas.TimePeriod = @TimePeriod LEFT JOIN Attributes a ON pas.AttributeId = a.AttributeId WHERE pss.Ukprn = @ukprn AND pss.TimePeriod = @TimePeriod";
+            //}
 
             return await _dbConnection.
                 QueryAsync<EmployerFeedbackResultSummary>(query,
@@ -394,7 +403,7 @@ namespace ESFA.DAS.ProvideFeedback.Data.Repositories
 
         public async Task<IEnumerable<ProviderStarsSummary>> GetAllStarsSummary()
         {
-            var timePeriod = ReviewDataPeriod.AggregatedData;
+            var timePeriod = ReviewDataPeriod.All;
             string query = @"SELECT Ukprn, ReviewCount, Stars FROM ProviderStarsSummary WHERE TimePeriod = @TimePeriod";
             return await _dbConnection.QueryAsync<ProviderStarsSummary>(query, new { TimePeriod = timePeriod });
         }

@@ -39,7 +39,8 @@ namespace ESFA.DAS.ProvideFeedback.Data.Repositories
         Task<int> GenerateProviderRatingResults(int allUserFeedback, int resultsforAllTime, int recentFeedbackMonths, decimal tolerance);
         Task<int> GenerateProviderAttributeResults(int allUserFeedback, int resultsforAllTime, int recentFeedbackMonths);
         Task<IEnumerable<EmployerFeedbackResultSummary>> GetFeedbackResultSummary(long ukprn);
-        Task<IEnumerable<EmployerFeedbackResultSummary>> GetAnnualizedFeedbackResultSummary(long ukprn,String AcademicYear);
+        Task<IEnumerable<EmployerFeedbackResultSummary>> GetFeedbackResultSummaryAnnual(long ukprn);
+        Task<IEnumerable<EmployerFeedbackResultSummary>> GetFeedbackResultSummaryForAcademicYear(long ukprn, String AcademicYear);
         Task<IEnumerable<ProviderStarsSummary>> GetAllStarsSummary();
     }
 }

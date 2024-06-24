@@ -7,9 +7,9 @@ using Newtonsoft.Json;
 namespace ESFA.DAS.EmployerProvideFeedback.Api.Models
 {
     [Serializable]
-    public class EmployerAnnualizedFeedbackResultDto : EmployerFeedbackStarsSummaryDto
+    public class EmployerFeedbackForAcademicYearResultDto : EmployerFeedbackStarsSummaryDto
     {
         [JsonProperty(PropertyName = "providerAttribute")]
-        public IEnumerable<ProviderAttributeAnnualizedSummaryItemDto> ProviderAttribute { get; set; }
+        public IEnumerable<ProviderAttributeForAcademicYearSummaryItemDto> ProviderAttribute { get; set; }
     }
 }

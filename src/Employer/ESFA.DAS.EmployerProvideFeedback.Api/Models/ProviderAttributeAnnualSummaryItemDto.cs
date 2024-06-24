@@ -9,7 +9,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Api.Models
     /// Strength and Weakness counts of a Provider
     /// </summary>
     [Serializable]
-    public class ProviderAttributeAnnualizedSummaryItemDto
+    public class ProviderAttributeAnnualSummaryItemDto
     {
         [JsonProperty(PropertyName = "name")]
         public string Name { get; set; }

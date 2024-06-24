@@ -10,7 +10,9 @@ using ESFA.DAS.EmployerProvideFeedback.Api.Models;
 using ESFA.DAS.EmployerProvideFeedback.Api.Queries.FeedbackResultQuery;
 using ESFA.DAS.EmployerProvideFeedback.Api.Queries.ProviderSummaryStarsQuery;
 using Microsoft.AspNetCore.Authorization;
-using ESFA.DAS.EmployerProvideFeedback.Api.Queries.AnnualizedFeedbackResultQuery;
+using ESFA.DAS.EmployerProvideFeedback.Api.Queries.FeedbackResultAnnualQuery;
+using ESFA.DAS.EmployerProvideFeedback.Api.Queries.FeedbackResultForAcademicYearQuery;
+using System.ComponentModel.DataAnnotations;
 
 
 namespace ESFA.DAS.EmployerProvideFeedback.Api.Controllers
@@ -54,16 +56,36 @@ namespace ESFA.DAS.EmployerProvideFeedback.Api.Controllers
         [ProducesResponseType(401)]
         [ProducesResponseType(500)]
         [Route("{ukprn}/annual")]
-        public async Task<IActionResult> GetAnnualizedEmployerfeedbackResult(long ukprn,String? academicYear)
+        public async Task<IActionResult> GetEmployerFeedbackResultAnnual(long ukprn)
         {
             try
             {
-                EmployerAnnualizedFeedbackResultDto result = await _mediator.Send(new AnnualizedFeedbackResultQuery() { Ukprn = ukprn,AcademicYear = academicYear });
+                EmployerFeedbackAnnualResultDto result = await _mediator.Send(new FeedbackResultAnnualQuery() { Ukprn = ukprn });
                 return Ok(result);
             }
             catch (Exception e)
             {
-                var message = $"Exception when attempting to get annualized Employer Feedback records for UKPRN {ukprn}: {e.Message}";
+                var message = $"Exception when attempting to get employer feedback result annual records for UKPRN {ukprn}: {e.Message}";
+                _logger.LogError(message);
+                return this.StatusCode(500, message);
+            }
+        }
+
+        [HttpGet]
+        [ProducesResponseType(200, Type = typeof(EmployerFeedbackResultDto))]
+        [ProducesResponseType(401)]
+        [ProducesResponseType(500)]
+        [Route("{ukprn}/annual/{year}")]
+        public async Task<IActionResult> GetEmployerFeedbackResultForAcademicYear(long ukprn, [RegularExpression(@"^(?:[a-zA-Z0-9]+)?$", ErrorMessage = "Invalid Year.")] string year)
+        {
+            try
+            {
+                EmployerFeedbackForAcademicYearResultDto result = await _mediator.Send(new FeedbackResultForAcademicYearQuery() { Ukprn = ukprn, AcademicYear = year });
+                return Ok(result);
+            }
+            catch (Exception e)
+            {
+                var message = $"Exception when attempting to get employer feedback result for academic year records for UKPRN {ukprn}: {e.Message}";
                 _logger.LogError(message);
                 return this.StatusCode(500, message);
             }
