@@ -4,6 +4,7 @@ using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
+using ESFA.DAS.ProvideFeedback.Data.Constants;
 using ESFA.DAS.ProvideFeedback.Data.Enums;
 using ESFA.DAS.ProvideFeedback.Domain.Entities.Models;
 
@@ -254,7 +255,7 @@ namespace ESFA.DAS.ProvideFeedback.Data.Repositories
                 };
                 var parameters = new DynamicParameters(parameterTemplate);
                 parameters.Add("@DateTimeCompleted", dateTimeCompleted, DbType.DateTime2);
-                
+
                 var result = await _dbConnection.QueryFirstOrDefaultAsync<Guid>(
 
                     sql: "[dbo].[CreateEmployerFeedbackResult]",
@@ -305,7 +306,7 @@ namespace ESFA.DAS.ProvideFeedback.Data.Repositories
             };
             var parameters = new DynamicParameters(parameterTemplate);
             parameters.Add("@dateTimeCompleted", datetimeCompleted, DbType.DateTime2);
-            
+
             return await _dbConnection.
                 QueryFirstOrDefaultAsync<EmployerFeedbackResult>(@"SELECT TOP 1 * FROM EmployerFeedbackResult WHERE feedbackId = @feedbackId AND dateTimeCompleted = @dateTimeCompleted", parameters);
         }
@@ -355,18 +356,49 @@ namespace ESFA.DAS.ProvideFeedback.Data.Repositories
 
         public async Task<IEnumerable<EmployerFeedbackResultSummary>> GetFeedbackResultSummary(long ukprn)
         {
+            var timePeriod = ReviewDataPeriod.All;
             return await _dbConnection.
-                QueryAsync<EmployerFeedbackResultSummary>(@"SELECT pss.Ukprn, pss.ReviewCount, pss.Stars, a.AttributeName, pas.Strength, pas.Weakness, pas.UpdatedOn FROM ProviderStarsSummary pss LEFT JOIN ProviderAttributeSummary pas ON pss.Ukprn = pas.Ukprn LEFT JOIN Attributes a ON pas.AttributeId = a.AttributeId WHERE pss.Ukprn = @ukprn",
-                new
-                {
-                    ukprn,
-                });
+                QueryAsync<EmployerFeedbackResultSummary>(@"SELECT pss.Ukprn, pss.ReviewCount, pss.Stars, a.AttributeName, pas.Strength, pas.Weakness, pas.UpdatedOn FROM ProviderStarsSummary pss LEFT JOIN ProviderAttributeSummary pas ON pss.Ukprn = pas.Ukprn AND pas.TimePeriod = @TimePeriod LEFT JOIN Attributes a ON pas.AttributeId = a.AttributeId WHERE pss.Ukprn = @ukprn AND pss.TimePeriod = @TimePeriod",
+                    new
+                    {
+                        ukprn,
+                        TimePeriod = timePeriod
+                    });
+        }
+
+        public async Task<IEnumerable<EmployerFeedbackResultSummary>> GetFeedbackResultSummaryAnnual(long ukprn)
+        {
+            var query =
+                 @"SELECT pss.Ukprn, pss.ReviewCount, pss.Stars, a.AttributeName, pas.Strength, pas.Weakness, pas.UpdatedOn,pas.TimePeriod FROM ProviderStarsSummary pss LEFT JOIN ProviderAttributeSummary pas ON pss.Ukprn = pas.Ukprn LEFT JOIN Attributes a ON pas.AttributeId = a.AttributeId AND pss.TimePeriod =pas.TimePeriod  WHERE pss.Ukprn = @ukprn";
+
+            return await _dbConnection.
+                QueryAsync<EmployerFeedbackResultSummary>(query,
+                    new
+                    {
+                        ukprn
+                    });
+        }
+
+        public async Task<IEnumerable<EmployerFeedbackResultSummary>> GetFeedbackResultSummaryForAcademicYear(long ukprn, String AcademicYear)
+        {
+            var timePeriod = AcademicYear;
+            var query =
+                @"SELECT pss.Ukprn, pss.ReviewCount, pss.Stars, a.AttributeName, pas.Strength, pas.Weakness, pas.UpdatedOn,pas.TimePeriod FROM ProviderStarsSummary pss LEFT JOIN ProviderAttributeSummary pas ON pss.Ukprn = pas.Ukprn AND pas.TimePeriod = @TimePeriod LEFT JOIN Attributes a ON pas.AttributeId = a.AttributeId WHERE pss.Ukprn = @ukprn AND pss.TimePeriod = @TimePeriod";
+
+            return await _dbConnection.
+                QueryAsync<EmployerFeedbackResultSummary>(query,
+                    new
+                    {
+                        ukprn,
+                        TimePeriod = timePeriod
+                    });
         }
 
         public async Task<IEnumerable<ProviderStarsSummary>> GetAllStarsSummary()
         {
-            return await _dbConnection.
-                QueryAsync<ProviderStarsSummary>(@"SELECT Ukprn, ReviewCount, Stars FROM ProviderStarsSummary");
+            var timePeriod = ReviewDataPeriod.All;
+            string query = @"SELECT Ukprn, ReviewCount, Stars FROM ProviderStarsSummary WHERE TimePeriod = @TimePeriod";
+            return await _dbConnection.QueryAsync<ProviderStarsSummary>(query, new { TimePeriod = timePeriod });
         }
 
         private DataTable ProvidersToDatatable(IEnumerable<Provider> providers)
