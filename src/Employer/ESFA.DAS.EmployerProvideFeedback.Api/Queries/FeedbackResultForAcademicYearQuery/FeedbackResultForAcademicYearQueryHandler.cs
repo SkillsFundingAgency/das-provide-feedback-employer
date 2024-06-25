@@ -34,19 +34,19 @@ namespace ESFA.DAS.EmployerProvideFeedback.Api.Queries.FeedbackResultForAcademic
             }
 
             IEnumerable<EmployerFeedbackForAcademicYearResultDto> grouped = feedback.GroupBy(
-                x => new { x.Ukprn, x.Stars, x.ReviewCount },
+                x => new { x.Ukprn, x.Stars, x.ReviewCount,x.TimePeriod },
                 x => new ProviderAttributeForAcademicYearSummaryItemDto
                 {
                     Name = x.AttributeName,
                     Strength = x.Strength,
                     Weakness = x.Weakness,
-                    TimePeriod = x.TimePeriod
                 },
                 (t, f) => new EmployerFeedbackForAcademicYearResultDto
                 {
                     Ukprn = t.Ukprn,
                     Stars = t.Stars,
                     ReviewCount = t.ReviewCount,
+                    TimePeriod = t.TimePeriod,
                     ProviderAttribute = f
                 });
 

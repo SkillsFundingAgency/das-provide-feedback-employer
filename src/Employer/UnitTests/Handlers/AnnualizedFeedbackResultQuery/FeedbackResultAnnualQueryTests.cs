@@ -2,11 +2,9 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using AutoFixture;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Xunit;
-using ESFA.DAS.EmployerProvideFeedback.Api.Models;
 using ESFA.DAS.ProvideFeedback.Data.Repositories;
 using ESFA.DAS.ProvideFeedback.Domain.Entities.Models;
 using ESFA.DAS.EmployerProvideFeedback.Api.Queries.FeedbackResultAnnualQuery;
@@ -26,7 +24,6 @@ namespace UnitTests.Api
             handler = new FeedbackResultAnnualQueryHandler(mockRepository.Object, mockLogger.Object);
         }
 
-
         [Fact]
         public async Task WhenQueryingFeedbackResultAnnual_IfNullReturnsEmptyCollection()
         {
@@ -34,14 +31,11 @@ namespace UnitTests.Api
             mockRepository.Setup(s => s.GetFeedbackResultSummaryAnnual(123)).ReturnsAsync((IEnumerable<EmployerFeedbackResultSummary>)null);
 
             // act
-            EmployerFeedbackAnnualResultDto response = await handler.Handle(new FeedbackResultAnnualQuery() { Ukprn = 123 }, new CancellationToken());
+            var response = await handler.Handle(new FeedbackResultAnnualQuery() { Ukprn = 123 }, new CancellationToken());
 
             // assert
-            Assert.Equal(123, response.Ukprn);
-            Assert.Equal(0, response.ReviewCount);
-            Assert.Equal(0, response.Stars);
-            Assert.IsAssignableFrom<IEnumerable<ProviderAttributeAnnualSummaryItemDto>>(response.ProviderAttribute);
-            Assert.Empty(response.ProviderAttribute);
+            Assert.NotNull(response);
+            Assert.Empty(response.AnnualEmployerFeedbackDetails);
         }
 
         [Fact]
@@ -51,34 +45,56 @@ namespace UnitTests.Api
             mockRepository.Setup(s => s.GetFeedbackResultSummaryAnnual(456)).ReturnsAsync(new List<EmployerFeedbackResultSummary>());
 
             // act
-            EmployerFeedbackAnnualResultDto response = await handler.Handle(new FeedbackResultAnnualQuery() { Ukprn = 456 }, new CancellationToken());
+            var response = await handler.Handle(new FeedbackResultAnnualQuery() { Ukprn = 456 }, new CancellationToken());
 
             // assert
-            Assert.Equal(456, response.Ukprn);
-            Assert.Equal(0, response.ReviewCount);
-            Assert.Equal(0, response.Stars);
-            Assert.IsAssignableFrom<IEnumerable<ProviderAttributeAnnualSummaryItemDto>>(response.ProviderAttribute);
-            Assert.Empty(response.ProviderAttribute);
+            Assert.NotNull(response);
+            Assert.Empty(response.AnnualEmployerFeedbackDetails);
         }
 
         [Fact]
         public async Task WhenQueryingFeedbackResultAnnual_IfFeedbackExistsReturnsConvertedModel()
         {
             // arrange
-            IEnumerable<EmployerFeedbackResultSummary> summaries = new Fixture().CreateMany<EmployerFeedbackResultSummary>(1);
-            summaries.First().Ukprn = 789;
+            var summaries = new List<EmployerFeedbackResultSummary>
+            {
+                new EmployerFeedbackResultSummary
+                {
+                    Ukprn = 789,
+                    TimePeriod = "All",
+                    Stars = 4,
+                    ReviewCount = 10,
+                    AttributeName = "Providing the right training at the right time",
+                    Strength = 2,
+                    Weakness = 4
+                },
+                new EmployerFeedbackResultSummary
+                {
+                    Ukprn = 789,
+                    TimePeriod = "All",
+                    Stars = 4,
+                    ReviewCount = 10,
+                    AttributeName = "Communication with employers",
+                    Strength = 2,
+                    Weakness = 4
+                }
+            };
+
             mockRepository.Setup(s => s.GetFeedbackResultSummaryAnnual(789)).ReturnsAsync(summaries);
 
             // act
-            EmployerFeedbackAnnualResultDto response = await handler.Handle(new FeedbackResultAnnualQuery() { Ukprn = 789 }, new CancellationToken());
+            var response = await handler.Handle(new FeedbackResultAnnualQuery() { Ukprn = 789 }, new CancellationToken());
 
             // assert
-            EmployerFeedbackResultSummary summary = summaries.First();
-            Assert.Equal(summary.Ukprn, response.Ukprn);
-            Assert.Equal(summary.ReviewCount, response.ReviewCount);
-            Assert.Equal(summary.Stars, response.Stars);
-            Assert.IsAssignableFrom<IEnumerable<ProviderAttributeAnnualSummaryItemDto>>(response.ProviderAttribute);
-            Assert.NotEmpty(response.ProviderAttribute);
+            Assert.NotNull(response);
+            Assert.NotEmpty(response.AnnualEmployerFeedbackDetails);
+
+            var details = response.AnnualEmployerFeedbackDetails.First();
+            Assert.Equal(789, details.Ukprn);
+            Assert.Equal("All", details.TimePeriod);
+            Assert.Equal(4, details.Stars);
+            Assert.Equal(10, details.ReviewCount);
+            Assert.Equal(2, details.ProviderAttribute.Count());
         }
     }
 }

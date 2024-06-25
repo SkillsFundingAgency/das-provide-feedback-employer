@@ -28,29 +28,37 @@ namespace ESFA.DAS.EmployerProvideFeedback.Api.Queries.FeedbackResultAnnualQuery
             {
                 return new EmployerFeedbackAnnualResultDto()
                 {
-                    Ukprn = request.Ukprn,
-                    ProviderAttribute = Enumerable.Empty<ProviderAttributeAnnualSummaryItemDto>()
+                    AnnualEmployerFeedbackDetails = Enumerable.Empty<EmployerFeedbackStarsAnnualSummaryDto>()
                 };
             }
 
-            IEnumerable<EmployerFeedbackAnnualResultDto> grouped = feedback.GroupBy(
-                x => new { x.Ukprn, x.Stars, x.ReviewCount },
-                x => new ProviderAttributeAnnualSummaryItemDto
-                {
-                    Name = x.AttributeName,
-                    Strength = x.Strength,
-                    Weakness = x.Weakness,
-                    TimePeriod = x.TimePeriod
-                },
-                (t, f) => new EmployerFeedbackAnnualResultDto
-                {
-                    Ukprn = t.Ukprn,
-                    Stars = t.Stars,
-                    ReviewCount = t.ReviewCount,
-                    ProviderAttribute = f
-                });
+            var grouped = feedback
+                .Where(f => f.AttributeName != null)  
+                .GroupBy(
+                    x => new { x.Ukprn, x.TimePeriod, x.Stars, x.ReviewCount },
+                    (key, group) => new EmployerFeedbackStarsAnnualSummaryDto
+                    {
+                        Ukprn = key.Ukprn,
+                        TimePeriod = key.TimePeriod,
+                        Stars = key.Stars,
+                        ReviewCount = key.ReviewCount,
+                        ProviderAttribute = group
+                            .Where(g => g.AttributeName != null)
+                            .Select(g => new ProviderAttributeAnnualSummaryItemDto
+                            {
+                                Name = g.AttributeName,
+                                Strength = g.Strength,
+                                Weakness = g.Weakness
+                            })
+                            .Distinct()
+                            .ToList()
+                    })
+                .ToList();
 
-            return grouped.FirstOrDefault();
+            return new EmployerFeedbackAnnualResultDto
+            {
+                AnnualEmployerFeedbackDetails = grouped
+            };
         }
     }
 }

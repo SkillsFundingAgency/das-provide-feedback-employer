@@ -369,7 +369,7 @@ namespace ESFA.DAS.ProvideFeedback.Data.Repositories
         public async Task<IEnumerable<EmployerFeedbackResultSummary>> GetFeedbackResultSummaryAnnual(long ukprn)
         {
             var query =
-                 @"SELECT pss.Ukprn, pss.ReviewCount, pss.Stars, a.AttributeName, pas.Strength, pas.Weakness, pas.UpdatedOn,pas.TimePeriod FROM ProviderStarsSummary pss LEFT JOIN ProviderAttributeSummary pas ON pss.Ukprn = pas.Ukprn LEFT JOIN Attributes a ON pas.AttributeId = a.AttributeId WHERE pss.Ukprn = @ukprn";
+                 @"SELECT pss.Ukprn, pss.ReviewCount, pss.Stars, a.AttributeName, pas.Strength, pas.Weakness, pas.UpdatedOn,pas.TimePeriod FROM ProviderStarsSummary pss LEFT JOIN ProviderAttributeSummary pas ON pss.Ukprn = pas.Ukprn LEFT JOIN Attributes a ON pas.AttributeId = a.AttributeId AND pss.TimePeriod =pas.TimePeriod  WHERE pss.Ukprn = @ukprn";
 
             return await _dbConnection.
                 QueryAsync<EmployerFeedbackResultSummary>(query,

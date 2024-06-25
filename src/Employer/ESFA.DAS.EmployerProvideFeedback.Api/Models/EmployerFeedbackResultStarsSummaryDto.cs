@@ -16,5 +16,8 @@ namespace ESFA.DAS.EmployerProvideFeedback.Api.Models
 
         [JsonProperty(PropertyName = "reviewCount", Order = int.MinValue)]
         public int ReviewCount { get; set; }
+
+        [JsonProperty(PropertyName = "timeperiod", Order = int.MinValue)]
+        public string TimePeriod { get; set; }
     }
 }

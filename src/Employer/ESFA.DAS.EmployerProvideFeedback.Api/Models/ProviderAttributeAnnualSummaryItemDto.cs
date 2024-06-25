@@ -15,12 +15,9 @@ namespace ESFA.DAS.EmployerProvideFeedback.Api.Models
         public string Name { get; set; }
 
         [JsonProperty(PropertyName = "strength")]
-        public int Strength{ get; set; }
+        public int Strength { get; set; }
 
         [JsonProperty(PropertyName = "weakness")]
         public int Weakness { get; set; }
-
-        [JsonProperty(PropertyName = "TimePeriod")]
-        public string TimePeriod { get; set; }
     }
 }
