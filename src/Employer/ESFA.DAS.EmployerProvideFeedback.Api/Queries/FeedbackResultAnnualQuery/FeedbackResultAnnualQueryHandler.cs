@@ -33,7 +33,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Api.Queries.FeedbackResultAnnualQuery
             }
 
             var grouped = feedback
-                .Where(f => f.AttributeName != null)  
+                .Where(f => f.AttributeName != null)
                 .GroupBy(
                     x => new { x.Ukprn, x.TimePeriod, x.Stars, x.ReviewCount },
                     (key, group) => new EmployerFeedbackStarsAnnualSummaryDto
@@ -50,7 +50,6 @@ namespace ESFA.DAS.EmployerProvideFeedback.Api.Queries.FeedbackResultAnnualQuery
                                 Strength = g.Strength,
                                 Weakness = g.Weakness
                             })
-                            .Distinct()
                             .ToList()
                     })
                 .ToList();
