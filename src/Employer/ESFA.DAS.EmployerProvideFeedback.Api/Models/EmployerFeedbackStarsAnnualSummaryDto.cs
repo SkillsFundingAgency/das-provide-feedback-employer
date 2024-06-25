@@ -1,8 +1,6 @@
-﻿
-using System;
+﻿using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
-
 
 namespace ESFA.DAS.EmployerProvideFeedback.Api.Models
 {
