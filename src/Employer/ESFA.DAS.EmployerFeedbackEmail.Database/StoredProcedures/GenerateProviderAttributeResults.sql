@@ -8,7 +8,7 @@ AS
 BEGIN
 DECLARE @CurrentDate DATE = GETDATE();
 DECLARE @CurrentYear INT = YEAR(@CurrentDate);
-DECLARE @StartYear INT = YEAR(DATEADD(YEAR, -10, @CurrentDate));
+DECLARE @StartYear INT = YEAR(DATEADD(YEAR, -5, @CurrentDate));
 DECLARE @EndYear INT = YEAR(@CurrentDate);
 DECLARE @TimePeriods TABLE (ID INT IDENTITY(1,1), TimePeriod VARCHAR(10), StartDate DATETIME, EndDate DATETIME);
 DECLARE @AcademicStartYear INT;
