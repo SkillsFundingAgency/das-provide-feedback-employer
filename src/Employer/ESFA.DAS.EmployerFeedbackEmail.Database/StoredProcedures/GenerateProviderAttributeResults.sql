@@ -7,25 +7,31 @@
 AS
 BEGIN
 DECLARE @CurrentDate DATE = GETDATE();
-DECLARE @StartYear INT = YEAR(DATEADD(YEAR, -5, @CurrentDate));
+DECLARE @CurrentYear INT = YEAR(@CurrentDate);
+DECLARE @StartYear INT = YEAR(DATEADD(YEAR, -10, @CurrentDate));
 DECLARE @EndYear INT = YEAR(@CurrentDate);
 DECLARE @TimePeriods TABLE (ID INT IDENTITY(1,1), TimePeriod VARCHAR(10), StartDate DATETIME, EndDate DATETIME);
 DECLARE @AcademicStartYear INT;
 DECLARE @AcademicEndYear INT;
 DECLARE @TimePeriodTemp VARCHAR(10);
 
-WHILE @StartYear <= @EndYear
+IF @CurrentDate <= DATEFROMPARTS(@CurrentYear, 7, 31)
 BEGIN
-    IF @CurrentDate <= DATEFROMPARTS(@EndYear, 7, 31)
-    BEGIN
-        SET @AcademicStartYear = @EndYear - 1;
-        SET @AcademicEndYear = @EndYear;
-    END
-    ELSE
-    BEGIN
-        SET @AcademicStartYear = @EndYear;
-        SET @AcademicEndYear = @EndYear + 1;
-    END
+    SET @EndYear = @CurrentYear;
+    SET @StartYear = @EndYear - 5;
+END
+ELSE
+BEGIN
+    SET @EndYear = @CurrentYear + 1;
+    SET @StartYear = @EndYear - 5;
+END
+
+WHILE @StartYear < @EndYear
+BEGIN
+
+    SET @AcademicStartYear = @StartYear;
+    SET @AcademicEndYear = @StartYear + 1;
+
 	    SET @TimePeriodTemp = CONCAT('AY', RIGHT(CAST(@AcademicStartYear AS VARCHAR), 2), RIGHT(CAST(@AcademicEndYear AS VARCHAR), 2));
         IF NOT EXISTS (SELECT 1 FROM @TimePeriods WHERE TimePeriod = @TimePeriodTemp)
         BEGIN
@@ -33,7 +39,7 @@ BEGIN
 	        VALUES (@TimePeriodTemp,DATETIMEFROMPARTS(@AcademicStartYear, 8, 1, 0, 0, 0, 0), DATETIMEFROMPARTS(@AcademicEndYear, 7, 31, 23, 59, 59, 997));
         END
 
-    SET @EndYear -= 1;
+     SET @StartYear += 1;
 END
 
 DECLARE @TimePeriod VARCHAR(10);
