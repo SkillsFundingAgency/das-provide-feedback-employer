@@ -120,7 +120,7 @@ END
 BEGIN
 
 DELETE FROM [dbo].[ProviderStarsSummary]
-WHERE TimePeriod NOT IN (SELECT TimePeriod FROM @TimePeriods);
+WHERE TimePeriod NOT IN (SELECT TimePeriod FROM @TimePeriods) AND TimePeriod != 'All';
 
     ;WITH ProviderRatingsWithTolerance AS (
         SELECT
