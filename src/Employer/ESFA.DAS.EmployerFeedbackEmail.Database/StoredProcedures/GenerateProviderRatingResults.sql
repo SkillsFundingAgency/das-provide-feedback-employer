@@ -50,6 +50,9 @@ DECLARE @EndDate DATETIME;
 DECLARE @RowNum INT = 1;
 DECLARE @TotalRows INT = (SELECT COUNT(*) FROM @TimePeriods);
 
+DELETE FROM [dbo].[ProviderRatingSummary]
+WHERE TimePeriod NOT IN (SELECT TimePeriod FROM @TimePeriods);
+
 WHILE @RowNum <= @TotalRows
 BEGIN
     SELECT @TimePeriod = TimePeriod, @StartDate = StartDate, @EndDate = EndDate
@@ -60,9 +63,6 @@ BEGIN
         SET @ratingTolerance = 0.5; -- Tolerance for years starting from 2025
     ELSE
         SET @ratingTolerance = 0.3; -- Default tolerance
-		
-	DELETE FROM [dbo].[ProviderRatingSummary]
-    WHERE TimePeriod NOT IN (SELECT TimePeriod FROM @TimePeriods);
 
 	;WITH LatestRatings 
 	AS (
