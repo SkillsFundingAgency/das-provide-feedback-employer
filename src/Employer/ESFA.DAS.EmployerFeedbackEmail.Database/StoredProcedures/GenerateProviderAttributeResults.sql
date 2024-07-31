@@ -48,14 +48,14 @@ DECLARE @EndDate DATETIME;
 DECLARE @RowNum INT = 1;
 DECLARE @TotalRows INT = (SELECT COUNT(*) FROM @TimePeriods);
 
+DELETE FROM [dbo].[ProviderAttributeSummary]
+WHERE TimePeriod NOT IN (SELECT TimePeriod FROM @TimePeriods) AND TimePeriod != 'All';;
+
 WHILE @RowNum <= @TotalRows
 BEGIN
     SELECT @TimePeriod = TimePeriod, @StartDate = StartDate, @EndDate = EndDate
     FROM @TimePeriods
     WHERE ID = @RowNum;
-
-	DELETE FROM [dbo].[ProviderAttributeSummary]
-    WHERE TimePeriod NOT IN (SELECT TimePeriod FROM @TimePeriods);
   
 	;WITH LatestResults 
     AS (
