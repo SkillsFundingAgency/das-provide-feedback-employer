@@ -3,11 +3,13 @@
 	[AttributeId] [int] NOT NULL,
 	[Strength] [int] NOT NULL,
 	[Weakness] [int] NOT NULL,
+	[TimePeriod] NVARCHAR(50) NOT NULL DEFAULT 'All',
 	[UpdatedOn] [datetime] NULL,
 PRIMARY KEY CLUSTERED 
 (
 	[Ukprn] ASC,
-	[AttributeId] ASC
+	[AttributeId] ASC,
+	[TimePeriod] ASC
 ))
 
 GO

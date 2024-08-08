@@ -1,12 +1,11 @@
-﻿
-using System;
+﻿using System;
+using System.Collections.Generic;
 using Newtonsoft.Json;
-
 
 namespace ESFA.DAS.EmployerProvideFeedback.Api.Models
 {
     [Serializable]
-    public class EmployerFeedbackStarsSummaryDto
+    public class EmployerFeedbackStarsAnnualSummaryDto
     {
         [JsonProperty(PropertyName = "ukprn", Order = int.MinValue)]
         public long Ukprn { get; set; }
@@ -17,7 +16,10 @@ namespace ESFA.DAS.EmployerProvideFeedback.Api.Models
         [JsonProperty(PropertyName = "reviewCount", Order = int.MinValue)]
         public int ReviewCount { get; set; }
 
-        [JsonProperty(PropertyName = "timeperiod", Order = int.MinValue)]
+        [JsonProperty(PropertyName = "timeperiod")]
         public string TimePeriod { get; set; }
+
+        [JsonProperty(PropertyName = "providerAttribute")]
+        public IEnumerable<ProviderAttributeAnnualSummaryItemDto> ProviderAttribute { get; set; }
     }
 }

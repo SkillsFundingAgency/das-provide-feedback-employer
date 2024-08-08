@@ -1,0 +1,75 @@
+{
+	"info": {
+		"_postman_id": "04a8da77-c6b8-4d4f-a127-d2239e16395a",
+		"name": "das-provide-feedback-employer",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "21174429"
+	},
+	"item": [
+		{
+			"name": "EmployerFeedbackAnnualResult",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://localhost:5031/api/EmployerFeedbackResult/10000028/annual",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "5031",
+					"path": [
+						"api",
+						"EmployerFeedbackResult",
+						"10000028",
+						"annual"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "EmployerFeedbackResultForAcademicYear",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://localhost:5031/api/EmployerFeedbackResult/10000028/annual/AY2021",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "5031",
+					"path": [
+						"api",
+						"EmployerFeedbackResult",
+						"10000028",
+						"annual",
+						"AY2021"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
