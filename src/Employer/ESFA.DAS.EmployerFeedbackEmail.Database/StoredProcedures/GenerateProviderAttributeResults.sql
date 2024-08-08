@@ -49,7 +49,7 @@ DECLARE @RowNum INT = 1;
 DECLARE @TotalRows INT = (SELECT COUNT(*) FROM @TimePeriods);
 
 DELETE FROM [dbo].[ProviderAttributeSummary]
-WHERE TimePeriod NOT IN (SELECT TimePeriod FROM @TimePeriods) AND TimePeriod != 'All';;
+WHERE TimePeriod NOT IN (SELECT TimePeriod FROM @TimePeriods) AND TimePeriod != 'All';
 
 WHILE @RowNum <= @TotalRows
 BEGIN
