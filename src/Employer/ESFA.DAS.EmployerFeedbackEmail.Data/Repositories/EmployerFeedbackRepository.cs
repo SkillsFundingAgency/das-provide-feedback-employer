@@ -22,17 +22,6 @@ namespace ESFA.DAS.ProvideFeedback.Data.Repositories
             _dbConnection = dbConnection;
         }
 
-        public Task<FeedbackInvite> GetLatestFeedbackInviteSentDateAsync(long feedbackId)
-        {
-            var parameters = new DynamicParameters();
-            parameters.Add("@FeedbackId", feedbackId, DbType.Int64);
-            return _dbConnection.QuerySingleAsync<FeedbackInvite>(
-                commandType: CommandType.StoredProcedure,
-                sql: "[dbo].[GetLatestFeedbackInviteSentDate]",
-                param: parameters,
-                commandTimeout: _commandTimeoutSeconds);
-        }
-
         public async Task<EmployerSurveyInvite> GetEmployerInviteForUniqueCode(Guid uniqueCode)
         {
             return await _dbConnection.QueryFirstOrDefaultAsync<EmployerSurveyInvite>(
@@ -40,26 +29,6 @@ namespace ESFA.DAS.ProvideFeedback.Data.Repositories
                                           FROM {EmployerSurveyHistoryComplete}
                                           WHERE UniqueSurveyCode = @{nameof(uniqueCode)}",
                                           new { uniqueCode });
-        }
-
-        public async Task<IEnumerable<EmployerSurveyInvite>> GetEmployerUsersToBeSentInvite()
-        {
-            return await _dbConnection.QueryAsync<EmployerSurveyInvite>(
-                sql: "[dbo].[GetSurveyInvitesToSend]",
-                commandType: CommandType.StoredProcedure,
-                commandTimeout: _commandTimeoutSeconds);
-        }
-
-        public async Task<IEnumerable<EmployerSurveyInvite>> GetEmployerInvitesToBeSentReminder(int minDaysSinceInvite)
-        {
-            var minSentDate = DateTime.UtcNow.AddDays(-minDaysSinceInvite);
-            var parameters = new DynamicParameters();
-            parameters.Add("@MinSentDate", minSentDate, DbType.DateTime2);
-            return await _dbConnection.QueryAsync<EmployerSurveyInvite>(
-                sql: "[dbo].[GetSurveyRemindersToSend]",
-                param: parameters,
-                commandType: CommandType.StoredProcedure,
-                commandTimeout: _commandTimeoutSeconds);
         }
 
         public async Task<bool> IsCodeBurnt(Guid emailCode)
