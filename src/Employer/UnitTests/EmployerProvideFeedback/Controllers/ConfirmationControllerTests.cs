@@ -6,20 +6,19 @@ using System.Security.Principal;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoFixture;
+using ESFA.DAS.EmployerProvideFeedback.Authentication;
 using ESFA.DAS.EmployerProvideFeedback.Configuration;
 using ESFA.DAS.EmployerProvideFeedback.Controllers;
 using ESFA.DAS.EmployerProvideFeedback.Infrastructure;
 using ESFA.DAS.EmployerProvideFeedback.ViewModels;
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
 using SFA.DAS.Employer.Shared.UI;
 using SFA.DAS.Employer.Shared.UI.Configuration;
-using SFA.DAS.EmployerUrlHelper;
 using Xunit;
 
 namespace UnitTests.EmployerProvideFeedback.Controllers
@@ -39,25 +38,12 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
             _cachedSurveyModel = _fixture.Create<SurveyModel>();
             var sessionServiceMock = new Mock<ISessionService>();
             var loggerMock = new Mock<ILogger<ConfirmationController>>();
-            var optionsMock = new Mock<IOptionsMonitor<MaPageConfiguration>>();
-            var linkGeneratorMock = new Mock<ILinkGenerator>();
-
-            var maPageConfiguration = new MaPageConfiguration
-            {
-                Routes = new MaRoutes
-                {
-                    Accounts = new Dictionary<string, string>()
-                }
-            };
-            maPageConfiguration.Routes.Accounts.Add("AccountsHome", "http://AnAccountsLink/{0}");
-            optionsMock.Setup(s => s.CurrentValue).Returns(maPageConfiguration);
-            linkGeneratorMock.Setup(s => s.AccountsLink(It.IsAny<string>())).Returns<string>(x => x);
 
             var config = new ProvideFeedbackEmployerWebConfiguration()
             {
                 ExternalLinks = _externalLinks
             };
-            var urlBuilder = new UrlBuilder(Mock.Of<ILogger<UrlBuilder>>(), optionsMock.Object, linkGeneratorMock.Object);
+            var urlBuilder = new UrlBuilder("LOCAL");
             sessionServiceMock
                 .Setup(mock => mock.Get<SurveyModel>(It.IsAny<string>()))
                     .Returns(Task.FromResult(_cachedSurveyModel));
@@ -71,7 +57,7 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
             {
                 User = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
                 {
-                    new Claim(ClaimTypes.NameIdentifier, "TestUserIdValue"),
+                    new Claim(EmployerClaims.UserId, "TestUserIdValue"),
                 }))
             };
             _controller.ControllerContext = new ControllerContext
@@ -94,7 +80,7 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
             viewModel.FeedbackRating.Should().Be(_cachedSurveyModel.Rating);
             viewModel.ProviderName.Should().Be(_cachedSurveyModel.ProviderName);
             viewModel.FatUrl.ToLowerInvariant().Should().Be(_externalLinks.FindApprenticeshipTrainingSiteUrl.ToLowerInvariant());
-            viewModel.EmployerAccountsHomeUrl.Should().Be($"http://AnAccountsLink/{encodedAccountId}");
+            viewModel.EmployerAccountsHomeUrl.Should().Be($"https://accounts.local-eas.apprenticeships.education.gov.uk/accounts/{encodedAccountId}/teams");
         }
 
     }

@@ -212,6 +212,16 @@
         },
         "configNames": {
             "type": "string"
+        },
+        "stubAuth": {
+            "type": "string"
+        },
+        "cdnUrl": {
+            "type": "string"
+        },
+        "minimumTlsVersion": {
+            "type": "string",
+            "defaultValue": "TLS1_2"
         }
     },
     "variables": {
@@ -262,6 +272,9 @@
                     },
                     "allowSharedKeyAccess": {
                         "value": true
+                    },
+                    "minimumTlsVersion": {
+                        "value": "[parameters('minimumTlsVersion')]"
                     }
                 }
             }
@@ -347,6 +360,10 @@
                                     "value": "[parameters('environmentName')]"
                                 },
                                 {
+                                    "name": "ResourceEnvironmentName",
+                                    "value": "[parameters('resourceEnvironmentName')]"
+                                },
+                                {
                                     "name": "ConfigurationStorageConnectionString",
                                     "value": "[parameters('configurationStorageConnectionString')]"
                                 },
@@ -373,6 +390,14 @@
                                 {
                                     "name": "ASPNETCORE_ENVIRONMENT",
                                     "value": "[parameters('aspNetCoreEnvironment')]"
+                                },
+                                {
+                                    "name": "StubAuth",
+                                    "value": "[parameters('stubAuth')]"
+                                },
+                                {
+                                    "name": "Cdn:Url",
+                                    "value": "[parameters('cdnUrl')]"
                                 }
                             ]
                         }

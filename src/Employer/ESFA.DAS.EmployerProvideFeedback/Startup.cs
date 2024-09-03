@@ -14,7 +14,6 @@ using Microsoft.Extensions.Hosting;
 using System.IO;
 using SFA.DAS.Configuration.AzureTableStorage;
 using ESFA.DAS.EmployerProvideFeedback.StartupExtensions;
-using SFA.DAS.EmployerUrlHelper.DependencyResolution;
 using SFA.DAS.Employer.Shared.UI;
 using Microsoft.AspNetCore.Mvc;
 using ESFA.DAS.EmployerProvideFeedback.Attributes.ModelBinders;
@@ -76,6 +75,8 @@ namespace ESFA.DAS.EmployerProvideFeedback
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseSession();
+            
+            app.UseHealthChecks("/ping");
 
             app.UseAuthentication();
             app.UseAuthorization();
@@ -96,14 +97,15 @@ namespace ESFA.DAS.EmployerProvideFeedback
             services.AddApplicationInsightsTelemetry(_configuration.GetValue<string>("APPINSIGHTS_INSTRUMENTATIONKEY"));
             services.AddDatabaseRegistration(config, _hostingEnvironment);
             services.AddEmployerAuthentication(config, _configuration);
-            services.AddEmployerSharedUI(config.Authentication, _configuration);
-            services.AddEmployerUrlHelper();
+            services.AddEmployerSharedUI(config, _configuration);
             services.AddMemoryCache();
             services.AddCache(_hostingEnvironment, config);
             services.AddDasDataProtection(config, _hostingEnvironment);
             services.AddServiceRegistrations(config);
             services.AddSessionPersistance();
-
+            
+            services.AddHealthChecks();
+            
             services.AddMvc(options =>
             {
                 options.EnableEndpointRouting = false;

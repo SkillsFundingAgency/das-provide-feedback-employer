@@ -50,11 +50,16 @@ namespace ESFA.DAS.EmployerProvideFeedback.Authentication
 
             
             var accountsAsJson = JsonConvert.SerializeObject(result.UserAccounts.ToDictionary(k => k.AccountId));
-            claims.Add(new Claim(EmployerClaims.Account, accountsAsJson, JsonClaimValueTypes.Json));
+            claims.Add(new Claim(EmployerClaims.AccountsClaimsTypeIdentifier, accountsAsJson, JsonClaimValueTypes.Json));
 
             if (!_configuration.UseGovSignIn)
             {
                 return claims;
+            }
+
+            if (result.IsSuspended)
+            {
+                claims.Add(new Claim(ClaimTypes.AuthorizationDecision, "Suspended"));    
             }
             
             claims.Add(new Claim(EmployerClaims.UserId, result.EmployerUserId));
