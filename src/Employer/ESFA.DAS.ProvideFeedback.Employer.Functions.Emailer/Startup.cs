@@ -77,9 +77,6 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
 
             builder.Services.AddTransient<IEmployerFeedbackRepository, EmployerFeedbackRepository>();
 
-            builder.Services.AddTransient<EmployerFeedbackDataRetrievalService>();
-            builder.Services.AddTransient<UserRefreshService>();
-            builder.Services.AddTransient<ProviderRefreshService>();
             builder.Services.AddTransient<FeedbackSummariesService>();
 
             var accApiConfig = _configuration.GetSection("AccountApi").Get<AccountApiConfiguration>();
