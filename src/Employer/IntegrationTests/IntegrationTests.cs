@@ -157,8 +157,7 @@ namespace IntegrationTests
             // Assert
             var invites = await _dbEmployerFeedbackRepository.GetEmployerUsersToBeSentInvite();
             invites.Count().Should().Be(4);
-            invites.Should().BeEquivalentTo(expectedInvites, options => options.Excluding(
-                s => s.SelectedMemberPath.EndsWith(".UniqueSurveyCode")));
+            invites.Should().BeEquivalentTo(expectedInvites, options => options.Excluding(info => info.UniqueSurveyCode));
         }
 
         [Test, Order(2)]
@@ -217,8 +216,8 @@ namespace IntegrationTests
             var invites = await _dbEmployerFeedbackRepository.GetEmployerUsersToBeSentInvite();
             invites.Count().Should().Be(2);
             var invitesList = invites.OrderBy(x => x.UserRef).ThenBy(x => x.AccountId).ThenBy(x => x.Ukprn).ToList();
-            invites.Should().BeEquivalentTo(expectedInvites, options => options.Excluding(
-                s => s.SelectedMemberPath.EndsWith(".UniqueSurveyCode")));
+            invites.Should()
+                .BeEquivalentTo(expectedInvites, options => options.Excluding(info => info.UniqueSurveyCode));
         }
 
         [Test, Order(5)]
@@ -308,8 +307,9 @@ namespace IntegrationTests
             //Assert
             var invites = await _dbEmployerFeedbackRepository.GetEmployerUsersToBeSentInvite();
             invites.Count().Should().Be(2);
-            invites.Should().BeEquivalentTo(expectedInvites, options => options.Excluding(
-                s => s.SelectedMemberPath.EndsWith(".UniqueSurveyCode")));
+            //todo: fix
+            invites.Should()
+                .BeEquivalentTo(expectedInvites, options => options.Excluding(info => info.UniqueSurveyCode));
         }
 
         [Test, Order(9)]

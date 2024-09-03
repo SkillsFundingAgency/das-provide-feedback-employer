@@ -1,16 +1,5 @@
 ﻿{
-  "Logging": {
-    "IncludeScopes": false,
-    "LogLevel": {
-      "Default": "Warning"
-    }
-  },
-  "AzureAd": {
-    "Tenant": "",
-    "Identifier": ""
-  },
   "ConnectionStrings": {
-    "Redis": "",
     "EmployerEmailStoreConnection": "Data Source=.;Initial Catalog=ESFA.DAS.EmployerFeedbackEmail.Database;Integrated Security=True;Connect Timeout=30;Encrypt=False;"
   }
 }
