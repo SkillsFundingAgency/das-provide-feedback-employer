@@ -48,7 +48,6 @@ namespace IntegrationTests
 
         private IEmployerFeedbackRepository _dbEmployerFeedbackRepository;
         private EmployerFeedbackDataRetrievalService _dataRetreivalService;
-        private EmployerSurveyInviteEmailer _employerSurveyInviteEmailer;
         private EmployerSurveyReminderEmailer _employerSurveyReminderEmailer;
         private InitiateDataRefreshFunction _initiateFunction;
         private ProviderRefreshFunction _providersRefreshFunction;
@@ -161,24 +160,6 @@ namespace IntegrationTests
                 s => s.SelectedMemberPath.EndsWith(".UniqueSurveyCode")));
         }
 
-        [Test, Order(2)]
-        public async Task FirstRoundInviteEmailsSentCorrectly()
-        {
-            //Assign
-            _notificationsApiClientMock = new Mock<INotificationsApi>();
-            _employerSurveyInviteEmailer = new EmployerSurveyInviteEmailer(
-                _dbEmployerFeedbackRepository,
-                _notificationsApiClientMock.Object,
-                _options,
-                _surveyLoggerMock.Object);
-
-            //Act
-            await _employerSurveyInviteEmailer.SendEmailsAsync();
-
-            //Assert
-            _notificationsApiClientMock.Verify(x => x.SendEmail(It.IsAny<Email>()), Times.Exactly(2));
-        }
-
         [Test, Order(3)]
         public async Task FirstRoundReminderEmailsSentCorrectly()
         {
@@ -221,26 +202,6 @@ namespace IntegrationTests
                 s => s.SelectedMemberPath.EndsWith(".UniqueSurveyCode")));
         }
 
-        [Test, Order(5)]
-        public async Task SecondRoundInviteEmailsSentCorrectly()
-        {
-            //Assign
-            await _dbConnection.ExecuteAsync($@" 
-                UPDATE EmployerSurveyHistory
-                SET SentDate = @newSentDate
-                WHERE EmailType = 1 AND UniqueSurveyCode IN (SELECT UniqueSurveyCode FROM EmployerSurveyCodes WHERE FeedbackId IN (SELECT FeedbackId FROM EmployerFeedback WHERE UserRef in @userRefs))",
-                new { newSentDate = DateTime.UtcNow - TimeSpan.FromDays(91), userRefs = new[] { _user1Guid, _user2Guid } });
-            _notificationsApiClientMock = new Mock<INotificationsApi>();
-            _employerSurveyInviteEmailer = new EmployerSurveyInviteEmailer(_dbEmployerFeedbackRepository,
-                _notificationsApiClientMock.Object, _options, _surveyLoggerMock.Object);
-
-            //Act
-            await _employerSurveyInviteEmailer.SendEmailsAsync();
-
-            //Assert
-            _notificationsApiClientMock.Verify(x => x.SendEmail(It.IsAny<Email>()), Times.Exactly(2));
-        }
-
         [Test, Order(6)]
         public async Task SecondRoundReminder_OnlySendWhereNoPreviousReminder()
         {
@@ -256,26 +217,6 @@ namespace IntegrationTests
 
             //Act
             await _employerSurveyReminderEmailer.SendEmailsAsync();
-
-            //Assert
-            _notificationsApiClientMock.Verify(x => x.SendEmail(It.IsAny<Email>()), Times.Exactly(2));
-        }
-
-        [Test, Order(7)]
-        public async Task ThirdRoundInviteEmailsSentCorrectly()
-        {
-            await _dbConnection.ExecuteAsync($@" 
-                UPDATE EmployerSurveyHistory
-                SET SentDate = @newSentDate
-                WHERE EmailType = 1 AND UniqueSurveyCode IN (SELECT UniqueSurveyCode FROM EmployerSurveyCodes WHERE FeedbackId IN (SELECT FeedbackId FROM EmployerFeedback WHERE UserRef in @userRefs))",
-                new { newSentDate = DateTime.UtcNow - TimeSpan.FromDays(91), userRefs = new[] { _user1Guid, _user2Guid } });
-            _employerSurveyInviteEmailer = new EmployerSurveyInviteEmailer(_dbEmployerFeedbackRepository,
-                _notificationsApiClientMock.Object, _options, _surveyLoggerMock.Object);
-
-            await RunThroughRefreshFunctions();
-
-            //Act
-            await _employerSurveyInviteEmailer.SendEmailsAsync();
 
             //Assert
             _notificationsApiClientMock.Verify(x => x.SendEmail(It.IsAny<Email>()), Times.Exactly(2));
