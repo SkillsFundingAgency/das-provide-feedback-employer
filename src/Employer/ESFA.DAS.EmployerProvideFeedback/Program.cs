@@ -25,7 +25,6 @@ namespace ESFA.DAS.EmployerProvideFeedback
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
-                .UseApplicationInsights()
                 .UseStartup<Startup>()
                 .UseNLog()
                 .UseUrls("https://localhost:5030");
