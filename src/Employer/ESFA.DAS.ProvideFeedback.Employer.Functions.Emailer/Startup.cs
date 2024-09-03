@@ -1,5 +1,4 @@
-﻿using ESFA.DAS.Feedback.Employer.Emailer;
-using ESFA.DAS.Feedback.Employer.Emailer.Configuration;
+﻿using ESFA.DAS.Feedback.Employer.Emailer.Configuration;
 using ESFA.DAS.ProvideFeedback.Data.Repositories;
 using ESFA.DAS.ProvideFeedback.Employer.Application;
 using ESFA.DAS.ProvideFeedback.Employer.ApplicationServices;
@@ -10,18 +9,11 @@ using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.Azure.Functions.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging.ApplicationInsights;
 using Microsoft.Extensions.Options;
-using NLog;
-using NLog.Common;
-using NLog.Config;
 using NLog.Extensions.Logging;
-using NLog.Targets;
-using SFA.DAS.NLog.Targets.Redis.DotNetCore;
 using SFA.DAS.Notifications.Api.Client;
 using SFA.DAS.Notifications.Api.Client.Configuration;
-using System;
 using System.IO;
 using System.Net.Http.Headers;
 using LogLevel = NLog.LogLevel;
@@ -42,20 +34,13 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
 
             builder.Services.AddDatabaseRegistration(_configuration);
 
+            builder.Services.AddApplicationInsightsTelemetry();
+
             builder.Services.AddLogging((options) =>
             {
-
-                options.AddConfiguration(_configuration.GetSection("Logging"));
-                options.SetMinimumLevel(Microsoft.Extensions.Logging.LogLevel.Trace);
-                options.AddNLog(new NLogProviderOptions
-                {
-                    CaptureMessageTemplates = true,
-                    CaptureMessageProperties = true
-                });
-
-                options.AddConsole();
-
-                ConfigureNLog();
+                options.AddApplicationInsights();
+                options.AddFilter<ApplicationInsightsLoggerProvider>("SFA.DAS", Microsoft.Extensions.Logging.LogLevel.Information);
+                options.AddFilter<ApplicationInsightsLoggerProvider>("Microsoft", Microsoft.Extensions.Logging.LogLevel.Warning);
             });
 
             builder.Services.AddSingleton(typeof(ILogger<>), typeof(Logger<>));
@@ -95,55 +80,5 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
             builder.Services.AddSingleton<ICommitmentApiConfiguration>(commitmentV2ApiConfig);
             builder.Services.AddSingleton<ICommitmentService, CommitmentService>();
         }
-
-        private void ConfigureNLog()
-        {
-            //var appName = _configuration.GetConnectionStringOrSetting("AppName");
-            //var localLogPath = _configuration.GetConnectionStringOrSetting("LogDir");
-            //var env = _configuration.GetConnectionStringOrSetting("ASPNETCORE_ENVIRONMENT");
-            //var config = new LoggingConfiguration();
-
-            //if (string.IsNullOrEmpty(env) || env.Equals("development", StringComparison.OrdinalIgnoreCase))
-            //{
-            //    AddLocalTarget(config, localLogPath, appName);
-            //}
-            //else
-            //{
-            //    AddRedisTarget(config, appName, env);
-            //}
-
-            //LogManager.Configuration = config;
-        }
-
-        private static void AddLocalTarget(LoggingConfiguration config, string localLogPath, string appName)
-        {
-            InternalLogger.LogFile = Path.Combine(localLogPath, $"{appName}\\nlog-internal.{appName}.log");
-            var fileTarget = new FileTarget("Disk")
-            {
-                FileName = Path.Combine(localLogPath, $"{appName}\\{appName}.${{shortdate}}.log"),
-                Layout = "${longdate} [${uppercase:${level}}] [${logger}] - ${message} ${onexception:${exception:format=tostring}}"
-            };
-            config.AddTarget(fileTarget);
-
-            config.AddRule(GetMinLogLevel(), LogLevel.Fatal, "Disk");
-        }
-
-        private static void AddRedisTarget(LoggingConfiguration config, string appName, string environment)
-        {
-            var target = new RedisTarget
-            {
-                Name = "RedisLog",
-                AppName = appName,
-                EnvironmentKeyName = "ASPNETCORE_ENVIRONMENT",
-                ConnectionStringName = "Redis",
-                IncludeAllProperties = true,
-                Layout = "${message}"
-            };
-
-            config.AddTarget(target);
-            config.AddRule(GetMinLogLevel(), LogLevel.Fatal, "RedisLog");
-        }
-
-        private static LogLevel GetMinLogLevel() => LogLevel.FromString("Info");
     }
 }
