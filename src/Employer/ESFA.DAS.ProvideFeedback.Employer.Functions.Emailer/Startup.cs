@@ -10,6 +10,8 @@ using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Azure.Functions.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using NLog;
 using NLog.Common;
@@ -103,21 +105,21 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
 
         private void ConfigureNLog()
         {
-            var appName = _configuration.GetConnectionStringOrSetting("AppName");
-            var localLogPath = _configuration.GetConnectionStringOrSetting("LogDir");
-            var env = _configuration.GetConnectionStringOrSetting("ASPNETCORE_ENVIRONMENT");
-            var config = new LoggingConfiguration();
+            //var appName = _configuration.GetConnectionStringOrSetting("AppName");
+            //var localLogPath = _configuration.GetConnectionStringOrSetting("LogDir");
+            //var env = _configuration.GetConnectionStringOrSetting("ASPNETCORE_ENVIRONMENT");
+            //var config = new LoggingConfiguration();
 
-            if (string.IsNullOrEmpty(env) || env.Equals("development", StringComparison.OrdinalIgnoreCase))
-            {
-                AddLocalTarget(config, localLogPath, appName);
-            }
-            else
-            {
-                AddRedisTarget(config, appName, env);
-            }
+            //if (string.IsNullOrEmpty(env) || env.Equals("development", StringComparison.OrdinalIgnoreCase))
+            //{
+            //    AddLocalTarget(config, localLogPath, appName);
+            //}
+            //else
+            //{
+            //    AddRedisTarget(config, appName, env);
+            //}
 
-            LogManager.Configuration = config;
+            //LogManager.Configuration = config;
         }
 
         private static void AddLocalTarget(LoggingConfiguration config, string localLogPath, string appName)

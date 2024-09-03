@@ -21,7 +21,7 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
         [FunctionName("AccountRefreshFunction")]
         public async Task Run(
             [ServiceBusTrigger("%AccountRefreshQueueName%", Connection = "ServiceBusConnection")]string accountIdMessage,
-            [ServiceBus("%ProcessActiveFeedbackQueueName%", Connection = "ServiceBusConnection", EntityType = EntityType.Queue)]ICollector<GroupedFeedbackRefreshMessage> queue,
+            [ServiceBus("%ProcessActiveFeedbackQueueName%", Connection = "ServiceBusConnection", EntityType = ServiceBusEntityType.Queue)]ICollector<GroupedFeedbackRefreshMessage> queue,
             ILogger log)
         {
             log.LogInformation($"Account refresh function triggered for: {accountIdMessage}");

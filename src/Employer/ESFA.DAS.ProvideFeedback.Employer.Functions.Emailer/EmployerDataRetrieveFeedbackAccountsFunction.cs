@@ -20,7 +20,7 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
         [FunctionName("EmployerDataRetrieveFeedbackAccountsFunction")]
         public async Task Run(
             [ServiceBusTrigger("%RetrieveFeedbackAccountsQueueName%", Connection = "ServiceBusConnection")]string myQueueItem,
-            [ServiceBus("%AccountRefreshQueueName%", Connection = "ServiceBusConnection", EntityType = EntityType.Queue)]ICollector<string> queue,
+            [ServiceBus("%AccountRefreshQueueName%", Connection = "ServiceBusConnection", EntityType = ServiceBusEntityType.Queue)]ICollector<string> queue,
             ILogger log)
         {
             log.LogInformation($"Starting Employer Account retrieval");
