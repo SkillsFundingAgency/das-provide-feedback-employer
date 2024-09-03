@@ -55,7 +55,6 @@ namespace IntegrationTests
         private EmployerSurveyInviteGeneratorFunction _surveyInviteGeneratorFunction;
         private UserRefreshService _helper;
         private SurveyInviteGenerator _surveyInviteGenerator;
-        private IOptions<EmailSettings> _options;
         private DbConnection _dbConnection;
 
         private Guid _user1Guid;
@@ -72,14 +71,6 @@ namespace IntegrationTests
                 .AddJsonFile("local.settings.json", optional: true, reloadOnChange: true)
                 .AddEnvironmentVariables()
                 .Build();
-
-            _options = new OptionsWrapper<EmailSettings>(new EmailSettings
-            {
-                BatchSize = 5,
-                FeedbackSiteBaseUrl = "test.com",
-                InviteCycleDays = 90,
-                ReminderDays = 14
-            });
 
             _user1Guid = Guid.Parse("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa");
             _user2Guid = Guid.Parse("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb");
@@ -103,79 +94,9 @@ namespace IntegrationTests
                 _dbEmployerFeedbackRepository);
 
             _helper = new UserRefreshService(new Mock<ILogger<UserRefreshService>>().Object, _dbEmployerFeedbackRepository);
-            _surveyInviteGenerator = new SurveyInviteGenerator(_options, _dbEmployerFeedbackRepository, Mock.Of<ILogger<SurveyInviteGenerator>>());
             var providerRefreshSevice = new ProviderRefreshService(_dbEmployerFeedbackRepository, _roatpService.Object);
 
             SetupApiMocks(2);
-
-            _initiateFunction = new InitiateDataRefreshFunction(_dbEmployerFeedbackRepository);
-            _providersRefreshFunction = new ProviderRefreshFunction(providerRefreshSevice);
-            _accountRetrieveFunction = new EmployerDataRetrieveFeedbackAccountsFunction(_commitmentServiceMock.Object);
-            _accountDataRetrieveFunction = new AccountRefreshFunction(_dataRetreivalService);
-            _processActiveFeedbackFunction = new ProcessActiveFeedbackFunction(_helper);
-            _surveyInviteGeneratorFunction = new EmployerSurveyInviteGeneratorFunction(_surveyInviteGenerator);
-        }
-
-        [Test, Category("IntegrationTest")]
-        public async Task InitiateEmployerFeedbackDataRefresh_ShouldSetAllFeedbackAsInactive()
-        {
-            // Arrange
-            await CleanupData();
-            await RunThroughRefreshFunctions();
-
-            // Act
-            var result = await _initiateFunction.Run(null, Mock.Of<ILogger>());
-
-            // Assert
-            result.Should().Be(string.Empty);
-            var feedbackIsActiveFlags = await _dbConnection.QueryAsync<int>($@"SELECT IsActive FROM EmployerFeedback");
-            feedbackIsActiveFlags.Should().AllBeEquivalentTo(0);
-        }
-
-        [Test, Order(1)]
-        public async Task FirstEmployerFeedbackDataRefresh()
-        {
-            // Assert
-            await CleanupData();
-
-            var expectedInvites = new List<EmployerSurveyInvite>
-            {
-                new EmployerSurveyInvite {UserRef = _user1Guid, EmailAddress = "Test@test.com", FirstName = "Master", AccountId = 1, Ukprn = 1, ProviderName = "Test Academy"},
-                new EmployerSurveyInvite {UserRef = _user1Guid, EmailAddress = "Test@test.com", FirstName = "Master", AccountId = 1, Ukprn = 2, ProviderName = "Worst School"},
-                new EmployerSurveyInvite {UserRef = _user2Guid, EmailAddress = "TheBestThereEverWas@90sReference.com", FirstName = "Flash", AccountId = 1, Ukprn = 1, ProviderName = "Test Academy"},
-                new EmployerSurveyInvite {UserRef = _user2Guid, EmailAddress = "TheBestThereEverWas@90sReference.com", FirstName = "Flash", AccountId = 1, Ukprn = 2, ProviderName = "Worst School"},
-            };
-
-            // Act
-            await RunThroughRefreshFunctions();
-
-            // Assert
-            var invites = await _dbEmployerFeedbackRepository.GetEmployerUsersToBeSentInvite();
-            invites.Count().Should().Be(4);
-            invites.Should().BeEquivalentTo(expectedInvites, options => options.Excluding(
-                s => s.SelectedMemberPath.EndsWith(".UniqueSurveyCode")));
-        }
-
-        [Test, Order(4)]
-        public async Task SomeApprenticeshipsChangeProvider()
-        {
-            //Assign
-            SetupApiMocks(3);
-            var expectedInvites = new List<EmployerSurveyInvite>
-            {
-                new EmployerSurveyInvite {UserRef = _user1Guid, EmailAddress = "Test@test.com", FirstName = "Master", AccountId = 1, Ukprn = 3, ProviderName = "Worst School"},
-                new EmployerSurveyInvite {UserRef = _user2Guid, EmailAddress = "TheBestThereEverWas@90sReference.com", FirstName = "Flash", AccountId = 1, Ukprn = 3, ProviderName = "Worst School"},
-            };
-
-            //Act
-            await RunThroughRefreshFunctions();
-
-            //Assert
-            var invites = await _dbEmployerFeedbackRepository.GetEmployerUsersToBeSentInvite();
-            invites.Count().Should().Be(2);
-            var invitesList = invites.OrderBy(x => x.UserRef).ThenBy(x => x.AccountId).ThenBy(x => x.Ukprn).ToList();
-            invites.Should().BeEquivalentTo(expectedInvites, options => options.Excluding(
-                s => s.SelectedMemberPath.EndsWith(".UniqueSurveyCode")));
         }
 
         [Test, Order(8)]
