@@ -1,49 +1,49 @@
-using System;
-using System.Linq;
-using System.Threading.Tasks;
-using ESFA.DAS.ProvideFeedback.Employer.ApplicationServices;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.ServiceBus;
-using Microsoft.Extensions.Logging;
+//using System;
+//using System.Linq;
+//using System.Threading.Tasks;
+//using ESFA.DAS.ProvideFeedback.Employer.ApplicationServices;
+//using Microsoft.Azure.WebJobs;
+//using Microsoft.Azure.WebJobs.ServiceBus;
+//using Microsoft.Extensions.Logging;
 
-namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
-{
-    public class EmployerDataRetrieveFeedbackAccountsFunction
-    {
-        private readonly ICommitmentService _commitmentService;
+//namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
+//{
+//    public class EmployerDataRetrieveFeedbackAccountsFunction
+//    {
+//        private readonly ICommitmentService _commitmentService;
 
-        public EmployerDataRetrieveFeedbackAccountsFunction(ICommitmentService commitmentService)
-        {
-            _commitmentService = commitmentService;
-        }
+//        public EmployerDataRetrieveFeedbackAccountsFunction(ICommitmentService commitmentService)
+//        {
+//            _commitmentService = commitmentService;
+//        }
 
-        [FunctionName("EmployerDataRetrieveFeedbackAccountsFunction")]
-        public async Task Run(
-            [ServiceBusTrigger("%RetrieveFeedbackAccountsQueueName%", Connection = "ServiceBusConnection")]string myQueueItem,
-            [ServiceBus("%AccountRefreshQueueName%", Connection = "ServiceBusConnection", EntityType = ServiceBusEntityType.Queue)]ICollector<string> queue,
-            ILogger log)
-        {
-            log.LogInformation($"Starting Employer Account retrieval");
+//        [FunctionName("EmployerDataRetrieveFeedbackAccountsFunction")]
+//        public async Task Run(
+//            [ServiceBusTrigger("%RetrieveFeedbackAccountsQueueName%", Connection = "ServiceBusConnection")]string myQueueItem,
+//            [ServiceBus("%AccountRefreshQueueName%", Connection = "ServiceBusConnection", EntityType = ServiceBusEntityType.Queue)]ICollector<string> queue,
+//            ILogger log)
+//        {
+//            log.LogInformation($"Starting Employer Account retrieval");
 
-            try
-            {
-                var allCohortAccountIdsResponse = await _commitmentService.GetAllCohortAccountIds();
+//            try
+//            {
+//                var allCohortAccountIdsResponse = await _commitmentService.GetAllCohortAccountIds();
 
-                log.LogInformation("Finished getting the Employer Accounts from APIs");
+//                log.LogInformation("Finished getting the Employer Accounts from APIs");
 
-                allCohortAccountIdsResponse
-                    .AccountIds
-                    .Select(id => id.ToString())
-                    .AsParallel()
-                    .ForAll(queue.Add);
+//                allCohortAccountIdsResponse
+//                    .AccountIds
+//                    .Select(id => id.ToString())
+//                    .AsParallel()
+//                    .ForAll(queue.Add);
 
-                log.LogInformation($"Placed { allCohortAccountIdsResponse.AccountIds.Count()} messages in the queue");
-            }
-            catch(Exception ex)
-            {
-                log.LogError(ex, $"Failed to retrieve Employer Accounts.");
-                throw;
-            }            
-        }
-    }
-}
+//                log.LogInformation($"Placed { allCohortAccountIdsResponse.AccountIds.Count()} messages in the queue");
+//            }
+//            catch(Exception ex)
+//            {
+//                log.LogError(ex, $"Failed to retrieve Employer Accounts.");
+//                throw;
+//            }            
+//        }
+//    }
+//}
