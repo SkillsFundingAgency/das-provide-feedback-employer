@@ -759,6 +759,10 @@
                                     "value": "[parameters('functionsExtensionVersion')]"
                                 },
                                 {
+                                    "name": "FUNCTIONS_WORKER_RUNTIME",
+                                    "value": "dotnet"
+                                },
+                                {
                                     "name": "Redis",
                                     "value": "[parameters('loggingRedisConnectionString')]"
                                 },
