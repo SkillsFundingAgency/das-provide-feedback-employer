@@ -1,9 +1,9 @@
 
 using System;
 using System.Threading.Tasks;
-using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
 using ESFA.DAS.ProvideFeedback.Employer.Application;
+using Microsoft.Azure.Functions.Worker;
 
 
 namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
@@ -17,7 +17,7 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
             _feedbackSummariesService = feedbackSummariesService;
         }
 
-        [FunctionName("GenerateFeedbackSummariesFunction")]
+        [Function("GenerateFeedbackSummariesFunction")]
         public async Task Run([TimerTrigger("0 52 * * * *")] TimerInfo myTimer, ILogger log)
         {
             log.LogInformation("Generate feedback summaries function started.");
