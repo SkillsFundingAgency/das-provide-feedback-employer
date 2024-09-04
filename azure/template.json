@@ -763,6 +763,10 @@
                                     "value": "dotnet"
                                 },
                                 {
+                                    "name": "FUNCTIONS_INPROC_NET8_ENABLED",
+                                    "value": "1"
+                                },
+                                {
                                     "name": "Redis",
                                     "value": "[parameters('loggingRedisConnectionString')]"
                                 },
