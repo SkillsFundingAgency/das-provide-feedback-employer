@@ -11,12 +11,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.ApplicationInsights;
 using Microsoft.Extensions.Options;
-using NLog.Extensions.Logging;
 using SFA.DAS.Notifications.Api.Client;
 using SFA.DAS.Notifications.Api.Client.Configuration;
 using System.IO;
 using System.Net.Http.Headers;
-using LogLevel = NLog.LogLevel;
 
 [assembly: FunctionsStartup(typeof(Startup))]
 namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
@@ -36,7 +34,7 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
 
             builder.Services.AddApplicationInsightsTelemetry();
 
-            builder.Services.AddLogging((options) =>
+            builder.Services.AddLogging(options =>
             {
                 options.AddApplicationInsights();
                 options.AddFilter<ApplicationInsightsLoggerProvider>("SFA.DAS", Microsoft.Extensions.Logging.LogLevel.Information);
