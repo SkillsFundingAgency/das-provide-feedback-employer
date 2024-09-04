@@ -5,10 +5,15 @@
 	<OutputType>Exe</OutputType>
   </PropertyGroup>
   <ItemGroup>
-	 <FrameworkReference Include="Microsoft.AspNetCore.App" />
+	<FrameworkReference Include="Microsoft.AspNetCore.App" />
+	<PackageReference Include="Microsoft.Azure.Functions.Worker" Version="1.23.0" />
+	<PackageReference Include="Microsoft.Azure.Functions.Worker.Sdk" Version="1.17.4" />
+	<PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.Http.AspNetCore" Version="1.2.1" />
+	<PackageReference Include="Microsoft.ApplicationInsights.WorkerService" Version="2.22.0" />
+	<PackageReference Include="Microsoft.Azure.Functions.Worker.ApplicationInsights" Version="1.2.0" />
     <PackageReference Include="Microsoft.Azure.Functions.Extensions" Version="1.1.0" />
-    <PackageReference Include="Microsoft.Azure.Functions.Worker" Version="1.23.0" />
-    <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="4.4.1" />
+	<PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.Timer" Version="4.3.1" />
+
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.0" />
     <PackageReference Include="Microsoft.Extensions.Http" Version="8.0.0" />
     <PackageReference Include="Microsoft.Extensions.Http.Polly" Version="8.0.8" />
@@ -17,9 +22,9 @@
     <PackageReference Include="Microsoft.Extensions.Options" Version="8.0.2" />
     <PackageReference Include="Microsoft.IdentityModel.Clients.ActiveDirectory" Version="5.2.8" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="SFA.DAS.Configuration.AzureTableStorage" Version="3.0.84" />
     <PackageReference Include="System.Data.SqlClient" Version="4.8.6" />
-	<PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.Timer" Version="4.3.1" />
-	<PackageReference Include="Microsoft.Azure.Functions.Worker.Sdk" Version="1.17.4" />
+
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ESFA.DAS.EmployerFeedbackEmail.Data\ESFA.DAS.ProvideFeedback.Data.csproj" />
@@ -27,41 +32,15 @@
     <ProjectReference Include="..\ESFA.DAS.ProvideFeedback.Emailer\ESFA.DAS.ProvideFeedback.Emailer.csproj" />
     <ProjectReference Include="..\ESFA.DAS.ProvideFeedback.Employer.Application\ESFA.DAS.ProvideFeedback.Employer.Application.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <None Update="host.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="local.settings.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <CopyToPublishDirectory>Never</CopyToPublishDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Update="SurveyInviteEmailer/function.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="SurveyReminderEmailer/function.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="InitiateDataRefreshFunction/function.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="ProviderRefreshFunction/function.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="EmployerDataRetrieverFunction/function.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="AccountRefreshFunction/function.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="EmployerFeedbackRefreshDataFunction/function.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="EmployerSurveyInviteGeneratorFunction/function.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
+	<ItemGroup>
+		<None Update="host.json">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="local.settings.json">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToPublishDirectory>Never</CopyToPublishDirectory>
+		</None>
+	</ItemGroup>
 	<ItemGroup>
 		<Using Include="System.Threading.ExecutionContext" Alias="ExecutionContext" />
 	</ItemGroup>
