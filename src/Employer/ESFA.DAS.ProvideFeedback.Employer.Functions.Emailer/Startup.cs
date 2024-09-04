@@ -37,7 +37,7 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
             builder.Services.AddLogging(options =>
             {
                 options.AddApplicationInsights();
-                options.AddFilter<ApplicationInsightsLoggerProvider>("SFA.DAS", Microsoft.Extensions.Logging.LogLevel.Information);
+                options.AddFilter<ApplicationInsightsLoggerProvider>("ESFA.DAS", Microsoft.Extensions.Logging.LogLevel.Information);
                 options.AddFilter<ApplicationInsightsLoggerProvider>("Microsoft", Microsoft.Extensions.Logging.LogLevel.Warning);
             });
 
