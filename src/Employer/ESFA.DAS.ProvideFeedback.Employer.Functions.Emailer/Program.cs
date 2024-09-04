@@ -10,8 +10,6 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.ApplicationInsights;
 using Microsoft.Extensions.Options;
-using SFA.DAS.Notifications.Api.Client.Configuration;
-using SFA.DAS.Notifications.Api.Client;
 using System.Configuration;
 using System.IO;
 using System.Net.Http.Headers;
@@ -45,21 +43,6 @@ var host = new HostBuilder()
         s.AddSingleton(typeof(ILogger<>), typeof(Logger<>));
 
         s.Configure<EmployerFeedbackSettings>(config.GetSection("EmployerFeedbackSettings"));
-
-        var notificationApiConfig = config.GetSection("NotificationApi").Get<NotificationApiConfig>();
-
-        s.AddHttpClient<INotificationsApi, NotificationsApi>(c =>
-        {
-            c.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", notificationApiConfig.ClientToken);
-        });
-
-        s.AddSingleton<INotificationsApiClientConfiguration, NotificationsApiClientConfiguration>(a =>
-            new NotificationsApiClientConfiguration
-            {
-                ApiBaseUrl = notificationApiConfig.BaseUrl,
-                ClientToken = notificationApiConfig.ClientToken
-            }
-        );
 
         s.AddTransient<IEmployerFeedbackRepository, EmployerFeedbackRepository>();
 
