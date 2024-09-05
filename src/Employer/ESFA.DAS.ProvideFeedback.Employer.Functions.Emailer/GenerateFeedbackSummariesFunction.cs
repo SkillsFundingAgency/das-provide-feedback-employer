@@ -11,16 +11,18 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
     public class GenerateFeedbackSummaries
     {
         private readonly FeedbackSummariesService _feedbackSummariesService;
+        private readonly ILogger<GenerateFeedbackSummaries> _logger;
 
-        public GenerateFeedbackSummaries(FeedbackSummariesService feedbackSummariesService)
+        public GenerateFeedbackSummaries(FeedbackSummariesService feedbackSummariesService, ILogger<GenerateFeedbackSummaries> logger)
         {
             _feedbackSummariesService = feedbackSummariesService;
+            _logger = logger;
         }
 
         [Function("GenerateFeedbackSummariesFunction")]
-        public async Task Run([TimerTrigger("0 52 * * * *")] TimerInfo myTimer, ILogger log)
+        public async Task Run([TimerTrigger("0 52 * * * *")] TimerInfo myTimer)
         {
-            log.LogInformation("Generate feedback summaries function started.");
+            _logger.LogInformation("Generate feedback summaries function started.");
 
             try
             {
@@ -28,11 +30,11 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer
             }
             catch(Exception ex)
             {
-                log.LogError(ex, "Error generating feedback summaries");
+                _logger.LogError(ex, "Error generating feedback summaries");
                 throw;
             }
 
-            log.LogInformation("Generate feedback summaries function complete.");
+            _logger.LogInformation("Generate feedback summaries function complete.");
         }        
     }
 }
