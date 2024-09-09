@@ -1,0 +1,19 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "FUNCTIONS_WORKER_RUNTIME": "dotnet-isolated",
+    "AzureWebJobsStorage": "UseDevelopmentStorage=true"
+  },
+  "ConnectionStrings": {
+    "ServiceBusConnection": "xxx",
+    "EmployerEmailStoreConnection": "Data Source=.;Initial Catalog=ESFA.DAS.EmployerFeedbackEmail.Database;Integrated Security=True;Connect Timeout=30;Encrypt=False;MultipleActiveResultSets=True"
+  },
+  "AccountApi": {
+    "ApiBaseUrl": "",
+    "IdentifierUri": ""
+  },
+  "CommitmentV2Api": {
+    "ApiBaseUrl": "",
+    "IdentifierUri": ""
+  }
+}
