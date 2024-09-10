@@ -50,11 +50,7 @@ var host = new HostBuilder()
 
         s.AddTransient<FeedbackSummariesService>();
 
-        var accApiConfig = config.GetSection("AccountApi").Get<AccountApiConfiguration>();
-        s.AddSingleton<IAccountApiConfiguration>(accApiConfig);
-        s.AddSingleton<IAccountService, AccountService>();
         s.AddHttpClient<SecureHttpClient>();
-
         var commitmentV2ApiConfig = config.GetSection("CommitmentV2Api").Get<CommitmentApiConfiguration>();
         s.AddSingleton<ICommitmentApiConfiguration>(commitmentV2ApiConfig);
         s.AddSingleton<ICommitmentService, CommitmentService>();
