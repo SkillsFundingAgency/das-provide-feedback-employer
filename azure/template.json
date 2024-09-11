@@ -822,6 +822,9 @@
                     },
                     "certificateThumbprint": {
                         "value": ""
+                    },
+                    "netFrameworkVersion": {
+                        "value": "v8.0"
                     }
                 }
             },
