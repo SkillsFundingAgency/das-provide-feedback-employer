@@ -26,7 +26,9 @@ var host = new HostBuilder()
         var configBuilder = new ConfigurationBuilder()
         .AddConfiguration(configuration)
         .SetBasePath(Directory.GetCurrentDirectory())
+#if DEBUG
         .AddJsonFile("local.settings.json", optional: true, reloadOnChange: true)
+#endif
         .AddEnvironmentVariables();
         var config = configBuilder.Build();
 
@@ -48,16 +50,7 @@ var host = new HostBuilder()
 
         s.AddTransient<FeedbackSummariesService>();
 
-        var accApiConfig = config.GetSection("AccountApi").Get<AccountApiConfiguration>();
-        s.AddSingleton<IAccountApiConfiguration>(accApiConfig);
-        s.AddSingleton<IAccountService, AccountService>();
         s.AddHttpClient<SecureHttpClient>();
-
-        s.Configure<RoatpApiConfiguration>(config.GetSection("RoatpApi"));
-        s.AddSingleton(cfg => cfg.GetService<IOptions<RoatpApiConfiguration>>().Value);
-        s.AddTransient<IAzureClientCredentialHelper, AzureClientCredentialHelper>();
-        s.AddHttpClient<IRoatpService, RoatpService>();
-
         var commitmentV2ApiConfig = config.GetSection("CommitmentV2Api").Get<CommitmentApiConfiguration>();
         s.AddSingleton<ICommitmentApiConfiguration>(commitmentV2ApiConfig);
         s.AddSingleton<ICommitmentService, CommitmentService>();
