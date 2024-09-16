@@ -20,13 +20,6 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer.StartUpExtensions
 #if DEBUG
             configBuilder.AddJsonFile("local.settings.json", optional: true);
 #endif
-            //configBuilder.AddAzureTableStorage(options =>
-            //{
-            //    options.ConfigurationKeys = ["SFA.DAS.EarlyConnect.Jobs"];
-            //    options.StorageConnectionString = configuration["ConfigurationStorageConnectionString"];
-            //    options.EnvironmentName = configuration["EnvironmentName"];
-            //    options.PreFixConfigurationKeys = false;
-            //});
 
             return configBuilder.Build();
         }
