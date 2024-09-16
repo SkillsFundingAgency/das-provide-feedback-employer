@@ -4,6 +4,8 @@ using MediatR;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.ApplicationInsights;
 
 namespace ESFA.DAS.EmployerProvideFeedback.Api
 {
@@ -25,7 +27,6 @@ namespace ESFA.DAS.EmployerProvideFeedback.Api
 
         public void ConfigureServices(IServiceCollection services)
         {
-
             services.AddAuthentication(_configuration, _hostingEnvironment);
             services.AddDatabaseConnection(_configuration, _hostingEnvironment);
             services.AddMediatR(typeof(Startup));
@@ -33,6 +34,13 @@ namespace ESFA.DAS.EmployerProvideFeedback.Api
             services.AddSwaggerGen();
             services.AddControllers();
             services.AddHealthChecks();
+            services.AddApplicationInsightsTelemetry();
+            services.AddLogging(options =>
+            {
+                options.AddApplicationInsights();
+                options.AddFilter<ApplicationInsightsLoggerProvider>("SFA.DAS", LogLevel.Information);
+                options.AddFilter<ApplicationInsightsLoggerProvider>("Microsoft", LogLevel.Warning);
+            });
         }
     }
 }

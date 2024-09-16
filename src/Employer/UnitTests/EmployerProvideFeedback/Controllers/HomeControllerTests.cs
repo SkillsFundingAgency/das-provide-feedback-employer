@@ -27,7 +27,7 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
         private readonly Mock<ISessionService> _sessionServiceMock;
         private readonly Mock<IEmployerFeedbackRepository> _employerEmailDetailsRepoMock;
         private readonly Mock<IEncodingService> _encodingServiceMock;
-        private readonly Mock<ILogger<HomeController>> _loggerMock; 
+        private readonly Mock<ILogger<HomeController>> _loggerMock;
         private readonly List<ProviderAttributeModel> _providerAttributes;
         private IFixture _fixture = new Fixture();
         private readonly IOptions<List<ProviderAttributeModel>> _providerAttributeOptions;
@@ -72,7 +72,7 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
         }
 
         [Fact]
-        public async void UniqueCode_Invalid_ShouldRedirect_ToError()
+        public async Task UniqueCode_Invalid_ShouldRedirect_ToError()
         {
             // Arrange
             var uniqueCode = Guid.NewGuid();
@@ -86,7 +86,7 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
         }
 
         [Fact]
-        public async void SessionSurvey_DoesNotExist_ShouldPopulateProviderName_OnViewData_FromEmployerEmailDetail()
+        public async Task SessionSurvey_DoesNotExist_ShouldPopulateProviderName_OnViewData_FromEmployerEmailDetail()
         {
             // Arrange
             var request = new StartFeedbackRequest();
@@ -101,7 +101,7 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
         }
 
         [Fact]
-        public async void SessionSurvey_DoesNotExist_ShouldCreateNewSurveyInSession()
+        public async Task SessionSurvey_DoesNotExist_ShouldCreateNewSurveyInSession()
         {
             // Arrange
             var uniqueEmailCode = Guid.NewGuid();
@@ -114,7 +114,7 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
         }
 
         [Fact]
-        public async void EmailEntryPoint_Should_Create_AccountId()
+        public async Task EmailEntryPoint_Should_Create_AccountId()
         {
             // Arrange
             var uniqueCode = Guid.NewGuid();
@@ -127,7 +127,7 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
         }
 
         [Fact]
-        public async  void SessionSurvey_Exists_ShouldNotCreateNewSurvey()
+        public async Task SessionSurvey_Exists_ShouldNotCreateNewSurvey()
         {
             // Arrange
             var existingSurvey = _fixture.Create<SurveyModel>();

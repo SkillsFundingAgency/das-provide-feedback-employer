@@ -57,7 +57,7 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
         }
 
         [Fact]
-        public async void Question_1_When_No_Session_Answers_Should_Have_No_Doing_Well_Attributes()
+        public async Task Question_1_When_No_Session_Answers_Should_Have_No_Doing_Well_Attributes()
         {
             // Arrange
 
@@ -71,7 +71,7 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
         }
 
         [Fact]
-        public async void Question_1_When_Session_Answers_Should_Mark_As_Doing_Well()
+        public async Task Question_1_When_Session_Answers_Should_Mark_As_Doing_Well()
         {
             // Arrange
             var surveyModel = new SurveyModel();
@@ -91,7 +91,7 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
         }
 
         [Fact]
-        public async void Question_1_When_Answers_Submitted_Should_Update_Session_And_Redirect()
+        public async Task Question_1_When_Answers_Submitted_Should_Update_Session_And_Redirect()
         {
             // Arrange
             var sessionDoingWellAtts = _providerAttributes.Take(3).ToList();
@@ -108,7 +108,7 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
         }
 
         [Fact]
-        public async void Question_1_Should_Handle_Return_Url()
+        public async Task Question_1_Should_Handle_Return_Url()
         {
             // Arrange
             _controller.TempData.Add("ReturnUrl", RouteNames.ReviewAnswers_Get);
@@ -122,7 +122,7 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
         }
 
         [Fact]
-        public async void Question_2_When_Q1_Skipped_Should_Have_No_Attributes_Doing_Well()
+        public async Task Question_2_When_Q1_Skipped_Should_Have_No_Attributes_Doing_Well()
         {
             // Arrange
 
@@ -136,7 +136,7 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
         }
 
         [Fact]
-        public async void Question_2_When_Q1_Skipped_And_Q2_Session_Answers_Should_Load_Previous_Selections()
+        public async Task Question_2_When_Q1_Skipped_And_Q2_Session_Answers_Should_Load_Previous_Selections()
         {
             // Arrange
             var surveyModel = new SurveyModel();
@@ -156,7 +156,7 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
         }
 
         [Fact]
-        public async void Question_2_When_Answers_Submitted_Should_Update_Session_And_Redirect()
+        public async Task Question_2_When_Answers_Submitted_Should_Update_Session_And_Redirect()
         {
             // Arrange
             var sessionDoingWellAtts = _providerAttributes.Take(3).ToList();
@@ -173,7 +173,7 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
         }
 
         [Fact]
-        public async void Question_2_Should_Handle_Return_Url()
+        public async Task Question_2_Should_Handle_Return_Url()
         {
             // Arrange
             _controller.TempData.Add("ReturnUrl", RouteNames.ReviewAnswers_Get);
@@ -187,7 +187,7 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
         }
 
         [Fact]
-        public async void Question_3_When_Q1_And_Q2_Skipped_Should_Have_No_Selected_Attributes()
+        public async Task Question_3_When_Q1_And_Q2_Skipped_Should_Have_No_Selected_Attributes()
         {
             // Arrange
 
@@ -202,7 +202,7 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
         }
 
         [Fact]
-        public async void Question_3_When_Q1_And_Q2_Skipped_And_Q3_Session_Answers_Should_Load_Previous_Selection()
+        public async Task Question_3_When_Q1_And_Q2_Skipped_And_Q3_Session_Answers_Should_Load_Previous_Selection()
         {
             // Arrange
             var surveyModel = new SurveyModel();
@@ -219,7 +219,7 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
         }
 
         [Fact]
-        public async void Question_3_When_Answer_Not_Selected_Should_Fail_Model_Validation()
+        public async Task Question_3_When_Answer_Not_Selected_Should_Fail_Model_Validation()
         {
             // Arrange
             var surveyModel = new SurveyModel();
@@ -237,7 +237,7 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
         }
 
         [Fact]
-        public async void Question_3_When_Answers_Submitted_Should_Update_Session_And_Redirect()
+        public async Task Question_3_When_Answers_Submitted_Should_Update_Session_And_Redirect()
         {
             // Arrange
             var surveyModel = new SurveyModel { Rating = ProviderRating.Excellent };
@@ -252,7 +252,7 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
         }
 
         [Fact]
-        public async void Question_3_Should_Handle_Return_Url()
+        public async Task Question_3_Should_Handle_Return_Url()
         {
             // Arrange
             var surveyModel = new SurveyModel { Rating = ProviderRating.Excellent };

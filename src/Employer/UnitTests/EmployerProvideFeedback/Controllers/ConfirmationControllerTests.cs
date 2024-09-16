@@ -67,7 +67,7 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
         }
 
         [Fact]
-        public async void ApprenticeApi_ProviderHasFeedback_FeedbackDisplayed_InViewModel()
+        public async Task ApprenticeApi_ProviderHasFeedback_FeedbackDisplayed_InViewModel()
         {
             // Arrange
             var encodedAccountId = "ABCDEFG";

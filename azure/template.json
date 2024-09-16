@@ -156,7 +156,7 @@
         },
         "functionsExtensionVersion": {
             "type": "string",
-            "defaultValue": "~3"
+            "defaultValue": "~4"
         },
         "sharedEnvResourceGroup": {
             "type": "string"
@@ -759,6 +759,10 @@
                                     "value": "[parameters('functionsExtensionVersion')]"
                                 },
                                 {
+                                    "name": "FUNCTIONS_WORKER_RUNTIME",
+                                    "value": "dotnet-isolated"
+                                },
+                                {
                                     "name": "Redis",
                                     "value": "[parameters('loggingRedisConnectionString')]"
                                 },
@@ -818,6 +822,9 @@
                     },
                     "certificateThumbprint": {
                         "value": ""
+                    },
+                    "netFrameworkVersion": {
+                        "value": "v8.0"
                     }
                 }
             },

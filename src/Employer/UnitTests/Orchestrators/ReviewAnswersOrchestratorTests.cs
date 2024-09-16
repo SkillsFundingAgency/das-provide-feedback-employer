@@ -8,6 +8,7 @@ using Moq;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace UnitTests.Orchestrators
@@ -30,13 +31,13 @@ namespace UnitTests.Orchestrators
         }
 
         [Theory, AutoData]
-        public async void WhenUsingEmailJourney_ThenBurnDateIsSet(SurveyModel surveyModel)
+        public async Task WhenUsingEmailJourney_ThenBurnDateIsSet(SurveyModel surveyModel)
         {
             //Arrange
             employerFeedback.Object.FeedbackId = 1;
             employerFeedbackRepository.Setup(x => x.GetEmployerFeedbackRecord(surveyModel.UserRef, surveyModel.AccountId, surveyModel.Ukprn))
                 .ReturnsAsync(employerFeedback.Object);
-           
+
             //Act
             await orchestrator.SubmitConfirmedEmployerFeedback(surveyModel);
 
@@ -46,7 +47,7 @@ namespace UnitTests.Orchestrators
         }
 
         [Theory, AutoData]
-        public async void WhenUsingAdHocJourney_ThenBurnDateIsSet(SurveyModel surveyModel)
+        public async Task WhenUsingAdHocJourney_ThenBurnDateIsSet(SurveyModel surveyModel)
         {
             //Arrange
             surveyModel.UniqueCode = null;
@@ -66,7 +67,7 @@ namespace UnitTests.Orchestrators
         }
 
         [Theory, AutoData]
-        public async void WhenUsingAdHocJourney_AndNoSurveyInvite_NoBurnDateSet(SurveyModel surveyModel)
+        public async Task WhenUsingAdHocJourney_AndNoSurveyInvite_NoBurnDateSet(SurveyModel surveyModel)
         {
             //Arrange
             surveyModel.UniqueCode = null;
