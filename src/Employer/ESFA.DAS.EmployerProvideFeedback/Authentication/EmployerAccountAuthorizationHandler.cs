@@ -81,8 +81,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Authentication
 
             if (employerAccounts == null || !employerAccounts.ContainsKey(accountIdFromUrl))
             {
-                var requiredIdClaim = _configuration.UseGovSignIn 
-                    ? ClaimTypes.NameIdentifier : EmployerClaims.UserId;
+                var requiredIdClaim = ClaimTypes.NameIdentifier;
                 
                 if (!context.User.HasClaim(c => c.Type.Equals(requiredIdClaim)))
                     return false;
