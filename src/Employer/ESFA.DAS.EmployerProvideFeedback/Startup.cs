@@ -75,7 +75,7 @@ namespace ESFA.DAS.EmployerProvideFeedback
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseSession();
-            
+
             app.UseHealthChecks("/ping");
 
             app.UseAuthentication();
@@ -91,10 +91,11 @@ namespace ESFA.DAS.EmployerProvideFeedback
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddHttpContextAccessor();
             services.AddConfigurationOptions(_configuration);
             var config = _configuration.GetSection("ProvideFeedbackEmployerWeb").Get<ProvideFeedbackEmployerWebConfiguration>();
-
-            services.AddApplicationInsightsTelemetry(_configuration.GetValue<string>("APPINSIGHTS_INSTRUMENTATIONKEY"));
+            services.AddApplicationInsightsTelemetry();
+            services.AddOpenTelemetryRegistration(_configuration["APPLICATIONINSIGHTS_CONNECTION_STRING"]!);
             services.AddDatabaseRegistration(config, _hostingEnvironment);
             services.AddEmployerAuthentication(config, _configuration);
             services.AddEmployerSharedUI(config, _configuration);
@@ -103,9 +104,9 @@ namespace ESFA.DAS.EmployerProvideFeedback
             services.AddDasDataProtection(config, _hostingEnvironment);
             services.AddServiceRegistrations(config);
             services.AddSessionPersistance();
-            
+
             services.AddHealthChecks();
-            
+
             services.AddMvc(options =>
             {
                 options.EnableEndpointRouting = false;
