@@ -1,8 +1,5 @@
-﻿using System;
-using Microsoft.AspNetCore;
+﻿using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace ESFA.DAS.EmployerProvideFeedback
 {
@@ -10,18 +7,7 @@ namespace ESFA.DAS.EmployerProvideFeedback
     {
         public static void Main(string[] args)
         {
-            var host = CreateWebHostBuilder(args).Build();
-            var logger = host.Services.GetRequiredService<ILogger<Program>>();
-            try
-            {
-                logger.LogInformation("Starting up host");
-                host.Run();
-            }
-            catch (Exception ex)
-            {
-                logger.LogError(ex, "Stopped program because of exception");
-                throw;
-            }
+            CreateWebHostBuilder(args).Build().Run();
         }
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
