@@ -1,7 +1,8 @@
 ﻿using System;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
-using NLog.Web;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace ESFA.DAS.EmployerProvideFeedback
 {
@@ -9,16 +10,16 @@ namespace ESFA.DAS.EmployerProvideFeedback
     {
         public static void Main(string[] args)
         {
-            var logger = NLogBuilder.ConfigureNLog("nlog.config").GetCurrentClassLogger();
+            var host = CreateWebHostBuilder(args).Build();
+            var logger = host.Services.GetRequiredService<ILogger<Program>>();
             try
             {
-                logger.Info("Starting up host");
-                CreateWebHostBuilder(args).Build().Run();
+                logger.LogInformation("Starting up host");
+                host.Run();
             }
             catch (Exception ex)
             {
-                //NLog: catch setup errors
-                logger.Error(ex, "Stopped program because of exception");
+                logger.LogError(ex, "Stopped program because of exception");
                 throw;
             }
         }
@@ -26,7 +27,6 @@ namespace ESFA.DAS.EmployerProvideFeedback
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
                 .UseStartup<Startup>()
-                .UseNLog()
                 .UseUrls("https://localhost:5030");
     }
 }
