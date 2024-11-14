@@ -93,8 +93,8 @@ namespace ESFA.DAS.EmployerProvideFeedback
         {
             services.AddConfigurationOptions(_configuration);
             var config = _configuration.GetSection("ProvideFeedbackEmployerWeb").Get<ProvideFeedbackEmployerWebConfiguration>();
-
-            services.AddApplicationInsightsTelemetry(_configuration.GetValue<string>("APPINSIGHTS_INSTRUMENTATIONKEY"));
+            services.AddOpenTelemetryRegistration(_configuration.GetValue<string>("APPLICATIONINSIGHTS_CONNECTION_STRING")!);
+            services.AddLogging();
             services.AddDatabaseRegistration(config, _hostingEnvironment);
             services.AddEmployerAuthentication(config, _configuration);
             services.AddEmployerSharedUI(config, _configuration);
