@@ -77,7 +77,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
 
             var employerEmailDetail = await _employerEmailDetailsRepository.GetEmployerInviteForUniqueCode(uniqueCode);
 
-            _logger.LogInformation("Landing Page GET hit");
+            _logger.LogWarning("Landing Page GET hit");
 
             if (employerEmailDetail == null)
             {
