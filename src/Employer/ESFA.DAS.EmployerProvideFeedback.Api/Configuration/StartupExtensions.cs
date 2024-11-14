@@ -10,6 +10,7 @@ using SFA.DAS.Api.Common.AppStart;
 using System.Data;
 using System.Data.SqlClient;
 using Microsoft.Azure.Services.AppAuthentication;
+using Azure.Monitor.OpenTelemetry.AspNetCore;
 
 namespace ESFA.DAS.EmployerProvideFeedback.Api.Configuration
 {
@@ -58,6 +59,18 @@ namespace ESFA.DAS.EmployerProvideFeedback.Api.Configuration
                 };
 
             });
+        }
+
+        public static void AddOpenTelemetryRegistration(this IServiceCollection services, string appInsightsConnectionString)
+        {
+            if (!string.IsNullOrEmpty(appInsightsConnectionString))
+            {
+                // This service will collect and send telemetry data to Azure Monitor.
+                services.AddOpenTelemetry().UseAzureMonitor(options =>
+                {
+                    options.ConnectionString = appInsightsConnectionString;
+                });
+            }
         }
     }
 }
