@@ -1,11 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using SFA.DAS.Configuration.AzureTableStorage;
+using Microsoft.Extensions.DependencyInjection;
+using Azure.Monitor.OpenTelemetry.AspNetCore;
 
 namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer.StartUpExtensions
 {
@@ -22,6 +18,18 @@ namespace ESFA.DAS.ProvideFeedback.Employer.Functions.Emailer.StartUpExtensions
 #endif
 
             return configBuilder.Build();
+        }
+
+        public static void AddOpenTelemetryRegistration(this IServiceCollection services, string appInsightsConnectionString)
+        {
+            if (!string.IsNullOrEmpty(appInsightsConnectionString))
+            {
+                // This service will collect and send telemetry data to Azure Monitor.
+                services.AddOpenTelemetry().UseAzureMonitor(options =>
+                {
+                    options.ConnectionString = appInsightsConnectionString;
+                });
+            }
         }
     }
 }
