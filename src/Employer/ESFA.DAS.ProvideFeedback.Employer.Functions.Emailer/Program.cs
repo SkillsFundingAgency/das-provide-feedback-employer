@@ -33,7 +33,7 @@ var host = new HostBuilder()
         var config = configBuilder.Build();
 
         s.AddDatabaseRegistration(config);
-        s.AddApplicationInsightsTelemetry();
+        s.AddOpenTelemetryRegistration(config.GetValue<string>("APPLICATIONINSIGHTS_CONNECTION_STRING")!);
 
         s.AddLogging(options =>
         {
