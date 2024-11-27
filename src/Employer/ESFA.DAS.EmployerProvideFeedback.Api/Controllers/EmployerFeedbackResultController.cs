@@ -58,6 +58,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Api.Controllers
             try
             {
                 EmployerFeedbackAnnualResultDto result = await _mediator.Send(new FeedbackResultAnnualQuery() { Ukprn = ukprn });
+                _logger.LogWarning($"Getting Employer Feedback Annual Result for {ukprn}");
                 return Ok(result);
             }
             catch (Exception e)
