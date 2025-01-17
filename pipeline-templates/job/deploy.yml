@@ -2,7 +2,7 @@ parameters:
   ServiceConnection:
   SolutionBaseName:
   Environment:
-  OverrideBlockOnPossibleDataLoss: true
+  OverrideBlockOnPossibleDataLoss:
   AppRoleAssignmentsServiceConnection:
 
 jobs:
