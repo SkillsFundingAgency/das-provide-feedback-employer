@@ -29,7 +29,7 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
         private static readonly Mock<ILogger<ProviderController>> _loggerMock;
         private static readonly SurveyModel _surveyModel;
         private static readonly UrlBuilder _urlBuilder;
-        
+
 
         static ProviderControllerTests()
         {

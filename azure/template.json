@@ -156,7 +156,7 @@
         },
         "functionsExtensionVersion": {
             "type": "string",
-            "defaultValue": "~3"
+            "defaultValue": "~4"
         },
         "sharedEnvResourceGroup": {
             "type": "string"
@@ -384,8 +384,8 @@
                                     "value": "[parameters('loggingRedisKey')]"
                                 },
                                 {
-                                    "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
-                                    "value": "[reference(concat(variables('uiAppServiceName'), '-application-insights-', parameters('utcValue'))).outputs.InstrumentationKey.value]"
+                                    "name": "APPLICATIONINSIGHTS_CONNECTION_STRING",
+                                    "value": "[reference(concat(variables('uiAppServiceName'), '-application-insights-', parameters('utcValue'))).outputs.ConnectionString.value]"
                                 },
                                 {
                                     "name": "ASPNETCORE_ENVIRONMENT",
@@ -675,8 +675,8 @@
                                     "value": "[parameters('aspNetCoreEnvironment')]"
                                 },
                                 {
-                                    "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
-                                    "value": "[reference(concat(variables('functionAppName'), '-app-insights-', parameters('utcValue'))).outputs.InstrumentationKey.value]"
+                                    "name": "APPLICATIONINSIGHTS_CONNECTION_STRING",
+                                    "value": "[reference(concat(variables('functionAppName'), '-app-insights-', parameters('utcValue'))).outputs.ConnectionString.value]"
                                 },
                                 {
                                     "name": "NotificationApi:BaseUrl",
@@ -759,6 +759,10 @@
                                     "value": "[parameters('functionsExtensionVersion')]"
                                 },
                                 {
+                                    "name": "FUNCTIONS_WORKER_RUNTIME",
+                                    "value": "dotnet-isolated"
+                                },
+                                {
                                     "name": "Redis",
                                     "value": "[parameters('loggingRedisConnectionString')]"
                                 },
@@ -818,6 +822,9 @@
                     },
                     "certificateThumbprint": {
                         "value": ""
+                    },
+                    "netFrameworkVersion": {
+                        "value": "v8.0"
                     }
                 }
             },

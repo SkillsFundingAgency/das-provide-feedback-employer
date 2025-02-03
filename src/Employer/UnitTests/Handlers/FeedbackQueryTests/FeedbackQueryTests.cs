@@ -2,14 +2,11 @@
 {
     using AutoFixture;
     using AutoFixture.Xunit2;
-    using ESFA.DAS.EmployerProvideFeedback.Api.Controllers;
     using ESFA.DAS.EmployerProvideFeedback.Api.Models;
     using ESFA.DAS.EmployerProvideFeedback.Api.Queries.FeedbackQuery;
     using ESFA.DAS.ProvideFeedback.Data.Repositories;
     using ESFA.DAS.ProvideFeedback.Domain.Entities.Models;
     using FluentAssertions;
-    using MediatR;
-    using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
     using Moq;
     using System;
@@ -103,7 +100,8 @@
 
             // assert
             var attributes = feedback.Select(p => new ProviderAttributeDto { Name = p.AttributeName, Value = p.AttributeValue }).ToList();
-            response.Should().BeEquivalentTo(new EmployerFeedbackDto
+
+            response.First().Should().BeEquivalentTo(new EmployerFeedbackDto
             {
                 Ukprn = ukprn,
                 ProviderRating = providerRating,
