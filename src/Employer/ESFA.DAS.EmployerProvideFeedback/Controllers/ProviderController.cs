@@ -195,7 +195,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Controllers
             {
                 UserRef = new Guid(idClaim?.Value),
                 EmailAddress = emailAddressClaim?.Value,
-                FirstName = firstNameClaim?.Value,
+                FirstName = firstNameClaim?.Value ?? ""
             };
             await _employerEmailDetailsRepository.UpsertIntoUsers(user);
 
