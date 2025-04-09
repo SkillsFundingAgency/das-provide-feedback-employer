@@ -13,6 +13,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Newtonsoft.Json;
+using SFA.DAS.GovUK.Auth.Employer;
 
 namespace ESFA.DAS.EmployerProvideFeedback.Authentication
 {
@@ -24,11 +25,11 @@ namespace ESFA.DAS.EmployerProvideFeedback.Authentication
     public class EmployerAccountAuthorizationHandler : AuthorizationHandler<EmployerAccountRequirement>, IEmployerAccountAuthorisationHandler
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly IEmployerAccountService _accountsService;
+        private readonly IGovAuthEmployerAccountService _accountsService;
         private readonly ILogger<EmployerAccountAuthorizationHandler> _logger;
         private readonly ProvideFeedbackEmployerWebConfiguration _configuration;
 
-        public EmployerAccountAuthorizationHandler(IHttpContextAccessor httpContextAccessor, IEmployerAccountService accountsService, ILogger<EmployerAccountAuthorizationHandler> logger, IOptions<ProvideFeedbackEmployerWebConfiguration> configuration)
+        public EmployerAccountAuthorizationHandler(IHttpContextAccessor httpContextAccessor, IGovAuthEmployerAccountService accountsService, ILogger<EmployerAccountAuthorizationHandler> logger, IOptions<ProvideFeedbackEmployerWebConfiguration> configuration)
         {
             _httpContextAccessor = httpContextAccessor;
             _accountsService = accountsService;
@@ -96,7 +97,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Authentication
 
                 var result = _accountsService.GetUserAccounts(userId, email).Result;
                 
-                var accountsAsJson = JsonConvert.SerializeObject(result.UserAccounts.ToDictionary(k => k.AccountId));
+                var accountsAsJson = JsonConvert.SerializeObject(result.EmployerAccounts.ToDictionary(k => k.AccountId));
                 var associatedAccountsClaim = new Claim(EmployerClaims.AccountsClaimsTypeIdentifier, accountsAsJson, JsonClaimValueTypes.Json);
                 
                 var updatedEmployerAccounts = JsonConvert.DeserializeObject<Dictionary<string, EmployerUserAccountItem>>(associatedAccountsClaim.Value);

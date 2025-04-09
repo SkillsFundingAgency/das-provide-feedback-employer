@@ -14,6 +14,7 @@ using Microsoft.Extensions.Configuration;
 using SFA.DAS.GovUK.Auth.AppStart;
 using SFA.DAS.GovUK.Auth.Authentication;
 using SFA.DAS.GovUK.Auth.Configuration;
+using SFA.DAS.GovUK.Auth.Models;
 using SFA.DAS.GovUK.Auth.Services;
 
 namespace ESFA.DAS.EmployerProvideFeedback.StartupExtensions
@@ -23,7 +24,6 @@ namespace ESFA.DAS.EmployerProvideFeedback.StartupExtensions
         public static void AddEmployerAuthentication(this IServiceCollection services, ProvideFeedbackEmployerWebConfiguration provideFeedbackEmployerWebConfiguration, IConfiguration configuration)
         {
             services.AddHttpContextAccessor();
-            services.AddTransient<ICustomClaims, EmployerAccountPostAuthenticationClaimsHandler>();
             services.AddTransient<IEmployerAccountAuthorisationHandler, EmployerAccountAuthorizationHandler>();
             services.AddSingleton<IAuthorizationHandler, EmployerAccountAuthorizationHandler>();
             services.AddSingleton<IAuthorizationHandler, EmployerViewerTransactorAuthorizationHandler>();
@@ -61,7 +61,15 @@ namespace ESFA.DAS.EmployerProvideFeedback.StartupExtensions
             if (provideFeedbackEmployerWebConfiguration.UseGovSignIn)
             {
                 services.Configure<GovUkOidcConfiguration>(configuration.GetSection("GovUkOidcConfiguration"));
-                services.AddAndConfigureGovUkAuthentication(configuration, typeof(EmployerAccountPostAuthenticationClaimsHandler), "", "/SignIn-Stub");
+                services.AddAndConfigureGovUkAuthentication(configuration, 
+                    new AuthRedirects
+                    {
+                      SignedOutRedirectUrl  = "",
+                      LocalStubLoginPath = "/SignIn-Stub"
+                    },
+                    null,
+                    typeof(EmployerAccountService)
+                    );
             }
             else
             {
