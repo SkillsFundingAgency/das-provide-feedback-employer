@@ -1,3 +1,5 @@
+using System;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using AutoFixture.NUnit3;
@@ -9,6 +11,7 @@ using ESFA.DAS.ProvideFeedback.Employer.ApplicationServices.OuterApi.EmployerAcc
 using FluentAssertions;
 using Moq;
 using NUnit.Framework;
+using SFA.DAS.GovUK.Auth.Employer;
 using SFA.DAS.Testing.AutoFixture;
 
 namespace UnitTests.ApplicationServices
@@ -31,7 +34,22 @@ namespace UnitTests.ApplicationServices
 
             var actual = await service.GetUserAccounts(userId, email);
 
-            actual.Should().BeEquivalentTo((EmployerUserAccounts) response);
+            actual.Should().BeEquivalentTo(new
+            {
+                EmployerAccounts = response.UserAccounts != null
+                    ? response.UserAccounts.Select(c => new EmployerUserAccountItem
+                    {
+                        Role = c.Role,
+                        AccountId = c.AccountId,
+                        ApprenticeshipEmployerType = Enum.Parse<ApprenticeshipEmployerType>(c.ApprenticeshipEmployerType.ToString()),
+                        EmployerName = c.EmployerName,
+                    }).ToList()
+                    : [],
+                FirstName = response.FirstName,
+                IsSuspended = response.IsSuspended,
+                LastName = response.LastName,
+                EmployerUserId = response.EmployerUserId,
+            });
         }
     }
 }

@@ -11,10 +11,11 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Hosting.Abstractions" Version="2.1.0" />
     <PackageReference Include="Microsoft.Azure.Services.AppAuthentication" Version="1.0.3" />
-    <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.1" />
-    <PackageReference Include="Microsoft.Extensions.Options" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Options" Version="8.0.2" />
     <PackageReference Include="SFA.DAS.Account.Api.Types" Version="1.6.2978" />
     <PackageReference Include="SFA.DAS.CommitmentsV2.Api.Types" Version="7.57.0" />
+    <PackageReference Include="SFA.DAS.GovUK.Auth" Version="17.1.139" />
   </ItemGroup>
 
 </Project>
