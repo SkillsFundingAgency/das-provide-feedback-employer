@@ -16,7 +16,9 @@ using Microsoft.Extensions.Options;
 using Moq;
 using Newtonsoft.Json;
 using NUnit.Framework;
+using SFA.DAS.GovUK.Auth.Employer;
 using SFA.DAS.Testing.AutoFixture;
+using EmployerClaims = ESFA.DAS.EmployerProvideFeedback.Authentication.EmployerClaims;
 
 namespace UnitTests.Web.Authentication
 {
@@ -87,7 +89,7 @@ namespace UnitTests.Web.Authentication
             EmployerAccountRequirement requirement,
             EmployerUserAccountItem serviceResponse,
             [Frozen] Mock<IHttpContextAccessor> httpContextAccessor,
-            [Frozen] Mock<IEmployerAccountService> employerAccountService,
+            [Frozen] Mock<IGovAuthEmployerAccountService> employerAccountService,
             [Frozen] Mock<IOptions<ProvideFeedbackEmployerWebConfiguration>> configuration,
             EmployerAccountAuthorizationHandler authorizationHandler)
         {
@@ -98,7 +100,7 @@ namespace UnitTests.Web.Authentication
             employerAccountService.Setup(x => x.GetUserAccounts(userId, email))
                 .ReturnsAsync(new EmployerUserAccounts
                 {
-                    UserAccounts = new List<EmployerUserAccountItem>{ serviceResponse }
+                    EmployerAccounts = new List<EmployerUserAccountItem>{ serviceResponse }
                 });
             
             var userClaim = new Claim(EmployerClaims.UserId, userId);
@@ -128,7 +130,7 @@ namespace UnitTests.Web.Authentication
             EmployerAccountRequirement requirement,
             EmployerUserAccountItem serviceResponse,
             [Frozen] Mock<IHttpContextAccessor> httpContextAccessor,
-            [Frozen] Mock<IEmployerAccountService> employerAccountService,
+            [Frozen] Mock<IGovAuthEmployerAccountService> employerAccountService,
             [Frozen] Mock<IOptions<ProvideFeedbackEmployerWebConfiguration>> configuration,
             EmployerAccountAuthorizationHandler authorizationHandler)
         {
@@ -139,7 +141,7 @@ namespace UnitTests.Web.Authentication
             employerAccountService.Setup(x => x.GetUserAccounts(userId, email))
                 .ReturnsAsync(new EmployerUserAccounts
                 {
-                    UserAccounts = new List<EmployerUserAccountItem>{ serviceResponse }
+                    EmployerAccounts = new List<EmployerUserAccountItem>{ serviceResponse }
                 });
             
             var userClaim = new Claim(ClaimTypes.NameIdentifier, userId);
@@ -168,7 +170,7 @@ namespace UnitTests.Web.Authentication
             EmployerAccountRequirement requirement,
             EmployerUserAccountItem serviceResponse,
             [Frozen] Mock<IHttpContextAccessor> httpContextAccessor,
-            [Frozen] Mock<IEmployerAccountService> employerAccountService,
+            [Frozen] Mock<IGovAuthEmployerAccountService> employerAccountService,
             EmployerAccountAuthorizationHandler authorizationHandler)
         {
             //Arrange
@@ -177,7 +179,7 @@ namespace UnitTests.Web.Authentication
             employerAccountService.Setup(x => x.GetUserAccounts(userId,""))
                 .ReturnsAsync(new EmployerUserAccounts
                 {
-                    UserAccounts = new List<EmployerUserAccountItem>{ serviceResponse }
+                    EmployerAccounts = new List<EmployerUserAccountItem>{ serviceResponse }
                 });
             
             var userClaim = new Claim(EmployerClaims.UserId, userId);
