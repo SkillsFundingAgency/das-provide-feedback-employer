@@ -6,7 +6,7 @@
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="SFA.DAS.GovUK.Auth" Version="17.1.139" />
+    <PackageReference Include="SFA.DAS.GovUK.Auth" Version="17.1.141" />
   </ItemGroup>
 
 </Project>
