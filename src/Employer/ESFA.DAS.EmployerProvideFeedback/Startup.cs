@@ -56,6 +56,13 @@ namespace ESFA.DAS.EmployerProvideFeedback
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IHostApplicationLifetime applicationLifetime, ILogger<Startup> logger)
         {
+            logger.LogInformation("LogInformation");
+            logger.LogCritical("LogCritical");
+            logger.LogDebug("LogDebug");
+            logger.LogError("LogError");
+            logger.LogTrace("LogTrace");
+            logger.LogWarning("LogWarning");
+
             applicationLifetime.ApplicationStarted.Register(() => logger.LogInformation("Host fully started"));
             applicationLifetime.ApplicationStopping.Register(() => logger.LogInformation("Host shutting down...waiting to complete requests."));
             applicationLifetime.ApplicationStopped.Register(() => logger.LogInformation("Host fully stopped. All requests processed."));
