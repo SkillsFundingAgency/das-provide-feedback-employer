@@ -11,8 +11,8 @@ using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Routing;
 using Moq;
+using NUnit.Framework;
 using SFA.DAS.Encoding;
-using Xunit;
 
 namespace UnitTests.EmployerProvideFeedback.Infrastructure
 {
@@ -33,7 +33,7 @@ namespace UnitTests.EmployerProvideFeedback.Infrastructure
             _encodingServiceMock.Setup(m => m.Encode(It.IsAny<long>(), EncodingType.AccountId)).Returns("ABCDEF");
         }
 
-        [Fact]
+        [Test]
         public void Session_NotExists_Should_RedirectToLanding()
         {
             // Arrange

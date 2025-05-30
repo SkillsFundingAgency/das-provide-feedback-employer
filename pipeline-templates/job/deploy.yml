@@ -82,7 +82,6 @@ jobs:
             AzureSubscription: ${{ parameters.ServiceConnection }}
             ServerName: $(SharedSQLServerFQDN)
             SqlUsername: $(SharedSQLServerUsername)
-            SqlPassword: $(SharedSQLServerPassword)
             DacpacFile: $(Pipeline.Workspace)/DacpacArtifact/src/Employer/ESFA.DAS.EmployerFeedbackEmail.Database/bin/Output/ESFA.DAS.EmployerFeedbackEmail.Database.dacpac
             DatabaseName: $(DatabaseName)
             OverrideBlockOnPossibleDataLoss: ${{ parameters.OverrideBlockOnPossibleDataLoss }}
