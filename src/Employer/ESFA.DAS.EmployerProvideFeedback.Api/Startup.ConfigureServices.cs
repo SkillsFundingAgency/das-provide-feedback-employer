@@ -34,7 +34,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Api
             services.AddSwaggerGen();
             services.AddControllers();
             services.AddHealthChecks();
-            services.AddApplicationInsightsTelemetry();
+            services.AddOpenTelemetryRegistration(_configuration.GetValue<string>("APPLICATIONINSIGHTS_CONNECTION_STRING")!);
             services.AddLogging(options =>
             {
                 options.AddApplicationInsights();

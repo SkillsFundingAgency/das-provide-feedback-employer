@@ -1,22 +1,19 @@
-﻿
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoFixture;
-using Microsoft.Extensions.Logging;
-using FluentAssertions;
-using Moq;
-using Xunit;
 using ESFA.DAS.EmployerProvideFeedback.Api.Models;
 using ESFA.DAS.EmployerProvideFeedback.Api.Queries.ProviderSummaryStarsQuery;
 using ESFA.DAS.ProvideFeedback.Data.Repositories;
 using ESFA.DAS.ProvideFeedback.Domain.Entities.Models;
-
+using FluentAssertions;
+using Microsoft.Extensions.Logging;
+using Moq;
+using NUnit.Framework;
 
 namespace UnitTests.Api
 {
-
     public class ProviderSummaryStarsQueryTests
     {
         private readonly Mock<ILogger<ProviderSummaryStarsQueryHandler>> mockLogger;
@@ -30,49 +27,54 @@ namespace UnitTests.Api
             handler = new ProviderSummaryStarsQueryHandler(mockRepository.Object, mockLogger.Object);
         }
 
-
-        [Fact]
+        [Test]
         public async Task WhenQueryingProviderSummaryStars_IfNullReturnsNull()
         {
-            // arrange
-            mockRepository.Setup(s => s.GetAllStarsSummary()).ReturnsAsync((IEnumerable<ProviderStarsSummary>) null);
+            // Arrange
+            mockRepository
+                .Setup(s => s.GetAllStarsSummary())
+                .ReturnsAsync((IEnumerable<ProviderStarsSummary>)null);
 
-            // act
-            IEnumerable<EmployerFeedbackStarsSummaryDto> response = await handler.Handle(new ProviderSummaryStarsQuery(), new CancellationToken());
+            // Act
+            var response = await handler.Handle(new ProviderSummaryStarsQuery(), new CancellationToken());
 
-            // assert
-            Assert.Null(response);
+            // Assert
+            response.Should().BeNull();
         }
 
-        [Fact]
+        [Test]
         public async Task WhenQueryingProviderSummaryStars_IfNoSummaryStarsReturnsEmptyCollection()
         {
-            // arrange
-            mockRepository.Setup(s => s.GetAllStarsSummary()).ReturnsAsync(new List<ProviderStarsSummary>());
+            // Arrange
+            mockRepository
+                .Setup(s => s.GetAllStarsSummary())
+                .ReturnsAsync(new List<ProviderStarsSummary>());
 
-            // act
-            IEnumerable<EmployerFeedbackStarsSummaryDto> response = await handler.Handle(new ProviderSummaryStarsQuery(), new CancellationToken());
+            // Act
+            var response = await handler.Handle(new ProviderSummaryStarsQuery(), new CancellationToken());
 
-            // assert
-            Assert.IsAssignableFrom<IEnumerable<EmployerFeedbackStarsSummaryDto>>(response);
-            Assert.Empty(response);
+            // Assert
+            response.Should().BeAssignableTo<IEnumerable<EmployerFeedbackStarsSummaryDto>>();
+            response.Should().BeEmpty();
         }
 
-        [Fact]
+        [Test]
         public async Task WhenQueryingProviderSummaryStars_IfSummaryStarsExistsReturnsConvertedModel()
         {
-            // arrange
-            IEnumerable<EmployerFeedbackResultSummary> summaries = new Fixture().CreateMany<EmployerFeedbackResultSummary>(10);
-            mockRepository.Setup(s => s.GetAllStarsSummary()).ReturnsAsync(summaries);
+            // Arrange
+            var summaries = new Fixture().CreateMany<EmployerFeedbackResultSummary>(10).ToList();
+            mockRepository
+                .Setup(s => s.GetAllStarsSummary())
+                .ReturnsAsync(summaries);
 
-            // act
-            IEnumerable<EmployerFeedbackStarsSummaryDto> response = await handler.Handle(new ProviderSummaryStarsQuery(), new CancellationToken());
+            // Act
+            var response = await handler.Handle(new ProviderSummaryStarsQuery(), new CancellationToken());
 
-            // assert
-            Assert.IsAssignableFrom<IEnumerable<EmployerFeedbackStarsSummaryDto>>(response);
-            Assert.NotEmpty(response);
+            // Assert
+            response.Should().BeAssignableTo<IEnumerable<EmployerFeedbackStarsSummaryDto>>();
+            response.Should().NotBeEmpty();
 
-            response.Should().BeEquivalentTo(summaries.Select(s => new EmployerFeedbackStarsSummaryDto()
+            response.Should().BeEquivalentTo(summaries.Select(s => new EmployerFeedbackStarsSummaryDto
             {
                 Ukprn = s.Ukprn,
                 ReviewCount = s.ReviewCount,

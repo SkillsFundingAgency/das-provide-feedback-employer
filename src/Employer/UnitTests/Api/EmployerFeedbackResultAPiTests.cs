@@ -1,93 +1,96 @@
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using AutoFixture.NUnit3;
+using ESFA.DAS.EmployerProvideFeedback.Api.Controllers;
+using ESFA.DAS.EmployerProvideFeedback.Api.Models;
 using ESFA.DAS.EmployerProvideFeedback.Api.Queries.FeedbackResultAnnualQuery;
 using ESFA.DAS.EmployerProvideFeedback.Api.Queries.FeedbackResultForAcademicYearQuery;
+using FluentAssertions;
+using MediatR;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using Moq;
+using NUnit.Framework;
 
 namespace UnitTests.Api
 {
-    using AutoFixture.Xunit2;
-    using ESFA.DAS.EmployerProvideFeedback.Api.Controllers;
-    using ESFA.DAS.EmployerProvideFeedback.Api.Models;
-    using MediatR;
-    using Microsoft.AspNetCore.Mvc;
-    using Microsoft.Extensions.Logging;
-    using Moq;
-    using System.Threading;
-    using System.Threading.Tasks;
-    using Xunit;
-
-    public class EmployerFeedbackResultAPiTests
+    public class EmployerFeedbackResultApiTests
     {
-        private readonly EmployerFeedbackResultController controller;
+        private EmployerFeedbackResultController _controller;
+        private Mock<ILogger<EmployerFeedbackResultController>> _mockLogger;
+        private Mock<IMediator> _mockMediator;
 
-        private readonly Mock<ILogger<EmployerFeedbackResultController>> mockLogger;
-
-        private readonly Mock<IMediator> mockMediator;
-
-
-        public EmployerFeedbackResultAPiTests()
+        [SetUp]
+        public void SetUp()
         {
-            mockMediator = new Mock<IMediator>();
-            mockLogger = new Mock<ILogger<EmployerFeedbackResultController>>();
-            controller = new EmployerFeedbackResultController(mockMediator.Object, mockLogger.Object);
+            _mockMediator = new Mock<IMediator>();
+            _mockLogger = new Mock<ILogger<EmployerFeedbackResultController>>();
+            _controller = new EmployerFeedbackResultController(_mockMediator.Object, _mockLogger.Object);
         }
 
-
-        [Theory, AutoData]
+        [Test, AutoData]
         public async Task WhenGettingEmployerFeedbackResultAnnual_SendsFeedbackAnnualQuery(EmployerFeedbackAnnualResultDto feedback)
         {
-            mockMediator.Setup(s => s.Send(It.IsAny<FeedbackResultAnnualQuery>(), It.IsAny<CancellationToken>())).ReturnsAsync(feedback);
+            // Arrange
+            _mockMediator
+                .Setup(m => m.Send(It.IsAny<FeedbackResultAnnualQuery>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(feedback);
 
-            var actionResult = await this.controller.GetEmployerFeedbackResultAnnual(123);
+            // Act
+            var result = await _controller.GetEmployerFeedbackResultAnnual(123);
 
-            var actionOkResult = actionResult as OkObjectResult;
-            Assert.NotNull(actionOkResult);
+            // Assert
+            result.Should().BeOfType<OkObjectResult>();
+            var okResult = result.As<OkObjectResult>();
 
-            var model = actionOkResult.Value as EmployerFeedbackAnnualResultDto;
-            Assert.NotNull(model);
+            okResult.Value.Should().BeOfType<EmployerFeedbackAnnualResultDto>();
+            var model = okResult.Value.As<EmployerFeedbackAnnualResultDto>();
 
-            Assert.Equal(feedback.AnnualEmployerFeedbackDetails.Count(), model.AnnualEmployerFeedbackDetails.Count());
+            model.AnnualEmployerFeedbackDetails.Should().HaveSameCount(feedback.AnnualEmployerFeedbackDetails);
 
             if (model.AnnualEmployerFeedbackDetails.Any())
             {
-                var expectedDetail = feedback.AnnualEmployerFeedbackDetails.First();
-                var actualDetail = model.AnnualEmployerFeedbackDetails.First();
+                var expected = feedback.AnnualEmployerFeedbackDetails.First();
+                var actual = model.AnnualEmployerFeedbackDetails.First();
 
-                Assert.Equal(expectedDetail.Ukprn, actualDetail.Ukprn);
-                Assert.Equal(expectedDetail.TimePeriod, actualDetail.TimePeriod);
-                Assert.Equal(expectedDetail.Stars, actualDetail.Stars);
-                Assert.Equal(expectedDetail.ReviewCount, actualDetail.ReviewCount);
-                Assert.Equal(expectedDetail.ProviderAttribute.Count(), actualDetail.ProviderAttribute.Count());
+                actual.Ukprn.Should().Be(expected.Ukprn);
+                actual.TimePeriod.Should().Be(expected.TimePeriod);
+                actual.Stars.Should().Be(expected.Stars);
+                actual.ReviewCount.Should().Be(expected.ReviewCount);
+                actual.ProviderAttribute.Should().HaveSameCount(expected.ProviderAttribute);
 
-                if (expectedDetail.ProviderAttribute.Any())
+                if (expected.ProviderAttribute.Any())
                 {
-                    var expectedAttribute = expectedDetail.ProviderAttribute.First();
-                    var actualAttribute = actualDetail.ProviderAttribute.First();
+                    var expectedAttr = expected.ProviderAttribute.First();
+                    var actualAttr = actual.ProviderAttribute.First();
 
-                    Assert.Equal(expectedAttribute.Name, actualAttribute.Name);
-                    Assert.Equal(expectedAttribute.Strength, actualAttribute.Strength);
-                    Assert.Equal(expectedAttribute.Weakness, actualAttribute.Weakness);
+                    actualAttr.Name.Should().Be(expectedAttr.Name);
+                    actualAttr.Strength.Should().Be(expectedAttr.Strength);
+                    actualAttr.Weakness.Should().Be(expectedAttr.Weakness);
                 }
             }
         }
 
-
-        [Theory, AutoData]
+        [Test, AutoData]
         public async Task WhenGettingEmployerFeedbackResultForAcademicYear_SendsFeedbackForAcademicYearQuery(EmployerFeedbackForAcademicYearResultDto feedback)
         {
-            // arrange
-            mockMediator.Setup(s => s.Send(It.IsAny<FeedbackResultForAcademicYearQuery>(), It.IsAny<CancellationToken>())).ReturnsAsync(feedback);
+            // Arange
+            _mockMediator
+                .Setup(m => m.Send(It.IsAny<FeedbackResultForAcademicYearQuery>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(feedback);
 
-            // act
-            var actionResult = await this.controller.GetEmployerFeedbackResultForAcademicYear(123,"AY2324");
+            // Act
+            var result = await _controller.GetEmployerFeedbackResultForAcademicYear(123, "AY2324");
 
-            // assert
-            var actionOkResult = actionResult as OkObjectResult;
-            Assert.NotNull(actionOkResult);
+            // Assert
+            result.Should().BeOfType<OkObjectResult>();
+            var okResult = result.As<OkObjectResult>();
 
-            var model = actionOkResult.Value as EmployerFeedbackForAcademicYearResultDto;
-            Assert.NotNull(model);
+            okResult.Value.Should().BeOfType<EmployerFeedbackForAcademicYearResultDto>();
+            var model = okResult.Value.As<EmployerFeedbackForAcademicYearResultDto>();
 
-            Assert.Equal(model.ReviewCount, feedback.ReviewCount);
+            model.ReviewCount.Should().Be(feedback.ReviewCount);
         }
     }
 }

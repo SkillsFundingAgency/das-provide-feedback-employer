@@ -16,39 +16,51 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
+using NUnit.Framework;
 using SFA.DAS.Encoding;
-using Xunit;
 
 namespace UnitTests.EmployerProvideFeedback.Controllers
 {
+    [TestFixture]
     public class HomeControllerTests
     {
-        private readonly HomeController _controller;
-        private readonly Mock<ISessionService> _sessionServiceMock;
-        private readonly Mock<IEmployerFeedbackRepository> _employerEmailDetailsRepoMock;
-        private readonly Mock<IEncodingService> _encodingServiceMock;
-        private readonly Mock<ILogger<HomeController>> _loggerMock;
-        private readonly List<ProviderAttributeModel> _providerAttributes;
-        private IFixture _fixture = new Fixture();
-        private readonly IOptions<List<ProviderAttributeModel>> _providerAttributeOptions;
-        private readonly EmployerSurveyInvite _employerEmailDetail;
-        private readonly SurveyModel _surveyModel;
+        private HomeController _controller;
+        private Mock<ISessionService> _sessionServiceMock;
+        private Mock<IEmployerFeedbackRepository> _employerEmailDetailsRepoMock;
+        private Mock<IEncodingService> _encodingServiceMock;
+        private Mock<ILogger<HomeController>> _loggerMock;
+        private List<ProviderAttributeModel> _providerAttributes;
+        private IFixture _fixture;
+        
+        private EmployerSurveyInvite _employerEmailDetail;
+        private SurveyModel _surveyModel;
 
-        public HomeControllerTests()
+        [SetUp]
+        public void SetUp()
         {
+            _fixture = new Fixture();
             _employerEmailDetail = _fixture.Create<EmployerSurveyInvite>();
-            _surveyModel = new SurveyModel()
+            _surveyModel = new SurveyModel
             {
                 UserRef = Guid.NewGuid(),
                 ProviderName = _employerEmailDetail.ProviderName,
             };
-            _providerAttributes = GetProviderAttributes();
+            _providerAttributes = _fixture.Build<ProviderAttributeModel>()
+                .With(x => x.Good, false)
+                .With(x => x.Bad, false)
+                .CreateMany(10)
+                .ToList();
+
             _sessionServiceMock = new Mock<ISessionService>();
-            _sessionServiceMock.Setup(mock => mock.Get<SurveyModel>(It.IsAny<string>())).Returns(Task.FromResult(_surveyModel));
+            _sessionServiceMock.Setup(m => m.Get<SurveyModel>(It.IsAny<string>())).Returns(Task.FromResult(_surveyModel));
+
             _employerEmailDetailsRepoMock = new Mock<IEmployerFeedbackRepository>();
+            _employerEmailDetailsRepoMock.Setup(m => m.GetEmployerInviteForUniqueCode(It.IsAny<Guid>()))
+                .Returns(Task.FromResult(_employerEmailDetail));
+
             _encodingServiceMock = new Mock<IEncodingService>();
             _loggerMock = new Mock<ILogger<HomeController>>();
-            _providerAttributeOptions = Options.Create(_providerAttributes);
+
             _controller = new HomeController(
                 _employerEmailDetailsRepoMock.Object,
                 _sessionServiceMock.Object,
@@ -56,99 +68,89 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
                 _loggerMock.Object,
                 null,
                 null);
-            var context = new DefaultHttpContext()
-            {
-                User = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
-                {
-                    new Claim(EmployerClaims.UserId, _surveyModel.UserRef.ToString()),
-                }))
-            };
+
             _controller.ControllerContext = new ControllerContext
             {
-                HttpContext = context
+                HttpContext = new DefaultHttpContext
+                {
+                    User = new ClaimsPrincipal(new ClaimsIdentity(new[]
+                    {
+                    new Claim(EmployerClaims.UserId, _surveyModel.UserRef.ToString()),
+                }))
+                }
             };
-
-            _employerEmailDetailsRepoMock.Setup(mock => mock.GetEmployerInviteForUniqueCode(It.IsAny<Guid>())).Returns(Task.FromResult(_employerEmailDetail));
         }
 
-        [Fact]
+        [Test]
         public async Task UniqueCode_Invalid_ShouldRedirect_ToError()
         {
             // Arrange
             var uniqueCode = Guid.NewGuid();
-            _employerEmailDetailsRepoMock.Setup(mock => mock.GetEmployerInviteForUniqueCode(uniqueCode)).ReturnsAsync(null as EmployerSurveyInvite);
+            _employerEmailDetailsRepoMock.Setup(m => m.GetEmployerInviteForUniqueCode(uniqueCode))
+                .ReturnsAsync((EmployerSurveyInvite)null);
 
             // Act
             var result = await _controller.Index(uniqueCode);
 
             // Assert
-            Assert.IsAssignableFrom<NotFoundResult>(result);
+            result.Should().BeOfType<NotFoundResult>();
         }
 
-        [Fact]
-        public async Task SessionSurvey_DoesNotExist_ShouldPopulateProviderName_OnViewData_FromEmployerEmailDetail()
+        [Test]
+        public async Task SessionSurvey_DoesNotExist_ShouldPopulateProviderName_OnViewData()
         {
             // Arrange
             var request = new StartFeedbackRequest();
 
             // Act
-            var result = await _controller.Index(request) as ViewResult;
+            await _controller.Index(request);
 
             // Assert
-            var viewData = _controller.ViewData;
-            Assert.Single(viewData);
-            Assert.Equal(_employerEmailDetail.ProviderName, viewData["ProviderName"]);
+            _controller.ViewData.Should().ContainKey("ProviderName");
+            _controller.ViewData["ProviderName"].Should().Be(_employerEmailDetail.ProviderName);
         }
 
-        [Fact]
+        [Test]
         public async Task SessionSurvey_DoesNotExist_ShouldCreateNewSurveyInSession()
         {
             // Arrange
             var uniqueEmailCode = Guid.NewGuid();
 
             // Act
-            var result = await _controller.Index(uniqueEmailCode) as ViewResult;
+            await _controller.Index(uniqueEmailCode);
 
             // Assert
-            _sessionServiceMock.Verify(mock => mock.Set(_surveyModel.UserRef.ToString(), It.IsAny<SurveyModel>()), Times.Once);
+            _sessionServiceMock.Verify(m => m.Set(_surveyModel.UserRef.ToString(), It.IsAny<SurveyModel>()), Times.Once);
         }
 
-        [Fact]
+        [Test]
         public async Task EmailEntryPoint_Should_Create_AccountId()
         {
             // Arrange
             var uniqueCode = Guid.NewGuid();
 
             // Act
-            var result = await _controller.Index(uniqueCode) as ViewResult;
+            await _controller.Index(uniqueCode);
 
             // Assert
-            _employerEmailDetailsRepoMock.Verify(mock => mock.GetEmployerInviteForUniqueCode(uniqueCode), Times.Once);
+            _employerEmailDetailsRepoMock.Verify(m => m.GetEmployerInviteForUniqueCode(uniqueCode), Times.Once);
         }
 
-        [Fact]
+        [Test]
         public async Task SessionSurvey_Exists_ShouldNotCreateNewSurvey()
         {
             // Arrange
             var existingSurvey = _fixture.Create<SurveyModel>();
             var uniqueCode = Guid.NewGuid();
-            _sessionServiceMock.Setup(mock => mock.Get<SurveyModel>(uniqueCode.ToString())).ReturnsAsync(existingSurvey);
+            _sessionServiceMock.Setup(m => m.Get<SurveyModel>(uniqueCode.ToString()))
+                .ReturnsAsync(existingSurvey);
 
             // Act
-            var result = await _controller.Index(uniqueCode) as ViewResult;
+            await _controller.Index(uniqueCode);
 
             // Assert
-            _sessionServiceMock.Verify(mock => mock.Set(uniqueCode.ToString(), It.IsAny<SurveyModel>()), Times.Never);
-        }
-
-        private List<ProviderAttributeModel> GetProviderAttributes()
-        {
-            return _fixture
-                .Build<ProviderAttributeModel>()
-                .With(x => x.Good, false)
-                .With(x => x.Bad, false)
-                .CreateMany(10)
-                .ToList();
+            _sessionServiceMock.Verify(m => m.Set(uniqueCode.ToString(), It.IsAny<SurveyModel>()), Times.Never);
         }
     }
+
 }

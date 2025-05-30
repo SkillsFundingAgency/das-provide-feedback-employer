@@ -1,7 +1,12 @@
 ﻿namespace UnitTests.Api
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Threading;
+    using System.Threading.Tasks;
     using AutoFixture;
-    using AutoFixture.Xunit2;
+    using AutoFixture.NUnit3;
     using ESFA.DAS.EmployerProvideFeedback.Api.Models;
     using ESFA.DAS.EmployerProvideFeedback.Api.Queries.FeedbackQuery;
     using ESFA.DAS.ProvideFeedback.Data.Repositories;
@@ -9,12 +14,7 @@
     using FluentAssertions;
     using Microsoft.Extensions.Logging;
     using Moq;
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Threading;
-    using System.Threading.Tasks;
-    using Xunit;
+    using NUnit.Framework;
 
     public class FeedbackQueryTests
     {
@@ -33,44 +33,44 @@
         }
 
 
-        [Fact]
+        [Test]
         public async Task WhenQueryingFeedback_IfNullReturnsEmptyCollection()
         {
-            // arrange
+            // Arrange
             mockRepository.Setup(s => s.GetEmployerFeedback()).ReturnsAsync((IEnumerable<EmployerFeedbackViewModel>) null);
 
-            // act
+            // Act
             var response = await handler.Handle(new FeedbackQuery(), new CancellationToken());
 
-            // assert
+            // Assert
             response.Should().BeEquivalentTo(Enumerable.Empty<EmployerFeedbackDto>());
         }
 
-        [Fact]
+        [Test]
         public async Task WhenQueryingFeedback_IfNoFeedbackReturnsEmptyCollection()
         {
-            // arrange
+            // Arrange
             mockRepository.Setup(s => s.GetEmployerFeedback()).ReturnsAsync(new List<EmployerFeedbackViewModel>());
 
-            // act
+            // Act
             var response = await handler.Handle(new FeedbackQuery(), new CancellationToken());
 
-            // assert
+            // Assert
             response.Should().BeEquivalentTo(Enumerable.Empty<EmployerFeedbackDto>());
         }
 
-        [Fact]
+        [Test]
         public async Task WhenQueryingFeedback_IfFeedbackExistsReturnsConvertedModel()
         {
-            // arrange
+            // Arrange
             var fixture = new Fixture();
             var feedback = fixture.CreateMany<EmployerFeedbackViewModel>(150);
             mockRepository.Setup(s => s.GetEmployerFeedback()).ReturnsAsync(feedback);
 
-            // act
+            // Act
             var response = await handler.Handle(new FeedbackQuery(), new CancellationToken());
 
-            // assert
+            // Assert
             response.Should().BeEquivalentTo(feedback.Select(s => new EmployerFeedbackDto
             {
                 Ukprn = s.Ukprn,
@@ -80,10 +80,10 @@
             }));
         }
 
-        [Theory, AutoData]
+        [Test, AutoData]
         public async Task WhenQueryingFeedback_IfFeedbackExistsReturnsGroupedFeedback(Guid Id, long ukprn, string providerRating, DateTime dateTimeCompleted)
         {
-            // arrange
+            // Arrange
             var fixture = new Fixture();
             var feedback = fixture.CreateMany<EmployerFeedbackViewModel>(10);
             foreach(var f in feedback)
@@ -95,10 +95,10 @@
             }
             mockRepository.Setup(s => s.GetEmployerFeedback()).ReturnsAsync(feedback);
 
-            // act
+            // Act
             var response = await handler.Handle(new FeedbackQuery(), new CancellationToken());
 
-            // assert
+            // Assert
             var attributes = feedback.Select(p => new ProviderAttributeDto { Name = p.AttributeName, Value = p.AttributeValue }).ToList();
 
             response.First().Should().BeEquivalentTo(new EmployerFeedbackDto

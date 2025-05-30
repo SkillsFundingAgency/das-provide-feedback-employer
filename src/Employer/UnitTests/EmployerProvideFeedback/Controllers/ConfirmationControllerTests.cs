@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Security.Claims;
-using System.Security.Principal;
-using System.Threading;
+﻿using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoFixture;
 using ESFA.DAS.EmployerProvideFeedback.Authentication;
-using ESFA.DAS.EmployerProvideFeedback.Configuration;
 using ESFA.DAS.EmployerProvideFeedback.Controllers;
 using ESFA.DAS.EmployerProvideFeedback.Infrastructure;
 using ESFA.DAS.EmployerProvideFeedback.ViewModels;
@@ -15,11 +9,9 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Moq;
+using NUnit.Framework;
 using SFA.DAS.Employer.Shared.UI;
-using SFA.DAS.Employer.Shared.UI.Configuration;
-using Xunit;
 
 namespace UnitTests.EmployerProvideFeedback.Controllers
 {
@@ -66,7 +58,7 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
             };
         }
 
-        [Fact]
+        [Test]
         public async Task ApprenticeApi_ProviderHasFeedback_FeedbackDisplayed_InViewModel()
         {
             // Arrange
@@ -76,7 +68,8 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
             var result = await _controller.Index(encodedAccountId) as ViewResult;
 
             // Assert
-            var viewModel = Assert.IsAssignableFrom<ConfirmationViewModel>(result.Model);
+            var viewModel = result.Model as ConfirmationViewModel;
+            viewModel.Should().NotBeNull();
             viewModel.FeedbackRating.Should().Be(_cachedSurveyModel.Rating);
             viewModel.ProviderName.Should().Be(_cachedSurveyModel.ProviderName);
             viewModel.FatUrl.ToLowerInvariant().Should().Be(_externalLinks.FindApprenticeshipTrainingSiteUrl.ToLowerInvariant());

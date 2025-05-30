@@ -4,7 +4,6 @@ using System.Net;
 using System.Threading.Tasks;
 using AutoFixture.NUnit3;
 using ESFA.DAS.ProvideFeedback.Domain.Entities.ApiTypes;
-using ESFA.DAS.ProvideFeedback.Domain.Entities.Models;
 using ESFA.DAS.ProvideFeedback.Employer.ApplicationServices;
 using ESFA.DAS.ProvideFeedback.Employer.ApplicationServices.OuterApi;
 using ESFA.DAS.ProvideFeedback.Employer.ApplicationServices.OuterApi.EmployerAccounts;
@@ -26,14 +25,17 @@ namespace UnitTests.ApplicationServices
             [Frozen] Mock<IOuterApiClient> apiClient,
             EmployerAccountService service)
         {
+            // Arrange
             var expectedRequest = new GetUserAccountsRequest(userId, email);
             apiClient.Setup(x =>
                     x.Get<GetUserAccountsResponse>(
                         It.Is<GetUserAccountsRequest>(c => c.GetUrl.Equals(expectedRequest.GetUrl))))
                 .ReturnsAsync(new ApiResponse<GetUserAccountsResponse>(response, HttpStatusCode.OK, ""));
 
+            // Act
             var actual = await service.GetUserAccounts(userId, email);
 
+            // Assert
             actual.Should().BeEquivalentTo(new
             {
                 EmployerAccounts = response.UserAccounts != null

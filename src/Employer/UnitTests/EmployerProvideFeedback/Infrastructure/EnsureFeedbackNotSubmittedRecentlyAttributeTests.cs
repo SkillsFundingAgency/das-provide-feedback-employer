@@ -13,8 +13,8 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Logging;
 using Moq;
+using NUnit.Framework;
 using SFA.DAS.Encoding;
-using Xunit;
 
 namespace UnitTests.EmployerProvideFeedback.Infrastructure
 {
@@ -53,7 +53,7 @@ namespace UnitTests.EmployerProvideFeedback.Infrastructure
             };
         }
 
-        [Fact]
+        [Test]
         public void When_Feedback_Submitted_Recently_Then_Redirect_To_FeedbackAlreadySubmitted()
         {
             // Arrange
@@ -100,7 +100,7 @@ namespace UnitTests.EmployerProvideFeedback.Infrastructure
                 .BeEquivalentTo(RouteNames.FeedbackAlreadySubmitted);
         }
 
-        [Fact]
+        [Test]
         public void When_Feedback_Not_Submitted_Recently_Then_No_Redirect()
         {
             // Arrange

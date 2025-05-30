@@ -1,55 +1,54 @@
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
+using AutoFixture.NUnit3;
+using ESFA.DAS.EmployerProvideFeedback.Api.Controllers;
+using ESFA.DAS.EmployerProvideFeedback.Api.Models;
+using ESFA.DAS.EmployerProvideFeedback.Api.Queries.FeedbackQuery;
+using FluentAssertions;
+using MediatR;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using Moq;
+using NUnit.Framework;
+
 namespace UnitTests.Api
 {
-    using AutoFixture.Xunit2;
-    using ESFA.DAS.EmployerProvideFeedback.Api.Controllers;
-    using ESFA.DAS.EmployerProvideFeedback.Api.Models;
-    using ESFA.DAS.EmployerProvideFeedback.Api.Queries.FeedbackQuery;
-    using MediatR;
-    using Microsoft.AspNetCore.Mvc;
-    using Microsoft.Extensions.Logging;
-    using Moq;
-    using System.Collections.Generic;
-    using System.Threading;
-    using System.Threading.Tasks;
-    using Xunit;
-
+    [TestFixture]
     public class FeedbackControllerTests
     {
-        private readonly FeedbackController controller;
+        private FeedbackController _controller;
+        private Mock<ILogger<FeedbackController>> _mockLogger;
+        private Mock<IMediator> _mockMediator;
 
-        private readonly Mock<ILogger<FeedbackController>> mockLogger;
-
-        private readonly Mock<IMediator> mockMediator;
-
-
-        public FeedbackControllerTests()
+        [SetUp]
+        public void SetUp()
         {
-            mockMediator = new Mock<IMediator>();
-            mockLogger = new Mock<ILogger<FeedbackController>>();
-            controller = new FeedbackController(mockMediator.Object, mockLogger.Object);
+            _mockMediator = new Mock<IMediator>();
+            _mockLogger = new Mock<ILogger<FeedbackController>>();
+            _controller = new FeedbackController(_mockMediator.Object, _mockLogger.Object);
         }
 
-
-        [Theory, AutoData]
+        [Test, AutoData]
         public async Task WhenGettingAllFeedback_SendsFeedbackQuery(List<EmployerFeedbackDto> feedback)
         {
-            // arrange
-            mockMediator.Setup(s => s.Send(It.IsAny<FeedbackQuery>(),It.IsAny<CancellationToken>())).ReturnsAsync(feedback);
+            // Arrange
+            _mockMediator
+                .Setup(m => m.Send(It.IsAny<FeedbackQuery>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(feedback);
 
-            // act
-            var actionResult = await this.controller.GetAll();
+            // Act
+            var result = await _controller.GetAll();
 
-            // assert
-            var actionOkResult = actionResult as OkObjectResult;
-            Assert.NotNull(actionOkResult);
+            // Assert
+            result.Should().BeOfType<OkObjectResult>();
+            var okResult = result.As<OkObjectResult>();
 
-            var model = actionOkResult.Value as List<EmployerFeedbackDto>;
-            Assert.NotNull(model);
+            okResult.Value.Should().BeAssignableTo<List<EmployerFeedbackDto>>();
+            var model = okResult.Value.As<List<EmployerFeedbackDto>>();
 
-            var actual = model.Count;
-
-            Assert.Equal(feedback.Count, actual);
+            model.Should().NotBeNull();
+            model.Count.Should().Be(feedback.Count);
         }
-
     }
 }
