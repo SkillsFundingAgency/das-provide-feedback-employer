@@ -6,8 +6,6 @@ using ESFA.DAS.EmployerProvideFeedback.Authentication;
 using ESFA.DAS.EmployerProvideFeedback.Configuration.Routing;
 using ESFA.DAS.EmployerProvideFeedback.Infrastructure;
 using ESFA.DAS.ProvideFeedback.Domain.Entities.ApiTypes;
-using ESFA.DAS.ProvideFeedback.Domain.Entities.Models;
-using ESFA.DAS.ProvideFeedback.Employer.ApplicationServices;
 using FluentAssertions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -16,7 +14,9 @@ using Microsoft.Extensions.Options;
 using Moq;
 using Newtonsoft.Json;
 using NUnit.Framework;
+using SFA.DAS.GovUK.Auth.Employer;
 using SFA.DAS.Testing.AutoFixture;
+using EmployerClaims = ESFA.DAS.EmployerProvideFeedback.Authentication.EmployerClaims;
 
 namespace UnitTests.Web.Authentication
 {
@@ -59,7 +59,7 @@ namespace UnitTests.Web.Authentication
             [Frozen] Mock<IHttpContextAccessor> httpContextAccessor,
             EmployerAccountAuthorizationHandler authorizationHandler)
         {
-            //Arrange
+            // Arrange
             employerIdentifier.Role = "Owner";
             employerIdentifier.AccountId = employerIdentifier.AccountId.ToUpper();
             var employerAccounts = new Dictionary<string, EmployerIdentifier>{{employerIdentifier.AccountId, employerIdentifier}};
@@ -71,10 +71,10 @@ namespace UnitTests.Web.Authentication
             httpContext.Request.RouteValues.Add(RouteValueKeys.EncodedAccountId,accountId.ToUpper());
             httpContextAccessor.Setup(x => x.HttpContext).Returns(httpContext);
 
-            //Act
+            // Act
             await authorizationHandler.HandleAsync(context);
 
-            //Assert
+            // Assert
             context.HasSucceeded.Should().BeFalse();
         }
 
@@ -87,7 +87,7 @@ namespace UnitTests.Web.Authentication
             EmployerAccountRequirement requirement,
             EmployerUserAccountItem serviceResponse,
             [Frozen] Mock<IHttpContextAccessor> httpContextAccessor,
-            [Frozen] Mock<IEmployerAccountService> employerAccountService,
+            [Frozen] Mock<IGovAuthEmployerAccountService> employerAccountService,
             [Frozen] Mock<IOptions<ProvideFeedbackEmployerWebConfiguration>> configuration,
             EmployerAccountAuthorizationHandler authorizationHandler)
         {
@@ -97,7 +97,7 @@ namespace UnitTests.Web.Authentication
             employerAccountService.Setup(x => x.GetUserAccounts(userId, email))
                 .ReturnsAsync(new EmployerUserAccounts
                 {
-                    UserAccounts = new List<EmployerUserAccountItem>{ serviceResponse }
+                    EmployerAccounts = new List<EmployerUserAccountItem>{ serviceResponse }
                 });
             
             var userClaim = new Claim(ClaimTypes.NameIdentifier, userId);
@@ -110,10 +110,10 @@ namespace UnitTests.Web.Authentication
             httpContext.Request.RouteValues.Add(RouteValueKeys.EncodedAccountId,accountId.ToUpper());
             httpContextAccessor.Setup(x => x.HttpContext).Returns(httpContext);
             
-            //Act
+            // Act
             await authorizationHandler.HandleAsync(context);
 
-            //Assert
+            // Assert
             context.HasSucceeded.Should().BeTrue();
             
         }
@@ -126,16 +126,16 @@ namespace UnitTests.Web.Authentication
             EmployerAccountRequirement requirement,
             EmployerUserAccountItem serviceResponse,
             [Frozen] Mock<IHttpContextAccessor> httpContextAccessor,
-            [Frozen] Mock<IEmployerAccountService> employerAccountService,
+            [Frozen] Mock<IGovAuthEmployerAccountService> employerAccountService,
             EmployerAccountAuthorizationHandler authorizationHandler)
         {
-            //Arrange
+            // Arrange
             serviceResponse.AccountId = serviceResponse.AccountId.ToUpper();
             serviceResponse.Role = "Owner";
             employerAccountService.Setup(x => x.GetUserAccounts(userId,""))
                 .ReturnsAsync(new EmployerUserAccounts
                 {
-                    UserAccounts = new List<EmployerUserAccountItem>{ serviceResponse }
+                    EmployerAccounts = new List<EmployerUserAccountItem>{ serviceResponse }
                 });
             
             var userClaim = new Claim(EmployerClaims.UserId, userId);
@@ -148,10 +148,10 @@ namespace UnitTests.Web.Authentication
             httpContext.Request.RouteValues.Add(RouteValueKeys.EncodedAccountId,accountId.ToUpper());
             httpContextAccessor.Setup(x => x.HttpContext).Returns(httpContext);
             
-            //Act
+            // Act
             await authorizationHandler.HandleAsync(context);
 
-            //Assert
+            // Assert
             context.HasSucceeded.Should().BeFalse();
         }
         
@@ -162,7 +162,7 @@ namespace UnitTests.Web.Authentication
             [Frozen] Mock<IHttpContextAccessor> httpContextAccessor,
             EmployerAccountAuthorizationHandler authorizationHandler)
         {
-            //Arrange
+            // Arrange
             employerIdentifier.Role = "Viewer-Owner-Transactor";
             employerIdentifier.AccountId = employerIdentifier.AccountId.ToUpper();
             var employerAccounts = new Dictionary<string, EmployerIdentifier>{{employerIdentifier.AccountId, employerIdentifier}};
@@ -174,10 +174,10 @@ namespace UnitTests.Web.Authentication
             httpContext.Request.RouteValues.Add(RouteValueKeys.EncodedAccountId,employerIdentifier.AccountId);
             httpContextAccessor.Setup(x => x.HttpContext).Returns(httpContext);
             
-            //Act
+            // Act
             await authorizationHandler.HandleAsync(context);
 
-            //Assert
+            // Assert
             context.HasSucceeded.Should().BeFalse();
         }
         
@@ -189,7 +189,7 @@ namespace UnitTests.Web.Authentication
             [Frozen] Mock<IHttpContextAccessor> httpContextAccessor,
             EmployerAccountAuthorizationHandler authorizationHandler)
         {
-            //Arrange
+            // Arrange
             employerIdentifier.Role = "Owner";
             employerIdentifier.AccountId = employerIdentifier.AccountId.ToUpper();
             var employerAccounts = new Dictionary<string, EmployerIdentifier>{{employerIdentifier.AccountId, employerIdentifier}};
@@ -201,10 +201,10 @@ namespace UnitTests.Web.Authentication
             httpContext.Request.RouteValues.Clear();
             httpContextAccessor.Setup(x => x.HttpContext).Returns(httpContext);
             
-            //Act
+            // Act
             await authorizationHandler.HandleAsync(context);
 
-            //Assert
+            // Assert
             context.HasSucceeded.Should().BeFalse();
         }
 
@@ -215,7 +215,7 @@ namespace UnitTests.Web.Authentication
             [Frozen] Mock<IHttpContextAccessor> httpContextAccessor,
             EmployerAccountAuthorizationHandler authorizationHandler)
         {
-            //Arrange
+            // Arrange
             employerIdentifier.Role = "Viewer-Owner-Transactor";
             employerIdentifier.AccountId = employerIdentifier.AccountId.ToUpper();
             var employerAccounts = new Dictionary<string, EmployerIdentifier>{{employerIdentifier.AccountId, employerIdentifier}};
@@ -227,10 +227,10 @@ namespace UnitTests.Web.Authentication
             httpContext.Request.RouteValues.Add(RouteValueKeys.EncodedAccountId,employerIdentifier.AccountId);
             httpContextAccessor.Setup(x => x.HttpContext).Returns(httpContext);
             
-            //Act
+            // Act
             await authorizationHandler.HandleAsync(context);
 
-            //Assert
+            // Assert
             context.HasSucceeded.Should().BeFalse();
         }
         
@@ -254,10 +254,10 @@ namespace UnitTests.Web.Authentication
             httpContext.Request.RouteValues.Add(RouteValueKeys.EncodedAccountId,employerIdentifier.AccountId);
             httpContextAccessor.Setup(x => x.HttpContext).Returns(httpContext);
             
-            //Act
+            // Act
             await authorizationHandler.HandleAsync(context);
 
-            //Assert
+            // Assert
             context.HasSucceeded.Should().BeFalse();
         }
 
@@ -268,7 +268,7 @@ namespace UnitTests.Web.Authentication
             [Frozen] Mock<IHttpContextAccessor> httpContextAccessor,
             EmployerAccountAuthorizationHandler authorizationHandler)
         {
-            //Arrange
+            // Arrange
             employerIdentifier.Role = "Owner";
             employerIdentifier.AccountId = employerIdentifier.AccountId.ToUpper();
             var claim = new Claim(EmployerClaims.AccountsClaimsTypeIdentifier, JsonConvert.SerializeObject(employerIdentifier));
@@ -279,10 +279,10 @@ namespace UnitTests.Web.Authentication
             httpContext.Request.RouteValues.Add(RouteValueKeys.EncodedAccountId,employerIdentifier.AccountId);
             httpContextAccessor.Setup(x => x.HttpContext).Returns(httpContext);
             
-            //Act
+            // Act
             await authorizationHandler.HandleAsync(context);
 
-            //Assert
+            // Assert
             context.HasSucceeded.Should().BeFalse();
         }
     }

@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Azure.Monitor.OpenTelemetry.AspNetCore;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace ESFA.DAS.EmployerProvideFeedback.StartupExtensions
 {

@@ -94,8 +94,8 @@ namespace ESFA.DAS.EmployerProvideFeedback
             services.AddHttpContextAccessor();
             services.AddConfigurationOptions(_configuration);
             var config = _configuration.GetSection("ProvideFeedbackEmployerWeb").Get<ProvideFeedbackEmployerWebConfiguration>();
-            services.AddApplicationInsightsTelemetry();
-            services.AddOpenTelemetryRegistration(_configuration["APPLICATIONINSIGHTS_CONNECTION_STRING"]!);
+            services.AddOpenTelemetryRegistration(_configuration.GetValue<string>("APPLICATIONINSIGHTS_CONNECTION_STRING")!);
+            services.AddLogging();
             services.AddDatabaseRegistration(config, _hostingEnvironment);
             services.AddEmployerAuthentication(config, _configuration);
             services.AddEmployerSharedUI(_configuration);

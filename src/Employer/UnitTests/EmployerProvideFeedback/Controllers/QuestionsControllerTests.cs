@@ -13,64 +13,65 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Moq;
-using Xunit;
+using NUnit.Framework;
+using FluentAssertions;
 
 namespace UnitTests.EmployerProvideFeedback.Controllers
 {
+    [TestFixture]
     public class QuestionsControllerTests
     {
         private QuestionsController _controller;
         private Mock<ISessionService> _sessionServiceMock;
         private IFixture _fixture;
         private List<ProviderAttributeModel> _providerAttributes;
-        private string _accountId = string.Empty;
+        private string _accountId;
 
-        public QuestionsControllerTests()
+        [SetUp]
+        public void SetUp()
         {
             _fixture = new Fixture();
-            _sessionServiceMock = new Mock<ISessionService>();
             _providerAttributes = GetProviderAttributes();
-            _sessionServiceMock.Setup(mock => mock.Get<SurveyModel>(It.IsAny<string>())).Returns(Task.FromResult(new SurveyModel()));
+            _sessionServiceMock = new Mock<ISessionService>();
+            _sessionServiceMock
+                .Setup(mock => mock.Get<SurveyModel>(It.IsAny<string>()))
+                .Returns(Task.FromResult(new SurveyModel()));
 
-            InitializeController();
-        }
-
-        private void InitializeController()
-        {
             var tempDataProvider = Mock.Of<ITempDataProvider>();
             var tempDataDictionaryFactory = new TempDataDictionaryFactory(tempDataProvider);
             var tempData = tempDataDictionaryFactory.GetTempData(new DefaultHttpContext());
 
-            _controller = new QuestionsController(_sessionServiceMock.Object);
-            _controller.TempData = tempData;
-            var context = new DefaultHttpContext()
+            _controller = new QuestionsController(_sessionServiceMock.Object)
             {
-                User = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
+                TempData = tempData,
+                ControllerContext = new ControllerContext
                 {
-                    new Claim(EmployerClaims.UserId, "TestUserIdValue"),
-                }))
+                    HttpContext = new DefaultHttpContext
+                    {
+                        User = new ClaimsPrincipal(new ClaimsIdentity(new[]
+                        {
+                        new Claim(EmployerClaims.UserId, "TestUserIdValue"),
+                    }))
+                    }
+                }
             };
-            _controller.ControllerContext = new ControllerContext
-            {
-                HttpContext = context
-            };
+
+            _accountId = string.Empty;
         }
 
-        [Fact]
+        [Test]
         public async Task Question_1_When_No_Session_Answers_Should_Have_No_Doing_Well_Attributes()
         {
-            // Arrange
-
             // Act
             var result = await _controller.QuestionOne(_accountId) as ViewResult;
 
             // Assert
-            Assert.IsAssignableFrom<SurveyModel>(result.Model);
+            result.Model.Should().BeOfType<SurveyModel>();
             var attributes = (result.Model as SurveyModel).Attributes;
-            Assert.DoesNotContain(attributes, m => m.Good);
+            attributes.Should().NotContain(m => m.Good);
         }
 
-        [Fact]
+        [Test]
         public async Task Question_1_When_Session_Answers_Should_Mark_As_Doing_Well()
         {
             // Arrange
@@ -78,19 +79,20 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
             var sessionDoingWellAtts = _providerAttributes.Take(3).ToList();
             sessionDoingWellAtts.ForEach(ps => ps.Good = true);
             surveyModel.Attributes = _providerAttributes;
-            _sessionServiceMock.Setup(mock => mock.Get<SurveyModel>(It.IsAny<string>())).Returns(Task.FromResult(surveyModel));
+            _sessionServiceMock.Setup(mock => mock.Get<SurveyModel>(It.IsAny<string>()))
+                .Returns(Task.FromResult(surveyModel));
 
             // Act
             var result = await _controller.QuestionOne(_accountId) as ViewResult;
 
             // Assert
-            Assert.IsAssignableFrom<SurveyModel>(result.Model);
+            result.Model.Should().BeOfType<SurveyModel>();
             var attributes = (result.Model as SurveyModel).Attributes;
-            Assert.Contains(attributes, m => m.Good);
-            Assert.Equal(sessionDoingWellAtts.Count, attributes.Count(m => m.Good));
+            attributes.Should().Contain(m => m.Good);
+            attributes.Count(m => m.Good).Should().Be(sessionDoingWellAtts.Count);
         }
 
-        [Fact]
+        [Test]
         public async Task Question_1_When_Answers_Submitted_Should_Update_Session_And_Redirect()
         {
             // Arrange
@@ -103,11 +105,11 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
 
             // Assert
             _sessionServiceMock.Verify(mock => mock.Set(It.IsAny<string>(), It.IsAny<object>()), Times.Once);
-            Assert.IsAssignableFrom<RedirectToRouteResult>(result);
-            Assert.Equal(RouteNames.QuestionTwo_Get, (result as RedirectToRouteResult).RouteName);
+            result.Should().BeOfType<RedirectToRouteResult>()
+                .Which.RouteName.Should().Be(RouteNames.QuestionTwo_Get);
         }
 
-        [Fact]
+        [Test]
         public async Task Question_1_Should_Handle_Return_Url()
         {
             // Arrange
@@ -117,25 +119,24 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
             var result = await _controller.QuestionOne(new SurveyModel { Attributes = _providerAttributes });
 
             // Assert
-            Assert.IsAssignableFrom<RedirectToRouteResult>(result);
-            Assert.Equal(RouteNames.ReviewAnswers_Get, (result as RedirectToRouteResult).RouteName);
+            result.Should().BeOfType<RedirectToRouteResult>()
+                .Which.RouteName.Should().Be(RouteNames.ReviewAnswers_Get);
         }
 
-        [Fact]
+        [Test]
         public async Task Question_2_When_Q1_Skipped_Should_Have_No_Attributes_Doing_Well()
         {
-            // Arrange
 
             // Act
             var result = await _controller.QuestionTwo() as ViewResult;
 
-            // Assert
-            Assert.IsAssignableFrom<SurveyModel>(result.Model);
+            // Asserrt
+            result.Model.Should().BeOfType<SurveyModel>();
             var attributes = (result.Model as SurveyModel).Attributes;
-            Assert.DoesNotContain(attributes, m => m.Good);
+            attributes.Should().NotContain(m => m.Good);
         }
 
-        [Fact]
+        [Test]
         public async Task Question_2_When_Q1_Skipped_And_Q2_Session_Answers_Should_Load_Previous_Selections()
         {
             // Arrange
@@ -143,19 +144,20 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
             var sessionDoingWellAtts = _providerAttributes.Take(3).ToList();
             sessionDoingWellAtts.ForEach(ps => ps.Bad = true);
             surveyModel.Attributes = _providerAttributes;
-            _sessionServiceMock.Setup(mock => mock.Get<SurveyModel>(It.IsAny<string>())).Returns(Task.FromResult(surveyModel));
+            _sessionServiceMock.Setup(mock => mock.Get<SurveyModel>(It.IsAny<string>()))
+                .Returns(Task.FromResult(surveyModel));
 
             // Act
             var result = await _controller.QuestionTwo() as ViewResult;
 
             // Assert
-            Assert.IsAssignableFrom<SurveyModel>(result.Model);
+            result.Model.Should().BeOfType<SurveyModel>();
             var attributes = (result.Model as SurveyModel).Attributes;
-            Assert.Contains(attributes, m => m.Bad);
-            Assert.Equal(sessionDoingWellAtts.Count, attributes.Count(m => m.Bad));
+            attributes.Should().Contain(m => m.Bad);
+            attributes.Count(m => m.Bad).Should().Be(sessionDoingWellAtts.Count);
         }
 
-        [Fact]
+        [Test]
         public async Task Question_2_When_Answers_Submitted_Should_Update_Session_And_Redirect()
         {
             // Arrange
@@ -168,11 +170,11 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
 
             // Assert
             _sessionServiceMock.Verify(mock => mock.Set(It.IsAny<string>(), It.IsAny<object>()), Times.Once);
-            Assert.IsAssignableFrom<RedirectToRouteResult>(result);
-            Assert.Equal(RouteNames.QuestionThree_Get, (result as RedirectToRouteResult).RouteName);
+            result.Should().BeOfType<RedirectToRouteResult>()
+                .Which.RouteName.Should().Be(RouteNames.QuestionThree_Get);
         }
 
-        [Fact]
+        [Test]
         public async Task Question_2_Should_Handle_Return_Url()
         {
             // Arrange
@@ -182,49 +184,46 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
             var result = await _controller.QuestionTwo(new SurveyModel { Attributes = _providerAttributes });
 
             // Assert
-            Assert.IsAssignableFrom<RedirectToRouteResult>(result);
-            Assert.Equal(RouteNames.ReviewAnswers_Get, (result as RedirectToRouteResult).RouteName);
+            result.Should().BeOfType<RedirectToRouteResult>()
+                .Which.RouteName.Should().Be(RouteNames.ReviewAnswers_Get);
         }
 
-        [Fact]
+        [Test]
         public async Task Question_3_When_Q1_And_Q2_Skipped_Should_Have_No_Selected_Attributes()
         {
-            // Arrange
-
             // Act
             var result = await _controller.QuestionThree() as ViewResult;
 
             // Assert
-            Assert.IsAssignableFrom<SurveyModel>(result.Model);
+            result.Model.Should().BeOfType<SurveyModel>();
             var model = result.Model as SurveyModel;
-            Assert.False(model.HasStrengths);
-            Assert.False(model.HasWeaknesses);
+            model.HasStrengths.Should().BeFalse();
+            model.HasWeaknesses.Should().BeFalse();
         }
 
-        [Fact]
+        [Test]
         public async Task Question_3_When_Q1_And_Q2_Skipped_And_Q3_Session_Answers_Should_Load_Previous_Selection()
         {
             // Arrange
-            var surveyModel = new SurveyModel();
-            surveyModel.Rating = ProviderRating.Poor;
-            _sessionServiceMock.Setup(mock => mock.Get<SurveyModel>(It.IsAny<string>())).Returns(Task.FromResult(surveyModel));
+            var surveyModel = new SurveyModel { Rating = ProviderRating.Poor };
+            _sessionServiceMock.Setup(mock => mock.Get<SurveyModel>(It.IsAny<string>()))
+                .Returns(Task.FromResult(surveyModel));
 
             // Act
             var result = await _controller.QuestionThree() as ViewResult;
 
             // Assert
-            Assert.IsAssignableFrom<SurveyModel>(result.Model);
+            result.Model.Should().BeOfType<SurveyModel>();
             var model = result.Model as SurveyModel;
-            Assert.Equal(ProviderRating.Poor, model.Rating);
+            model.Rating.Should().Be(ProviderRating.Poor);
         }
 
-        [Fact]
+        [Test]
         public async Task Question_3_When_Answer_Not_Selected_Should_Fail_Model_Validation()
         {
             // Arrange
             var surveyModel = new SurveyModel();
             _sessionServiceMock.Setup(mock => mock.Get<SurveyModel>(It.IsAny<string>())).Verifiable();
-
             // simulate model validation as this only occurs at runtime
             _controller.ModelState.AddModelError("ProviderRating", "Required Field");
 
@@ -233,25 +232,25 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
 
             // Assert
             _sessionServiceMock.Verify(mock => mock.Set(It.IsAny<string>(), It.IsAny<object>()), Times.Never);
-            Assert.IsAssignableFrom<ViewResult>(result);
+            result.Should().BeOfType<ViewResult>();
         }
 
-        [Fact]
+        [Test]
         public async Task Question_3_When_Answers_Submitted_Should_Update_Session_And_Redirect()
         {
             // Arrange
             var surveyModel = new SurveyModel { Rating = ProviderRating.Excellent };
 
             // Act
-            var result = await _controller.QuestionThree(surveyModel);
+            var result = await _controller.QuestionThree(surveyModel) as RedirectToRouteResult;
 
             // Assert
             _sessionServiceMock.Verify(mock => mock.Set(It.IsAny<string>(), It.IsAny<object>()), Times.Once);
-            var redirectResult = Assert.IsAssignableFrom<RedirectToRouteResult>(result);
-            Assert.Equal(RouteNames.ReviewAnswers_Get, redirectResult.RouteName);
+            result.Should().NotBeNull();
+            result.RouteName.Should().Be(RouteNames.ReviewAnswers_Get);
         }
 
-        [Fact]
+        [Test]
         public async Task Question_3_Should_Handle_Return_Url()
         {
             // Arrange
@@ -262,8 +261,8 @@ namespace UnitTests.EmployerProvideFeedback.Controllers
             var result = await _controller.QuestionThree(surveyModel);
 
             // Assert
-            Assert.IsAssignableFrom<RedirectToRouteResult>(result);
-            Assert.Equal(RouteNames.ReviewAnswers_Get, (result as RedirectToRouteResult).RouteName);
+            result.Should().BeOfType<RedirectToRouteResult>()
+                .Which.RouteName.Should().Be(RouteNames.ReviewAnswers_Get);
         }
 
         private List<ProviderAttributeModel> GetProviderAttributes()

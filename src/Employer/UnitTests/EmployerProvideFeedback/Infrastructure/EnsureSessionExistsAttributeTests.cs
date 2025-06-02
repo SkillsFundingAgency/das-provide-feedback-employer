@@ -14,8 +14,8 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Logging;
 using Moq;
+using NUnit.Framework;
 using SFA.DAS.Encoding;
-using Xunit;
 
 namespace UnitTests.EmployerProvideFeedback.Infrastructure
 {
@@ -56,7 +56,7 @@ namespace UnitTests.EmployerProvideFeedback.Infrastructure
             };
         }
 
-        [Fact]
+        [Test]
         public void Session_NotExists_Should_RedirectToLanding()
         {
             // Arrange

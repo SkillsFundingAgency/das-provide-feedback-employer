@@ -6,7 +6,6 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.IdentityModel.Clients.ActiveDirectory" Version="5.2.8" />
-    <PackageReference Include="NLog" Version="4.7.7" />
   </ItemGroup>
 
   <ItemGroup>
