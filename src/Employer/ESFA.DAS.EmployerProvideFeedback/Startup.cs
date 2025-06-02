@@ -98,7 +98,7 @@ namespace ESFA.DAS.EmployerProvideFeedback
             services.AddLogging();
             services.AddDatabaseRegistration(config, _hostingEnvironment);
             services.AddEmployerAuthentication(config, _configuration);
-            services.AddEmployerSharedUI(config, _configuration);
+            services.AddEmployerSharedUI(_configuration);
             services.AddMemoryCache();
             services.AddCache(_hostingEnvironment, config);
             services.AddDasDataProtection(config, _hostingEnvironment);

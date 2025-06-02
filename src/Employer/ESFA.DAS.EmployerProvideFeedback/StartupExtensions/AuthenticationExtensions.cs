@@ -27,7 +27,6 @@ namespace ESFA.DAS.EmployerProvideFeedback.StartupExtensions
             services.AddTransient<IEmployerAccountAuthorisationHandler, EmployerAccountAuthorizationHandler>();
             services.AddSingleton<IAuthorizationHandler, EmployerAccountAuthorizationHandler>();
             services.AddSingleton<IAuthorizationHandler, EmployerViewerTransactorAuthorizationHandler>();
-            services.AddSingleton<IAuthorizationHandler, AccountActiveAuthorizationHandler>();//TODO remove after gov login go live
             
             services.AddAuthorization(options =>
             {
@@ -58,79 +57,15 @@ namespace ESFA.DAS.EmployerProvideFeedback.StartupExtensions
                     });
             });
 
-            if (provideFeedbackEmployerWebConfiguration.UseGovSignIn)
-            {
-                services.Configure<GovUkOidcConfiguration>(configuration.GetSection("GovUkOidcConfiguration"));
-                services.AddAndConfigureGovUkAuthentication(configuration, 
-                    new AuthRedirects
-                    {
-                      SignedOutRedirectUrl  = "",
-                      LocalStubLoginPath = "/SignIn-Stub"
-                    },
-                    null,
-                    typeof(EmployerAccountService)
-                    );
-            }
-            else
-            {
-                var authenticationConfiguration = provideFeedbackEmployerWebConfiguration.Authentication;
-                
-                services
-                .AddAuthentication(sharedOptions =>
+            services.Configure<GovUkOidcConfiguration>(configuration.GetSection("GovUkOidcConfiguration"));
+            services.AddAndConfigureGovUkAuthentication(configuration, 
+                new AuthRedirects
                 {
-                    sharedOptions.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                    sharedOptions.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                    sharedOptions.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
-                    sharedOptions.DefaultSignOutScheme = OpenIdConnectDefaults.AuthenticationScheme;
-
-                }).AddOpenIdConnect(options =>
-                {
-                    options.ClientId = authenticationConfiguration.ClientId;
-                    options.ClientSecret = authenticationConfiguration.ClientSecret;
-                    options.Authority = authenticationConfiguration.BaseAddress;
-                    options.UsePkce = authenticationConfiguration.UsePkce;
-                    options.ResponseType = authenticationConfiguration.ResponseType;
-
-                    var scopes = authenticationConfiguration.Scopes.Split(' ');
-
-                    foreach (var scope in scopes)
-                    {
-                        options.Scope.Add(scope);
-                    }
-                    options.ClaimActions.MapUniqueJsonKey("sub", "id");
-                    options.Events.OnRemoteFailure = c =>
-                    {
-                        if (c.Failure.Message.Contains("Correlation failed"))
-                        {
-                            c.Response.Redirect("/");
-                            c.HandleResponse();
-                        }
-
-                        return Task.CompletedTask;
-                    };
-                })
-                .AddCookie(options =>
-                {
-                    options.AccessDeniedPath = new PathString("/error/403");
-                    options.ExpireTimeSpan = TimeSpan.FromHours(1);
-                    options.Cookie.Name = "SFA.DAS.ProvideFeedbackEmployer.Web.Auth";
-                    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-                    options.SlidingExpiration = true;
-                    options.Cookie.SameSite = SameSiteMode.None;
-                    options.CookieManager = new ChunkingCookieManager() { ChunkSize = 3000 };
-                });
-                services
-                    .AddOptions<OpenIdConnectOptions>(OpenIdConnectDefaults.AuthenticationScheme)
-                    .Configure<ICustomClaims>((options, customClaims) =>
-                    {
-                        options.Events.OnTokenValidated = async (ctx) =>
-                        {
-                            var claims = await customClaims.GetClaims(ctx);
-                            ctx.Principal.Identities.First().AddClaims(claims);
-                        };
-                    });
-            }
-            
+                    SignedOutRedirectUrl = "",
+                    LocalStubLoginPath = "/SignIn-Stub"
+                },
+                null,
+                typeof(EmployerAccountService));
         }
     }
 }
