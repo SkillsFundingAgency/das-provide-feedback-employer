@@ -58,15 +58,14 @@ namespace ESFA.DAS.EmployerProvideFeedback.StartupExtensions
             });
 
             services.Configure<GovUkOidcConfiguration>(configuration.GetSection("GovUkOidcConfiguration"));
-            services.AddAndConfigureGovUkAuthentication(configuration, typeof(EmployerAccountPostAuthenticationClaimsHandler), "", "/SignIn-Stub");
-            services.AddAndConfigureGovUkAuthentication(configuration, new AuthRedirects
-                    {
-                        SignedOutRedirectUrl = "",
-                        LocalStubLoginPath = "/SignIn-Stub"
-                    },
-                    null,
-                    typeof(EmployerAccountService)
-                    );
+            services.AddAndConfigureGovUkAuthentication(configuration, 
+                new AuthRedirects
+                {
+                    SignedOutRedirectUrl = "",
+                    LocalStubLoginPath = "/SignIn-Stub"
+                },
+                null,
+                typeof(EmployerAccountService));
         }
     }
 }
