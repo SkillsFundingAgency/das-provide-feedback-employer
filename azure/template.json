@@ -238,6 +238,10 @@
             "metadata": {
                 "description": "Determines whether to enable route table association on subnet"
             }
+        },
+        "vnetRouteAllEnabled": {
+            "type": "bool",
+            "defaultValue": false
         }
     },
     "variables": {
@@ -456,6 +460,9 @@
                     },
                     "ipSecurityRestrictions": {
                         "value": "[parameters('frontEndAccessRestrictions')]"
+                    },
+                    "vnetRouteAllEnabled": {
+                        "value": "[parameters('vnetRouteAllEnabled')]"
                     }
                 }
             }
@@ -624,6 +631,9 @@
                     },
                     "ipSecurityRestrictions": {
                         "value": "[parameters('backEndAccessRestrictions')]"
+                    },
+                    "vnetRouteAllEnabled": {
+                        "value": "[parameters('vnetRouteAllEnabled')]"
                     }
                 }
             }
@@ -924,6 +934,9 @@
                     },
                     "netFrameworkVersion": {
                         "value": "v8.0"
+                    },
+                    "vnetRouteAllEnabled": {
+                        "value": "[parameters('vnetRouteAllEnabled')]"
                     }
                 }
             },
