@@ -11,7 +11,7 @@ using ESFA.DAS.ProvideFeedback.Domain.Entities.Models;
 
 namespace ESFA.DAS.EmployerProvideFeedback.Api.Queries.ProviderSummaryStarsQuery
 {
-    public class ProviderSummaryStarsQueryHandler : IRequestHandler<ProviderSummaryStarsQuery, IEnumerable<EmployerFeedbackForStarsSummaryDto>>
+    public class ProviderSummaryStarsQueryHandler : IRequestHandler<ProviderSummaryStarsQuery, IEnumerable<EmployerFeedbackStarsSummaryByPeriod>>
     {
         private readonly IEmployerFeedbackRepository _employerfeedbackRepository;
         private readonly ILogger<ProviderSummaryStarsQueryHandler> _logger;
@@ -22,11 +22,11 @@ namespace ESFA.DAS.EmployerProvideFeedback.Api.Queries.ProviderSummaryStarsQuery
             _logger = logger;
         }
 
-        public async Task<IEnumerable<EmployerFeedbackForStarsSummaryDto>> Handle(ProviderSummaryStarsQuery request, CancellationToken token)
+        public async Task<IEnumerable<EmployerFeedbackStarsSummaryByPeriod>> Handle(ProviderSummaryStarsQuery request, CancellationToken token)
         {
             IEnumerable<ProviderStarsSummary> stars = await _employerfeedbackRepository.GetAllStarsSummary(request.TimePeriod);
 
-            return stars?.Select(x => new EmployerFeedbackForStarsSummaryDto()
+            return stars?.Select(x => new EmployerFeedbackStarsSummaryByPeriod()
             {
                 Ukprn = x.Ukprn,
                 ReviewCount = x.ReviewCount,

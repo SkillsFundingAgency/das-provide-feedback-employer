@@ -102,7 +102,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Api.Controllers
             }
             try
             {
-                IEnumerable<EmployerFeedbackForStarsSummaryDto> result = await _mediator.Send(new ProviderSummaryStarsQuery(){ TimePeriod = timePeriod });
+                IEnumerable<EmployerFeedbackStarsSummaryByPeriod> result = await _mediator.Send(new ProviderSummaryStarsQuery(){ TimePeriod = timePeriod });
                 return Ok(result);
             }
             catch (Exception e)
