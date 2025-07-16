@@ -6,6 +6,7 @@ using ESFA.DAS.EmployerProvideFeedback.Api.Controllers;
 using ESFA.DAS.EmployerProvideFeedback.Api.Models;
 using ESFA.DAS.EmployerProvideFeedback.Api.Queries.FeedbackResultAnnualQuery;
 using ESFA.DAS.EmployerProvideFeedback.Api.Queries.FeedbackResultForAcademicYearQuery;
+using ESFA.DAS.EmployerProvideFeedback.Api.Queries.ProviderSummaryStarsQuery;
 using FluentAssertions;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -91,6 +92,25 @@ namespace UnitTests.Api
             var model = okResult.Value.As<EmployerFeedbackForAcademicYearResultDto>();
 
             model.ReviewCount.Should().Be(feedback.ReviewCount);
+        }
+
+        [TestCase(null)]
+        [TestCase("")]
+        [TestCase("All")]
+        [TestCase("AY2024")]
+        [TestCase("AY1234")]
+        public async Task GetAllStarsSummary_WithValidTimePeriod_ReturnsOk(string timePeriod)
+        {
+            var expected = new[] { new EmployerFeedbackForStarsSummaryDto { Ukprn = 1, ReviewCount = 5, Stars = 4} };
+            _mockMediator
+                .Setup(m => m.Send(It.IsAny<ProviderSummaryStarsQuery>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(expected);
+
+            var result = await _controller.GetAllStarsSummary(timePeriod);
+
+            result.Should().BeOfType<OkObjectResult>();
+            var okResult = result as OkObjectResult;
+            okResult.Value.Should().BeEquivalentTo(expected);
         }
     }
 }

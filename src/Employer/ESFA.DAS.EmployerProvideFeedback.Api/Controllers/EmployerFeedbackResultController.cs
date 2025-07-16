@@ -94,11 +94,15 @@ namespace ESFA.DAS.EmployerProvideFeedback.Api.Controllers
         [ProducesResponseType(401)]
         [ProducesResponseType(500)]
         [Route("reviews")]
-        public async Task<IActionResult> GetAllStarsSummary()
+        public async Task<IActionResult> GetAllStarsSummary([RegularExpression("^(|All|AY\\d{4})$", ErrorMessage = "Time period should be empty, 'All', or in the format 'AYdddd'")] string timePeriod)
         {
+            if (string.IsNullOrWhiteSpace(timePeriod))
+            {
+                timePeriod = "All";
+            }
             try
             {
-                IEnumerable<EmployerFeedbackStarsSummaryDto> result = await _mediator.Send(new ProviderSummaryStarsQuery());
+                IEnumerable<EmployerFeedbackForStarsSummaryDto> result = await _mediator.Send(new ProviderSummaryStarsQuery(){ TimePeriod = timePeriod });
                 return Ok(result);
             }
             catch (Exception e)

@@ -32,7 +32,7 @@ namespace UnitTests.Api
         {
             // Arrange
             mockRepository
-                .Setup(s => s.GetAllStarsSummary())
+                .Setup(s => s.GetAllStarsSummary(It.IsAny<string>()))
                 .ReturnsAsync((IEnumerable<ProviderStarsSummary>)null);
 
             // Act
@@ -47,7 +47,7 @@ namespace UnitTests.Api
         {
             // Arrange
             mockRepository
-                .Setup(s => s.GetAllStarsSummary())
+                .Setup(s => s.GetAllStarsSummary(It.IsAny<string>()))
                 .ReturnsAsync(new List<ProviderStarsSummary>());
 
             // Act
@@ -64,7 +64,7 @@ namespace UnitTests.Api
             // Arrange
             var summaries = new Fixture().CreateMany<EmployerFeedbackResultSummary>(10).ToList();
             mockRepository
-                .Setup(s => s.GetAllStarsSummary())
+                .Setup(s => s.GetAllStarsSummary(It.IsAny<string>()))
                 .ReturnsAsync(summaries);
 
             // Act
@@ -78,7 +78,8 @@ namespace UnitTests.Api
             {
                 Ukprn = s.Ukprn,
                 ReviewCount = s.ReviewCount,
-                Stars = s.Stars
+                Stars = s.Stars,
+                TimePeriod = s.TimePeriod
             }));
         }
     }
