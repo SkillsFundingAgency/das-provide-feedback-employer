@@ -10,6 +10,7 @@ using ESFA.DAS.EmployerProvideFeedback.Api.Queries.ProviderSummaryStarsQuery;
 using ESFA.DAS.EmployerProvideFeedback.Api.Queries.FeedbackResultAnnualQuery;
 using ESFA.DAS.EmployerProvideFeedback.Api.Queries.FeedbackResultForAcademicYearQuery;
 using System.ComponentModel.DataAnnotations;
+using ESFA.DAS.ProvideFeedback.Data.Constants;
 
 
 namespace ESFA.DAS.EmployerProvideFeedback.Api.Controllers
@@ -90,7 +91,7 @@ namespace ESFA.DAS.EmployerProvideFeedback.Api.Controllers
         }
 
         [HttpGet]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<EmployerFeedbackStarsSummaryDto>))]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<EmployerFeedbackStarsSummary>))]
         [ProducesResponseType(401)]
         [ProducesResponseType(500)]
         [Route("reviews")]
@@ -98,11 +99,11 @@ namespace ESFA.DAS.EmployerProvideFeedback.Api.Controllers
         {
             if (string.IsNullOrWhiteSpace(timePeriod))
             {
-                timePeriod = "All";
+                timePeriod = ReviewDataPeriod.All;
             }
             try
             {
-                IEnumerable<EmployerFeedbackStarsSummaryByPeriod> result = await _mediator.Send(new ProviderSummaryStarsQuery(){ TimePeriod = timePeriod });
+                IEnumerable<EmployerFeedbackStarsSummary> result = await _mediator.Send(new ProviderSummaryStarsQuery(){ TimePeriod = timePeriod });
                 return Ok(result);
             }
             catch (Exception e)

@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 namespace ESFA.DAS.EmployerProvideFeedback.Api.Models
 {
     [Serializable]
-    public class EmployerFeedbackStarsSummaryByPeriod
+    public class EmployerFeedbackStarsSummary
     {
         [JsonProperty(PropertyName = "ukprn", Order = int.MinValue)]
         public long Ukprn { get; set; }

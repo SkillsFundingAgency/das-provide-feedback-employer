@@ -54,7 +54,7 @@ namespace UnitTests.Api
             var response = await handler.Handle(new ProviderSummaryStarsQuery(), new CancellationToken());
 
             // Assert
-            response.Should().BeAssignableTo<IEnumerable<EmployerFeedbackStarsSummaryByPeriod>>();
+            response.Should().BeAssignableTo<IEnumerable<EmployerFeedbackStarsSummary>>();
             response.Should().BeEmpty();
         }
 
@@ -71,10 +71,10 @@ namespace UnitTests.Api
             var response = await handler.Handle(new ProviderSummaryStarsQuery(), new CancellationToken());
 
             // Assert
-            response.Should().BeAssignableTo<IEnumerable<EmployerFeedbackStarsSummaryByPeriod>>();
+            response.Should().BeAssignableTo<IEnumerable<EmployerFeedbackStarsSummary>>();
             response.Should().NotBeEmpty();
 
-            response.Should().BeEquivalentTo(summaries.Select(s => new EmployerFeedbackStarsSummaryByPeriod
+            response.Should().BeEquivalentTo(summaries.Select(s => new EmployerFeedbackStarsSummary
             {
                 Ukprn = s.Ukprn,
                 ReviewCount = s.ReviewCount,

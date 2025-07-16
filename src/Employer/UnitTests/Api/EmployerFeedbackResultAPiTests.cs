@@ -101,7 +101,7 @@ namespace UnitTests.Api
         [TestCase("AY1234")]
         public async Task GetAllStarsSummary_WithValidTimePeriod_ReturnsOk(string timePeriod)
         {
-            var expected = new[] { new EmployerFeedbackStarsSummaryByPeriod { Ukprn = 1, ReviewCount = 5, Stars = 4} };
+            var expected = new[] { new EmployerFeedbackStarsSummary { Ukprn = 1, ReviewCount = 5, Stars = 4} };
             _mockMediator
                 .Setup(m => m.Send(It.IsAny<ProviderSummaryStarsQuery>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(expected);
