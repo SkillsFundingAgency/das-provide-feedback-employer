@@ -36,7 +36,7 @@ namespace UnitTests.Api
                 .ReturnsAsync((IEnumerable<ProviderStarsSummary>)null);
 
             // Act
-            var response = await handler.Handle(new ProviderSummaryStarsQuery(), new CancellationToken());
+            var response = await handler.Handle(new ProviderSummaryStarsQuery() { TimePeriod = "AY2024" }, new CancellationToken());
 
             // Assert
             response.Should().BeNull();
@@ -51,7 +51,7 @@ namespace UnitTests.Api
                 .ReturnsAsync(new List<ProviderStarsSummary>());
 
             // Act
-            var response = await handler.Handle(new ProviderSummaryStarsQuery(), new CancellationToken());
+            var response = await handler.Handle(new ProviderSummaryStarsQuery() { TimePeriod = "AY2024" }, new CancellationToken());
 
             // Assert
             response.Should().BeAssignableTo<IEnumerable<EmployerFeedbackStarsSummary>>();
@@ -68,7 +68,7 @@ namespace UnitTests.Api
                 .ReturnsAsync(summaries);
 
             // Act
-            var response = await handler.Handle(new ProviderSummaryStarsQuery(), new CancellationToken());
+            var response = await handler.Handle(new ProviderSummaryStarsQuery(){TimePeriod = "AY2024"}, new CancellationToken());
 
             // Assert
             response.Should().BeAssignableTo<IEnumerable<EmployerFeedbackStarsSummary>>();
