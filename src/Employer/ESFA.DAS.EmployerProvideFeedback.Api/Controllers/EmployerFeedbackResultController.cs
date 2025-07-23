@@ -10,6 +10,7 @@ using ESFA.DAS.EmployerProvideFeedback.Api.Queries.ProviderSummaryStarsQuery;
 using ESFA.DAS.EmployerProvideFeedback.Api.Queries.FeedbackResultAnnualQuery;
 using ESFA.DAS.EmployerProvideFeedback.Api.Queries.FeedbackResultForAcademicYearQuery;
 using System.ComponentModel.DataAnnotations;
+using ESFA.DAS.ProvideFeedback.Data.Constants;
 
 
 namespace ESFA.DAS.EmployerProvideFeedback.Api.Controllers
@@ -90,15 +91,19 @@ namespace ESFA.DAS.EmployerProvideFeedback.Api.Controllers
         }
 
         [HttpGet]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<EmployerFeedbackStarsSummaryDto>))]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<EmployerFeedbackStarsSummary>))]
         [ProducesResponseType(401)]
         [ProducesResponseType(500)]
         [Route("reviews")]
-        public async Task<IActionResult> GetAllStarsSummary()
+        public async Task<IActionResult> GetAllStarsSummary([RegularExpression("^(|All|AY\\d{4})$", ErrorMessage = "Time period should be empty, 'All', or in the format 'AYdddd'")] string timePeriod)
         {
+            if (string.IsNullOrWhiteSpace(timePeriod))
+            {
+                timePeriod = ReviewDataPeriod.All;
+            }
             try
             {
-                IEnumerable<EmployerFeedbackStarsSummaryDto> result = await _mediator.Send(new ProviderSummaryStarsQuery());
+                IEnumerable<EmployerFeedbackStarsSummary> result = await _mediator.Send(new ProviderSummaryStarsQuery(){ TimePeriod = timePeriod });
                 return Ok(result);
             }
             catch (Exception e)

@@ -6,7 +6,8 @@ using ESFA.DAS.EmployerProvideFeedback.Api.Models;
 
 namespace ESFA.DAS.EmployerProvideFeedback.Api.Queries.ProviderSummaryStarsQuery
 {
-    public class ProviderSummaryStarsQuery : IRequest<IEnumerable<EmployerFeedbackStarsSummaryDto>>
+    public class ProviderSummaryStarsQuery : IRequest<IEnumerable<EmployerFeedbackStarsSummary>>
     {
+        public string TimePeriod { get; set; }
     }
 }

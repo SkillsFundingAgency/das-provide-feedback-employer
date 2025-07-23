@@ -32,11 +32,11 @@ namespace UnitTests.Api
         {
             // Arrange
             mockRepository
-                .Setup(s => s.GetAllStarsSummary())
+                .Setup(s => s.GetAllStarsSummary("AY2024"))
                 .ReturnsAsync((IEnumerable<ProviderStarsSummary>)null);
 
             // Act
-            var response = await handler.Handle(new ProviderSummaryStarsQuery(), new CancellationToken());
+            var response = await handler.Handle(new ProviderSummaryStarsQuery() { TimePeriod = "AY2024" }, new CancellationToken());
 
             // Assert
             response.Should().BeNull();
@@ -47,14 +47,14 @@ namespace UnitTests.Api
         {
             // Arrange
             mockRepository
-                .Setup(s => s.GetAllStarsSummary())
+                .Setup(s => s.GetAllStarsSummary("AY2024"))
                 .ReturnsAsync(new List<ProviderStarsSummary>());
 
             // Act
-            var response = await handler.Handle(new ProviderSummaryStarsQuery(), new CancellationToken());
+            var response = await handler.Handle(new ProviderSummaryStarsQuery() { TimePeriod = "AY2024" }, new CancellationToken());
 
             // Assert
-            response.Should().BeAssignableTo<IEnumerable<EmployerFeedbackStarsSummaryDto>>();
+            response.Should().BeAssignableTo<IEnumerable<EmployerFeedbackStarsSummary>>();
             response.Should().BeEmpty();
         }
 
@@ -64,21 +64,21 @@ namespace UnitTests.Api
             // Arrange
             var summaries = new Fixture().CreateMany<EmployerFeedbackResultSummary>(10).ToList();
             mockRepository
-                .Setup(s => s.GetAllStarsSummary())
+                .Setup(s => s.GetAllStarsSummary("AY2024"))
                 .ReturnsAsync(summaries);
 
             // Act
-            var response = await handler.Handle(new ProviderSummaryStarsQuery(), new CancellationToken());
+            var response = await handler.Handle(new ProviderSummaryStarsQuery(){TimePeriod = "AY2024"}, new CancellationToken());
 
             // Assert
-            response.Should().BeAssignableTo<IEnumerable<EmployerFeedbackStarsSummaryDto>>();
+            response.Should().BeAssignableTo<IEnumerable<EmployerFeedbackStarsSummary>>();
             response.Should().NotBeEmpty();
 
-            response.Should().BeEquivalentTo(summaries.Select(s => new EmployerFeedbackStarsSummaryDto
+            response.Should().BeEquivalentTo(summaries.Select(s => new EmployerFeedbackStarsSummary
             {
                 Ukprn = s.Ukprn,
                 ReviewCount = s.ReviewCount,
-                Stars = s.Stars
+                Stars = s.Stars,
             }));
         }
     }

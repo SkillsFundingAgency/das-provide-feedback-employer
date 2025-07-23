@@ -38,6 +38,6 @@ namespace ESFA.DAS.ProvideFeedback.Data.Repositories
         Task<IEnumerable<EmployerFeedbackResultSummary>> GetFeedbackResultSummary(long ukprn);
         Task<IEnumerable<EmployerFeedbackResultSummary>> GetFeedbackResultSummaryAnnual(long ukprn);
         Task<IEnumerable<EmployerFeedbackResultSummary>> GetFeedbackResultSummaryForAcademicYear(long ukprn, String AcademicYear);
-        Task<IEnumerable<ProviderStarsSummary>> GetAllStarsSummary();
+        Task<IEnumerable<ProviderStarsSummary>> GetAllStarsSummary(string timePeriod);
     }
 }

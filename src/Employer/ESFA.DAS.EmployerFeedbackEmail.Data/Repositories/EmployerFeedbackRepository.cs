@@ -363,9 +363,8 @@ namespace ESFA.DAS.ProvideFeedback.Data.Repositories
                     });
         }
 
-        public async Task<IEnumerable<ProviderStarsSummary>> GetAllStarsSummary()
+        public async Task<IEnumerable<ProviderStarsSummary>> GetAllStarsSummary(string timePeriod)
         {
-            var timePeriod = ReviewDataPeriod.All;
             string query = @"SELECT Ukprn, ReviewCount, Stars FROM ProviderStarsSummary WHERE TimePeriod = @TimePeriod";
             return await _dbConnection.QueryAsync<ProviderStarsSummary>(query, new { TimePeriod = timePeriod });
         }
